@@ -1,10 +1,36 @@
-# rtt index | generated 2026-07-18 13:53 | 1216 files | 191228 tokens
+# rtt index | generated 2026-07-18 13:56 | 1242 files | 193118 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
 class MavenWrapperDownloader
   void main(String args[])
   void downloadFileFromURL(String urlString, File destination)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/catalog/NamedEntity.java [java]
+imports: java.io.Serializable, com.salesmanager.contracts.common.ShopEntity
+class NamedEntity
+  String getName()
+  void setName(String name)
+  String getDescription()
+  void setDescription(String description)
+  String getFriendlyUrl()
+  void setFriendlyUrl(String friendlyUrl)
+  String getKeyWords()
+  void setKeyWords(String keyWords)
+  String getHighlights()
+  void setHighlights(String highlights)
+  String getMetaDescription()
+  void setMetaDescription(String metaDescription)
+  String getTitle()
+  void setTitle(String title)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/client/ReferenceServiceClient.java [java]
+imports: com.salesmanager.contracts.reference.ReadableCountry, com.salesmanager.contracts.reference.ReadableLanguage, com.salesmanager.contracts.reference.ReadableZone
+interface ReferenceServiceClient
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/client/TaxServiceClient.java [java]
+imports: com.salesmanager.contracts.common.Entity, com.salesmanager.contracts.common.ReadableEntityList, com.salesmanager.contracts.tax.PersistableTaxClass, com.salesmanager.contracts.tax.PersistableTaxRate, com.salesmanager.contracts.tax.ReadableTaxClass, com.salesmanager.contracts.tax.ReadableTaxRate
+interface TaxServiceClient
 
 # shopizer-api-contracts/src/main/java/com/salesmanager/contracts/common/Entity.java [java]
 imports: java.io.Serializable
@@ -42,6 +68,148 @@ class ShopEntity
   void setLanguage(String language)
   String getLanguage()
 
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/reference/CountryEntity.java [java]
+imports: com.salesmanager.contracts.common.Entity
+class CountryEntity
+  String getCode()
+  void setCode(String code)
+  boolean isSupported()
+  void setSupported(boolean supported)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/reference/DimensionUnitOfMeasure.java [java]
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/reference/MeasureUnit.java [java]
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/reference/ReadableCountry.java [java]
+imports: java.util.ArrayList, java.util.List
+class ReadableCountry
+  String getName()
+  void setName(String name)
+  List<ReadableZone> getZones()
+  void setZones(List<ReadableZone> zones)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/reference/ReadableCurrency.java [java]
+imports: com.salesmanager.contracts.common.Entity
+class ReadableCurrency
+  String getCode()
+  void setCode(String code)
+  String getName()
+  void setName(String name)
+  String getSymbol()
+  void setSymbol(String symbol)
+  boolean isSupported()
+  void setSupported(boolean supported)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/reference/ReadableLanguage.java [java]
+imports: java.io.Serializable
+class ReadableLanguage
+  int getId()
+  void setId(int id)
+  String getCode()
+  void setCode(String code)
+  int getSortOrder()
+  void setSortOrder(int sortOrder)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/reference/ReadableZone.java [java]
+class ReadableZone
+  String getName()
+  void setName(String name)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/reference/SizeReferences.java [java]
+imports: java.util.List
+class SizeReferences
+  List<WeightUnit> getWeights()
+  void setWeights(List<WeightUnit> weights)
+  List<MeasureUnit> getMeasures()
+  void setMeasures(List<MeasureUnit> measures)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/reference/WeightUnit.java [java]
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/reference/WeightUnitOfMeasure.java [java]
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/reference/ZoneEntity.java [java]
+imports: com.salesmanager.contracts.common.Entity
+class ZoneEntity
+  String getCountryCode()
+  void setCountryCode(String countryCode)
+  String getCode()
+  void setCode(String code)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/tax/PersistableTaxClass.java [java]
+class PersistableTaxClass
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/tax/PersistableTaxRate.java [java]
+imports: java.math.BigDecimal, java.util.ArrayList, java.util.List
+class PersistableTaxRate
+  BigDecimal getRate()
+  void setRate(BigDecimal rate)
+  String getStore()
+  void setStore(String store)
+  String getZone()
+  void setZone(String zone)
+  String getCountry()
+  void setCountry(String country)
+  List<TaxRateDescription> getDescriptions()
+  void setDescriptions(List<TaxRateDescription> descriptions)
+  String getTaxClass()
+  void setTaxClass(String taxClass)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/tax/ReadableTaxClass.java [java]
+class ReadableTaxClass
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/tax/ReadableTaxRate.java [java]
+class ReadableTaxRate
+  ReadableTaxClass getTaxClass()
+  void setTaxClass(ReadableTaxClass taxClass)
+  ReadableTaxRateDescription getDescription()
+  void setDescription(ReadableTaxRateDescription description)
+  String getRate()
+  void setRate(String rate)
+  String getStore()
+  void setStore(String store)
+  String getZone()
+  void setZone(String zone)
+  String getCountry()
+  void setCountry(String country)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/tax/ReadableTaxRateDescription.java [java]
+imports: com.salesmanager.contracts.catalog.NamedEntity
+class ReadableTaxRateDescription
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/tax/ReadableTaxRateFull.java [java]
+imports: java.util.ArrayList, java.util.List
+class ReadableTaxRateFull
+  List<ReadableTaxRateDescription> getDescriptions()
+  void setDescriptions(List<ReadableTaxRateDescription> descriptions)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/tax/TaxClassEntity.java [java]
+imports: javax.validation.constraints.Size, com.salesmanager.contracts.common.Entity
+class TaxClassEntity
+  String getStore()
+  void setStore(String store)
+  String getCode()
+  void setCode(String code)
+  String getName()
+  void setName(String name)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/tax/TaxRateDescription.java [java]
+imports: com.salesmanager.contracts.catalog.NamedEntity
+class TaxRateDescription
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/tax/TaxRateEntity.java [java]
+imports: com.salesmanager.contracts.common.Entity
+class TaxRateEntity
+  int getPriority()
+  void setPriority(int priority)
+  String getCode()
+  void setCode(String code)
+
+# shopizer-api-contracts/src/test/java/com/salesmanager/contracts/client/ServiceClientContractTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertFalse, org.junit.jupiter.api.Assertions.assertTrue, java.lang.reflect.Method, java.lang.reflect.Parameter, java.math.BigDecimal, java.util.Arrays, org.junit.jupiter.api.Test, com.salesmanager.contracts.common.Entity, com.salesmanager.contracts.common.ReadableEntityList, com.salesmanager.contracts.reference.ReadableCountry, com.salesmanager.contracts.reference.ReadableLanguage, com.salesmanager.contracts.reference.ReadableZone, com.salesmanager.contracts.tax.PersistableTaxClass, com.salesmanager.contracts.tax.PersistableTaxRate, com.salesmanager.contracts.tax.ReadableTaxClass, com.salesmanager.contracts.tax.ReadableTaxRate, com.salesmanager.contracts.tax.TaxRateDescription
+class ServiceClientContractTest
+  void referenceServiceClientAcceptsOnlyStringCodes()
+  void taxServiceClientUsesStoreAndLangStringCodes()
+
 # shopizer-api-contracts/src/test/java/com/salesmanager/contracts/common/CommonDtoJacksonTest.java [java]
 imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertFalse, org.junit.jupiter.api.Assertions.assertTrue, java.util.Arrays, java.util.List, org.junit.jupiter.api.Test, com.fasterxml.jackson.databind.JsonNode, com.fasterxml.jackson.databind.ObjectMapper
 class CommonDtoJacksonTest
@@ -49,6 +217,21 @@ class CommonDtoJacksonTest
   void entityExistsSerializesBooleanFlag()
   void readableEntityListPreservesItemsAndPaginationMetadata()
   void shopEntitySerializesLanguageAndId()
+
+# shopizer-api-contracts/src/test/java/com/salesmanager/contracts/reference/ReferenceDtoJacksonTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertFalse, org.junit.jupiter.api.Assertions.assertTrue, java.util.Arrays, java.util.Iterator, org.junit.jupiter.api.Test, com.fasterxml.jackson.databind.JsonNode, com.fasterxml.jackson.databind.ObjectMapper
+class ReferenceDtoJacksonTest
+  void readableCurrencySerializesIdCodeNameSymbolSupported()
+  void readableLanguageJsonContainsOnlyIdCodeSortOrder()
+  void readableCountryAndZoneRoundTripWithNestedZones()
+  void sizeReferencesSerializesMeasureEnums()
+  void measureAndWeightEnumValuesAreStable()
+
+# shopizer-api-contracts/src/test/java/com/salesmanager/contracts/tax/TaxDtoJacksonTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertFalse, java.math.BigDecimal, java.util.Arrays, org.junit.jupiter.api.Test, com.fasterxml.jackson.databind.JsonNode, com.fasterxml.jackson.databind.ObjectMapper
+class TaxDtoJacksonTest
+  void persistableAndReadableTaxRateRoundTripWithI18nDescriptions()
+  void taxClassAndFullRateRoundTrip()
 
 # sm-core-model/.mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
