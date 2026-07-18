@@ -1,5 +1,5 @@
 ---
-status: pending
+status: completed
 title: Scaffold shopizer-api-contracts e DTOs comuns
 type: backend
 complexity: medium
@@ -28,11 +28,11 @@ Consolida TLC T1–T2. Cria o módulo Maven `shopizer-api-contracts` no reactor 
 </requirements>
 
 ## Subtasks
-- [ ] 1.1 Scaffold do módulo `shopizer-api-contracts` e registro no reactor
-- [ ] 1.2 Configurar dependências mínimas (jackson-annotations, validation-api)
-- [ ] 1.3 Migrar wrappers DTO comuns para `contracts.common`
-- [ ] 1.4 Validar compile do módulo isolado
-- [ ] 1.5 Smoke test de serialização Jackson dos wrappers comuns
+- [x] 1.1 Scaffold do módulo `shopizer-api-contracts` e registro no reactor
+- [x] 1.2 Configurar dependências mínimas (jackson-annotations, validation-api)
+- [x] 1.3 Migrar wrappers DTO comuns para `contracts.common`
+- [x] 1.4 Validar compile do módulo isolado
+- [x] 1.5 Smoke test de serialização Jackson dos wrappers comuns
 
 ## Implementation Details
 Ver TechSpec: **Arquitetura do sistema** (`shopizer-api-contracts`), **Modelos de dados** (wrappers comuns), **Ordem de build** passo 1. Fontes atuais em `sm-shop-model/.../model/entity/`.
@@ -60,12 +60,12 @@ Ver TechSpec: **Arquitetura do sistema** (`shopizer-api-contracts`), **Modelos d
 
 ## Tests
 - Unit tests:
-  - [ ] `Entity` serializa/deserializa `id` via Jackson sem campos JPA
-  - [ ] `EntityExists` serializa `{exists: true|false}` corretamente
-  - [ ] `ReadableEntityList` preserva lista e metadados de paginação no JSON
+  - [x] `Entity` serializa/deserializa `id` via Jackson sem campos JPA
+  - [x] `EntityExists` serializa `{exists: true|false}` corretamente
+  - [x] `ReadableEntityList` preserva lista e metadados de paginação no JSON
 - Integration tests:
-  - [ ] `./mvnw validate -pl shopizer-api-contracts` passa
-  - [ ] `./mvnw compile -pl shopizer-api-contracts` passa sem dep transitiva de `sm-core-model`
+  - [x] `./mvnw validate -pl shopizer-api-contracts` passa
+  - [x] `./mvnw compile -pl shopizer-api-contracts` passa sem dep transitiva de `sm-core-model`
 - Test coverage target: >=80%
 - All tests must pass
 

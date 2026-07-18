@@ -1,0 +1,17 @@
+[defaults]
+ide = "cursor-agent"
+auto_commit = true
+access_mode = "full"
+timeout = "45m"
+max_retries = 2
+retry_backoff_multiplier = 1.5
+
+[tasks]
+types = ["frontend", "backend", "docs", "test", "infra", "refactor", "chore", "bugfix"]
+
+[tasks.run]
+include_completed = false
+recursive = false
+
+[tasks.run.parallel]
+max_concurrency = 4
