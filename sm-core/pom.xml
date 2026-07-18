@@ -40,6 +40,12 @@
 			<artifactId>sm-core-model</artifactId>
 		</dependency>
 
+		<!-- reference CRUD (Country/Zone/Language/Currency) -->
+		<dependency>
+			<groupId>com.shopizer</groupId>
+			<artifactId>sm-reference-core</artifactId>
+		</dependency>
+
 		<!-- sm-core-modules -->
 		<dependency>
 			<groupId>com.shopizer</groupId>

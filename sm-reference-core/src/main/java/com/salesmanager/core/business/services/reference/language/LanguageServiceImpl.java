@@ -52,17 +52,18 @@ public class LanguageServiceImpl extends SalesManagerEntityServiceImpl<Integer, 
 	
 	@Override
 	public Locale toLocale(Language language, MerchantStore store) {
-		
-		if(store != null) {
-		
-			String countryCode = store.getCountry().getIsoCode();
-			
-			return new Locale(language.getCode(), countryCode);
-		
-		} else {
-			
-			return new Locale(language.getCode());
+		if (store != null && store.getCountry() != null) {
+			return toLocale(language, store.getCountry().getIsoCode());
 		}
+		return toLocale(language, (String) null);
+	}
+
+	@Override
+	public Locale toLocale(Language language, String countryCode) {
+		if (countryCode != null && !countryCode.isEmpty()) {
+			return new Locale(language.getCode(), countryCode);
+		}
+		return new Locale(language.getCode());
 	}
 	
 	@Override

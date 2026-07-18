@@ -15,14 +15,19 @@ Keep only durable, cross-task context here. Do not duplicate facts that are obvi
 - `ReadableLanguage` wire fields: id, code, sortOrder only.
 - Slim `NamedEntity` lives in `com.salesmanager.contracts.catalog` for tax descriptions.
 - Address DTOs were not migrated in task_02 (YAGNI for Wave 1 reference endpoints).
+- `sm-reference-core` holds reference repos/CRUD plus the shared service slice (`SalesManagerEntityService*`, `CacheUtils`, `Constants`) so thin cores depend on `sm-core-model` without a circular dep on `sm-core`. Init/loader stay in `sm-core` (ADR-007).
 
 ## Shared Learnings
 
 - JaCoCo 0.8.8 check at 80% line coverage is configured on `shopizer-api-contracts` (`verify` phase).
+- After thin-core extraction, `./mvnw test -pl sm-core` needs `-am` (or a prior install); otherwise Maven looks for the new artifact on `repo.spring.io` and 401s.
 
 ## Open Risks
 
+- `sm-tax-core` (task_05) will also need `SalesManagerEntityServiceImpl` — today it arrives only via `sm-core` → `sm-reference-core`. Prefer extracting a neutral shared home or depending on the reference-core slice explicitly; do not reintroduce a cycle with `sm-core`.
+
 ## Handoffs
 
-- task_04/task_05: extract cores; contracts already available via reactor/`sm-shop-model`.
+- task_05: mirror thin-core extraction for tax CRUD; resolve generic-service home (see Open Risks).
+- task_06: `reference-service` depends on `sm-reference-core` + contracts.
 - task_08: strangler adapters can import contracts types transitively from `sm-shop`.

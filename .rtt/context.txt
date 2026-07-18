@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-18 14:11 | 1246 files | 193251 tokens
+# rtt index | generated 2026-07-18 14:18 | 1253 files | 194699 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -3064,10 +3064,6 @@ class IndexProductEventListener
   void saveProductAttribute(SaveProductAttributeEvent event)
   void deleteProductAttribute(DeleteProductAttributeEvent event)
 
-# sm-core/src/main/java/com/salesmanager/core/business/constants/Constants.java [java]
-imports: java.nio.charset.Charset, java.nio.charset.StandardCharsets, java.util.Currency, java.util.Locale
-class Constants
-
 # sm-core/src/main/java/com/salesmanager/core/business/constants/ShippingConstants.java [java]
 class ShippingConstants
 
@@ -4280,22 +4276,6 @@ interface OrderProductRepository
 imports: java.util.Date, java.util.List, org.springframework.data.jpa.repository.JpaRepository, org.springframework.data.jpa.repository.Query, org.springframework.data.jpa.repository.Temporal, org.springframework.data.repository.query.Param, com.salesmanager.core.model.payments.Transaction
 interface TransactionRepository
 
-# sm-core/src/main/java/com/salesmanager/core/business/repositories/reference/country/CountryRepository.java [java]
-imports: java.util.List, org.springframework.data.jpa.repository.JpaRepository, org.springframework.data.jpa.repository.Query, com.salesmanager.core.model.reference.country.Country
-interface CountryRepository
-
-# sm-core/src/main/java/com/salesmanager/core/business/repositories/reference/currency/CurrencyRepository.java [java]
-imports: org.springframework.data.jpa.repository.JpaRepository, com.salesmanager.core.model.reference.currency.Currency
-interface CurrencyRepository
-
-# sm-core/src/main/java/com/salesmanager/core/business/repositories/reference/language/LanguageRepository.java [java]
-imports: org.springframework.data.jpa.repository.JpaRepository, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.model.reference.language.Language
-interface LanguageRepository
-
-# sm-core/src/main/java/com/salesmanager/core/business/repositories/reference/zone/ZoneRepository.java [java]
-imports: java.util.List, org.springframework.data.jpa.repository.JpaRepository, org.springframework.data.jpa.repository.Query, com.salesmanager.core.model.reference.zone.Zone
-interface ZoneRepository
-
 # sm-core/src/main/java/com/salesmanager/core/business/repositories/shipping/ShippingOriginRepository.java [java]
 imports: org.springframework.data.jpa.repository.JpaRepository, org.springframework.data.jpa.repository.Query, com.salesmanager.core.model.shipping.ShippingOrigin
 interface ShippingOriginRepository
@@ -4786,28 +4766,6 @@ class ProductVariationServiceImpl
   void saveOrUpdate(ProductVariation entity)
   List<ProductVariation> getByIds(List<Long> ids, MerchantStore store)
 
-# sm-core/src/main/java/com/salesmanager/core/business/services/common/generic/SalesManagerEntityService.java [java]
-imports: java.io.Serializable, java.util.List, com.salesmanager.core.business.exception.ServiceException
-interface SalesManagerEntityService
-
-# sm-core/src/main/java/com/salesmanager/core/business/services/common/generic/SalesManagerEntityServiceImpl.java [java]
-imports: java.io.Serializable, java.lang.reflect.ParameterizedType, java.util.List, org.springframework.data.jpa.repository.JpaRepository, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.model.generic.SalesManagerEntity
-class SalesManagerEntityServiceImpl
-  Class<E> getObjectClass()
-  E getById(K id)
-  void save(E entity)
-  void saveAll(Iterable<E> entities)
-  void create(E entity)
-  void update(E entity)
-  void delete(E entity)
-  void flush()
-  List<E> list()
-  Long count()
-  E saveAndFlush(E entity)
-
-# sm-core/src/main/java/com/salesmanager/core/business/services/common/generic/TransactionalAspectAwareService.java [java]
-interface TransactionalAspectAwareService
-
 # sm-core/src/main/java/com/salesmanager/core/business/services/content/ContentService.java [java]
 imports: java.util.List, java.util.Optional, org.springframework.data.domain.Page, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.common.generic.SalesManagerEntityService, com.salesmanager.core.model.content.Content, com.salesmanager.core.model.content.ContentDescription, com.salesmanager.core.model.content.ContentType, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.content.InputContentFile, com.salesmanager.core.model.content.OutputContentFile, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language
 interface ContentService
@@ -5072,29 +5030,6 @@ class TransactionServiceImpl
   Transaction getRefundableTransaction(Order order)
   List<Transaction> listTransactions(Date startDate, Date endDate)
 
-# sm-core/src/main/java/com/salesmanager/core/business/services/reference/country/CountryService.java [java]
-imports: java.util.List, java.util.Map, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.common.generic.SalesManagerEntityService, com.salesmanager.core.model.reference.country.Country, com.salesmanager.core.model.reference.country.CountryDescription, com.salesmanager.core.model.reference.language.Language
-interface CountryService
-
-# sm-core/src/main/java/com/salesmanager/core/business/services/reference/country/CountryServiceImpl.java [java]
-imports: java.util.ArrayList, java.util.LinkedHashMap, java.util.List, java.util.Map, javax.inject.Inject, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.cache.annotation.Cacheable, org.springframework.stereotype.Service, org.springframework.util.CollectionUtils, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.repositories.reference.country.CountryRepository, com.salesmanager.core.business.services.common.generic.SalesManagerEntityServiceImpl, com.salesmanager.core.business.utils.CacheUtils, com.salesmanager.core.model.reference.country.Country, com.salesmanager.core.model.reference.country.CountryDescription, com.salesmanager.core.model.reference.language.Language
-class CountryServiceImpl
-  Country getByCode(String code)
-  void addCountryDescription(Country country, CountryDescription description)
-  Map<String,Country> getCountriesMap(Language language)
-  List<Country> getCountries(final List<String> isoCodes, final Language language)
-  List<Country> getCountries(Language language)
-  List<Country> listCountryZones(Language language)
-
-# sm-core/src/main/java/com/salesmanager/core/business/services/reference/currency/CurrencyService.java [java]
-imports: com.salesmanager.core.business.services.common.generic.SalesManagerEntityService, com.salesmanager.core.model.reference.currency.Currency
-interface CurrencyService
-
-# sm-core/src/main/java/com/salesmanager/core/business/services/reference/currency/CurrencyServiceImpl.java [java]
-imports: javax.inject.Inject, org.springframework.stereotype.Service, com.salesmanager.core.business.repositories.reference.currency.CurrencyRepository, com.salesmanager.core.business.services.common.generic.SalesManagerEntityServiceImpl, com.salesmanager.core.model.reference.currency.Currency
-class CurrencyServiceImpl
-  Currency getByCode(String code)
-
 # sm-core/src/main/java/com/salesmanager/core/business/services/reference/init/InitializationDatabase.java [java]
 imports: com.salesmanager.core.business.exception.ServiceException
 interface InitializationDatabase
@@ -5113,20 +5048,6 @@ class InitializationDatabaseImpl
   void createMerchant()
   void createModules()
   void createSubReferences()
-
-# sm-core/src/main/java/com/salesmanager/core/business/services/reference/language/LanguageService.java [java]
-imports: java.util.List, java.util.Locale, java.util.Map, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.common.generic.SalesManagerEntityService, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language
-interface LanguageService
-
-# sm-core/src/main/java/com/salesmanager/core/business/services/reference/language/LanguageServiceImpl.java [java]
-imports: java.util.LinkedHashMap, java.util.List, java.util.Locale, java.util.Map, javax.inject.Inject, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.cache.annotation.Cacheable, org.springframework.stereotype.Service, com.salesmanager.core.business.constants.Constants, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.repositories.reference.language.LanguageRepository, com.salesmanager.core.business.services.common.generic.SalesManagerEntityServiceImpl, com.salesmanager.core.business.utils.CacheUtils, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language
-class LanguageServiceImpl
-  Language getByCode(String code)
-  Locale toLocale(Language language, MerchantStore store)
-  Language toLanguage(Locale locale)
-  Map<String,Language> getLanguagesMap()
-  List<Language> getLanguages()
-  Language defaultLanguage()
 
 # sm-core/src/main/java/com/salesmanager/core/business/services/reference/loader/ConfigurationModulesLoader.java [java]
 imports: java.util.HashMap, java.util.List, java.util.Map, org.slf4j.Logger, org.slf4j.LoggerFactory, com.fasterxml.jackson.databind.ObjectMapper, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.model.system.IntegrationConfiguration
@@ -5150,28 +5071,6 @@ class ZonesLoader
 			Map<String, Country> countriesMap, Map<String, Zone> zonesMap, Map<String, String> zonesMark,
 			Map<String, String> list)
   List<Resource> geZoneFiles(String path)
-
-# sm-core/src/main/java/com/salesmanager/core/business/services/reference/zone/ZoneService.java [java]
-imports: java.util.List, java.util.Map, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.common.generic.SalesManagerEntityService, com.salesmanager.core.model.reference.country.Country, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.reference.zone.Zone, com.salesmanager.core.model.reference.zone.ZoneDescription
-interface ZoneService
-
-# sm-core/src/main/java/com/salesmanager/core/business/services/reference/zone/ZoneServiceImpl.java [java]
-imports: java.util.ArrayList, java.util.HashMap, java.util.List, java.util.Map, javax.inject.Inject, org.apache.commons.lang3.Validate, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.cache.annotation.Cacheable, org.springframework.stereotype.Service, com.salesmanager.core.business.constants.Constants, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.repositories.reference.zone.ZoneRepository, com.salesmanager.core.business.services.common.generic.SalesManagerEntityServiceImpl, com.salesmanager.core.business.utils.CacheUtils, com.salesmanager.core.model.reference.country.Country, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.reference.zone.Zone, com.salesmanager.core.model.reference.zone.ZoneDescription
-class ZoneServiceImpl
-  Zone getByCode(String code)
-  void addDescription(Zone zone, ZoneDescription description)
-  List<Zone> getZones(Country country, Language language)
-  List<Zone> getZones(String countryCode, Language language)
-  Map<String, Zone> getZones(Language language)
-
-# sm-core/src/main/java/com/salesmanager/core/business/services/reference/zone/ZoneTransient.java [java]
-class ZoneTransient
-  String getZoneCode()
-  void setZoneCode(String zoneCode)
-  String getZoneName()
-  void setZoneName(String zoneName)
-  String getCountryCode()
-  void setCountryCode(String countryCode)
 
 # sm-core/src/main/java/com/salesmanager/core/business/services/search/SearchService.java [java]
 imports: java.util.Optional, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.model.catalog.product.Product, com.salesmanager.core.model.catalog.product.variant.ProductVariant, com.salesmanager.core.model.merchant.MerchantStore, modules.commons.search.request.Document, modules.commons.search.request.SearchRequest, modules.commons.search.request.SearchResponse
@@ -5448,16 +5347,6 @@ class AbstractDataPopulator
   Locale getLocale()
   Target populate(Source source, MerchantStore store, Language language)
   Target createTarget()
-
-# sm-core/src/main/java/com/salesmanager/core/business/utils/CacheUtils.java [java]
-imports: java.util.ArrayList, java.util.List, javax.inject.Inject, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.beans.factory.annotation.Qualifier, org.springframework.cache.Cache, org.springframework.cache.Cache.ValueWrapper, org.springframework.stereotype.Component, com.salesmanager.core.model.merchant.MerchantStore
-class CacheUtils
-  void putInCache(Object object, String keyName)
-  Object getFromCache(String keyName)
-  List<String> getCacheKeys(MerchantStore store)
-  void shutDownCache()
-  void removeFromCache(String keyName)
-  void removeAllFromCache(MerchantStore store)
 
 # sm-core/src/main/java/com/salesmanager/core/business/utils/CatalogServiceHelper.java [java]
 imports: com.salesmanager.core.business.constants.Constants, com.salesmanager.core.model.catalog.product.Product, com.salesmanager.core.model.catalog.product.attribute, com.salesmanager.core.model.catalog.product.availability.ProductAvailability, java.util.HashSet, java.util.Locale, java.util.Optional, java.util.Set, java.util.stream.Collectors
@@ -5738,6 +5627,196 @@ class UtilsTestCase
   void testCache()
   void testCurrency()
   void testGeoLocation()
+
+# sm-reference-core/src/main/java/com/salesmanager/core/business/constants/Constants.java [java]
+imports: java.nio.charset.Charset, java.nio.charset.StandardCharsets, java.util.Currency, java.util.Locale
+class Constants
+
+# sm-reference-core/src/main/java/com/salesmanager/core/business/repositories/reference/country/CountryRepository.java [java]
+imports: java.util.List, org.springframework.data.jpa.repository.JpaRepository, org.springframework.data.jpa.repository.Query, com.salesmanager.core.model.reference.country.Country
+interface CountryRepository
+
+# sm-reference-core/src/main/java/com/salesmanager/core/business/repositories/reference/currency/CurrencyRepository.java [java]
+imports: org.springframework.data.jpa.repository.JpaRepository, com.salesmanager.core.model.reference.currency.Currency
+interface CurrencyRepository
+
+# sm-reference-core/src/main/java/com/salesmanager/core/business/repositories/reference/language/LanguageRepository.java [java]
+imports: org.springframework.data.jpa.repository.JpaRepository, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.model.reference.language.Language
+interface LanguageRepository
+
+# sm-reference-core/src/main/java/com/salesmanager/core/business/repositories/reference/zone/ZoneRepository.java [java]
+imports: java.util.List, org.springframework.data.jpa.repository.JpaRepository, org.springframework.data.jpa.repository.Query, com.salesmanager.core.model.reference.zone.Zone
+interface ZoneRepository
+
+# sm-reference-core/src/main/java/com/salesmanager/core/business/services/common/generic/SalesManagerEntityService.java [java]
+imports: java.io.Serializable, java.util.List, com.salesmanager.core.business.exception.ServiceException
+interface SalesManagerEntityService
+
+# sm-reference-core/src/main/java/com/salesmanager/core/business/services/common/generic/SalesManagerEntityServiceImpl.java [java]
+imports: java.io.Serializable, java.lang.reflect.ParameterizedType, java.util.List, org.springframework.data.jpa.repository.JpaRepository, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.model.generic.SalesManagerEntity
+class SalesManagerEntityServiceImpl
+  Class<E> getObjectClass()
+  E getById(K id)
+  void save(E entity)
+  void saveAll(Iterable<E> entities)
+  void create(E entity)
+  void update(E entity)
+  void delete(E entity)
+  void flush()
+  List<E> list()
+  Long count()
+  E saveAndFlush(E entity)
+
+# sm-reference-core/src/main/java/com/salesmanager/core/business/services/common/generic/TransactionalAspectAwareService.java [java]
+interface TransactionalAspectAwareService
+
+# sm-reference-core/src/main/java/com/salesmanager/core/business/services/reference/country/CountryService.java [java]
+imports: java.util.List, java.util.Map, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.common.generic.SalesManagerEntityService, com.salesmanager.core.model.reference.country.Country, com.salesmanager.core.model.reference.country.CountryDescription, com.salesmanager.core.model.reference.language.Language
+interface CountryService
+
+# sm-reference-core/src/main/java/com/salesmanager/core/business/services/reference/country/CountryServiceImpl.java [java]
+imports: java.util.ArrayList, java.util.LinkedHashMap, java.util.List, java.util.Map, javax.inject.Inject, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.cache.annotation.Cacheable, org.springframework.stereotype.Service, org.springframework.util.CollectionUtils, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.repositories.reference.country.CountryRepository, com.salesmanager.core.business.services.common.generic.SalesManagerEntityServiceImpl, com.salesmanager.core.business.utils.CacheUtils, com.salesmanager.core.model.reference.country.Country, com.salesmanager.core.model.reference.country.CountryDescription, com.salesmanager.core.model.reference.language.Language
+class CountryServiceImpl
+  Country getByCode(String code)
+  void addCountryDescription(Country country, CountryDescription description)
+  Map<String,Country> getCountriesMap(Language language)
+  List<Country> getCountries(final List<String> isoCodes, final Language language)
+  List<Country> getCountries(Language language)
+  List<Country> listCountryZones(Language language)
+
+# sm-reference-core/src/main/java/com/salesmanager/core/business/services/reference/currency/CurrencyService.java [java]
+imports: com.salesmanager.core.business.services.common.generic.SalesManagerEntityService, com.salesmanager.core.model.reference.currency.Currency
+interface CurrencyService
+
+# sm-reference-core/src/main/java/com/salesmanager/core/business/services/reference/currency/CurrencyServiceImpl.java [java]
+imports: javax.inject.Inject, org.springframework.stereotype.Service, com.salesmanager.core.business.repositories.reference.currency.CurrencyRepository, com.salesmanager.core.business.services.common.generic.SalesManagerEntityServiceImpl, com.salesmanager.core.model.reference.currency.Currency
+class CurrencyServiceImpl
+  Currency getByCode(String code)
+
+# sm-reference-core/src/main/java/com/salesmanager/core/business/services/reference/language/LanguageService.java [java]
+imports: java.util.List, java.util.Locale, java.util.Map, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.common.generic.SalesManagerEntityService, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language
+interface LanguageService
+
+# sm-reference-core/src/main/java/com/salesmanager/core/business/services/reference/language/LanguageServiceImpl.java [java]
+imports: java.util.LinkedHashMap, java.util.List, java.util.Locale, java.util.Map, javax.inject.Inject, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.cache.annotation.Cacheable, org.springframework.stereotype.Service, com.salesmanager.core.business.constants.Constants, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.repositories.reference.language.LanguageRepository, com.salesmanager.core.business.services.common.generic.SalesManagerEntityServiceImpl, com.salesmanager.core.business.utils.CacheUtils, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language
+class LanguageServiceImpl
+  Language getByCode(String code)
+  Locale toLocale(Language language, MerchantStore store)
+  Locale toLocale(Language language, String countryCode)
+  Language toLanguage(Locale locale)
+  Map<String,Language> getLanguagesMap()
+  List<Language> getLanguages()
+  Language defaultLanguage()
+
+# sm-reference-core/src/main/java/com/salesmanager/core/business/services/reference/zone/ZoneService.java [java]
+imports: java.util.List, java.util.Map, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.common.generic.SalesManagerEntityService, com.salesmanager.core.model.reference.country.Country, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.reference.zone.Zone, com.salesmanager.core.model.reference.zone.ZoneDescription
+interface ZoneService
+
+# sm-reference-core/src/main/java/com/salesmanager/core/business/services/reference/zone/ZoneServiceImpl.java [java]
+imports: java.util.ArrayList, java.util.HashMap, java.util.List, java.util.Map, javax.inject.Inject, org.apache.commons.lang3.Validate, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.cache.annotation.Cacheable, org.springframework.stereotype.Service, com.salesmanager.core.business.constants.Constants, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.repositories.reference.zone.ZoneRepository, com.salesmanager.core.business.services.common.generic.SalesManagerEntityServiceImpl, com.salesmanager.core.business.utils.CacheUtils, com.salesmanager.core.model.reference.country.Country, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.reference.zone.Zone, com.salesmanager.core.model.reference.zone.ZoneDescription
+class ZoneServiceImpl
+  Zone getByCode(String code)
+  void addDescription(Zone zone, ZoneDescription description)
+  List<Zone> getZones(Country country, Language language)
+  List<Zone> getZones(String countryCode, Language language)
+  Map<String, Zone> getZones(Language language)
+
+# sm-reference-core/src/main/java/com/salesmanager/core/business/services/reference/zone/ZoneTransient.java [java]
+class ZoneTransient
+  String getZoneCode()
+  void setZoneCode(String zoneCode)
+  String getZoneName()
+  void setZoneName(String zoneName)
+  String getCountryCode()
+  void setCountryCode(String countryCode)
+
+# sm-reference-core/src/main/java/com/salesmanager/core/business/utils/CacheUtils.java [java]
+imports: java.util.ArrayList, java.util.List, javax.inject.Inject, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.beans.factory.annotation.Qualifier, org.springframework.cache.Cache, org.springframework.cache.Cache.ValueWrapper, org.springframework.stereotype.Component, com.salesmanager.core.model.merchant.MerchantStore
+class CacheUtils
+  void putInCache(Object object, String keyName)
+  Object getFromCache(String keyName)
+  List<String> getCacheKeys(MerchantStore store)
+  void shutDownCache()
+  void removeFromCache(String keyName)
+  void removeAllFromCache(MerchantStore store)
+
+# sm-reference-core/src/test/java/com/salesmanager/core/business/repositories/reference/country/CountryRepositoryTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertNotNull, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.autoconfigure.domain.EntityScan, org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest, org.springframework.data.jpa.repository.config.EnableJpaRepositories, org.springframework.test.context.ContextConfiguration, com.salesmanager.core.model.reference.country.Country
+class CountryRepositoryTest
+  class Config
+  void findByIsoCode_returnsPersistedCountry()
+
+# sm-reference-core/src/test/java/com/salesmanager/core/business/services/common/generic/SalesManagerEntityServiceImplTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.mockito.Mockito.verify, org.mockito.Mockito.when, java.util.Collections, java.util.List, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.springframework.data.jpa.repository.JpaRepository, com.salesmanager.core.model.reference.currency.Currency
+class SalesManagerEntityServiceImplTest
+  void setUp()
+  void list_delegatesToFindAll()
+  void count_delegatesToRepository()
+  void getById_delegatesToGetOne()
+  void delete_delegatesToRepository()
+  void flush_delegatesToRepository()
+  void save_create_update_and_saveAll_delegate()
+  void getObjectClass_returnsCurrency()
+
+# sm-reference-core/src/test/java/com/salesmanager/core/business/services/reference/country/CountryServiceImplTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertTrue, org.mockito.ArgumentMatchers.anyString, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.verify, org.mockito.Mockito.when, java.lang.reflect.Field, java.util.Arrays, java.util.Collections, java.util.HashSet, java.util.List, java.util.Map, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.core.business.repositories.reference.country.CountryRepository, com.salesmanager.core.business.utils.CacheUtils, com.salesmanager.core.model.reference.country.Country, com.salesmanager.core.model.reference.country.CountryDescription, com.salesmanager.core.model.reference.language.Language
+class CountryServiceImplTest
+  void setUp()
+  void getByCode_delegatesToRepository()
+  void getCountries_populatesNameFromDescription()
+  void getCountriesMap_indexesByIsoCode()
+  void getCountries_filtersByIsoCodes()
+  void listCountryZones_delegatesToRepository()
+  void addCountryDescription_updatesCountry()
+  void getCountries_whenCacheHit_returnsCached()
+  void listCountryZones_wrapsRepositoryFailure()
+
+# sm-reference-core/src/test/java/com/salesmanager/core/business/services/reference/currency/CurrencyServiceImplTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.mockito.Mockito.when, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.core.business.repositories.reference.currency.CurrencyRepository, com.salesmanager.core.model.reference.currency.Currency
+class CurrencyServiceImplTest
+  void setUp()
+  void getByCode_delegatesToRepository()
+
+# sm-reference-core/src/test/java/com/salesmanager/core/business/services/reference/language/LanguageServiceImplTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertFalse, org.junit.jupiter.api.Assertions.assertNotNull, org.junit.jupiter.api.Assertions.assertTrue, org.mockito.ArgumentMatchers.anyString, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.when, java.lang.reflect.Field, java.lang.reflect.Method, java.util.Arrays, java.util.List, java.util.Locale, java.util.Map, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.core.business.repositories.reference.language.LanguageRepository, com.salesmanager.core.business.utils.CacheUtils, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.country.Country, com.salesmanager.core.model.reference.language.Language
+class LanguageServiceImplTest
+  void setUp()
+  void toLocale_withLanguageAndCountryCode_buildsExpectedLocale()
+  void toLocale_withNullCountryCode_usesLanguageOnly()
+  void toLocale_newSignature_doesNotRequireMerchantStore()
+  void toLocale_withMerchantStore_delegatesToCountryCodeOverload()
+  void toLocale_withNullStore_usesLanguageOnly()
+  void getByCode_delegatesToRepository()
+  void getLanguages_usesCacheThenRepositoryList()
+  void getLanguagesMap_indexesByCode()
+  void toLanguage_resolvesFromMap()
+  void defaultLanguage_returnsEnglish()
+  void getLanguages_whenCacheHit_skipsRepository()
+  void toLanguage_whenMissing_fallsBackToDefault()
+  void getLanguages_whenCacheThrows_wrapsServiceException()
+  void toLanguage_whenMapLookupFails_fallsBackToDefault()
+
+# sm-reference-core/src/test/java/com/salesmanager/core/business/services/reference/zone/ZoneServiceImplTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertTrue, org.mockito.ArgumentMatchers.anyString, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.when, java.lang.reflect.Field, java.util.Collections, java.util.List, java.util.Map, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.core.business.repositories.reference.zone.ZoneRepository, com.salesmanager.core.business.utils.CacheUtils, com.salesmanager.core.model.reference.country.Country, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.reference.zone.Zone, com.salesmanager.core.model.reference.zone.ZoneDescription
+class ZoneServiceImplTest
+  void setUp()
+  void getByCode_delegatesToRepository()
+  void getZones_byCountryCode_populatesName()
+  void getZones_byCountryEntity_usesIsoCode()
+  void getZones_byLanguage_returnsMap()
+  void addDescription_whenDescriptionsNull_createsList()
+  void addDescription_whenMissing_appendsAndUpdates()
+  void getZones_withNullCountry_usesDefaultCountry()
+  void getZones_byLanguage_cacheHit()
+
+# sm-reference-core/src/test/java/com/salesmanager/core/business/utils/CacheUtilsTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertNull, org.mockito.Mockito.verify, org.mockito.Mockito.when, java.lang.reflect.Field, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.springframework.cache.Cache, org.springframework.cache.support.SimpleValueWrapper
+class CacheUtilsTest
+  void setUp()
+  void putAndGetRoundTrip()
+  void getFromCache_whenMissing_returnsNull()
+  void removeFromCache_evictsKey()
+  void shutDownCache_isNoOp()
 
 # sm-shop-model/.mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties

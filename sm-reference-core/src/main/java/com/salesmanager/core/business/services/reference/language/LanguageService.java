@@ -19,6 +19,11 @@ public interface LanguageService extends SalesManagerEntityService<Integer, Lang
 
 	Locale toLocale(Language language, MerchantStore store);
 
+	/**
+	 * REF-08: build a Locale from language + country ISO codes without MerchantStore.
+	 */
+	Locale toLocale(Language language, String countryCode);
+
 	Language toLanguage(Locale locale);
 	
 	Language defaultLanguage();
