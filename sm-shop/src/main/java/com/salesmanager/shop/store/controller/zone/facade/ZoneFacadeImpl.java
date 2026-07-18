@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import com.salesmanager.core.business.exception.ConversionException;
@@ -20,6 +21,7 @@ import com.salesmanager.shop.store.api.exception.ConversionRuntimeException;
 import com.salesmanager.shop.store.api.exception.ServiceRuntimeException;
 
 @Service
+@ConditionalOnProperty(name = "wave1.strangler.enabled", havingValue = "false", matchIfMissing = true)
 public class ZoneFacadeImpl implements ZoneFacade {
 
   @Inject

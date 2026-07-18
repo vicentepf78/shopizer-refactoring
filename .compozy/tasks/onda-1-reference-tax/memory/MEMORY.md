@@ -9,6 +9,7 @@ Keep only durable, cross-task context here. Do not duplicate facts that are obvi
 - `sm-reference-core` and `sm-tax-core` are extracted; `sm-core` depends on both. `TaxService*` (calculate) remains in `sm-core` (ADR-003).
 - `reference-service` Boot app exists (:8081): depends on `sm-reference-core` + contracts; public P1 REST without JWT.
 - `tax-service` Boot app exists (:8082): depends on `sm-tax-core` + contracts; private tax REST with JWT; HTTP client to reference via `wave1.reference-service.base-url`.
+- `sm-shop` Strangler: `wave1.strangler.enabled` + profiles `monolith`/`strangler`; HTTP adapters under `com.salesmanager.shop.strangler`.
 
 ## Shared Decisions
 
@@ -33,10 +34,10 @@ Keep only durable, cross-task context here. Do not duplicate facts that are obvi
 
 ## Open Risks
 
-- Monolito sm-shop still may map store-mismatch `UnauthorizedException` → 401; tax-service uses 403 per techspec — strangler should preserve tax-service status codes.
+- Monolito sm-shop still may map store-mismatch `UnauthorizedException` → 401; tax-service uses 403 per techspec — strangler adapters propagate tax-service status via `DownstreamHttpException`.
 - sm-shop ControllerAdvice for `TaxClassInUseException` → 409 still pending if delete stays in-process when strangler is off.
 
 ## Handoffs
 
-- task_08: strangler adapters can import contracts types transitively from `sm-shop`; forward `Authorization` to tax-service (:8082); reference paths match monolito `/api/v1/{country,zones,languages,currency,measures}`.
-- task_09: Pact provider tests target `reference-service` 5 endpoints (and tax if in scope).
+- task_08 done: profiles `monolith` / `strangler`; `wave1.strangler.enabled` toggles in-process vs HTTP facade beans; JaCoCo gate only on `sm-shop` strangler package (≥80%).
+- task_09: Pact provider tests target `reference-service` 5 endpoints (and tax if in scope); consumer can assume strangler adapters call the same paths as reference/tax services.

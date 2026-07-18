@@ -7,6 +7,7 @@ import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import com.salesmanager.core.business.exception.ServiceException;
@@ -33,6 +34,7 @@ import com.salesmanager.shop.store.api.exception.UnauthorizedException;
 import com.salesmanager.shop.store.controller.tax.facade.TaxFacade;
 
 @Service
+@ConditionalOnProperty(name = "wave1.strangler.enabled", havingValue = "false", matchIfMissing = true)
 public class TaxFacadeImpl implements TaxFacade {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(TaxFacadeImpl.class);

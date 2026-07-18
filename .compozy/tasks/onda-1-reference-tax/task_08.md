@@ -1,5 +1,5 @@
 ---
-status: pending
+status: completed
 title: "Strangler monolito: RestTemplate, adapters e beans condicionais"
 type: backend
 complexity: high
@@ -29,11 +29,11 @@ Consolida TLC T21–T24. Configura o Strangler no `sm-shop`: RestTemplate + prop
 </requirements>
 
 ## Subtasks
-- [ ] 8.1 Config RestTemplate + properties wave1 + testes de binding
-- [ ] 8.2 Adapters HTTP das 4 facades de reference
-- [ ] 8.3 Adapter HTTP de TaxFacade (JWT forward)
-- [ ] 8.4 Conditional beans: exatamente um bean por interface facade
-- [ ] 8.5 ITs em profiles monolith e strangler + 503 em downstream down
+- [x] 8.1 Config RestTemplate + properties wave1 + testes de binding
+- [x] 8.2 Adapters HTTP das 4 facades de reference
+- [x] 8.3 Adapter HTTP de TaxFacade (JWT forward)
+- [x] 8.4 Conditional beans: exatamente um bean por interface facade
+- [x] 8.5 ITs em profiles monolith e strangler + 503 em downstream down
 
 ## Implementation Details
 Ver TechSpec: **Interfaces principais** (padrão CountryFacadeHttpAdapter), **Pontos de integração** (monolito→services), **Configuração**, **Ordem de build** passo 8, **Abordagem de testes** (profiles).
@@ -64,15 +64,15 @@ Ver TechSpec: **Interfaces principais** (padrão CountryFacadeHttpAdapter), **Po
 
 ## Tests
 - Unit tests:
-  - [ ] Properties `wave1.*` fazem bind corretamente em `Wave1ClientConfig`
-  - [ ] Adapter reference propaga header `X-Correlation-Id`
-  - [ ] Adapter tax encaminha header `Authorization`
+  - [x] Properties `wave1.*` fazem bind corretamente em `Wave1ClientConfig`
+  - [x] Adapter reference propaga header `X-Correlation-Id`
+  - [x] Adapter tax encaminha header `Authorization`
 - Integration tests:
-  - [ ] Profile strangler: CountryFacade bean é HTTP adapter
-  - [ ] Profile monolith (default): CountryFacade bean é impl in-process
-  - [ ] Downstream reference down + strangler on → 503 no BFF
-  - [ ] TaxFacadeHttpAdapter delega CRUD class/rate ao tax-service
-  - [ ] `./mvnw test -pl sm-shop` passa em ambos profiles (subconjunto strangler + monolith)
+  - [x] Profile strangler: CountryFacade bean é HTTP adapter
+  - [x] Profile monolith (default): CountryFacade bean é impl in-process
+  - [x] Downstream reference down + strangler on → 503 no BFF
+  - [x] TaxFacadeHttpAdapter delega CRUD class/rate ao tax-service
+  - [x] `./mvnw test -pl sm-shop` passa em ambos profiles (subconjunto strangler + monolith)
 - Test coverage target: >=80%
 - All tests must pass
 

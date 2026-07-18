@@ -9,9 +9,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import javax.inject.Inject;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 @Service
+@ConditionalOnProperty(name = "wave1.strangler.enabled", havingValue = "false", matchIfMissing = true)
 public class CurrencyFacadeImpl implements CurrencyFacade {
 
   @Inject
