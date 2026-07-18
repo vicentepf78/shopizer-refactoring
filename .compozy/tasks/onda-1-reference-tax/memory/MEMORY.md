@@ -5,10 +5,11 @@ Keep only durable, cross-task context here. Do not duplicate facts that are obvi
 ## Current State
 
 - `shopizer-api-contracts` holds common wrappers plus reference/tax DTOs and `ReferenceServiceClient` / `TaxServiceClient`.
+- `sm-shop-model` depends on `shopizer-api-contracts` (transitive to `sm-shop`); overlapping shop-model DTOs are `@Deprecated` aliases.
 
 ## Shared Decisions
 
-- Contract wrappers live under `com.salesmanager.contracts.common`; originals in `sm-shop-model` stay until task_03 rewires consumers.
+- Contract wrappers live under `com.salesmanager.contracts.common`; shop-model duplicates stay as `@Deprecated` compile aliases (no inheritance re-export — nested types would break).
 - Module declares only jackson-annotations + validation-api; MUST NOT add `sm-core-model`. Parent still injects shared compile deps (jackson-databind, mysql, ehcache, etc.) into every child — treat that as reactor inheritance, not a contracts-module dependency.
 - Client interfaces use String `storeCode`/`langCode` (and reference iso/zone codes) — never `MerchantStore`/`Language` JPA.
 - `ReadableLanguage` wire fields: id, code, sortOrder only.
@@ -23,4 +24,5 @@ Keep only durable, cross-task context here. Do not duplicate facts that are obvi
 
 ## Handoffs
 
-- task_03: wire `sm-shop-model` → contracts and deprecate/re-export shop-model duplicates (including optional Address migration if needed).
+- task_04/task_05: extract cores; contracts already available via reactor/`sm-shop-model`.
+- task_08: strangler adapters can import contracts types transitively from `sm-shop`.

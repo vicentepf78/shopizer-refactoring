@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-18 14:03 | 1242 files | 193118 tokens
+# rtt index | generated 2026-07-18 14:11 | 1246 files | 193251 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -7386,6 +7386,8 @@ class ValueList
   List<String> getValues()
   void setValues(List<String> values)
 
+# sm-shop-model/src/main/java/com/salesmanager/shop/model/entity/package-info.java [java]
+
 # sm-shop-model/src/main/java/com/salesmanager/shop/model/marketplace/MarketPlaceEntity.java [java]
 imports: com.salesmanager.shop.model.entity.Entity
 class MarketPlaceEntity
@@ -7897,6 +7899,8 @@ class ZoneEntity
   String getCode()
   void setCode(String code)
 
+# sm-shop-model/src/main/java/com/salesmanager/shop/model/references/package-info.java [java]
+
 # sm-shop-model/src/main/java/com/salesmanager/shop/model/security/GroupEntity.java [java]
 imports: java.io.Serializable
 class GroupEntity
@@ -8334,6 +8338,8 @@ class TaxRateEntity
   String getCode()
   void setCode(String code)
 
+# sm-shop-model/src/main/java/com/salesmanager/shop/model/tax/package-info.java [java]
+
 # sm-shop-model/src/main/java/com/salesmanager/shop/model/user/PersistableUser.java [java]
 imports: java.util.ArrayList, java.util.List, com.salesmanager.shop.model.security.PersistableGroup
 class PersistableUser
@@ -8525,6 +8531,12 @@ imports: org.slf4j.Logger, org.slf4j.LoggerFactory, javax.validation.ConstraintV
 class FieldMatchValidator
   void initialize(final FieldMatch constraintAnnotation)
   boolean isValid(final Object value, final ConstraintValidatorContext context)
+
+# sm-shop-model/src/test/java/com/salesmanager/shop/model/ContractsClasspathSmokeTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertNotNull, org.junit.jupiter.api.Assertions.assertTrue, org.junit.jupiter.api.Test
+class ContractsClasspathSmokeTest
+  void contractsReadableCountryIsLoadable()
+  void contractsTypesVisibleAlongsideLegacyAliases()
 
 # sm-shop/.mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties

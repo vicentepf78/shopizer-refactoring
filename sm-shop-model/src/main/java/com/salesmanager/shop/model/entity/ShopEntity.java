@@ -2,6 +2,11 @@ package com.salesmanager.shop.model.entity;
 
 import java.io.Serializable;
 
+/**
+ * @deprecated Use {@link com.salesmanager.contracts.common.ShopEntity} from shopizer-api-contracts.
+ * Kept as a compile-compatible legacy alias for the monolith.
+ */
+@Deprecated
 public abstract class ShopEntity extends Entity implements Serializable {
 	
 	/**

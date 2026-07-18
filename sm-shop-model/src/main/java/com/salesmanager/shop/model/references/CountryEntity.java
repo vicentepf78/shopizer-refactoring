@@ -2,6 +2,11 @@ package com.salesmanager.shop.model.references;
 
 import com.salesmanager.shop.model.entity.Entity;
 
+/**
+ * @deprecated Use {@link com.salesmanager.contracts.reference.CountryEntity} from shopizer-api-contracts.
+ * Kept as a compile-compatible legacy alias for the monolith.
+ */
+@Deprecated
 public class CountryEntity extends Entity {
 
 	/**
