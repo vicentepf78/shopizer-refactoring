@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.Validate;
 import org.springframework.stereotype.Service;
 
 import com.salesmanager.core.business.exception.ServiceException;
@@ -20,8 +21,8 @@ import com.salesmanager.core.model.tax.taxrate.TaxRate;
 public class TaxRateServiceImpl extends SalesManagerEntityServiceImpl<Long, TaxRate>
 		implements TaxRateService {
 
-	private TaxRateRepository taxRateRepository;
-	
+	private final TaxRateRepository taxRateRepository;
+
 	@Inject
 	public TaxRateServiceImpl(TaxRateRepository taxRateRepository) {
 		super(taxRateRepository);
@@ -78,7 +79,12 @@ public class TaxRateServiceImpl extends SalesManagerEntityServiceImpl<Long, TaxR
 	public TaxRate getById(Long id, MerchantStore store) throws ServiceException {
 		return taxRateRepository.findByStoreAndId(store.getId(), id);
 	}
-		
 
-	
+	@Override
+	public boolean exists(String code, MerchantStore store) throws ServiceException {
+		Validate.notNull(code, "TaxRate code cannot be empty");
+		Validate.notNull(store, "MerchantStore cannot be null");
+		return taxRateRepository.findByStoreAndCode(store.getId(), code) != null;
+	}
+
 }

@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-18 14:18 | 1253 files | 194699 tokens
+# rtt index | generated 2026-07-18 14:26 | 1259 files | 195727 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -248,6 +248,12 @@ class ServiceException
   int getExceptionType()
   void setExceptionType(int exceptionType)
   String getMessageCode()
+
+# sm-core-model/src/main/java/com/salesmanager/core/business/exception/TaxClassInUseException.java [java]
+class TaxClassInUseException
+  Long getTaxClassId()
+  long getProductCount()
+  String getErrorCode()
 
 # sm-core-model/src/main/java/com/salesmanager/core/constants/MeasureUnit.java [java]
 
@@ -4320,14 +4326,6 @@ interface SystemConfigurationRepository
 imports: org.springframework.data.jpa.repository.JpaRepository, com.salesmanager.core.model.system.SystemNotification
 interface SystemNotificationRepository
 
-# sm-core/src/main/java/com/salesmanager/core/business/repositories/tax/TaxClassRepository.java [java]
-imports: java.util.List, org.springframework.data.jpa.repository.JpaRepository, org.springframework.data.jpa.repository.Query, com.salesmanager.core.model.tax.taxclass.TaxClass
-interface TaxClassRepository
-
-# sm-core/src/main/java/com/salesmanager/core/business/repositories/tax/TaxRateRepository.java [java]
-imports: java.util.List, org.springframework.data.jpa.repository.JpaRepository, org.springframework.data.jpa.repository.Query, com.salesmanager.core.model.tax.taxrate.TaxRate
-interface TaxRateRepository
-
 # sm-core/src/main/java/com/salesmanager/core/business/repositories/user/GroupRepository.java [java]
 imports: java.util.List, java.util.Set, org.springframework.data.jpa.repository.JpaRepository, org.springframework.data.jpa.repository.Query, com.salesmanager.core.model.user.Group, com.salesmanager.core.model.user.GroupType
 interface GroupRepository
@@ -5250,37 +5248,6 @@ imports: javax.inject.Inject, org.springframework.stereotype.Service, com.salesm
 class OptinServiceImpl
   Optin getOptinByCode(MerchantStore store, String code)
   Optin getOptinByMerchantAndType(MerchantStore store, OptinType type)
-
-# sm-core/src/main/java/com/salesmanager/core/business/services/tax/TaxClassService.java [java]
-imports: java.util.List, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.common.generic.SalesManagerEntityService, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.tax.taxclass.TaxClass
-interface TaxClassService
-
-# sm-core/src/main/java/com/salesmanager/core/business/services/tax/TaxClassServiceImpl.java [java]
-imports: java.util.List, javax.inject.Inject, org.jsoup.helper.Validate, org.springframework.stereotype.Service, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.repositories.tax.TaxClassRepository, com.salesmanager.core.business.services.common.generic.SalesManagerEntityServiceImpl, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.tax.taxclass.TaxClass
-class TaxClassServiceImpl
-  List<TaxClass> listByStore(MerchantStore store)
-  TaxClass getByCode(String code)
-  TaxClass getByCode(String code, MerchantStore store)
-  void delete(TaxClass taxClass)
-  TaxClass getById(Long id)
-  boolean exists(String code, MerchantStore store)
-  TaxClass saveOrUpdate(TaxClass taxClass)
-
-# sm-core/src/main/java/com/salesmanager/core/business/services/tax/TaxRateService.java [java]
-imports: java.util.List, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.common.generic.SalesManagerEntityService, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.country.Country, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.reference.zone.Zone, com.salesmanager.core.model.tax.taxclass.TaxClass, com.salesmanager.core.model.tax.taxrate.TaxRate
-interface TaxRateService
-
-# sm-core/src/main/java/com/salesmanager/core/business/services/tax/TaxRateServiceImpl.java [java]
-imports: java.util.List, javax.inject.Inject, org.springframework.stereotype.Service, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.repositories.tax.TaxRateRepository, com.salesmanager.core.business.services.common.generic.SalesManagerEntityServiceImpl, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.country.Country, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.reference.zone.Zone, com.salesmanager.core.model.tax.taxclass.TaxClass, com.salesmanager.core.model.tax.taxrate.TaxRate
-class TaxRateServiceImpl
-  List<TaxRate> listByStore(MerchantStore store)
-  List<TaxRate> listByStore(MerchantStore store, Language language)
-  TaxRate getByCode(String code, MerchantStore store)
-  List<TaxRate> listByCountryZoneAndTaxClass(Country country, Zone zone, TaxClass taxClass, MerchantStore store, Language language)
-  List<TaxRate> listByCountryStateProvinceAndTaxClass(Country country, String stateProvince, TaxClass taxClass, MerchantStore store, Language language)
-  void delete(TaxRate taxRate)
-  TaxRate saveOrUpdate(TaxRate taxRate)
-  TaxRate getById(Long id, MerchantStore store)
 
 # sm-core/src/main/java/com/salesmanager/core/business/services/tax/TaxService.java [java]
 imports: java.util.List, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.model.customer.Customer, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.order.OrderSummary, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.tax.TaxConfiguration, com.salesmanager.core.model.tax.TaxItem
@@ -12497,3 +12464,96 @@ class UserApiIntegrationTest
 imports: javax.inject.Inject, javax.inject.Named, org.junit.Assert, org.junit.Test, org.junit.runner.RunWith, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.boot.test.context.SpringBootTest, org.springframework.boot.test.context.SpringBootTest.WebEnvironment, org.springframework.security.crypto.password.PasswordEncoder, org.springframework.test.context.junit4.SpringRunner, com.salesmanager.shop.application.ShopApplication, com.salesmanager.test.shop.common.ServicesTestSupport
 class GeneratePasswordTest
   void createPassword()
+
+# sm-tax-core/src/main/java/com/salesmanager/core/business/repositories/tax/ProductTaxClassCountRepository.java [java]
+imports: org.springframework.data.jpa.repository.JpaRepository, org.springframework.data.jpa.repository.Query, com.salesmanager.core.model.catalog.product.Product
+interface ProductTaxClassCountRepository
+
+# sm-tax-core/src/main/java/com/salesmanager/core/business/repositories/tax/TaxClassRepository.java [java]
+imports: java.util.List, org.springframework.data.jpa.repository.JpaRepository, org.springframework.data.jpa.repository.Query, com.salesmanager.core.model.tax.taxclass.TaxClass
+interface TaxClassRepository
+
+# sm-tax-core/src/main/java/com/salesmanager/core/business/repositories/tax/TaxRateRepository.java [java]
+imports: java.util.List, org.springframework.data.jpa.repository.JpaRepository, org.springframework.data.jpa.repository.Query, com.salesmanager.core.model.tax.taxrate.TaxRate
+interface TaxRateRepository
+
+# sm-tax-core/src/main/java/com/salesmanager/core/business/services/tax/TaxClassService.java [java]
+imports: java.util.List, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.common.generic.SalesManagerEntityService, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.tax.taxclass.TaxClass
+interface TaxClassService
+
+# sm-tax-core/src/main/java/com/salesmanager/core/business/services/tax/TaxClassServiceImpl.java [java]
+imports: java.util.List, javax.inject.Inject, org.apache.commons.lang3.Validate, org.springframework.stereotype.Service, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.exception.TaxClassInUseException, com.salesmanager.core.business.repositories.tax.ProductTaxClassCountRepository, com.salesmanager.core.business.repositories.tax.TaxClassRepository, com.salesmanager.core.business.services.common.generic.SalesManagerEntityServiceImpl, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.tax.taxclass.TaxClass
+class TaxClassServiceImpl
+  List<TaxClass> listByStore(MerchantStore store)
+  TaxClass getByCode(String code)
+  TaxClass getByCode(String code, MerchantStore store)
+  void delete(TaxClass taxClass)
+  TaxClass getById(Long id)
+  boolean exists(String code, MerchantStore store)
+  TaxClass saveOrUpdate(TaxClass taxClass)
+
+# sm-tax-core/src/main/java/com/salesmanager/core/business/services/tax/TaxRateService.java [java]
+imports: java.util.List, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.common.generic.SalesManagerEntityService, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.country.Country, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.reference.zone.Zone, com.salesmanager.core.model.tax.taxclass.TaxClass, com.salesmanager.core.model.tax.taxrate.TaxRate
+interface TaxRateService
+
+# sm-tax-core/src/main/java/com/salesmanager/core/business/services/tax/TaxRateServiceImpl.java [java]
+imports: java.util.List, javax.inject.Inject, org.apache.commons.lang3.Validate, org.springframework.stereotype.Service, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.repositories.tax.TaxRateRepository, com.salesmanager.core.business.services.common.generic.SalesManagerEntityServiceImpl, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.country.Country, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.reference.zone.Zone, com.salesmanager.core.model.tax.taxclass.TaxClass, com.salesmanager.core.model.tax.taxrate.TaxRate
+class TaxRateServiceImpl
+  List<TaxRate> listByStore(MerchantStore store)
+  List<TaxRate> listByStore(MerchantStore store, Language language)
+  TaxRate getByCode(String code, MerchantStore store)
+  List<TaxRate> listByCountryZoneAndTaxClass(Country country, Zone zone, TaxClass taxClass, MerchantStore store, Language language)
+  List<TaxRate> listByCountryStateProvinceAndTaxClass(Country country, String stateProvince, TaxClass taxClass, MerchantStore store, Language language)
+  void delete(TaxRate taxRate)
+  TaxRate saveOrUpdate(TaxRate taxRate)
+  TaxRate getById(Long id, MerchantStore store)
+  boolean exists(String code, MerchantStore store)
+
+# sm-tax-core/src/test/java/com/salesmanager/core/business/repositories/tax/TaxClassRepositoryTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertNotNull, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.autoconfigure.domain.EntityScan, org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest, org.springframework.data.jpa.repository.config.EnableJpaRepositories, org.springframework.test.context.ContextConfiguration, com.salesmanager.core.model.tax.taxclass.TaxClass
+class TaxClassRepositoryTest
+  class Config
+  void findByCode_returnsPersistedTaxClass()
+
+# sm-tax-core/src/test/java/com/salesmanager/core/business/repositories/tax/TaxRateRepositoryTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertNotNull, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.autoconfigure.domain.EntityScan, org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest, org.springframework.data.jpa.repository.config.EnableJpaRepositories, org.springframework.test.context.ContextConfiguration
+class TaxRateRepositoryTest
+  class Config
+  void repositoryIsWired()
+
+# sm-tax-core/src/test/java/com/salesmanager/core/business/services/tax/TaxClassServiceImplTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertFalse, org.junit.jupiter.api.Assertions.assertSame, org.junit.jupiter.api.Assertions.assertThrows, org.junit.jupiter.api.Assertions.assertTrue, org.mockito.ArgumentMatchers.any, org.mockito.Mockito.never, org.mockito.Mockito.verify, org.mockito.Mockito.when, java.util.Collections, java.util.List, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.core.business.exception.TaxClassInUseException, com.salesmanager.core.business.repositories.tax.ProductTaxClassCountRepository, com.salesmanager.core.business.repositories.tax.TaxClassRepository, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.tax.taxclass.TaxClass
+class TaxClassServiceImplTest
+  void setUp()
+  void delete_withProducts_throwsTaxClassInUseException()
+  void delete_withoutProducts_removesSuccessfully()
+  void listByStore_delegatesToRepository()
+  void getByCode_delegatesToRepository()
+  void getByCode_withStore_delegatesToRepository()
+  void exists_whenPresent_returnsTrue()
+  void exists_whenAbsent_returnsFalse()
+  void saveOrUpdate_newEntity_savesAndFlushes()
+  void saveOrUpdate_existingEntity_updates()
+  TaxClass taxClass(Long id, String code)
+  MerchantStore store(Integer id)
+
+# sm-tax-core/src/test/java/com/salesmanager/core/business/services/tax/TaxRateServiceImplTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertFalse, org.junit.jupiter.api.Assertions.assertSame, org.junit.jupiter.api.Assertions.assertTrue, org.mockito.Mockito.verify, org.mockito.Mockito.when, java.util.Collections, java.util.List, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.core.business.repositories.tax.TaxRateRepository, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.country.Country, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.reference.zone.Zone, com.salesmanager.core.model.tax.taxclass.TaxClass, com.salesmanager.core.model.tax.taxrate.TaxRate
+class TaxRateServiceImplTest
+  void setUp()
+  void exists_whenCodeAbsent_returnsFalseWithoutException()
+  void exists_whenCodePresent_returnsTrue()
+  void getByCode_delegatesToRepository()
+  void listByStore_delegatesToRepository()
+  void listByStore_withLanguage_delegatesToRepository()
+  void listByCountryZoneAndTaxClass_delegatesToRepository()
+  void listByCountryStateProvinceAndTaxClass_delegatesToRepository()
+  void getById_withStore_delegatesToRepository()
+  void delete_delegatesToRepository()
+  void saveOrUpdate_newEntity_savesAndFlushes()
+  void saveOrUpdate_existingEntity_updates()
+  TaxRate rate(Long id, String code)
+  MerchantStore store(Integer id)
+  Language language(Integer id)
+  Country country(Integer id)
+  Zone zone(Long id)

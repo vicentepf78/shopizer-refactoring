@@ -33,7 +33,7 @@ public interface TaxRateService extends SalesManagerEntityService<Long, TaxRate>
 			throws ServiceException;
 
 	TaxRate saveOrUpdate(TaxRate taxRate) throws ServiceException;
-	
-	
+
+	boolean exists(String code, MerchantStore store) throws ServiceException;
 
 }

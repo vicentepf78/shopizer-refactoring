@@ -1,5 +1,5 @@
 ---
-status: pending
+status: completed
 title: Extrair sm-tax-core, guard 409 e rewire sm-core
 type: backend
 complexity: high
@@ -28,11 +28,11 @@ Consolida TLC T10–T12 e T16. Extrai repositories e services CRUD de TaxClass/T
 </requirements>
 
 ## Subtasks
-- [ ] 5.1 Scaffold `sm-tax-core` + mover tax repositories
-- [ ] 5.2 Mover TaxClass/TaxRate services (excluir TaxService*)
-- [ ] 5.3 Implementar guard 409 + semântica existsTaxRate
-- [ ] 5.4 Rewire `sm-core` e validar TaxService permanece
-- [ ] 5.5 Testes unitários do guard/exists + regressão sm-shop TaxRate IT
+- [x] 5.1 Scaffold `sm-tax-core` + mover tax repositories
+- [x] 5.2 Mover TaxClass/TaxRate services (excluir TaxService*)
+- [x] 5.3 Implementar guard 409 + semântica existsTaxRate
+- [x] 5.4 Rewire `sm-core` e validar TaxService permanece
+- [x] 5.5 Testes unitários do guard/exists + regressão sm-shop TaxRate IT
 
 ## Implementation Details
 Ver TechSpec: **Interfaces principais** (delete guard), **Convenções de erro**, **Modelos de dados** (tabelas TAX_*), **Ordem de build** passo 5, ADR-003.
@@ -63,14 +63,14 @@ Ver TechSpec: **Interfaces principais** (delete guard), **Convenções de erro**
 
 ## Tests
 - Unit tests:
-  - [ ] Delete TaxClass com products associados → `TaxClassInUseException`
-  - [ ] Delete TaxClass sem products → remove com sucesso
-  - [ ] `existsTaxRate` com code ausente → false, sem exception
-  - [ ] `existsTaxRate` com code existente → true
+  - [x] Delete TaxClass com products associados → `TaxClassInUseException`
+  - [x] Delete TaxClass sem products → remove com sucesso
+  - [x] `existsTaxRate` com code ausente → false, sem exception
+  - [x] `existsTaxRate` com code existente → true
 - Integration tests:
-  - [ ] `@DataJpaTest` smoke nos tax repositories
-  - [ ] `./mvnw test -pl sm-core` verde
-  - [ ] `./mvnw test -pl sm-shop -Dtest=TaxRateIntegrationTest` verde (TAX-07)
+  - [x] `@DataJpaTest` smoke nos tax repositories
+  - [x] `./mvnw test -pl sm-core` verde
+  - [x] `./mvnw test -pl sm-shop -Dtest=TaxRateIntegrationTest` verde (TAX-07)
 - Test coverage target: >=80%
 - All tests must pass
 

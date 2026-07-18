@@ -319,12 +319,14 @@ public class TaxFacadeImpl implements TaxFacade {
 		Validate.notNull(code,"TaxRate code cannot be null");
 		Validate.notNull(store,"MerchantStore cannot be null");
 		Validate.notNull(store.getCode(),"MerchantStore code cannot be null");
-		
-		TaxRate rate = taxRateByCode(code, store, language);
-		if(rate == null) {
-			return false;
+
+		try {
+			// TAX-09: missing code → false (do not throw via taxRateByCode)
+			return taxRateService.exists(code, store);
+		} catch (ServiceException e) {
+			LOGGER.error("Error while checking taxRate [" + code + "] for store [" + store.getCode() + "]", e);
+			throw new ServiceRuntimeException("Error while checking taxRate [" + code + "] for store [" + store.getCode() + "]", e);
 		}
-		return true;
 	}
 
 	@Override

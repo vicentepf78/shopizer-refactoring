@@ -6,6 +6,7 @@ Keep only durable, cross-task context here. Do not duplicate facts that are obvi
 
 - `shopizer-api-contracts` holds common wrappers plus reference/tax DTOs and `ReferenceServiceClient` / `TaxServiceClient`.
 - `sm-shop-model` depends on `shopizer-api-contracts` (transitive to `sm-shop`); overlapping shop-model DTOs are `@Deprecated` aliases.
+- `sm-reference-core` and `sm-tax-core` are extracted; `sm-core` depends on both. `TaxService*` (calculate) remains in `sm-core` (ADR-003).
 
 ## Shared Decisions
 
@@ -16,18 +17,21 @@ Keep only durable, cross-task context here. Do not duplicate facts that are obvi
 - Slim `NamedEntity` lives in `com.salesmanager.contracts.catalog` for tax descriptions.
 - Address DTOs were not migrated in task_02 (YAGNI for Wave 1 reference endpoints).
 - `sm-reference-core` holds reference repos/CRUD plus the shared service slice (`SalesManagerEntityService*`, `CacheUtils`, `Constants`) so thin cores depend on `sm-core-model` without a circular dep on `sm-core`. Init/loader stay in `sm-core` (ADR-007).
+- `sm-tax-core` depends on `sm-reference-core` for that generic slice (not on `sm-core`). Product delete-guard uses `ProductTaxClassCountRepository` in tax-core (query on PRODUCT) so tax-core never depends on catalog repos in sm-core.
+- `TaxClassInUseException` lives in `sm-core-model` (`TAX_CLASS_IN_USE`) for HTTP 409 mapping in tax-service / sm-shop.
 
 ## Shared Learnings
 
 - JaCoCo 0.8.8 check at 80% line coverage is configured on `shopizer-api-contracts` (`verify` phase).
-- After thin-core extraction, `./mvnw test -pl sm-core` needs `-am` (or a prior install); otherwise Maven looks for the new artifact on `repo.spring.io` and 401s.
+- After thin-core extraction, `./mvnw test -pl sm-core` (and siblings) needs `-am` (or a prior install); otherwise Maven looks for the new artifact on `repo.spring.io` and 401s.
+- Filtered `-Dtest=...` with `-am` needs `-DfailIfNoTests=false` or upstream modules without matching tests fail the reactor.
 
 ## Open Risks
 
-- `sm-tax-core` (task_05) will also need `SalesManagerEntityServiceImpl` — today it arrives only via `sm-core` → `sm-reference-core`. Prefer extracting a neutral shared home or depending on the reference-core slice explicitly; do not reintroduce a cycle with `sm-core`.
+- HTTP 409 ControllerAdvice for `TaxClassInUseException` is still pending (task_07 tax-service / sm-shop mapping).
 
 ## Handoffs
 
-- task_05: mirror thin-core extraction for tax CRUD; resolve generic-service home (see Open Risks).
 - task_06: `reference-service` depends on `sm-reference-core` + contracts.
+- task_07: `tax-service` depends on `sm-tax-core` + contracts; map `TaxClassInUseException` → 409.
 - task_08: strangler adapters can import contracts types transitively from `sm-shop`.

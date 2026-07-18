@@ -46,6 +46,12 @@
 			<artifactId>sm-reference-core</artifactId>
 		</dependency>
 
+		<!-- tax admin CRUD (TaxClass/TaxRate); TaxService calculate stays in this module -->
+		<dependency>
+			<groupId>com.shopizer</groupId>
+			<artifactId>sm-tax-core</artifactId>
+		</dependency>
+
 		<!-- sm-core-modules -->
 		<dependency>
 			<groupId>com.shopizer</groupId>

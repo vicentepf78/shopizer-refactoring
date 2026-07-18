@@ -4,10 +4,12 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.jsoup.helper.Validate;
+import org.apache.commons.lang3.Validate;
 import org.springframework.stereotype.Service;
 
 import com.salesmanager.core.business.exception.ServiceException;
+import com.salesmanager.core.business.exception.TaxClassInUseException;
+import com.salesmanager.core.business.repositories.tax.ProductTaxClassCountRepository;
 import com.salesmanager.core.business.repositories.tax.TaxClassRepository;
 import com.salesmanager.core.business.services.common.generic.SalesManagerEntityServiceImpl;
 import com.salesmanager.core.model.merchant.MerchantStore;
@@ -17,38 +19,42 @@ import com.salesmanager.core.model.tax.taxclass.TaxClass;
 public class TaxClassServiceImpl extends SalesManagerEntityServiceImpl<Long, TaxClass>
 		implements TaxClassService {
 
-	private TaxClassRepository taxClassRepository;
-	
+	private final TaxClassRepository taxClassRepository;
+	private final ProductTaxClassCountRepository productTaxClassCountRepository;
+
 	@Inject
-	public TaxClassServiceImpl(TaxClassRepository taxClassRepository) {
+	public TaxClassServiceImpl(TaxClassRepository taxClassRepository,
+			ProductTaxClassCountRepository productTaxClassCountRepository) {
 		super(taxClassRepository);
-		
 		this.taxClassRepository = taxClassRepository;
+		this.productTaxClassCountRepository = productTaxClassCountRepository;
 	}
-	
+
 	@Override
-	public List<TaxClass> listByStore(MerchantStore store) throws ServiceException {	
+	public List<TaxClass> listByStore(MerchantStore store) throws ServiceException {
 		return taxClassRepository.findByStore(store.getId());
 	}
-	
+
 	@Override
 	public TaxClass getByCode(String code) throws ServiceException {
 		return taxClassRepository.findByCode(code);
 	}
-	
+
 	@Override
 	public TaxClass getByCode(String code, MerchantStore store) throws ServiceException {
 		return taxClassRepository.findByStoreAndCode(store.getId(), code);
 	}
-	
+
 	@Override
 	public void delete(TaxClass taxClass) throws ServiceException {
-		
 		TaxClass t = getById(taxClass.getId());
+		long productCount = productTaxClassCountRepository.countByTaxClassId(t.getId());
+		if (productCount > 0) {
+			throw new TaxClassInUseException(t.getId(), productCount);
+		}
 		super.delete(t);
-		
 	}
-	
+
 	@Override
 	public TaxClass getById(Long id) {
 		return taxClassRepository.getOne(id);
@@ -58,21 +64,16 @@ public class TaxClassServiceImpl extends SalesManagerEntityServiceImpl<Long, Tax
 	public boolean exists(String code, MerchantStore store) throws ServiceException {
 		Validate.notNull(code, "TaxClass code cannot be empty");
 		Validate.notNull(store, "MerchantStore cannot be null");
-		
 		return taxClassRepository.findByStoreAndCode(store.getId(), code) != null;
-
 	}
-	
+
 	@Override
 	public TaxClass saveOrUpdate(TaxClass taxClass) throws ServiceException {
-		if(taxClass.getId()!=null && taxClass.getId() > 0) {
+		if (taxClass.getId() != null && taxClass.getId() > 0) {
 			this.update(taxClass);
 		} else {
 			taxClass = super.saveAndFlush(taxClass);
 		}
 		return taxClass;
 	}
-
-	
-
 }
