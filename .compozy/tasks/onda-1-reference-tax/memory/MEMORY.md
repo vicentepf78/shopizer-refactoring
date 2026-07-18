@@ -40,4 +40,5 @@ Keep only durable, cross-task context here. Do not duplicate facts that are obvi
 ## Handoffs
 
 - task_08 done: profiles `monolith` / `strangler`; `wave1.strangler.enabled` toggles in-process vs HTTP facade beans; JaCoCo gate only on `sm-shop` strangler package (≥80%).
-- task_09: Pact provider tests target `reference-service` 5 endpoints (and tax if in scope); consumer can assume strangler adapters call the same paths as reference/tax services.
+- task_09 done: Pact JVM 4.6.17; consumer `Wave1ConsumerPactTest` writes `pacts/`; providers verify via `@PactFolder("../pacts")` + MockMvc; drift via `ReferenceProviderDriftProofTest`. Gate cmds in `task_09.md` Verification.
+- task_10: reactor `./mvnw clean install` must keep Pact consumer green.

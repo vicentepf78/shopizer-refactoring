@@ -1,0 +1,822 @@
+{
+  "consumer": {
+    "name": "sm-shop-wave1"
+  },
+  "interactions": [
+    {
+      "description": "create tax class",
+      "providerStates": [
+        {
+          "name": "store DEFAULT accepts tax class create"
+        }
+      ],
+      "request": {
+        "body": {
+          "code": "T1",
+          "name": "Standard"
+        },
+        "headers": {
+          "Authorization": "Bearer test-token",
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "body": {
+            "$.code": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "method": "POST",
+        "path": "/api/v1/private/tax/class",
+        "query": {
+          "lang": [
+            "en"
+          ],
+          "store": [
+            "DEFAULT"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "id": 5
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "body": {
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "create tax rate",
+      "providerStates": [
+        {
+          "name": "store DEFAULT accepts tax rate create"
+        }
+      ],
+      "request": {
+        "body": {
+          "code": "TR1",
+          "country": "BR",
+          "priority": 0,
+          "rate": 10.0,
+          "taxClass": "T1"
+        },
+        "headers": {
+          "Authorization": "Bearer test-token",
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "body": {
+            "$.code": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.country": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.priority": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.rate": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.taxClass": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "method": "POST",
+        "path": "/api/v1/private/tax/rate",
+        "query": {
+          "lang": [
+            "en"
+          ],
+          "store": [
+            "DEFAULT"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "id": 9
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "body": {
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "get tax class by code",
+      "providerStates": [
+        {
+          "name": "tax class T1 exists for store DEFAULT"
+        }
+      ],
+      "request": {
+        "headers": {
+          "Authorization": "Bearer test-token"
+        },
+        "method": "GET",
+        "path": "/api/v1/private/tax/class/T1",
+        "query": {
+          "lang": [
+            "en"
+          ],
+          "store": [
+            "DEFAULT"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "code": "T1",
+          "id": 5,
+          "name": "Standard",
+          "store": "DEFAULT"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "body": {
+            "$.code": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.store": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "tax class unique",
+      "providerStates": [
+        {
+          "name": "tax class code T1 uniqueness check"
+        }
+      ],
+      "request": {
+        "headers": {
+          "Authorization": "Bearer test-token"
+        },
+        "method": "GET",
+        "path": "/api/v1/private/tax/class/unique",
+        "query": {
+          "code": [
+            "T1"
+          ],
+          "lang": [
+            "en"
+          ],
+          "store": [
+            "DEFAULT"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "exists": true
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "body": {
+            "$.exists": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "delete tax class",
+      "providerStates": [
+        {
+          "name": "tax class id 5 deletable for store DEFAULT"
+        }
+      ],
+      "request": {
+        "headers": {
+          "Authorization": "Bearer test-token"
+        },
+        "method": "DELETE",
+        "path": "/api/v1/private/tax/class/5",
+        "query": {
+          "lang": [
+            "en"
+          ],
+          "store": [
+            "DEFAULT"
+          ]
+        }
+      },
+      "response": {
+        "status": 200
+      }
+    },
+    {
+      "description": "update tax class",
+      "providerStates": [
+        {
+          "name": "tax class id 5 exists for store DEFAULT"
+        }
+      ],
+      "request": {
+        "body": {
+          "code": "T1",
+          "name": "Updated"
+        },
+        "headers": {
+          "Authorization": "Bearer test-token",
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "body": {
+            "$.code": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "method": "PUT",
+        "path": "/api/v1/private/tax/class/5",
+        "query": {
+          "lang": [
+            "en"
+          ],
+          "store": [
+            "DEFAULT"
+          ]
+        }
+      },
+      "response": {
+        "status": 200
+      }
+    },
+    {
+      "description": "list tax classes",
+      "providerStates": [
+        {
+          "name": "tax classes exist for store DEFAULT"
+        }
+      ],
+      "request": {
+        "headers": {
+          "Authorization": "Bearer test-token"
+        },
+        "method": "GET",
+        "path": "/api/v1/private/tax/class",
+        "query": {
+          "lang": [
+            "en"
+          ],
+          "store": [
+            "DEFAULT"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "items": [
+            {
+              "code": "T1",
+              "id": 5,
+              "name": "Standard",
+              "store": "DEFAULT"
+            }
+          ],
+          "number": 0,
+          "recordsFiltered": 1,
+          "recordsTotal": 1,
+          "totalPages": 1
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "body": {
+            "$.items[0].code": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.items[0].id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.items[0].name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.items[0].store": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.number": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.recordsFiltered": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.recordsTotal": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.totalPages": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "tax rate unique",
+      "providerStates": [
+        {
+          "name": "tax rate code TR1 uniqueness check"
+        }
+      ],
+      "request": {
+        "headers": {
+          "Authorization": "Bearer test-token"
+        },
+        "method": "GET",
+        "path": "/api/v1/private/tax/rate/unique",
+        "query": {
+          "code": [
+            "TR1"
+          ],
+          "lang": [
+            "en"
+          ],
+          "store": [
+            "DEFAULT"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "exists": false
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "body": {
+            "$.exists": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "delete tax rate",
+      "providerStates": [
+        {
+          "name": "tax rate id 9 deletable for store DEFAULT"
+        }
+      ],
+      "request": {
+        "headers": {
+          "Authorization": "Bearer test-token"
+        },
+        "method": "DELETE",
+        "path": "/api/v1/private/tax/rate/9",
+        "query": {
+          "lang": [
+            "en"
+          ],
+          "store": [
+            "DEFAULT"
+          ]
+        }
+      },
+      "response": {
+        "status": 200
+      }
+    },
+    {
+      "description": "get tax rate by id",
+      "providerStates": [
+        {
+          "name": "tax rate id 9 exists for store DEFAULT"
+        }
+      ],
+      "request": {
+        "headers": {
+          "Authorization": "Bearer test-token"
+        },
+        "method": "GET",
+        "path": "/api/v1/private/tax/rate/9",
+        "query": {
+          "lang": [
+            "en"
+          ],
+          "store": [
+            "DEFAULT"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "code": "TR1",
+          "country": "BR",
+          "id": 9,
+          "rate": "10.00",
+          "store": "DEFAULT"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "body": {
+            "$.code": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.country": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.rate": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.store": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "update tax rate",
+      "providerStates": [
+        {
+          "name": "tax rate id 9 exists for store DEFAULT"
+        }
+      ],
+      "request": {
+        "body": {
+          "code": "TR1",
+          "country": "BR",
+          "priority": 1,
+          "rate": 12.0,
+          "taxClass": "T1"
+        },
+        "headers": {
+          "Authorization": "Bearer test-token",
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "body": {
+            "$.code": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.country": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.priority": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.rate": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.taxClass": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "method": "PUT",
+        "path": "/api/v1/private/tax/rate/9",
+        "query": {
+          "lang": [
+            "en"
+          ],
+          "store": [
+            "DEFAULT"
+          ]
+        }
+      },
+      "response": {
+        "status": 200
+      }
+    },
+    {
+      "description": "list tax rates",
+      "providerStates": [
+        {
+          "name": "tax rates exist for store DEFAULT"
+        }
+      ],
+      "request": {
+        "headers": {
+          "Authorization": "Bearer test-token"
+        },
+        "method": "GET",
+        "path": "/api/v1/private/tax/rates",
+        "query": {
+          "lang": [
+            "en"
+          ],
+          "store": [
+            "DEFAULT"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "items": [
+            {
+              "code": "TR1",
+              "country": "BR",
+              "id": 9,
+              "rate": "10.00",
+              "store": "DEFAULT"
+            }
+          ],
+          "recordsTotal": 1,
+          "totalPages": 1
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "body": {
+            "$.items[0].code": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.items[0].country": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.items[0].id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.items[0].rate": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.items[0].store": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.recordsTotal": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.totalPages": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      }
+    }
+  ],
+  "metadata": {
+    "pact-jvm": {
+      "version": "4.6.17"
+    },
+    "pactSpecification": {
+      "version": "3.0.0"
+    }
+  },
+  "provider": {
+    "name": "tax-service"
+  }
+}

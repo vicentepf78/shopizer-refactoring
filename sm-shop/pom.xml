@@ -119,6 +119,13 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- Wave 1 Pact consumer (task_09) -->
+		<dependency>
+			<groupId>au.com.dius.pact.consumer</groupId>
+			<artifactId>junit5</artifactId>
+			<scope>test</scope>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-rng-simple -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -205,6 +212,10 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<argLine>${argLine}</argLine>
+					<systemPropertyVariables>
+						<pact.rootDir>${project.basedir}/../pacts</pact.rootDir>
+						<pact.writer.overwrite>true</pact.writer.overwrite>
+					</systemPropertyVariables>
 				</configuration>
 			</plugin>
 		</plugins>

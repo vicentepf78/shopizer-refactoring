@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-18 14:51 | 1347 files | 209252 tokens
+# rtt index | generated 2026-07-18 15:20 | 1361 files | 211825 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -74,6 +74,11 @@ class ZoneFacadeImpl
   List<ReadableZone> getZones(String countryCode, Language language)
   List<Zone> getListZones(String countryCode, Language language)
 
+# reference-service/src/main/java/com/salesmanager/reference/health/ReferenceHealthIndicator.java [java]
+imports: java.sql.Connection, javax.sql.DataSource, org.springframework.boot.actuate.health.Health, org.springframework.boot.actuate.health.HealthIndicator, org.springframework.stereotype.Component
+class ReferenceHealthIndicator
+  Health health()
+
 # reference-service/src/main/java/com/salesmanager/reference/populator/ReadableCountryPopulator.java [java]
 imports: com.salesmanager.contracts.reference.ReadableCountry, com.salesmanager.contracts.reference.ReadableZone, com.salesmanager.core.model.reference.country.Country, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.reference.zone.Zone, com.salesmanager.core.model.reference.zone.ZoneDescription
 class ReadableCountryPopulator
@@ -106,10 +111,35 @@ class ResourceNotFoundException
 # reference-service/src/main/java/com/salesmanager/reference/support/ServiceRuntimeException.java [java]
 class ServiceRuntimeException
 
+# reference-service/src/main/java/com/salesmanager/reference/web/CorrelationIdFilter.java [java]
+imports: java.io.IOException, java.util.Collections, java.util.Enumeration, java.util.UUID, javax.servlet.FilterChain, javax.servlet.ServletException, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletRequestWrapper, javax.servlet.http.HttpServletResponse, org.slf4j.Logger, org.slf4j.LoggerFactory, org.slf4j.MDC, org.springframework.core.Ordered, org.springframework.core.annotation.Order, org.springframework.stereotype.Component, org.springframework.util.StringUtils, org.springframework.web.filter.OncePerRequestFilter
+class CorrelationIdFilter
+  void doFilterInternal(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			FilterChain filterChain)
+  class CorrelationHeaderRequest
+
 # reference-service/src/test/java/com/salesmanager/reference/ReferenceServiceApplicationTest.java [java]
 imports: org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get, org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath, org.springframework.test.web.servlet.result.MockMvcResultMatchers.status, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc, org.springframework.boot.test.context.SpringBootTest, org.springframework.test.context.ActiveProfiles, org.springframework.test.web.servlet.MockMvc
 class ReferenceServiceApplicationTest
   void contextLoads_andHealthIsUp()
+
+# reference-service/src/test/java/com/salesmanager/reference/contract/ReferenceProviderDriftProofTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, java.nio.charset.StandardCharsets, java.util.List, java.util.stream.Collectors, org.junit.jupiter.api.Test, au.com.dius.pact.core.matchers.BodyMatchResult, au.com.dius.pact.core.matchers.BodyMismatch, au.com.dius.pact.core.matchers.JsonContentMatcher, au.com.dius.pact.core.matchers.MatchingContext, au.com.dius.pact.core.matchers.Mismatch, au.com.dius.pact.core.model.ContentType, au.com.dius.pact.core.model.OptionalBody, au.com.dius.pact.core.model.matchingrules.MatchingRuleCategory, au.com.dius.pact.core.model.matchingrules.MatchingRulesImpl, au.com.dius.pact.core.model.matchingrules.TypeMatcher
+class ReferenceProviderDriftProofTest
+  void missingRequiredLanguageCode_failsBodyMatch()
+
+# reference-service/src/test/java/com/salesmanager/reference/contract/ReferenceProviderPactTest.java [java]
+imports: org.mockito.ArgumentMatchers.any, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.lenient, org.mockito.Mockito.when, java.util.Collections, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.TestTemplate, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.springframework.http.converter.json.MappingJackson2HttpMessageConverter, org.springframework.test.web.servlet.setup.MockMvcBuilders, com.salesmanager.contracts.reference.ReadableCountry, com.salesmanager.contracts.reference.ReadableCurrency, com.salesmanager.contracts.reference.ReadableLanguage, com.salesmanager.contracts.reference.ReadableZone, com.salesmanager.core.model.reference.language.Language, com.salesmanager.reference.controller.ReferencesController, com.salesmanager.reference.facade.CountryFacade, com.salesmanager.reference.facade.CurrencyFacade, com.salesmanager.reference.facade.LanguageFacade, com.salesmanager.reference.facade.ZoneFacade, com.salesmanager.reference.support.LanguageResolver, au.com.dius.pact.provider.junit5.PactVerificationContext, au.com.dius.pact.provider.junit5.PactVerificationInvocationContextProvider, au.com.dius.pact.provider.junitsupport.Provider, au.com.dius.pact.provider.junitsupport.State, au.com.dius.pact.provider.junitsupport.loader.PactFolder, au.com.dius.pact.provider.spring.junit5.MockMvcTestTarget
+class ReferenceProviderPactTest
+  void setUp(PactVerificationContext context)
+  void verifyInteraction(PactVerificationContext context)
+  void languagesExist()
+  void countriesExist()
+  void zonesExist()
+  void currenciesExist()
+  void measuresAvailable()
 
 # reference-service/src/test/java/com/salesmanager/reference/controller/ReferencesControllerTest.java [java]
 imports: org.hamcrest.Matchers.containsString, org.hamcrest.Matchers.hasSize, org.hamcrest.Matchers.not, org.mockito.ArgumentMatchers.any, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.when, org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get, org.springframework.test.web.servlet.result.MockMvcResultMatchers.content, org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath, org.springframework.test.web.servlet.result.MockMvcResultMatchers.status, java.util.Collections, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.springframework.http.MediaType, org.springframework.test.web.servlet.MockMvc, org.springframework.test.web.servlet.setup.MockMvcBuilders, com.salesmanager.contracts.reference.ReadableCountry, com.salesmanager.contracts.reference.ReadableCurrency, com.salesmanager.contracts.reference.ReadableLanguage, com.salesmanager.core.model.reference.language.Language, com.salesmanager.reference.facade.CountryFacade, com.salesmanager.reference.facade.CurrencyFacade, com.salesmanager.reference.facade.LanguageFacade, com.salesmanager.reference.facade.ZoneFacade, com.salesmanager.reference.support.LanguageResolver
@@ -147,11 +177,25 @@ class ZoneFacadeImplTest
   void getZones_nullFromService_returnsEmptyList()
   void getZones_mapsDto()
 
+# reference-service/src/test/java/com/salesmanager/reference/health/ReferenceHealthIndicatorTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.mockito.ArgumentMatchers.anyInt, org.mockito.Mockito.mock, org.mockito.Mockito.when, java.sql.Connection, java.sql.SQLException, javax.sql.DataSource, org.junit.jupiter.api.Test, org.springframework.boot.actuate.health.Health, org.springframework.boot.actuate.health.Status
+class ReferenceHealthIndicatorTest
+  void reportsUpWhenDatabaseOk()
+  void reportsDownWhenDatabaseFails()
+  void reportsDownWhenConnectionInvalid()
+
 # reference-service/src/test/java/com/salesmanager/reference/support/LanguageResolverTest.java [java]
 imports: org.junit.jupiter.api.Assertions.assertEquals, org.mockito.Mockito.when, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.InjectMocks, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.core.business.services.reference.language.LanguageService, com.salesmanager.core.model.reference.language.Language
 class LanguageResolverTest
   void resolve_usesLangCodeWhenPresent()
   void resolve_fallsBackToDefaultWhenBlank()
+
+# reference-service/src/test/java/com/salesmanager/reference/web/CorrelationIdFilterTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, java.util.concurrent.atomic.AtomicReference, javax.servlet.http.HttpServletRequest, org.junit.jupiter.api.AfterEach, org.junit.jupiter.api.Test, org.slf4j.MDC, org.springframework.mock.web.MockHttpServletRequest, org.springframework.mock.web.MockHttpServletResponse
+class CorrelationIdFilterTest
+  void clearMdc()
+  void generatesIdWhenHeaderAbsent()
+  void propagatesExistingHeader()
 
 # shopizer-api-contracts/src/main/java/com/salesmanager/contracts/catalog/NamedEntity.java [java]
 imports: java.io.Serializable, com.salesmanager.contracts.common.ShopEntity
@@ -8875,6 +8919,15 @@ class ImagesController
   byte[] printImage(@PathVariable final String storeCode, @PathVariable final String productCode, @PathVariable final String imageSize, @PathVariable final String imageName, @PathVariable final String extension, HttpServletRequest request)
   byte[] printImage(@PathVariable final String storeCode, @PathVariable final String productCode, @PathVariable final String imageName, @PathVariable final String extension, HttpServletRequest request)
 
+# sm-shop/src/main/java/com/salesmanager/shop/filter/CorrelationIdFilter.java [java]
+imports: java.io.IOException, java.util.Collections, java.util.Enumeration, java.util.UUID, javax.servlet.FilterChain, javax.servlet.ServletException, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletRequestWrapper, javax.servlet.http.HttpServletResponse, org.slf4j.Logger, org.slf4j.LoggerFactory, org.slf4j.MDC, org.springframework.core.Ordered, org.springframework.core.annotation.Order, org.springframework.stereotype.Component, org.springframework.util.StringUtils, org.springframework.web.filter.OncePerRequestFilter
+class CorrelationIdFilter
+  void doFilterInternal(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			FilterChain filterChain)
+  class CorrelationHeaderRequest
+
 # sm-shop/src/main/java/com/salesmanager/shop/filter/CorsFilter.java [java]
 imports: java.io.IOException, javax.servlet.Filter, javax.servlet.FilterChain, javax.servlet.FilterConfig, javax.servlet.ServletException, javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, org.apache.commons.lang3.StringUtils, org.springframework.web.servlet.handler.HandlerInterceptorAdapter
 class CorsFilter
@@ -12590,6 +12643,24 @@ class WebApplicationCacheUtils
   Object getFromCache(String key)
   void putInCache(String key, Object object)
 
+# sm-shop/src/test/java/com/salesmanager/shop/contract/Wave1ConsumerPactTest.java [java]
+imports: au.com.dius.pact.consumer.dsl.LambdaDsl.newJsonArray, au.com.dius.pact.consumer.dsl.LambdaDsl.newJsonBody, org.assertj.core.api.Assertions.assertThat, java.util.HashMap, java.util.List, java.util.Map, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.springframework.core.ParameterizedTypeReference, org.springframework.http.HttpEntity, org.springframework.http.HttpHeaders, org.springframework.http.HttpMethod, org.springframework.http.MediaType, org.springframework.http.ResponseEntity, org.springframework.web.client.RestTemplate, au.com.dius.pact.consumer.MockServer, au.com.dius.pact.consumer.dsl.PactDslWithProvider, au.com.dius.pact.consumer.junit5.PactConsumerTestExt, au.com.dius.pact.consumer.junit5.PactTestFor, au.com.dius.pact.core.model.PactSpecVersion, au.com.dius.pact.core.model.RequestResponsePact, au.com.dius.pact.core.model.annotations.Pact, au.com.dius.pact.core.model.annotations.PactDirectory
+class Wave1ConsumerPactTest
+  RequestResponsePact referenceServicePact(PactDslWithProvider builder)
+  RequestResponsePact taxServicePact(PactDslWithProvider builder)
+  void referenceEndpoints_matchStranglerExpectations(MockServer mockServer)
+  void taxEndpoints_matchStranglerExpectations(MockServer mockServer)
+  Map<String, String> jsonHeaders()
+  Map<String, String> authHeaders()
+  Map<String, String> authJsonHeaders()
+
+# sm-shop/src/test/java/com/salesmanager/shop/filter/CorrelationIdFilterTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, java.util.concurrent.atomic.AtomicReference, javax.servlet.http.HttpServletRequest, org.junit.jupiter.api.AfterEach, org.junit.jupiter.api.Test, org.slf4j.MDC, org.springframework.mock.web.MockHttpServletRequest, org.springframework.mock.web.MockHttpServletResponse
+class CorrelationIdFilterTest
+  void clearMdc()
+  void generatesIdWhenHeaderAbsent()
+  void propagatesExistingHeader()
+
 # sm-shop/src/test/java/com/salesmanager/shop/strangler/StranglerConditionalBeanTest.java [java]
 imports: org.assertj.core.api.Assertions.assertThat, org.junit.jupiter.api.Test, org.springframework.boot.autoconfigure.condition.ConditionalOnProperty, org.springframework.context.annotation.AnnotationConfigApplicationContext, org.springframework.context.annotation.Bean, org.springframework.context.annotation.Configuration, org.springframework.mock.env.MockEnvironment, org.springframework.stereotype.Service, org.springframework.web.client.RestTemplate, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.shop.model.references.ReadableCountry, com.salesmanager.shop.store.controller.country.facade.CountryFacade, com.salesmanager.shop.strangler.reference.CountryFacadeHttpAdapter, com.salesmanager.shop.strangler.support.StranglerRestClient, java.util.Collections, java.util.List
 class StranglerConditionalBeanTest
@@ -12871,11 +12942,13 @@ class CacheConfig
   Cache serviceCache(EhCacheCacheManager cacheManager)
 
 # tax-service/src/main/java/com/salesmanager/tax/config/RestClientConfig.java [java]
-imports: java.time.Duration, org.springframework.beans.factory.annotation.Value, org.springframework.boot.web.client.RestTemplateBuilder, org.springframework.context.annotation.Bean, org.springframework.context.annotation.Configuration, org.springframework.web.client.RestTemplate
+imports: java.time.Duration, java.util.UUID, javax.servlet.http.HttpServletRequest, org.springframework.beans.factory.annotation.Value, org.springframework.boot.web.client.RestTemplateBuilder, org.springframework.context.annotation.Bean, org.springframework.context.annotation.Configuration, org.springframework.http.client.ClientHttpRequestInterceptor, org.springframework.util.StringUtils, org.springframework.web.client.RestTemplate, org.springframework.web.context.request.RequestAttributes, org.springframework.web.context.request.RequestContextHolder, org.springframework.web.context.request.ServletRequestAttributes, com.salesmanager.tax.web.CorrelationIdFilter
 class RestClientConfig
   RestTemplate referenceRestTemplate(
 			RestTemplateBuilder builder,
 			@Value("${wave1.http.client.timeout-ms:5000}") long timeoutMs)
+  ClientHttpRequestInterceptor correlationInterceptor()
+  String resolveCorrelationId()
 
 # tax-service/src/main/java/com/salesmanager/tax/config/TaxCoreConfig.java [java]
 imports: org.springframework.boot.autoconfigure.domain.EntityScan, org.springframework.cache.annotation.EnableCaching, org.springframework.context.annotation.ComponentScan, org.springframework.context.annotation.Configuration, org.springframework.data.jpa.repository.config.EnableJpaRepositories
@@ -12946,6 +13019,13 @@ class TaxFacadeImpl
   void updateTaxRate(Long id, PersistableTaxRate taxRate, MerchantStore store, Language language)
   boolean existsTaxRate(String code, MerchantStore store, Language language)
   ReadableEntityList<ReadableTaxRate> taxRates(MerchantStore store, Language language)
+
+# tax-service/src/main/java/com/salesmanager/tax/health/TaxHealthIndicator.java [java]
+imports: java.sql.Connection, javax.sql.DataSource, org.apache.commons.lang3.StringUtils, org.springframework.beans.factory.annotation.Value, org.springframework.boot.actuate.health.Health, org.springframework.boot.actuate.health.HealthIndicator, org.springframework.http.ResponseEntity, org.springframework.stereotype.Component, org.springframework.web.client.RestClientException, org.springframework.web.client.RestTemplate
+class TaxHealthIndicator
+  Health health()
+  boolean checkDatabase(Health.Builder builder)
+  boolean checkReference(Health.Builder builder)
 
 # tax-service/src/main/java/com/salesmanager/tax/mapper/PersistableTaxClassMapper.java [java]
 imports: org.apache.commons.lang3.Validate, org.springframework.stereotype.Component, com.salesmanager.contracts.tax.PersistableTaxClass, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.tax.taxclass.TaxClass
@@ -13064,6 +13144,15 @@ class StoreForbiddenException
 # tax-service/src/main/java/com/salesmanager/tax/support/ValidationException.java [java]
 class ValidationException
 
+# tax-service/src/main/java/com/salesmanager/tax/web/CorrelationIdFilter.java [java]
+imports: java.io.IOException, java.util.Collections, java.util.Enumeration, java.util.UUID, javax.servlet.FilterChain, javax.servlet.ServletException, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletRequestWrapper, javax.servlet.http.HttpServletResponse, org.slf4j.Logger, org.slf4j.LoggerFactory, org.slf4j.MDC, org.springframework.core.Ordered, org.springframework.core.annotation.Order, org.springframework.stereotype.Component, org.springframework.util.StringUtils, org.springframework.web.filter.OncePerRequestFilter
+class CorrelationIdFilter
+  void doFilterInternal(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			FilterChain filterChain)
+  class CorrelationHeaderRequest
+
 # tax-service/src/main/java/com/salesmanager/tax/web/LanguageArgumentResolver.java [java]
 imports: java.util.Optional, org.apache.commons.lang3.StringUtils, org.springframework.core.MethodParameter, org.springframework.stereotype.Component, org.springframework.web.bind.support.WebDataBinderFactory, org.springframework.web.context.request.NativeWebRequest, org.springframework.web.method.support.HandlerMethodArgumentResolver, org.springframework.web.method.support.ModelAndViewContainer, com.salesmanager.core.business.services.reference.language.LanguageService, com.salesmanager.core.model.reference.language.Language, com.salesmanager.tax.support.ServiceRuntimeException
 class LanguageArgumentResolver
@@ -13092,6 +13181,23 @@ class ReferenceServiceClientTest
   void getZoneByCode_resolvesFromZonesList()
   void getLanguageByCode_resolvesFromLanguagesList()
   void getCountryByCode_unknown_returnsNull()
+
+# tax-service/src/test/java/com/salesmanager/tax/contract/TaxProviderPactTest.java [java]
+imports: org.mockito.ArgumentMatchers.any, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.doNothing, org.mockito.Mockito.lenient, org.mockito.Mockito.when, java.util.Collections, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.TestTemplate, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.springframework.http.converter.json.MappingJackson2HttpMessageConverter, org.springframework.test.web.servlet.setup.MockMvcBuilders, com.salesmanager.contracts.common.Entity, com.salesmanager.contracts.common.ReadableEntityList, com.salesmanager.contracts.tax.PersistableTaxClass, com.salesmanager.contracts.tax.PersistableTaxRate, com.salesmanager.contracts.tax.ReadableTaxClass, com.salesmanager.contracts.tax.ReadableTaxRate, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.tax.controller.TaxClassController, com.salesmanager.tax.controller.TaxRatesController, com.salesmanager.tax.facade.TaxFacade, com.salesmanager.tax.support.RestErrorHandler, com.salesmanager.tax.web.LanguageArgumentResolver, com.salesmanager.tax.web.MerchantStoreArgumentResolver, au.com.dius.pact.provider.junit5.PactVerificationContext, au.com.dius.pact.provider.junit5.PactVerificationInvocationContextProvider, au.com.dius.pact.provider.junitsupport.Provider
+class TaxProviderPactTest
+  void setUp(PactVerificationContext context)
+  void verifyInteraction(PactVerificationContext context)
+  void acceptTaxClassCreate()
+  void taxClassesExist()
+  void taxClassT1Exists()
+  void taxClassUnique()
+  void taxClassId5Exists()
+  void taxClassId5Deletable()
+  void acceptTaxRateCreate()
+  void taxRatesExist()
+  void taxRateId9Exists()
+  void taxRateUnique()
+  void taxRateId9Deletable()
 
 # tax-service/src/test/java/com/salesmanager/tax/controller/TaxApiIntegrationTest.java [java]
 imports: org.mockito.ArgumentMatchers.any, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.when, org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete, org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get, org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post, org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath, org.springframework.test.web.servlet.result.MockMvcResultMatchers.status, java.math.BigDecimal, java.util.Collections, java.util.UUID, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc, org.springframework.boot.test.context.SpringBootTest, org.springframework.boot.test.mock.mockito.MockBean, org.springframework.context.annotation.Import, org.springframework.http.MediaType, org.springframework.test.context.ActiveProfiles, org.springframework.test.web.servlet.MockMvc, org.springframework.test.web.servlet.MvcResult, com.fasterxml.jackson.databind.ObjectMapper, com.salesmanager.contracts.client.ReferenceServiceClient, com.salesmanager.contracts.reference.ReadableCountry, com.salesmanager.contracts.reference.ReadableLanguage, com.salesmanager.contracts.reference.ReadableZone, com.salesmanager.contracts.tax.PersistableTaxClass, com.salesmanager.contracts.tax.PersistableTaxRate, com.salesmanager.contracts.tax.TaxRateDescription
@@ -13132,6 +13238,12 @@ imports: org.assertj.core.api.Assertions.assertThatThrownBy, org.mockito.Argumen
 class TaxFacadeImplTest
   void setUp()
   void deleteTaxClass_inUse_propagatesConflict()
+
+# tax-service/src/test/java/com/salesmanager/tax/health/TaxHealthIndicatorTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.mockito.ArgumentMatchers.anyInt, org.mockito.ArgumentMatchers.anyString, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.mock, org.mockito.Mockito.when, java.sql.Connection, javax.sql.DataSource, org.junit.jupiter.api.Test, org.springframework.boot.actuate.health.Health, org.springframework.boot.actuate.health.Status, org.springframework.http.HttpStatus, org.springframework.http.ResponseEntity, org.springframework.web.client.RestClientException, org.springframework.web.client.RestTemplate
+class TaxHealthIndicatorTest
+  void reportsDownWhenReferenceHttpFailsEvenIfDatabaseUp()
+  void reportsUpWhenDatabaseAndReferenceOk()
 
 # tax-service/src/test/java/com/salesmanager/tax/mapper/PersistableTaxRateMapperTest.java [java]
 imports: org.assertj.core.api.Assertions.assertThatThrownBy, org.mockito.ArgumentMatchers.any, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.when, java.math.BigDecimal, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.contracts.client.ReferenceServiceClient, com.salesmanager.contracts.tax.PersistableTaxRate, com.salesmanager.core.business.services.tax.TaxClassService, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.tax.support.ValidationException
@@ -13207,3 +13319,10 @@ class ArgumentResolversTest
   void merchantStoreResolver_missingStore_notFound()
   void languageResolver_usesLangParam()
   void languageResolver_defaultsWhenMissing()
+
+# tax-service/src/test/java/com/salesmanager/tax/web/CorrelationIdFilterTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, java.util.concurrent.atomic.AtomicReference, javax.servlet.http.HttpServletRequest, org.junit.jupiter.api.AfterEach, org.junit.jupiter.api.Test, org.slf4j.MDC, org.springframework.mock.web.MockHttpServletRequest, org.springframework.mock.web.MockHttpServletResponse
+class CorrelationIdFilterTest
+  void clearMdc()
+  void generatesIdWhenHeaderAbsent()
+  void propagatesExistingHeader()

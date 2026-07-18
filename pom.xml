@@ -80,6 +80,9 @@
 		<!-- api documentation -->
 		<swagger.version>2.9.2</swagger.version>
 
+		<!-- Pact JVM (Wave 1 contract gates, task_09) -->
+		<pact.version>4.6.17</pact.version>
+
 		<!-- jacoco coverage -->
 		<coverage.lines>.30</coverage.lines>
 		<coverage.branches>.37</coverage.branches>
@@ -378,6 +381,18 @@
 				<groupId>javax.annotation</groupId>
 				<artifactId>javax.annotation-api</artifactId>
 				<version>${javax.annotation}</version>
+			</dependency>
+
+			<!-- Pact JVM — consumer (sm-shop) / provider (reference-service, tax-service) -->
+			<dependency>
+				<groupId>au.com.dius.pact.consumer</groupId>
+				<artifactId>junit5</artifactId>
+				<version>${pact.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>au.com.dius.pact.provider</groupId>
+				<artifactId>junit5spring</artifactId>
+				<version>${pact.version}</version>
 			</dependency>
 
 		</dependencies>

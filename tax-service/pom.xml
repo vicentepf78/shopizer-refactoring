@@ -97,6 +97,12 @@
       <artifactId>spring-security-test</artifactId>
       <scope>test</scope>
     </dependency>
+    <!-- Wave 1 Pact provider (task_09) -->
+    <dependency>
+      <groupId>au.com.dius.pact.provider</groupId>
+      <artifactId>junit5spring</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
