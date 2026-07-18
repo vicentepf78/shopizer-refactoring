@@ -1,5 +1,5 @@
 ---
-status: pending
+status: completed
 title: tax-service Boot, JWT, client Reference e REST
 type: backend
 complexity: high
@@ -29,11 +29,11 @@ Consolida TLC T17–T20. Entrega `tax-service` (porta 8082) com cadeia JWT, impl
 </requirements>
 
 ## Subtasks
-- [ ] 7.1 Scaffold Boot + JWT security chain + IT 401
-- [ ] 7.2 Implementar `ReferenceServiceClient` HTTP + testes MockRestServiceServer/WireMock
-- [ ] 7.3 Portar TaxFacadeImpl + 4 mappers (rate usa client)
-- [ ] 7.4 Expor controllers REST private tax (class + rate)
-- [ ] 7.5 IT CRUD autenticado + validação country/zone inválido → 400
+- [x] 7.1 Scaffold Boot + JWT security chain + IT 401
+- [x] 7.2 Implementar `ReferenceServiceClient` HTTP + testes MockRestServiceServer/WireMock
+- [x] 7.3 Portar TaxFacadeImpl + 4 mappers (rate usa client)
+- [x] 7.4 Expor controllers REST private tax (class + rate)
+- [x] 7.5 IT CRUD autenticado + validação country/zone inválido → 400
 
 ## Implementation Details
 Ver TechSpec: **Endpoints da API** (tax-service), **Pontos de integração** (tax→reference, JWT), **Configuração**, **Ordem de build** passo 7, **Convenções de erro**. Login permanece só no monolito.
@@ -66,15 +66,15 @@ Ver TechSpec: **Endpoints da API** (tax-service), **Pontos de integração** (ta
 
 ## Tests
 - Unit tests:
-  - [ ] `ReferenceServiceClient` resolve country/zone por code (MockRestServiceServer)
-  - [ ] PersistableTaxRateMapper falha com validação quando reference retorna country inválido
-  - [ ] Facade delete class em uso propaga conflito (409)
+  - [x] `ReferenceServiceClient` resolve country/zone por code (MockRestServiceServer)
+  - [x] PersistableTaxRateMapper falha com validação quando reference retorna country inválido
+  - [x] Facade delete class em uso propaga conflito (409)
 - Integration tests:
-  - [ ] Request sem JWT em `/api/v1/private/tax/class` → 401
-  - [ ] CRUD tax class com JWT válido → 2xx e escopo de store
-  - [ ] CRUD tax rate com descriptions i18n + codes válidos
-  - [ ] GET unique tax-rate code ausente → 200 `{exists:false}`
-  - [ ] Store mismatch → 403 (paridade)
+  - [x] Request sem JWT em `/api/v1/private/tax/class` → 401
+  - [x] CRUD tax class com JWT válido → 2xx e escopo de store
+  - [x] CRUD tax rate com descriptions i18n + codes válidos
+  - [x] GET unique tax-rate code ausente → 200 `{exists:false}`
+  - [x] Store mismatch → 403 (paridade)
 - Test coverage target: >=80%
 - All tests must pass
 

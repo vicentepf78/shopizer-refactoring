@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-18 14:32 | 1285 files | 198597 tokens
+# rtt index | generated 2026-07-18 14:45 | 1331 files | 206245 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -12704,3 +12704,364 @@ class TaxRateServiceImplTest
   Language language(Integer id)
   Country country(Integer id)
   Zone zone(Long id)
+
+# tax-service/src/main/java/com/salesmanager/tax/TaxServiceApplication.java [java]
+imports: org.springframework.boot.SpringApplication, org.springframework.boot.autoconfigure.SpringBootApplication
+class TaxServiceApplication
+  void main(String[] args)
+
+# tax-service/src/main/java/com/salesmanager/tax/client/ReferenceServiceClientImpl.java [java]
+imports: java.util.Collections, java.util.List, org.apache.commons.lang3.StringUtils, org.springframework.beans.factory.annotation.Value, org.springframework.core.ParameterizedTypeReference, org.springframework.http.HttpMethod, org.springframework.http.ResponseEntity, org.springframework.stereotype.Component, org.springframework.web.client.RestClientException, org.springframework.web.client.RestTemplate, org.springframework.web.util.UriComponentsBuilder, com.salesmanager.contracts.client.ReferenceServiceClient, com.salesmanager.contracts.reference.ReadableCountry, com.salesmanager.contracts.reference.ReadableLanguage, com.salesmanager.contracts.reference.ReadableZone
+class ReferenceServiceClientImpl
+  ReadableCountry getCountryByCode(String isoCode, String langCode)
+  ReadableZone getZoneByCode(String countryCode, String zoneCode, String langCode)
+  ReadableLanguage getLanguageByCode(String code)
+  List<ReadableCountry> getCountries(String langCode)
+  List<ReadableZone> getZones(String countryCode, String langCode)
+  List<ReadableLanguage> getLanguages()
+  List<T> exchangeList(String url, ParameterizedTypeReference<List<T>> type)
+
+# tax-service/src/main/java/com/salesmanager/tax/config/CacheConfig.java [java]
+imports: org.springframework.cache.Cache, org.springframework.cache.ehcache.EhCacheCacheManager, org.springframework.cache.ehcache.EhCacheManagerFactoryBean, org.springframework.context.annotation.Bean, org.springframework.context.annotation.Configuration, org.springframework.core.io.ClassPathResource
+class CacheConfig
+  EhCacheManagerFactoryBean springCacheManager()
+  EhCacheCacheManager cacheManager(net.sf.ehcache.CacheManager springCacheManager)
+  Cache serviceCache(EhCacheCacheManager cacheManager)
+
+# tax-service/src/main/java/com/salesmanager/tax/config/RestClientConfig.java [java]
+imports: java.time.Duration, org.springframework.beans.factory.annotation.Value, org.springframework.boot.web.client.RestTemplateBuilder, org.springframework.context.annotation.Bean, org.springframework.context.annotation.Configuration, org.springframework.web.client.RestTemplate
+class RestClientConfig
+  RestTemplate referenceRestTemplate(
+			RestTemplateBuilder builder,
+			@Value("${wave1.http.client.timeout-ms:5000}") long timeoutMs)
+
+# tax-service/src/main/java/com/salesmanager/tax/config/TaxCoreConfig.java [java]
+imports: org.springframework.boot.autoconfigure.domain.EntityScan, org.springframework.cache.annotation.EnableCaching, org.springframework.context.annotation.ComponentScan, org.springframework.context.annotation.Configuration, org.springframework.data.jpa.repository.config.EnableJpaRepositories
+class TaxCoreConfig
+
+# tax-service/src/main/java/com/salesmanager/tax/config/WebMvcConfig.java [java]
+imports: java.util.List, org.springframework.context.annotation.Configuration, org.springframework.web.method.support.HandlerMethodArgumentResolver, org.springframework.web.servlet.config.annotation.WebMvcConfigurer, com.salesmanager.tax.web.LanguageArgumentResolver, com.salesmanager.tax.web.MerchantStoreArgumentResolver
+class WebMvcConfig
+  void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers)
+
+# tax-service/src/main/java/com/salesmanager/tax/controller/TaxClassController.java [java]
+imports: javax.validation.Valid, org.springframework.http.HttpStatus, org.springframework.http.MediaType, org.springframework.http.ResponseEntity, org.springframework.web.bind.annotation.DeleteMapping, org.springframework.web.bind.annotation.GetMapping, org.springframework.web.bind.annotation.PathVariable, org.springframework.web.bind.annotation.PostMapping, org.springframework.web.bind.annotation.PutMapping, org.springframework.web.bind.annotation.RequestBody, org.springframework.web.bind.annotation.RequestMapping, org.springframework.web.bind.annotation.RequestParam, org.springframework.web.bind.annotation.RestController, com.salesmanager.contracts.common.Entity, com.salesmanager.contracts.common.EntityExists, com.salesmanager.contracts.common.ReadableEntityList, com.salesmanager.contracts.tax.PersistableTaxClass, com.salesmanager.contracts.tax.ReadableTaxClass, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.tax.facade.TaxFacade
+class TaxClassController
+  Entity create(MerchantStore merchantStore, Language language,
+			@Valid @RequestBody PersistableTaxClass taxClass)
+  ResponseEntity<EntityExists> exists(
+			@RequestParam String code, MerchantStore merchantStore, Language language)
+  void update(
+			MerchantStore merchantStore,
+			@PathVariable Long id,
+			Language language,
+			@Valid @RequestBody PersistableTaxClass taxClass)
+  ReadableEntityList<ReadableTaxClass> list(
+			@RequestParam(name = "count", defaultValue = "10") int count,
+			@RequestParam(name = "page", defaultValue = "0") int page,
+			MerchantStore merchantStore,
+			Language language)
+  ReadableTaxClass get(MerchantStore merchantStore, @PathVariable String code, Language language)
+  void delete(@PathVariable Long id, MerchantStore merchantStore, Language language)
+
+# tax-service/src/main/java/com/salesmanager/tax/controller/TaxRatesController.java [java]
+imports: javax.validation.Valid, org.springframework.http.HttpStatus, org.springframework.http.MediaType, org.springframework.http.ResponseEntity, org.springframework.web.bind.annotation.DeleteMapping, org.springframework.web.bind.annotation.GetMapping, org.springframework.web.bind.annotation.PathVariable, org.springframework.web.bind.annotation.PostMapping, org.springframework.web.bind.annotation.PutMapping, org.springframework.web.bind.annotation.RequestBody, org.springframework.web.bind.annotation.RequestMapping, org.springframework.web.bind.annotation.RequestParam, org.springframework.web.bind.annotation.RestController, com.salesmanager.contracts.common.Entity, com.salesmanager.contracts.common.EntityExists, com.salesmanager.contracts.common.ReadableEntityList, com.salesmanager.contracts.tax.PersistableTaxRate, com.salesmanager.contracts.tax.ReadableTaxRate, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.tax.facade.TaxFacade
+class TaxRatesController
+  Entity create(MerchantStore merchantStore, Language language,
+			@Valid @RequestBody PersistableTaxRate taxRate)
+  ResponseEntity<EntityExists> exists(
+			@RequestParam String code, MerchantStore merchantStore, Language language)
+  void update(
+			MerchantStore merchantStore,
+			@PathVariable Long id,
+			Language language,
+			@Valid @RequestBody PersistableTaxRate taxRate)
+  ReadableEntityList<ReadableTaxRate> list(
+			@RequestParam(name = "count", defaultValue = "10") int count,
+			@RequestParam(name = "page", defaultValue = "0") int page,
+			MerchantStore merchantStore,
+			Language language)
+  ReadableTaxRate get(MerchantStore merchantStore, @PathVariable Long id, Language language)
+  void delete(@PathVariable Long id, MerchantStore merchantStore, Language language)
+
+# tax-service/src/main/java/com/salesmanager/tax/facade/TaxFacade.java [java]
+imports: com.salesmanager.contracts.common.Entity, com.salesmanager.contracts.common.ReadableEntityList, com.salesmanager.contracts.tax.PersistableTaxClass, com.salesmanager.contracts.tax.PersistableTaxRate, com.salesmanager.contracts.tax.ReadableTaxClass, com.salesmanager.contracts.tax.ReadableTaxRate, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language
+interface TaxFacade
+
+# tax-service/src/main/java/com/salesmanager/tax/facade/TaxFacadeImpl.java [java]
+imports: java.util.List, java.util.stream.Collectors, org.apache.commons.lang3.Validate, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.stereotype.Service, org.springframework.transaction.annotation.Transactional, com.salesmanager.contracts.common.Entity, com.salesmanager.contracts.common.ReadableEntityList, com.salesmanager.contracts.tax.PersistableTaxClass, com.salesmanager.contracts.tax.PersistableTaxRate, com.salesmanager.contracts.tax.ReadableTaxClass, com.salesmanager.contracts.tax.ReadableTaxRate, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.exception.TaxClassInUseException, com.salesmanager.core.business.services.tax.TaxClassService, com.salesmanager.core.business.services.tax.TaxRateService, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.tax.taxclass.TaxClass, com.salesmanager.core.model.tax.taxrate.TaxRate, com.salesmanager.tax.mapper.PersistableTaxClassMapper, com.salesmanager.tax.mapper.PersistableTaxRateMapper, com.salesmanager.tax.mapper.ReadableTaxClassMapper, com.salesmanager.tax.mapper.ReadableTaxRateMapper, com.salesmanager.tax.support.OperationNotAllowedException, com.salesmanager.tax.support.ResourceNotFoundException, com.salesmanager.tax.support.ServiceRuntimeException, com.salesmanager.tax.support.StoreForbiddenException
+class TaxFacadeImpl
+  Entity createTaxClass(PersistableTaxClass taxClass, MerchantStore store, Language language)
+  void deleteTaxClass(Long id, MerchantStore store, Language language)
+  ReadableEntityList<ReadableTaxClass> taxClasses(MerchantStore store, Language language)
+  void updateTaxClass(Long id, PersistableTaxClass taxClass, MerchantStore store, Language language)
+  ReadableTaxClass taxClass(String code, MerchantStore store, Language language)
+  boolean existsTaxClass(String code, MerchantStore store, Language language)
+  TaxRate taxRateById(Long id, MerchantStore store)
+  void deleteTaxRate(Long id, MerchantStore store, Language language)
+  ReadableTaxRate taxRate(Long id, MerchantStore store, Language language)
+  Entity createTaxRate(PersistableTaxRate taxRate, MerchantStore store, Language language)
+  void updateTaxRate(Long id, PersistableTaxRate taxRate, MerchantStore store, Language language)
+  boolean existsTaxRate(String code, MerchantStore store, Language language)
+  ReadableEntityList<ReadableTaxRate> taxRates(MerchantStore store, Language language)
+
+# tax-service/src/main/java/com/salesmanager/tax/mapper/PersistableTaxClassMapper.java [java]
+imports: org.apache.commons.lang3.Validate, org.springframework.stereotype.Component, com.salesmanager.contracts.tax.PersistableTaxClass, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.tax.taxclass.TaxClass
+class PersistableTaxClassMapper
+  TaxClass convert(PersistableTaxClass source, MerchantStore store, Language language)
+  TaxClass merge(PersistableTaxClass source, TaxClass destination, MerchantStore store, Language language)
+
+# tax-service/src/main/java/com/salesmanager/tax/mapper/PersistableTaxRateMapper.java [java]
+imports: org.apache.commons.collections4.CollectionUtils, org.apache.commons.lang3.StringUtils, org.apache.commons.lang3.Validate, org.springframework.stereotype.Component, com.salesmanager.contracts.client.ReferenceServiceClient, com.salesmanager.contracts.reference.ReadableCountry, com.salesmanager.contracts.reference.ReadableLanguage, com.salesmanager.contracts.reference.ReadableZone, com.salesmanager.contracts.tax.PersistableTaxRate, com.salesmanager.contracts.tax.TaxRateDescription, com.salesmanager.core.business.services.tax.TaxClassService, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.country.Country, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.reference.zone.Zone, com.salesmanager.core.model.tax.taxrate.TaxRate, com.salesmanager.tax.support.ValidationException
+class PersistableTaxRateMapper
+  TaxRate convert(PersistableTaxRate source, MerchantStore store, Language language)
+  TaxRate merge(PersistableTaxRate source, TaxRate destination, MerchantStore store, Language language)
+  void applyDescriptions(TaxRate destination, PersistableTaxRate source)
+  com.salesmanager.core.model.tax.taxrate.TaxRateDescription toDescription(TaxRateDescription source)
+
+# tax-service/src/main/java/com/salesmanager/tax/mapper/ReadableTaxClassMapper.java [java]
+imports: org.springframework.stereotype.Component, com.salesmanager.contracts.tax.ReadableTaxClass, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.tax.taxclass.TaxClass
+class ReadableTaxClassMapper
+  ReadableTaxClass convert(TaxClass source, MerchantStore store, Language language)
+
+# tax-service/src/main/java/com/salesmanager/tax/mapper/ReadableTaxRateMapper.java [java]
+imports: java.util.List, java.util.Optional, org.apache.commons.lang3.Validate, org.springframework.stereotype.Component, com.salesmanager.contracts.tax.ReadableTaxRate, com.salesmanager.contracts.tax.ReadableTaxRateDescription, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.tax.taxrate.TaxRate, com.salesmanager.core.model.tax.taxrate.TaxRateDescription
+class ReadableTaxRateMapper
+  ReadableTaxRate convert(TaxRate source, MerchantStore store, Language language)
+  ReadableTaxRate merge(TaxRate source, ReadableTaxRate destination, MerchantStore store, Language language)
+  Optional<ReadableTaxRateDescription> convertDescription(
+			List<TaxRateDescription> descriptions, Language language)
+  ReadableTaxRateDescription toReadable(TaxRateDescription desc)
+
+# tax-service/src/main/java/com/salesmanager/tax/security/AdminUserRepository.java [java]
+imports: org.springframework.data.jpa.repository.JpaRepository, org.springframework.data.jpa.repository.Query, com.salesmanager.core.model.user.User
+interface AdminUserRepository
+
+# tax-service/src/main/java/com/salesmanager/tax/security/AuthenticationTokenFilter.java [java]
+imports: java.io.IOException, javax.servlet.FilterChain, javax.servlet.ServletException, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, org.apache.commons.lang3.StringUtils, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.beans.factory.annotation.Value, org.springframework.security.authentication.UsernamePasswordAuthenticationToken, org.springframework.security.core.context.SecurityContextHolder, org.springframework.security.core.userdetails.UserDetails, org.springframework.security.core.userdetails.UserDetailsService, org.springframework.security.web.authentication.WebAuthenticationDetailsSource, org.springframework.stereotype.Component, org.springframework.web.filter.OncePerRequestFilter, io.jsonwebtoken.ExpiredJwtException
+class AuthenticationTokenFilter
+  void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+
+# tax-service/src/main/java/com/salesmanager/tax/security/JWTAdminDetailsService.java [java]
+imports: java.util.ArrayList, java.util.Collection, java.util.List, org.springframework.security.core.GrantedAuthority, org.springframework.security.core.authority.SimpleGrantedAuthority, org.springframework.security.core.userdetails.UserDetails, org.springframework.security.core.userdetails.UserDetailsService, org.springframework.security.core.userdetails.UsernameNotFoundException, org.springframework.stereotype.Service, com.salesmanager.core.model.user.Group, com.salesmanager.core.model.user.User
+class JWTAdminDetailsService
+  UserDetails loadUserByUsername(String userName)
+
+# tax-service/src/main/java/com/salesmanager/tax/security/JWTTokenUtil.java [java]
+imports: java.io.Serializable, java.util.Date, java.util.HashMap, java.util.Map, java.util.function.Function, org.springframework.beans.factory.annotation.Value, org.springframework.security.core.userdetails.UserDetails, org.springframework.stereotype.Component, io.jsonwebtoken.Claims, io.jsonwebtoken.Jwts, io.jsonwebtoken.SignatureAlgorithm
+class JWTTokenUtil
+  String getUsernameFromToken(String token)
+  Date getIssuedAtDateFromToken(String token)
+  Date getExpirationDateFromToken(String token)
+  T getClaimFromToken(String token, Function<Claims, T> claimsResolver)
+  Claims getAllClaimsFromToken(String token)
+  Boolean isTokenExpired(String token)
+  Boolean isCreatedBeforeLastPasswordReset(Date created, Date lastPasswordReset)
+  String generateToken(UserDetails userDetails)
+  String generateToken(String username)
+  String doGenerateToken(Map<String, Object> claims, String subject)
+  Boolean validateToken(String token, UserDetails userDetails)
+
+# tax-service/src/main/java/com/salesmanager/tax/security/JWTUser.java [java]
+imports: java.util.Collection, java.util.Date, org.springframework.security.core.GrantedAuthority, org.springframework.security.core.userdetails.UserDetails, com.fasterxml.jackson.annotation.JsonIgnore
+class JWTUser
+  Long getId()
+  String getStoreCode()
+  String getUsername()
+  boolean isAccountNonExpired()
+  boolean isAccountNonLocked()
+  boolean isCredentialsNonExpired()
+  String getFirstname()
+  String getLastname()
+  String getEmail()
+  String getPassword()
+  Collection<? extends GrantedAuthority> getAuthorities()
+  boolean isEnabled()
+  Date getLastPasswordResetDate()
+
+# tax-service/src/main/java/com/salesmanager/tax/security/MerchantStoreRepository.java [java]
+imports: org.springframework.data.jpa.repository.JpaRepository, org.springframework.data.jpa.repository.Query, com.salesmanager.core.model.merchant.MerchantStore
+interface MerchantStoreRepository
+
+# tax-service/src/main/java/com/salesmanager/tax/security/StoreAuthorizationService.java [java]
+imports: org.springframework.security.core.Authentication, org.springframework.security.core.GrantedAuthority, org.springframework.security.core.context.SecurityContextHolder, org.springframework.stereotype.Service, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.tax.support.ResourceNotFoundException, com.salesmanager.tax.support.StoreForbiddenException
+class StoreAuthorizationService
+  void authorize(MerchantStore store, String requestUri)
+
+# tax-service/src/main/java/com/salesmanager/tax/security/TaxSecurityConfig.java [java]
+imports: org.springframework.context.annotation.Bean, org.springframework.context.annotation.Configuration, org.springframework.core.annotation.Order, org.springframework.http.HttpMethod, org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder, org.springframework.security.config.annotation.web.builders.HttpSecurity, org.springframework.security.config.annotation.web.configuration.EnableWebSecurity, org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter, org.springframework.security.config.http.SessionCreationPolicy, org.springframework.security.core.userdetails.UserDetailsService, org.springframework.security.web.AuthenticationEntryPoint, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter, org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint
+class TaxSecurityConfig
+  class PrivateApiSecurity
+  class PublicAndActuatorSecurity
+
+# tax-service/src/main/java/com/salesmanager/tax/support/OperationNotAllowedException.java [java]
+class OperationNotAllowedException
+
+# tax-service/src/main/java/com/salesmanager/tax/support/ResourceNotFoundException.java [java]
+imports: org.springframework.http.HttpStatus, org.springframework.web.bind.annotation.ResponseStatus
+class ResourceNotFoundException
+
+# tax-service/src/main/java/com/salesmanager/tax/support/RestErrorHandler.java [java]
+imports: java.util.HashMap, java.util.Map, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.http.HttpStatus, org.springframework.web.bind.annotation.ExceptionHandler, org.springframework.web.bind.annotation.ResponseBody, org.springframework.web.bind.annotation.ResponseStatus, org.springframework.web.bind.annotation.RestControllerAdvice, com.salesmanager.core.business.exception.TaxClassInUseException
+class RestErrorHandler
+  Map<String, Object> handleTaxClassInUse(TaxClassInUseException ex)
+  Map<String, String> handleNotFound(ResourceNotFoundException ex)
+  Map<String, String> handleForbidden(StoreForbiddenException ex)
+  Map<String, String> handleBadRequest(ServiceRuntimeException ex)
+  Map<String, String> handleService(ServiceRuntimeException ex)
+  Map<String, String> error(String code, String message)
+
+# tax-service/src/main/java/com/salesmanager/tax/support/ServiceRuntimeException.java [java]
+class ServiceRuntimeException
+  String getErrorCode()
+  String getErrorMessage()
+
+# tax-service/src/main/java/com/salesmanager/tax/support/StoreForbiddenException.java [java]
+class StoreForbiddenException
+
+# tax-service/src/main/java/com/salesmanager/tax/support/ValidationException.java [java]
+class ValidationException
+
+# tax-service/src/main/java/com/salesmanager/tax/web/LanguageArgumentResolver.java [java]
+imports: java.util.Optional, org.apache.commons.lang3.StringUtils, org.springframework.core.MethodParameter, org.springframework.stereotype.Component, org.springframework.web.bind.support.WebDataBinderFactory, org.springframework.web.context.request.NativeWebRequest, org.springframework.web.method.support.HandlerMethodArgumentResolver, org.springframework.web.method.support.ModelAndViewContainer, com.salesmanager.core.business.services.reference.language.LanguageService, com.salesmanager.core.model.reference.language.Language, com.salesmanager.tax.support.ServiceRuntimeException
+class LanguageArgumentResolver
+  boolean supportsParameter(MethodParameter parameter)
+  Object resolveArgument(
+			MethodParameter parameter,
+			ModelAndViewContainer mavContainer,
+			NativeWebRequest webRequest,
+			WebDataBinderFactory binderFactory)
+
+# tax-service/src/main/java/com/salesmanager/tax/web/MerchantStoreArgumentResolver.java [java]
+imports: java.util.Optional, javax.servlet.http.HttpServletRequest, org.apache.commons.lang3.StringUtils, org.springframework.core.MethodParameter, org.springframework.stereotype.Component, org.springframework.web.bind.support.WebDataBinderFactory, org.springframework.web.context.request.NativeWebRequest, org.springframework.web.method.support.HandlerMethodArgumentResolver, org.springframework.web.method.support.ModelAndViewContainer, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.tax.security.MerchantStoreRepository, com.salesmanager.tax.security.StoreAuthorizationService, com.salesmanager.tax.support.ResourceNotFoundException
+class MerchantStoreArgumentResolver
+  boolean supportsParameter(MethodParameter parameter)
+  Object resolveArgument(
+			MethodParameter parameter,
+			ModelAndViewContainer mavContainer,
+			NativeWebRequest webRequest,
+			WebDataBinderFactory binderFactory)
+
+# tax-service/src/test/java/com/salesmanager/tax/client/ReferenceServiceClientTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.springframework.test.web.client.match.MockRestRequestMatchers.method, org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo, org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.http.HttpMethod, org.springframework.http.MediaType, org.springframework.test.web.client.MockRestServiceServer, org.springframework.web.client.RestTemplate, com.salesmanager.contracts.reference.ReadableCountry, com.salesmanager.contracts.reference.ReadableLanguage, com.salesmanager.contracts.reference.ReadableZone
+class ReferenceServiceClientTest
+  void setUp()
+  void getCountryByCode_resolvesFromCountryList()
+  void getZoneByCode_resolvesFromZonesList()
+  void getLanguageByCode_resolvesFromLanguagesList()
+  void getCountryByCode_unknown_returnsNull()
+
+# tax-service/src/test/java/com/salesmanager/tax/controller/TaxApiIntegrationTest.java [java]
+imports: org.mockito.ArgumentMatchers.any, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.when, org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete, org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get, org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post, org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath, org.springframework.test.web.servlet.result.MockMvcResultMatchers.status, java.math.BigDecimal, java.util.Collections, java.util.UUID, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc, org.springframework.boot.test.context.SpringBootTest, org.springframework.boot.test.mock.mockito.MockBean, org.springframework.context.annotation.Import, org.springframework.http.MediaType, org.springframework.test.context.ActiveProfiles, org.springframework.test.web.servlet.MockMvc, org.springframework.test.web.servlet.MvcResult, com.fasterxml.jackson.databind.ObjectMapper, com.salesmanager.contracts.client.ReferenceServiceClient, com.salesmanager.contracts.reference.ReadableCountry, com.salesmanager.contracts.reference.ReadableLanguage, com.salesmanager.contracts.reference.ReadableZone, com.salesmanager.contracts.tax.PersistableTaxClass, com.salesmanager.contracts.tax.PersistableTaxRate, com.salesmanager.contracts.tax.TaxRateDescription
+class TaxApiIntegrationTest
+  void setUp()
+  void taxClassCrud_withValidJwt_succeeds()
+  void taxRateCrud_withValidCodesAndDescriptions()
+  void uniqueTaxRate_missingCode_returnsExistsFalse()
+  void storeMismatch_returns403()
+  void createTaxRate_invalidCountry_returns400()
+
+# tax-service/src/test/java/com/salesmanager/tax/controller/TaxClassControllerTest.java [java]
+imports: org.mockito.ArgumentMatchers.any, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.when, org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get, org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post, org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath, org.springframework.test.web.servlet.result.MockMvcResultMatchers.status, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.springframework.http.MediaType, org.springframework.test.web.servlet.MockMvc, org.springframework.test.web.servlet.setup.MockMvcBuilders, com.salesmanager.contracts.common.Entity, com.salesmanager.contracts.common.EntityExists, com.salesmanager.contracts.tax.PersistableTaxClass, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.tax.facade.TaxFacade, com.salesmanager.tax.support.RestErrorHandler, com.salesmanager.tax.web.LanguageArgumentResolver, com.salesmanager.tax.web.MerchantStoreArgumentResolver
+class TaxClassControllerTest
+  void setUp()
+  void create_returnsEntityId()
+  void unique_returnsExistsFlag()
+
+# tax-service/src/test/java/com/salesmanager/tax/controller/TaxRatesControllerTest.java [java]
+imports: org.mockito.ArgumentMatchers.any, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.when, org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get, org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post, org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath, org.springframework.test.web.servlet.result.MockMvcResultMatchers.status, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.springframework.http.MediaType, org.springframework.test.web.servlet.MockMvc, org.springframework.test.web.servlet.setup.MockMvcBuilders, com.salesmanager.contracts.common.Entity, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.tax.facade.TaxFacade, com.salesmanager.tax.support.RestErrorHandler, com.salesmanager.tax.web.LanguageArgumentResolver, com.salesmanager.tax.web.MerchantStoreArgumentResolver
+class TaxRatesControllerTest
+  void setUp()
+  void create_andUnique()
+
+# tax-service/src/test/java/com/salesmanager/tax/facade/TaxFacadeImplMoreTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.assertj.core.api.Assertions.assertThatThrownBy, org.mockito.ArgumentMatchers.any, org.mockito.Mockito.verify, org.mockito.Mockito.when, java.util.Collections, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.contracts.common.Entity, com.salesmanager.contracts.common.ReadableEntityList, com.salesmanager.contracts.tax.PersistableTaxClass, com.salesmanager.contracts.tax.PersistableTaxRate, com.salesmanager.contracts.tax.ReadableTaxClass, com.salesmanager.contracts.tax.ReadableTaxRate, com.salesmanager.core.business.services.tax.TaxClassService, com.salesmanager.core.business.services.tax.TaxRateService, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.tax.taxclass.TaxClass, com.salesmanager.core.model.tax.taxrate.TaxRate, com.salesmanager.tax.mapper.PersistableTaxClassMapper, com.salesmanager.tax.mapper.PersistableTaxRateMapper, com.salesmanager.tax.mapper.ReadableTaxClassMapper, com.salesmanager.tax.mapper.ReadableTaxRateMapper, com.salesmanager.tax.support.OperationNotAllowedException, com.salesmanager.tax.support.ResourceNotFoundException, com.salesmanager.tax.support.StoreForbiddenException
+class TaxFacadeImplMoreTest
+  void setUp()
+  void createTaxClass_andList_andGet_andExists()
+  void createTaxClass_duplicate_throws()
+  void deleteTaxClass_wrongStore_forbidden()
+  void taxClass_missing_notFound()
+  void taxRate_crud_andExistsFalse()
+  void updateTaxClass_ok()
+
+# tax-service/src/test/java/com/salesmanager/tax/facade/TaxFacadeImplTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThatThrownBy, org.mockito.ArgumentMatchers.any, org.mockito.Mockito.doThrow, org.mockito.Mockito.when, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.core.business.exception.TaxClassInUseException, com.salesmanager.core.business.services.tax.TaxClassService, com.salesmanager.core.business.services.tax.TaxRateService, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.tax.taxclass.TaxClass, com.salesmanager.tax.mapper.PersistableTaxClassMapper, com.salesmanager.tax.mapper.PersistableTaxRateMapper, com.salesmanager.tax.mapper.ReadableTaxClassMapper, com.salesmanager.tax.mapper.ReadableTaxRateMapper
+class TaxFacadeImplTest
+  void setUp()
+  void deleteTaxClass_inUse_propagatesConflict()
+
+# tax-service/src/test/java/com/salesmanager/tax/mapper/PersistableTaxRateMapperTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThatThrownBy, org.mockito.ArgumentMatchers.any, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.when, java.math.BigDecimal, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.contracts.client.ReferenceServiceClient, com.salesmanager.contracts.tax.PersistableTaxRate, com.salesmanager.core.business.services.tax.TaxClassService, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.tax.support.ValidationException
+class PersistableTaxRateMapperTest
+  void setUp()
+  void merge_invalidCountry_throwsValidationException()
+
+# tax-service/src/test/java/com/salesmanager/tax/mapper/TaxMappersTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.assertj.core.api.Assertions.assertThatThrownBy, org.mockito.ArgumentMatchers.any, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.when, java.math.BigDecimal, java.util.ArrayList, java.util.Collections, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.contracts.client.ReferenceServiceClient, com.salesmanager.contracts.reference.ReadableCountry, com.salesmanager.contracts.reference.ReadableLanguage, com.salesmanager.contracts.reference.ReadableZone, com.salesmanager.contracts.tax.PersistableTaxClass, com.salesmanager.contracts.tax.PersistableTaxRate, com.salesmanager.contracts.tax.ReadableTaxClass, com.salesmanager.contracts.tax.ReadableTaxRate, com.salesmanager.contracts.tax.TaxRateDescription, com.salesmanager.core.business.services.tax.TaxClassService, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.country.Country, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.reference.zone.Zone, com.salesmanager.core.model.tax.taxclass.TaxClass, com.salesmanager.core.model.tax.taxrate.TaxRate, com.salesmanager.tax.support.ValidationException
+class TaxMappersTest
+  void setUp()
+  void persistableTaxClass_convertAndMerge()
+  void readableTaxClass_convert()
+  void persistableTaxRate_happyPath_withDescriptions()
+  void persistableTaxRate_invalidZone_throws()
+  void persistableTaxRate_invalidLanguage_throws()
+  void readableTaxRate_convertWithMatchingDescription()
+
+# tax-service/src/test/java/com/salesmanager/tax/security/AuthenticationTokenFilterTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.mockito.ArgumentMatchers.anyString, org.mockito.Mockito.when, java.util.Collections, javax.servlet.FilterChain, org.junit.jupiter.api.AfterEach, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.springframework.mock.web.MockHttpServletRequest, org.springframework.mock.web.MockHttpServletResponse, org.springframework.security.core.authority.SimpleGrantedAuthority, org.springframework.security.core.context.SecurityContextHolder, org.springframework.security.core.userdetails.UserDetailsService, org.springframework.test.util.ReflectionTestUtils
+class AuthenticationTokenFilterTest
+  void setUp()
+  void clear()
+  void privatePath_withValidBearer_setsAuthentication()
+  void privatePath_withoutToken_leavesUnauthenticated()
+  void invalidToken_doesNotSetAuthentication()
+
+# tax-service/src/test/java/com/salesmanager/tax/security/JWTAdminDetailsServiceTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.assertj.core.api.Assertions.assertThatThrownBy, org.mockito.Mockito.when, java.util.Collections, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.springframework.security.core.userdetails.UserDetails, org.springframework.security.core.userdetails.UsernameNotFoundException, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.user.Group, com.salesmanager.core.model.user.User
+class JWTAdminDetailsServiceTest
+  void loadUserByUsername_mapsAuthoritiesAndStore()
+  void loadUserByUsername_missing_throws()
+
+# tax-service/src/test/java/com/salesmanager/tax/security/JWTTokenUtilTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, java.util.Collections, java.util.Date, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.security.core.authority.SimpleGrantedAuthority, org.springframework.test.util.ReflectionTestUtils
+class JWTTokenUtilTest
+  void setUp()
+  void generateAndValidateToken()
+  void generateToken_byUsername()
+
+# tax-service/src/test/java/com/salesmanager/tax/security/StoreAuthorizationServiceTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThatCode, org.assertj.core.api.Assertions.assertThatThrownBy, java.util.Collections, org.junit.jupiter.api.AfterEach, org.junit.jupiter.api.Test, org.springframework.security.authentication.UsernamePasswordAuthenticationToken, org.springframework.security.core.authority.SimpleGrantedAuthority, org.springframework.security.core.context.SecurityContextHolder, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.tax.support.StoreForbiddenException
+class StoreAuthorizationServiceTest
+  void clear()
+  void authorize_matchingStore_ok()
+  void authorize_mismatchWithoutSuperAdmin_forbidden()
+  void authorize_superAdmin_okForOtherStore()
+
+# tax-service/src/test/java/com/salesmanager/tax/security/TaxSecurityIntegrationTest.java [java]
+imports: org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get, org.springframework.test.web.servlet.result.MockMvcResultMatchers.status, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc, org.springframework.boot.test.context.SpringBootTest, org.springframework.boot.test.mock.mockito.MockBean, org.springframework.context.annotation.Import, org.springframework.test.context.ActiveProfiles, org.springframework.test.web.servlet.MockMvc, com.salesmanager.contracts.client.ReferenceServiceClient, com.salesmanager.tax.support.TestDataFactory
+class TaxSecurityIntegrationTest
+  void privateTaxClassWithoutJwt_returns401()
+
+# tax-service/src/test/java/com/salesmanager/tax/support/RestErrorHandlerTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, java.util.Map, org.junit.jupiter.api.Test, com.salesmanager.core.business.exception.TaxClassInUseException
+class RestErrorHandlerTest
+  void handleTaxClassInUse()
+  void handleNotFoundAndForbiddenAndValidation()
+
+# tax-service/src/test/java/com/salesmanager/tax/support/TestDataFactory.java [java]
+imports: java.util.Collections, javax.persistence.EntityManager, javax.persistence.PersistenceContext, org.springframework.stereotype.Component, org.springframework.transaction.annotation.Transactional, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.country.Country, com.salesmanager.core.model.reference.currency.Currency, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.reference.zone.Zone, com.salesmanager.core.model.user.Group, com.salesmanager.core.model.user.GroupType, com.salesmanager.core.model.user.User, com.salesmanager.tax.security.AdminUserRepository
+class TestDataFactory
+  Seed ensureDefaultAdmin()
+  Seed seedDefaultAdmin(String username, String storeCode)
+  MerchantStore seedOtherStore(String storeCode, Seed seed)
+  Zone seedZone(String code, Country country)
+  class Seed
+
+# tax-service/src/test/java/com/salesmanager/tax/web/ArgumentResolversTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.assertj.core.api.Assertions.assertThatThrownBy, org.mockito.ArgumentMatchers.any, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.doNothing, org.mockito.Mockito.verify, org.mockito.Mockito.when, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.springframework.core.MethodParameter, org.springframework.mock.web.MockHttpServletRequest, org.springframework.web.context.request.ServletWebRequest, com.salesmanager.core.business.services.reference.language.LanguageService, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.tax.security.MerchantStoreRepository, com.salesmanager.tax.security.StoreAuthorizationService, com.salesmanager.tax.support.ResourceNotFoundException
+class ArgumentResolversTest
+  void merchantStoreResolver_loadsAndAuthorizes()
+  void merchantStoreResolver_missingStore_notFound()
+  void languageResolver_usesLangParam()
+  void languageResolver_defaultsWhenMissing()
