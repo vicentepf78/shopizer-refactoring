@@ -1,0 +1,123 @@
+# Wave 1 topology (TechSpec Dependências técnicas / STR-05)
+#
+# Startup order: MySQL → reference-service → tax-service → sm-shop
+# No Eureka/K8s discovery — URLs via env (WAVE1_*_BASE_URL).
+#
+# Greenfield seed (ADR-007): InitializationDatabaseImpl stays in the monolith.
+# Against an empty DB, run sm-shop once (or seed externally) before relying on
+# reference/tax data; runtime depends_on still follows MySQL→ref→tax→shop.
+#
+# Pre-build Boot jars before `docker compose up --build`:
+#   ./mvnw -pl reference-service,tax-service,sm-shop -am package -DskipTests
+#
+# --- Manual smoke (minimum) ---
+# 1. Health UP:
+#    curl -s http://localhost:8081/actuator/health
+#    curl -s http://localhost:8082/actuator/health
+#    curl -s http://localhost:8080/actuator/health
+# 2. GET reference:
+#    curl -s "http://localhost:8081/api/v1/country?lang=en"
+# 3. Authenticated tax CRUD (login on monolito, then tax-service or shop BFF):
+#    TOKEN=$(curl -s -X POST http://localhost:8080/api/v1/private/login \
+#      -H 'Content-Type: application/json' \
+#      -d '{"username":"admin@shopizer.com","password":"password"}' | jq -r .token)
+#    curl -s -H "Authorization: Bearer $TOKEN" \
+#      "http://localhost:8082/api/v1/private/tax/class?store=DEFAULT&lang=en"
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: wave1-mysql
+    environment:
+      MYSQL_DATABASE: SALESMANAGER
+      MYSQL_USER: shopizer
+      MYSQL_PASSWORD: very-long-shopizer-password
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+
+  reference-service:
+    build:
+      context: ./reference-service
+      dockerfile: Dockerfile
+    container_name: wave1-reference
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/SALESMANAGER?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+      DB_USER: shopizer
+      DB_PASSWORD: very-long-shopizer-password
+      SERVER_PORT: "8081"
+    ports:
+      - "8081:8081"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8081/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 18
+      start_period: 40s
+
+  tax-service:
+    build:
+      context: ./tax-service
+      dockerfile: Dockerfile
+    container_name: wave1-tax
+    depends_on:
+      mysql:
+        condition: service_healthy
+      reference-service:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/SALESMANAGER?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+      DB_USER: shopizer
+      DB_PASSWORD: very-long-shopizer-password
+      JWT_SECRET: aSecret
+      WAVE1_REFERENCE_BASE_URL: http://reference-service:8081
+      WAVE1_HTTP_TIMEOUT_MS: "5000"
+      SERVER_PORT: "8082"
+    ports:
+      - "8082:8082"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8082/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 18
+      start_period: 40s
+
+  sm-shop:
+    build:
+      context: ./sm-shop
+      dockerfile: Dockerfile.wave1
+    container_name: wave1-shop
+    depends_on:
+      mysql:
+        condition: service_healthy
+      reference-service:
+        condition: service_healthy
+      tax-service:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: mysql,strangler
+      db.jdbcUrl: jdbc:mysql://mysql:3306/SALESMANAGER?autoReconnect=true&serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8
+      db.user: shopizer
+      db.password: very-long-shopizer-password
+      WAVE1_REFERENCE_BASE_URL: http://reference-service:8081
+      WAVE1_TAX_BASE_URL: http://tax-service:8082
+      WAVE1_HTTP_TIMEOUT_MS: "5000"
+      SERVER_PORT: "8080"
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8080/actuator/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 24
+      start_period: 90s

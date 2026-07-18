@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-18 15:20 | 1361 files | 211825 tokens
+# rtt index | generated 2026-07-18 15:27 | 1361 files | 211825 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties

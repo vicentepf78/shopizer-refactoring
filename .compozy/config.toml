@@ -1,8 +1,9 @@
 [defaults]
 ide = "cursor-agent"
+model = "grok-4.5"
 auto_commit = true
 access_mode = "full"
-timeout = "45m"
+timeout = "60m"
 max_retries = 2
 retry_backoff_multiplier = 1.5
 
