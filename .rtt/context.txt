@@ -1,10 +1,54 @@
-# rtt index | generated 2026-07-18 13:40 | 1210 files | 190830 tokens
+# rtt index | generated 2026-07-18 13:52 | 1216 files | 191228 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
 class MavenWrapperDownloader
   void main(String args[])
   void downloadFileFromURL(String urlString, File destination)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/common/Entity.java [java]
+imports: java.io.Serializable
+class Entity
+  void setId(Long id)
+  Long getId()
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/common/EntityExists.java [java]
+imports: java.io.Serializable
+class EntityExists
+  boolean isExists()
+  void setExists(boolean exists)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/common/ReadableEntityList.java [java]
+imports: java.util.List
+class ReadableEntityList
+  List<T> getItems()
+  void setItems(List<T> items)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/common/ReadableList.java [java]
+imports: java.io.Serializable
+class ReadableList
+  int getTotalPages()
+  void setTotalPages(int totalCount)
+  long getRecordsTotal()
+  void setRecordsTotal(long recordsTotal)
+  int getRecordsFiltered()
+  void setRecordsFiltered(int recordsFiltered)
+  int getNumber()
+  void setNumber(int number)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/common/ShopEntity.java [java]
+imports: java.io.Serializable
+class ShopEntity
+  void setLanguage(String language)
+  String getLanguage()
+
+# shopizer-api-contracts/src/test/java/com/salesmanager/contracts/common/CommonDtoJacksonTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertFalse, org.junit.jupiter.api.Assertions.assertTrue, java.util.Arrays, java.util.List, org.junit.jupiter.api.Test, com.fasterxml.jackson.databind.JsonNode, com.fasterxml.jackson.databind.ObjectMapper
+class CommonDtoJacksonTest
+  void entitySerializesAndDeserializesIdWithoutJpaFields()
+  void entityExistsSerializesBooleanFlag()
+  void readableEntityListPreservesItemsAndPaginationMetadata()
+  void shopEntitySerializesLanguageAndId()
 
 # sm-core-model/.mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
