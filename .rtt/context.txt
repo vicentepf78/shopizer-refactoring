@@ -1,10 +1,157 @@
-# rtt index | generated 2026-07-18 14:26 | 1259 files | 195727 tokens
+# rtt index | generated 2026-07-18 14:32 | 1285 files | 198597 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
 class MavenWrapperDownloader
   void main(String args[])
   void downloadFileFromURL(String urlString, File destination)
+
+# reference-service/src/main/java/com/salesmanager/reference/ReferenceServiceApplication.java [java]
+imports: org.springframework.boot.SpringApplication, org.springframework.boot.autoconfigure.SpringBootApplication
+class ReferenceServiceApplication
+  void main(String[] args)
+
+# reference-service/src/main/java/com/salesmanager/reference/config/CacheConfig.java [java]
+imports: org.springframework.cache.Cache, org.springframework.cache.ehcache.EhCacheCacheManager, org.springframework.cache.ehcache.EhCacheManagerFactoryBean, org.springframework.context.annotation.Bean, org.springframework.context.annotation.Configuration, org.springframework.core.io.ClassPathResource
+class CacheConfig
+  EhCacheManagerFactoryBean springCacheManager()
+  EhCacheCacheManager cacheManager(net.sf.ehcache.CacheManager springCacheManager)
+  Cache serviceCache(EhCacheCacheManager cacheManager)
+
+# reference-service/src/main/java/com/salesmanager/reference/config/ReferenceCoreConfig.java [java]
+imports: org.springframework.boot.autoconfigure.domain.EntityScan, org.springframework.cache.annotation.EnableCaching, org.springframework.context.annotation.ComponentScan, org.springframework.context.annotation.Configuration, org.springframework.data.jpa.repository.config.EnableJpaRepositories
+class ReferenceCoreConfig
+
+# reference-service/src/main/java/com/salesmanager/reference/controller/ReferencesController.java [java]
+imports: java.util.Arrays, java.util.List, org.springframework.web.bind.annotation.GetMapping, org.springframework.web.bind.annotation.RequestMapping, org.springframework.web.bind.annotation.RequestParam, org.springframework.web.bind.annotation.RestController, com.salesmanager.contracts.reference.MeasureUnit, com.salesmanager.contracts.reference.ReadableCountry, com.salesmanager.contracts.reference.ReadableCurrency, com.salesmanager.contracts.reference.ReadableLanguage, com.salesmanager.contracts.reference.ReadableZone, com.salesmanager.contracts.reference.SizeReferences, com.salesmanager.contracts.reference.WeightUnit, com.salesmanager.core.model.reference.language.Language, com.salesmanager.reference.facade.CountryFacade, com.salesmanager.reference.facade.CurrencyFacade, com.salesmanager.reference.facade.LanguageFacade, com.salesmanager.reference.facade.ZoneFacade, com.salesmanager.reference.support.LanguageResolver
+class ReferencesController
+  List<ReadableLanguage> getLanguages()
+  List<ReadableCountry> getCountry(
+			@RequestParam(value = "lang", required = false) String lang,
+			@RequestParam(value = "store", required = false) String store)
+  List<ReadableZone> getZones(
+			@RequestParam("code") String code,
+			@RequestParam(value = "lang", required = false) String lang,
+			@RequestParam(value = "store", required = false) String store)
+  List<ReadableCurrency> getCurrency()
+  SizeReferences measures()
+
+# reference-service/src/main/java/com/salesmanager/reference/facade/CountryFacade.java [java]
+imports: java.util.List, com.salesmanager.contracts.reference.ReadableCountry, com.salesmanager.core.model.reference.language.Language
+interface CountryFacade
+
+# reference-service/src/main/java/com/salesmanager/reference/facade/CountryFacadeImpl.java [java]
+imports: java.util.List, java.util.stream.Collectors, org.springframework.stereotype.Service, com.salesmanager.contracts.reference.ReadableCountry, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.reference.country.CountryService, com.salesmanager.core.model.reference.country.Country, com.salesmanager.core.model.reference.language.Language, com.salesmanager.reference.populator.ReadableCountryPopulator, com.salesmanager.reference.support.ServiceRuntimeException
+class CountryFacadeImpl
+  List<ReadableCountry> getListCountryZones(Language language)
+  List<Country> getListOfCountryZones(Language language)
+
+# reference-service/src/main/java/com/salesmanager/reference/facade/CurrencyFacade.java [java]
+imports: java.util.List, com.salesmanager.contracts.reference.ReadableCurrency
+interface CurrencyFacade
+
+# reference-service/src/main/java/com/salesmanager/reference/facade/CurrencyFacadeImpl.java [java]
+imports: java.util.Comparator, java.util.List, java.util.stream.Collectors, org.springframework.stereotype.Service, com.salesmanager.contracts.reference.ReadableCurrency, com.salesmanager.core.business.services.reference.currency.CurrencyService, com.salesmanager.core.model.reference.currency.Currency, com.salesmanager.reference.populator.ReadableCurrencyMapper, com.salesmanager.reference.support.ResourceNotFoundException
+class CurrencyFacadeImpl
+  List<ReadableCurrency> getList()
+
+# reference-service/src/main/java/com/salesmanager/reference/facade/LanguageFacade.java [java]
+imports: java.util.List, com.salesmanager.contracts.reference.ReadableLanguage
+interface LanguageFacade
+
+# reference-service/src/main/java/com/salesmanager/reference/facade/LanguageFacadeImpl.java [java]
+imports: java.util.List, java.util.stream.Collectors, org.springframework.stereotype.Service, com.salesmanager.contracts.reference.ReadableLanguage, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.reference.language.LanguageService, com.salesmanager.core.model.reference.language.Language, com.salesmanager.reference.populator.ReadableLanguageMapper, com.salesmanager.reference.support.ResourceNotFoundException, com.salesmanager.reference.support.ServiceRuntimeException
+class LanguageFacadeImpl
+  List<ReadableLanguage> getLanguages()
+
+# reference-service/src/main/java/com/salesmanager/reference/facade/ZoneFacade.java [java]
+imports: java.util.List, com.salesmanager.contracts.reference.ReadableZone, com.salesmanager.core.model.reference.language.Language
+interface ZoneFacade
+
+# reference-service/src/main/java/com/salesmanager/reference/facade/ZoneFacadeImpl.java [java]
+imports: java.util.Collections, java.util.List, java.util.stream.Collectors, org.springframework.stereotype.Service, com.salesmanager.contracts.reference.ReadableZone, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.reference.zone.ZoneService, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.reference.zone.Zone, com.salesmanager.reference.populator.ReadableZonePopulator, com.salesmanager.reference.support.ServiceRuntimeException
+class ZoneFacadeImpl
+  List<ReadableZone> getZones(String countryCode, Language language)
+  List<Zone> getListZones(String countryCode, Language language)
+
+# reference-service/src/main/java/com/salesmanager/reference/populator/ReadableCountryPopulator.java [java]
+imports: com.salesmanager.contracts.reference.ReadableCountry, com.salesmanager.contracts.reference.ReadableZone, com.salesmanager.core.model.reference.country.Country, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.reference.zone.Zone, com.salesmanager.core.model.reference.zone.ZoneDescription
+class ReadableCountryPopulator
+  ReadableCountry populate(Country source, Language language)
+
+# reference-service/src/main/java/com/salesmanager/reference/populator/ReadableCurrencyMapper.java [java]
+imports: com.salesmanager.contracts.reference.ReadableCurrency, com.salesmanager.core.model.reference.currency.Currency
+class ReadableCurrencyMapper
+  ReadableCurrency toDto(Currency source)
+
+# reference-service/src/main/java/com/salesmanager/reference/populator/ReadableLanguageMapper.java [java]
+imports: com.salesmanager.contracts.reference.ReadableLanguage, com.salesmanager.core.model.reference.language.Language
+class ReadableLanguageMapper
+  ReadableLanguage toDto(Language source)
+
+# reference-service/src/main/java/com/salesmanager/reference/populator/ReadableZonePopulator.java [java]
+imports: com.salesmanager.contracts.reference.ReadableZone, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.reference.zone.Zone, com.salesmanager.core.model.reference.zone.ZoneDescription
+class ReadableZonePopulator
+  ReadableZone populate(Zone source, Language language)
+
+# reference-service/src/main/java/com/salesmanager/reference/support/LanguageResolver.java [java]
+imports: org.apache.commons.lang3.StringUtils, org.springframework.stereotype.Component, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.reference.language.LanguageService, com.salesmanager.core.model.reference.language.Language
+class LanguageResolver
+  Language resolve(String lang)
+
+# reference-service/src/main/java/com/salesmanager/reference/support/ResourceNotFoundException.java [java]
+imports: org.springframework.http.HttpStatus, org.springframework.web.bind.annotation.ResponseStatus
+class ResourceNotFoundException
+
+# reference-service/src/main/java/com/salesmanager/reference/support/ServiceRuntimeException.java [java]
+class ServiceRuntimeException
+
+# reference-service/src/test/java/com/salesmanager/reference/ReferenceServiceApplicationTest.java [java]
+imports: org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get, org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath, org.springframework.test.web.servlet.result.MockMvcResultMatchers.status, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc, org.springframework.boot.test.context.SpringBootTest, org.springframework.test.context.ActiveProfiles, org.springframework.test.web.servlet.MockMvc
+class ReferenceServiceApplicationTest
+  void contextLoads_andHealthIsUp()
+
+# reference-service/src/test/java/com/salesmanager/reference/controller/ReferencesControllerTest.java [java]
+imports: org.hamcrest.Matchers.containsString, org.hamcrest.Matchers.hasSize, org.hamcrest.Matchers.not, org.mockito.ArgumentMatchers.any, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.when, org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get, org.springframework.test.web.servlet.result.MockMvcResultMatchers.content, org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath, org.springframework.test.web.servlet.result.MockMvcResultMatchers.status, java.util.Collections, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.springframework.http.MediaType, org.springframework.test.web.servlet.MockMvc, org.springframework.test.web.servlet.setup.MockMvcBuilders, com.salesmanager.contracts.reference.ReadableCountry, com.salesmanager.contracts.reference.ReadableCurrency, com.salesmanager.contracts.reference.ReadableLanguage, com.salesmanager.core.model.reference.language.Language, com.salesmanager.reference.facade.CountryFacade, com.salesmanager.reference.facade.CurrencyFacade, com.salesmanager.reference.facade.LanguageFacade, com.salesmanager.reference.facade.ZoneFacade, com.salesmanager.reference.support.LanguageResolver
+class ReferencesControllerTest
+  void setUp()
+  void getCountry_returnsReadableCountryList()
+  void getZones_unknownCode_returnsEmptyArray()
+  void getLanguages_returnsDtos()
+  void getCurrency_returnsDtos()
+  void getMeasures_returnsSizeReferences()
+
+# reference-service/src/test/java/com/salesmanager/reference/facade/CountryFacadeImplTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertFalse, org.mockito.Mockito.when, java.util.Collections, java.util.HashSet, java.util.List, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.InjectMocks, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.contracts.reference.ReadableCountry, com.salesmanager.core.business.services.reference.country.CountryService, com.salesmanager.core.model.reference.country.Country, com.salesmanager.core.model.reference.country.CountryDescription, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.reference.zone.Zone, com.salesmanager.core.model.reference.zone.ZoneDescription
+class CountryFacadeImplTest
+  void getListCountryZones_includesNestedZonesInDto()
+
+# reference-service/src/test/java/com/salesmanager/reference/facade/CurrencyFacadeImplTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertFalse, org.junit.jupiter.api.Assertions.assertThrows, org.junit.jupiter.api.Assertions.assertTrue, org.mockito.Mockito.when, java.util.Arrays, java.util.Collections, java.util.List, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.InjectMocks, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.contracts.reference.ReadableCurrency, com.salesmanager.core.business.services.reference.currency.CurrencyService, com.salesmanager.core.model.reference.currency.Currency, com.salesmanager.reference.support.ResourceNotFoundException
+class CurrencyFacadeImplTest
+  void getList_returnsReadableCurrencyNotJpaEntity()
+  void getList_empty_throwsNotFound()
+  Currency currency(String code, String name, boolean supported)
+
+# reference-service/src/test/java/com/salesmanager/reference/facade/LanguageFacadeImplTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertThrows, org.mockito.Mockito.when, java.util.Collections, java.util.List, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.InjectMocks, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.fasterxml.jackson.databind.JsonNode, com.fasterxml.jackson.databind.ObjectMapper, com.salesmanager.contracts.reference.ReadableLanguage, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.reference.language.LanguageService, com.salesmanager.core.model.reference.language.Language, com.salesmanager.reference.support.ResourceNotFoundException
+class LanguageFacadeImplTest
+  void getLanguages_returnsReadableLanguageWithIdCodeSortOrderOnly()
+  void getLanguages_empty_throwsNotFound()
+  void getLanguages_serviceFailure_wraps()
+
+# reference-service/src/test/java/com/salesmanager/reference/facade/ZoneFacadeImplTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertTrue, org.mockito.Mockito.when, java.util.Collections, java.util.List, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.InjectMocks, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.contracts.reference.ReadableZone, com.salesmanager.core.business.services.reference.zone.ZoneService, com.salesmanager.core.model.reference.country.Country, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.reference.zone.Zone
+class ZoneFacadeImplTest
+  void getZones_unknownCountry_returnsEmptyList()
+  void getZones_nullFromService_returnsEmptyList()
+  void getZones_mapsDto()
+
+# reference-service/src/test/java/com/salesmanager/reference/support/LanguageResolverTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.mockito.Mockito.when, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.InjectMocks, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.core.business.services.reference.language.LanguageService, com.salesmanager.core.model.reference.language.Language
+class LanguageResolverTest
+  void resolve_usesLangCodeWhenPresent()
+  void resolve_fallsBackToDefaultWhenBlank()
 
 # shopizer-api-contracts/src/main/java/com/salesmanager/contracts/catalog/NamedEntity.java [java]
 imports: java.io.Serializable, com.salesmanager.contracts.common.ShopEntity

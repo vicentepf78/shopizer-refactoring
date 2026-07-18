@@ -7,6 +7,7 @@ Keep only durable, cross-task context here. Do not duplicate facts that are obvi
 - `shopizer-api-contracts` holds common wrappers plus reference/tax DTOs and `ReferenceServiceClient` / `TaxServiceClient`.
 - `sm-shop-model` depends on `shopizer-api-contracts` (transitive to `sm-shop`); overlapping shop-model DTOs are `@Deprecated` aliases.
 - `sm-reference-core` and `sm-tax-core` are extracted; `sm-core` depends on both. `TaxService*` (calculate) remains in `sm-core` (ADR-003).
+- `reference-service` Boot app exists (:8081): depends on `sm-reference-core` + contracts; public P1 REST without JWT.
 
 ## Shared Decisions
 
@@ -25,6 +26,9 @@ Keep only durable, cross-task context here. Do not duplicate facts that are obvi
 - JaCoCo 0.8.8 check at 80% line coverage is configured on `shopizer-api-contracts` (`verify` phase).
 - After thin-core extraction, `./mvnw test -pl sm-core` (and siblings) needs `-am` (or a prior install); otherwise Maven looks for the new artifact on `repo.spring.io` and 401s.
 - Filtered `-Dtest=...` with `-am` needs `-DfailIfNoTests=false` or upstream modules without matching tests fail the reactor.
+- Do not put version-less Spring Boot starters in parent `dependencyManagement` — that clears the Boot BOM version and breaks modules that declare those starters.
+- On Java 21, JaCoCo needs ≥0.8.11 for Boot IT (0.8.8 hits “Unsupported class file major version 65”).
+- `reference-service` resolves language from `lang` (or default); `store` is accepted for path parity only — strangler BFF should pass `lang` when calling it.
 
 ## Open Risks
 
@@ -32,6 +36,6 @@ Keep only durable, cross-task context here. Do not duplicate facts that are obvi
 
 ## Handoffs
 
-- task_06: `reference-service` depends on `sm-reference-core` + contracts.
-- task_07: `tax-service` depends on `sm-tax-core` + contracts; map `TaxClassInUseException` → 409.
-- task_08: strangler adapters can import contracts types transitively from `sm-shop`.
+- task_07: `tax-service` depends on `sm-tax-core` + contracts; map `TaxClassInUseException` → 409; call `reference-service` via `wave1.reference-service.base-url` (8081).
+- task_08: strangler adapters can import contracts types transitively from `sm-shop`; reference HTTP paths match monolito `/api/v1/{country,zones,languages,currency,measures}`.
+- task_09: Pact provider tests target `reference-service` 5 endpoints.

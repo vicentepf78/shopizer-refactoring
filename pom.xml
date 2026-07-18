@@ -30,6 +30,7 @@
 		<module>sm-tax-core</module>
 		<module>sm-core</module>
 		<module>shopizer-api-contracts</module>
+		<module>reference-service</module>
 		<module>sm-shop-model</module>
 		<module>sm-shop</module>
 	</modules>
@@ -88,14 +89,7 @@
 	<dependencyManagement>
 		<dependencies>
 
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-starter-web</artifactId>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-starter-cache</artifactId>
-			</dependency>
+			<!-- spring-boot starters: versions from spring-boot-starter-parent BOM -->
 			<dependency>
 				<groupId>com.shopizer</groupId>
 				<artifactId>sm-core</artifactId>
