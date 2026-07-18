@@ -1,5 +1,5 @@
 ---
-status: pending
+status: completed
 title: Docker Compose, health, correlation e gate do reactor
 type: infra
 complexity: medium
@@ -29,11 +29,11 @@ Consolida TLC T28–T30. Fecha a Wave 1 com topologia Docker Compose (MySQL → 
 </requirements>
 
 ## Subtasks
-- [ ] 10.1 Criar `docker-compose-wave1.yml` e validar config
-- [ ] 10.2 Health indicators custom (reference DB; tax DB+reference)
-- [ ] 10.3 Filtros/propagação `X-Correlation-Id` nos 3 apps
-- [ ] 10.4 Gate `./mvnw clean install` + regressões Pact/TaxRate
-- [ ] 10.5 Checklist smoke de integração documentado
+- [x] 10.1 Criar `docker-compose-wave1.yml` e validar config
+- [x] 10.2 Health indicators custom (reference DB; tax DB+reference)
+- [x] 10.3 Filtros/propagação `X-Correlation-Id` nos 3 apps
+- [x] 10.4 Gate `./mvnw clean install` + regressões Pact/TaxRate
+- [x] 10.5 Checklist smoke de integração documentado
 
 ## Implementation Details
 Ver TechSpec: **Monitoramento e observabilidade**, **Dependências técnicas**, **Configuração**, **Ordem de build** passo 10, **Abordagem de testes** (gate reactor). Seed permanece no monolito (ADR-007).
@@ -63,11 +63,11 @@ Ver TechSpec: **Monitoramento e observabilidade**, **Dependências técnicas**, 
 
 ## Tests
 - Unit tests:
-  - [ ] `ReferenceHealthIndicator` reporta UP quando DB ok / DOWN quando DB falha
-  - [ ] `TaxHealthIndicator` DOWN quando reference HTTP falha mesmo com DB UP
-  - [ ] Correlation filter gera ID quando header ausente e propaga quando presente
+  - [x] `ReferenceHealthIndicator` reporta UP quando DB ok / DOWN quando DB falha
+  - [x] `TaxHealthIndicator` DOWN quando reference HTTP falha mesmo com DB UP
+  - [x] Correlation filter gera ID quando header ausente e propaga quando presente
 - Integration tests:
-  - [ ] `docker compose -f docker-compose-wave1.yml config` exit 0
+  - [x] `docker compose -f docker-compose-wave1.yml config` exit 0
   - [ ] `./mvnw clean install` passa no reactor
   - [ ] `TaxRateIntegrationTest` verde (profile monolith)
   - [ ] `Wave1ConsumerPactTest` verde

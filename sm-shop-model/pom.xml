@@ -48,6 +48,12 @@
   </developers>
 
   <dependencies>
+
+    <!-- Wave 1 canonical API DTOs / clients (transitive to sm-shop) -->
+    <dependency>
+      <groupId>com.shopizer</groupId>
+      <artifactId>shopizer-api-contracts</artifactId>
+    </dependency>
   
     <!-- sm-core-model -->
     <dependency>
@@ -74,6 +80,12 @@
     <dependency>
       <groupId>io.springfox</groupId>
       <artifactId>springfox-swagger2</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
     </dependency>
 
   </dependencies>

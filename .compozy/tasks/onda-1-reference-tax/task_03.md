@@ -1,5 +1,5 @@
 ---
-status: pending
+status: completed
 title: Wire sm-shop-model → shopizer-api-contracts
 type: backend
 complexity: low
@@ -27,10 +27,10 @@ Consolida TLC T6. Liga `sm-shop-model` ao JAR `shopizer-api-contracts` (TechSpec
 </requirements>
 
 ## Subtasks
-- [ ] 3.1 Adicionar dep `shopizer-api-contracts` em `sm-shop-model`
-- [ ] 3.2 Aplicar aliases/@Deprecated nos DTOs duplicados de reference/tax/entity
-- [ ] 3.3 Validar compile de `sm-shop-model` e `sm-shop -am`
-- [ ] 3.4 Smoke: classe do monolito resolve tipo contracts no classpath
+- [x] 3.1 Adicionar dep `shopizer-api-contracts` em `sm-shop-model`
+- [x] 3.2 Aplicar aliases/@Deprecated nos DTOs duplicados de reference/tax/entity
+- [x] 3.3 Validar compile de `sm-shop-model` e `sm-shop -am`
+- [x] 3.4 Smoke: classe do monolito resolve tipo contracts no classpath
 
 ## Implementation Details
 Ver TechSpec: **Análise de impacto** (`sm-shop-model`), **Ordem de build** passo 3. Preferir churn mínimo: dep Maven + aliases, sem reescrever todos os imports do monolito nesta task.
@@ -57,11 +57,11 @@ Ver TechSpec: **Análise de impacto** (`sm-shop-model`), **Ordem de build** pass
 
 ## Tests
 - Unit tests:
-  - [ ] Tipo contracts (`ReadableCountry` ou equivalente) é carregável a partir do classpath de `sm-shop-model`
-  - [ ] Alias/@Deprecated legado ainda resolve no compile (se re-export usado)
+  - [x] Tipo contracts (`ReadableCountry` ou equivalente) é carregável a partir do classpath de `sm-shop-model`
+  - [x] Alias/@Deprecated legado ainda resolve no compile (se re-export usado)
 - Integration tests:
-  - [ ] `./mvnw compile -pl sm-shop-model` passa
-  - [ ] `./mvnw compile -pl sm-shop -am` passa
+  - [x] `./mvnw compile -pl sm-shop-model` passa
+  - [x] `./mvnw compile -pl sm-shop -am` passa
 - Test coverage target: >=80% (código novo/alterado nesta task)
 - All tests must pass
 

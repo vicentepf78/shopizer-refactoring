@@ -26,8 +26,12 @@
 	<modules>
 		<module>sm-core-model</module>
 		<module>sm-core-modules</module>
+		<module>sm-reference-core</module>
+		<module>sm-tax-core</module>
 		<module>sm-core</module>
 		<module>shopizer-api-contracts</module>
+		<module>reference-service</module>
+		<module>tax-service</module>
 		<module>sm-shop-model</module>
 		<module>sm-shop</module>
 	</modules>
@@ -76,6 +80,9 @@
 		<!-- api documentation -->
 		<swagger.version>2.9.2</swagger.version>
 
+		<!-- Pact JVM (Wave 1 contract gates, task_09) -->
+		<pact.version>4.6.17</pact.version>
+
 		<!-- jacoco coverage -->
 		<coverage.lines>.30</coverage.lines>
 		<coverage.branches>.37</coverage.branches>
@@ -86,17 +93,20 @@
 	<dependencyManagement>
 		<dependencies>
 
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-starter-web</artifactId>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-starter-cache</artifactId>
-			</dependency>
+			<!-- spring-boot starters: versions from spring-boot-starter-parent BOM -->
 			<dependency>
 				<groupId>com.shopizer</groupId>
 				<artifactId>sm-core</artifactId>
+				<version>3.2.5</version>
+			</dependency>
+			<dependency>
+				<groupId>com.shopizer</groupId>
+				<artifactId>sm-reference-core</artifactId>
+				<version>3.2.5</version>
+			</dependency>
+			<dependency>
+				<groupId>com.shopizer</groupId>
+				<artifactId>sm-tax-core</artifactId>
 				<version>3.2.5</version>
 			</dependency>
 			<dependency>
@@ -371,6 +381,18 @@
 				<groupId>javax.annotation</groupId>
 				<artifactId>javax.annotation-api</artifactId>
 				<version>${javax.annotation}</version>
+			</dependency>
+
+			<!-- Pact JVM — consumer (sm-shop) / provider (reference-service, tax-service) -->
+			<dependency>
+				<groupId>au.com.dius.pact.consumer</groupId>
+				<artifactId>junit5</artifactId>
+				<version>${pact.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>au.com.dius.pact.provider</groupId>
+				<artifactId>junit5spring</artifactId>
+				<version>${pact.version}</version>
 			</dependency>
 
 		</dependencies>

@@ -1,0 +1,304 @@
+{
+  "consumer": {
+    "name": "sm-shop-wave1"
+  },
+  "interactions": [
+    {
+      "description": "get countries",
+      "providerStates": [
+        {
+          "name": "countries exist"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/api/v1/country",
+        "query": {
+          "lang": [
+            "en"
+          ],
+          "store": [
+            "DEFAULT"
+          ]
+        }
+      },
+      "response": {
+        "body": [
+          {
+            "code": "BR",
+            "id": 1,
+            "name": "Brazil"
+          }
+        ],
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "body": {
+            "$[0].code": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[0].id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$[0].name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "get currencies",
+      "providerStates": [
+        {
+          "name": "currencies exist"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/api/v1/currency"
+      },
+      "response": {
+        "body": [
+          {
+            "code": "BRL",
+            "id": 1,
+            "name": "Brazilian Real",
+            "supported": true,
+            "symbol": "R$"
+          }
+        ],
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "body": {
+            "$[0].code": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[0].id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$[0].name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[0].supported": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[0].symbol": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "get languages",
+      "providerStates": [
+        {
+          "name": "languages exist"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/api/v1/languages"
+      },
+      "response": {
+        "body": [
+          {
+            "code": "en",
+            "id": 1,
+            "sortOrder": 0
+          }
+        ],
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "body": {
+            "$[0].code": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[0].id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$[0].sortOrder": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "get measures",
+      "providerStates": [
+        {
+          "name": "measures available"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/api/v1/measures"
+      },
+      "response": {
+        "body": {
+          "measures": [
+            "CM",
+            "IN"
+          ],
+          "weights": [
+            "LB",
+            "KG"
+          ]
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "get zones by country code",
+      "providerStates": [
+        {
+          "name": "zones for country BR exist"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/api/v1/zones",
+        "query": {
+          "code": [
+            "BR"
+          ],
+          "lang": [
+            "en"
+          ],
+          "store": [
+            "DEFAULT"
+          ]
+        }
+      },
+      "response": {
+        "body": [
+          {
+            "code": "SP",
+            "countryCode": "BR",
+            "id": 10,
+            "name": "Sao Paulo"
+          }
+        ],
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "body": {
+            "$[0].code": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[0].countryCode": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[0].id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$[0].name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      }
+    }
+  ],
+  "metadata": {
+    "pact-jvm": {
+      "version": "4.6.17"
+    },
+    "pactSpecification": {
+      "version": "3.0.0"
+    }
+  },
+  "provider": {
+    "name": "reference-service"
+  }
+}

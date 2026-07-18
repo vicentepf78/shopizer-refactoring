@@ -1,5 +1,5 @@
 ---
-status: pending
+status: completed
 title: DTOs Reference/Tax e interfaces de client nos contracts
 type: backend
 complexity: medium
@@ -29,11 +29,11 @@ Consolida TLC T3–T5. Completa o passo 2 da **Ordem de build**: migra DTOs de r
 </requirements>
 
 ## Subtasks
-- [ ] 2.1 Migrar DTOs/enums reference e criar `ReadableCurrency`
-- [ ] 2.2 Migrar DTOs tax e `NamedEntity` slim
-- [ ] 2.3 Definir `ReferenceServiceClient` e `TaxServiceClient`
-- [ ] 2.4 Garantir ausência de imports JPA/core.model
-- [ ] 2.5 Testes de serialização dos DTOs-chave (currency, tax rate, language)
+- [x] 2.1 Migrar DTOs/enums reference e criar `ReadableCurrency`
+- [x] 2.2 Migrar DTOs tax e `NamedEntity` slim
+- [x] 2.3 Definir `ReferenceServiceClient` e `TaxServiceClient`
+- [x] 2.4 Garantir ausência de imports JPA/core.model
+- [x] 2.5 Testes de serialização dos DTOs-chave (currency, tax rate, language)
 
 ## Implementation Details
 Ver TechSpec: **Interfaces principais** (`ReferenceServiceClient`), **Modelos de dados**, **Endpoints da API**. Fontes: `sm-shop-model/.../model/references/*` e `.../model/tax/*`.
@@ -64,12 +64,12 @@ Ver TechSpec: **Interfaces principais** (`ReferenceServiceClient`), **Modelos de
 
 ## Tests
 - Unit tests:
-  - [ ] `ReadableCurrency` serializa id, code, name, symbol, supported
-  - [ ] `ReadableLanguage` JSON contém apenas id, code, sortOrder (sem campos JPA)
-  - [ ] `PersistableTaxRate` / `ReadableTaxRate` round-trip com descriptions i18n
-  - [ ] Assinaturas de `ReferenceServiceClient` aceitam apenas String codes (sem MerchantStore)
+  - [x] `ReadableCurrency` serializa id, code, name, symbol, supported
+  - [x] `ReadableLanguage` JSON contém apenas id, code, sortOrder (sem campos JPA)
+  - [x] `PersistableTaxRate` / `ReadableTaxRate` round-trip com descriptions i18n
+  - [x] Assinaturas de `ReferenceServiceClient` aceitam apenas String codes (sem MerchantStore)
 - Integration tests:
-  - [ ] `./mvnw compile -pl shopizer-api-contracts` passa
+  - [x] `./mvnw compile -pl shopizer-api-contracts` passa
 - Test coverage target: >=80%
 - All tests must pass
 

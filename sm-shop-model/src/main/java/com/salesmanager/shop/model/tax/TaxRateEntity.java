@@ -2,6 +2,11 @@ package com.salesmanager.shop.model.tax;
 
 import com.salesmanager.shop.model.entity.Entity;
 
+/**
+ * @deprecated Use {@link com.salesmanager.contracts.tax.TaxRateEntity} from shopizer-api-contracts.
+ * Kept as a compile-compatible legacy alias for the monolith.
+ */
+@Deprecated
 public class TaxRateEntity extends Entity {
 
 	/**

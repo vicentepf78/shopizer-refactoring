@@ -3,6 +3,11 @@ package com.salesmanager.shop.model.references;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @deprecated Use {@link com.salesmanager.contracts.reference.ReadableCountry} from shopizer-api-contracts.
+ * Kept as a compile-compatible legacy alias for the monolith.
+ */
+@Deprecated
 public class ReadableCountry extends CountryEntity {
 
 	/**

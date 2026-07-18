@@ -1,5 +1,5 @@
 ---
-status: pending
+status: completed
 title: Extrair sm-reference-core e rewire sm-core
 type: backend
 complexity: high
@@ -29,11 +29,11 @@ Consolida TLC T7–T9. Extrai repositories e services CRUD de Country/Zone/Langu
 </requirements>
 
 ## Subtasks
-- [ ] 4.1 Scaffold `sm-reference-core` + mover repositories de reference
-- [ ] 4.2 Mover services CRUD reference (excluir init/loader)
-- [ ] 4.3 Implementar overload `toLocale(Language, String countryCode)`
-- [ ] 4.4 Rewire `sm-core` (dep + remoção de classes movidas)
-- [ ] 4.5 Smoke `@DataJpaTest` + regressão `./mvnw test -pl sm-core`
+- [x] 4.1 Scaffold `sm-reference-core` + mover repositories de reference
+- [x] 4.2 Mover services CRUD reference (excluir init/loader)
+- [x] 4.3 Implementar overload `toLocale(Language, String countryCode)`
+- [x] 4.4 Rewire `sm-core` (dep + remoção de classes movidas)
+- [x] 4.5 Smoke `@DataJpaTest` + regressão `./mvnw test -pl sm-core`
 
 ## Implementation Details
 Ver TechSpec: **Arquitetura** (`sm-reference-core`), **Modelos de dados** (tabelas COUNTRY/ZONE/LANGUAGE/CURRENCY), **Ordem de build** passo 4, **Análise de impacto**. Inventário TLC T7–T9.
@@ -64,12 +64,12 @@ Ver TechSpec: **Arquitetura** (`sm-reference-core`), **Modelos de dados** (tabel
 
 ## Tests
 - Unit tests:
-  - [ ] `toLocale(Language, String countryCode)` produz Locale esperado para language+country codes válidos
-  - [ ] Service CRUD Language/Country não depende de MerchantStore na nova assinatura de toLocale
+  - [x] `toLocale(Language, String countryCode)` produz Locale esperado para language+country codes válidos
+  - [x] Service CRUD Language/Country não depende de MerchantStore na nova assinatura de toLocale
 - Integration tests:
-  - [ ] `@DataJpaTest` smoke em `CountryRepository` (ou equivalente) no sm-reference-core
-  - [ ] `./mvnw test -pl sm-core` — testes existentes verdes
-  - [ ] Init/loader ainda presente e compilável em sm-core
+  - [x] `@DataJpaTest` smoke em `CountryRepository` (ou equivalente) no sm-reference-core
+  - [x] `./mvnw test -pl sm-core` — testes existentes verdes
+  - [x] Init/loader ainda presente e compilável em sm-core
 - Test coverage target: >=80%
 - All tests must pass
 

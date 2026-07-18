@@ -1,5 +1,5 @@
 ---
-status: pending
+status: completed
 title: reference-service Boot, facades e REST
 type: backend
 complexity: high
@@ -29,11 +29,11 @@ Consolida TLC T13–T15. Entrega o executável `reference-service` (porta 8081) 
 </requirements>
 
 ## Subtasks
-- [ ] 6.1 Scaffold Boot app + packaging + health mínimo
-- [ ] 6.2 Portar facades e populators (Country/Zone/Language/Currency)
-- [ ] 6.3 Implementar `ReferencesController` com 5 endpoints
-- [ ] 6.4 Garantir respostas só-DTO (incl. `ReadableCurrency`)
-- [ ] 6.5 IT de API: 5 endpoints + zones desconhecido → 200 `[]`
+- [x] 6.1 Scaffold Boot app + packaging + health mínimo
+- [x] 6.2 Portar facades e populators (Country/Zone/Language/Currency)
+- [x] 6.3 Implementar `ReferencesController` com 5 endpoints
+- [x] 6.4 Garantir respostas só-DTO (incl. `ReadableCurrency`)
+- [x] 6.5 IT de API: 5 endpoints + zones desconhecido → 200 `[]`
 
 ## Implementation Details
 Ver TechSpec: **Endpoints da API** (reference-service), **Configuração** (`server.port=8081`), **Abordagem de testes** (IT reference-service), **Ordem de build** passo 6. Reutilizar comportamento de `ReferencesApi` do monolito como espelho de paths.
@@ -66,15 +66,15 @@ Ver TechSpec: **Endpoints da API** (reference-service), **Configuração** (`ser
 
 ## Tests
 - Unit tests:
-  - [ ] LanguageFacade retorna `ReadableLanguage` só com id/code/sortOrder
-  - [ ] CurrencyFacade retorna `ReadableCurrency` (não entidade Currency)
-  - [ ] CountryFacade inclui zones aninhadas no DTO
+  - [x] LanguageFacade retorna `ReadableLanguage` só com id/code/sortOrder
+  - [x] CurrencyFacade retorna `ReadableCurrency` (não entidade Currency)
+  - [x] CountryFacade inclui zones aninhadas no DTO
 - Integration tests:
-  - [ ] GET `/api/v1/country` → 200 lista `ReadableCountry`
-  - [ ] GET `/api/v1/zones?code=XX` (desconhecido) → 200 `[]`
-  - [ ] GET `/api/v1/languages`, `/currency`, `/measures` → 200 DTOs
-  - [ ] Resposta JSON não contém campos tipicamente JPA (ex.: hibernateLazyInitializer)
-  - [ ] `ReferenceServiceApplicationTest` / health UP
+  - [x] GET `/api/v1/country` → 200 lista `ReadableCountry`
+  - [x] GET `/api/v1/zones?code=XX` (desconhecido) → 200 `[]`
+  - [x] GET `/api/v1/languages`, `/currency`, `/measures` → 200 DTOs
+  - [x] Resposta JSON não contém campos tipicamente JPA (ex.: hibernateLazyInitializer)
+  - [x] `ReferenceServiceApplicationTest` / health UP
 - Test coverage target: >=80%
 - All tests must pass
 

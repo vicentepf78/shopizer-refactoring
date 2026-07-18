@@ -9,11 +9,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+import com.salesmanager.shop.strangler.support.DownstreamHttpException;
+import com.salesmanager.shop.strangler.support.ServiceUnavailableException;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice({"com.salesmanager.shop.store.api"})
@@ -95,6 +99,23 @@ public class RestErrorHandler {
         ErrorEntity errorEntity = createErrorEntity(exception.getErrorCode(), exception.getErrorMessage(),
                 exception.getLocalizedMessage());
         return errorEntity;
+    }
+
+    @RequestMapping(produces = "application/json")
+    @ExceptionHandler(ServiceUnavailableException.class)
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    public @ResponseBody ErrorEntity handleServiceUnavailable(ServiceUnavailableException exception) {
+        log.error(exception.getErrorMessage(), exception);
+        return createErrorEntity("503", exception.getErrorMessage(), exception.getLocalizedMessage());
+    }
+
+    @RequestMapping(produces = "application/json")
+    @ExceptionHandler(DownstreamHttpException.class)
+    public ResponseEntity<ErrorEntity> handleDownstream(DownstreamHttpException exception) {
+        log.error(exception.getErrorMessage(), exception);
+        ErrorEntity body = createErrorEntity(exception.getErrorCode(), exception.getErrorMessage(),
+                exception.getLocalizedMessage());
+        return ResponseEntity.status(exception.getStatus()).body(body);
     }
 
     private ErrorEntity createErrorEntity(String errorCode, String message, String detailMessage) {

@@ -1,0 +1,8 @@
+# Pre-build: ./mvnw -pl sm-shop -am package -DskipTests
+# Wave 1 compose image (does not replace legacy sm-shop/Dockerfile)
+FROM eclipse-temurin:11-jre-alpine
+RUN apk add --no-cache curl
+WORKDIR /app
+COPY target/shopizer.jar /app/app.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
