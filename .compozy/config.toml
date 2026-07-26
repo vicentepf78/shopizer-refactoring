@@ -1,6 +1,6 @@
 [defaults]
 ide = "cursor-agent"
-model = "composer-2.5"
+model = "composer-2.5-fast"
 auto_commit = true
 access_mode = "full"
 timeout = "60m"
