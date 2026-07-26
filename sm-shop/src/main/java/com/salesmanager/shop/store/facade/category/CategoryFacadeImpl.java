@@ -91,7 +91,15 @@ public class CategoryFacadeImpl implements CategoryFacade {
 
 			List<Category> categories = null;
 			ReadableCategoryList returnList = new ReadableCategoryList();
-			if (!CollectionUtils.isEmpty(filter) && filter.contains(FEATURED_CATEGORY)) {
+			if (language == null) {
+				categories = categoryService.getListByDepth(parent, depth);
+				if (!CollectionUtils.isEmpty(filter) && filter.contains(FEATURED_CATEGORY)) {
+					categories = categories.stream().filter(Category::isFeatured).collect(Collectors.toList());
+				}
+				returnList.setRecordsTotal(categories.size());
+				returnList.setNumber(categories.size());
+				returnList.setTotalPages(1);
+			} else if (!CollectionUtils.isEmpty(filter) && filter.contains(FEATURED_CATEGORY)) {
 				categories = categoryService.getListByDepthFilterByFeatured(parent, depth, language);
 				returnList.setRecordsTotal(categories.size());
 				returnList.setNumber(categories.size());
@@ -343,16 +351,24 @@ public class CategoryFacadeImpl implements CategoryFacade {
 		Validate.notNull(friendlyUrl, "Category search friendly URL must not be null");
 
 
-		Category category = categoryService.getBySeUrl(store, friendlyUrl, language);
-		
-		if(category == null) {
+		Category category;
+		if (language == null) {
+			List<Category> matches = categoryService.listBySeUrl(store, friendlyUrl);
+			category = CollectionUtils.isEmpty(matches) ? null : matches.get(0);
+		} else {
+			category = categoryService.getBySeUrl(store, friendlyUrl, language);
+		}
+
+		if (category == null) {
 			throw new ResourceNotFoundException("Category with friendlyUrl [" + friendlyUrl + "] was not found");
 		}
-		
+
+		if (language == null) {
+			return readableCategoryMapper.convert(category, store, language);
+		}
+
 		ReadableCategoryPopulator categoryPopulator = new ReadableCategoryPopulator();
 		ReadableCategory readableCategory = new ReadableCategory();
-		
-		
 		categoryPopulator.populate(category, readableCategory, store, language);
 
 		return readableCategory;

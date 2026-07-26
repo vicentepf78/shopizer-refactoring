@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-26 20:06 | 1702 files | 267762 tokens
+# rtt index | generated 2026-07-26 20:09 | 1703 files | 268000 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -15832,6 +15832,12 @@ imports: org.mockito.ArgumentMatchers.eq, org.mockito.ArgumentMatchers.isNull, o
 class SearchApiTest
   void search_withNullLanguage_passesNullLanguageCodeForAllLanguages()
   void autocomplete_withNullLanguage_passesNullLanguageCodeForAllLanguages()
+
+# sm-shop/src/test/java/com/salesmanager/shop/store/facade/category/CategoryFacadeImplTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertNotNull, org.mockito.ArgumentMatchers.eq, org.mockito.ArgumentMatchers.isNull, org.mockito.Mockito.verify, org.mockito.Mockito.when, java.util.Collections, java.util.List, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.InjectMocks, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.core.business.services.catalog.category.CategoryService, com.salesmanager.core.business.services.merchant.MerchantStoreService, com.salesmanager.core.model.catalog.category.Category, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.shop.mapper.catalog.ReadableCategoryMapper, com.salesmanager.shop.model.catalog.category.ReadableCategory, com.salesmanager.shop.model.catalog.category.ReadableCategoryList, com.salesmanager.shop.tenant.TenantEntityBridge
+class CategoryFacadeImplTest
+  void getCategoryHierarchy_withNullLanguageCode_usesDepthQueryWithoutLanguage()
+  void getCategoryByFriendlyUrl_withNullLanguageCode_usesListBySeUrlAndAllLangMapper()
 
 # sm-shop/src/test/java/com/salesmanager/shop/store/facade/order/OrderFacadeImplTenantBridgeTest.java [java]
 imports: org.junit.jupiter.api.Assertions.assertNotNull, org.mockito.ArgumentMatchers.any, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.verify, org.mockito.Mockito.when, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.InjectMocks, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.contracts.tenant.LanguageCode, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.core.model.customer.Customer, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.order.Order, com.salesmanager.core.model.reference.language.Language, com.salesmanager.shop.mapper.customer.ReadableCustomerMapper, com.salesmanager.shop.mapper.order.ReadableOrderProductMapper, com.salesmanager.shop.mapper.order.ReadableOrderTotalMapper, com.salesmanager.shop.model.customer.ReadableCustomer, com.salesmanager.shop.model.order.v1.ReadableOrderConfirmation, com.salesmanager.shop.tenant.TenantEntityBridge, com.salesmanager.shop.utils.LabelUtils
