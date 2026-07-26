@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-26 18:34 | 1674 files | 261886 tokens
+# rtt index | generated 2026-07-26 18:36 | 1666 files | 260035 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -12486,6 +12486,16 @@ class ReadableCountryPopulator
   ReadableCountry populate(Country source, ReadableCountry target, MerchantStore store, Language language)
   ReadableCountry createTarget()
 
+# sm-shop/src/main/java/com/salesmanager/shop/populator/references/ReadableCurrencyMapper.java [java]
+imports: com.salesmanager.contracts.reference.ReadableCurrency, com.salesmanager.core.model.reference.currency.Currency
+class ReadableCurrencyMapper
+  ReadableCurrency toDto(Currency source)
+
+# sm-shop/src/main/java/com/salesmanager/shop/populator/references/ReadableLanguageMapper.java [java]
+imports: com.salesmanager.contracts.reference.ReadableLanguage, com.salesmanager.core.model.reference.language.Language
+class ReadableLanguageMapper
+  ReadableLanguage toDto(Language source)
+
 # sm-shop/src/main/java/com/salesmanager/shop/populator/references/ReadableZonePopulator.java [java]
 imports: org.apache.commons.collections4.CollectionUtils, com.salesmanager.core.business.exception.ConversionException, com.salesmanager.core.business.utils.AbstractDataPopulator, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.reference.zone.Zone, com.salesmanager.core.model.reference.zone.ZoneDescription, com.salesmanager.shop.model.references.ReadableZone
 class ReadableZonePopulator
@@ -13492,13 +13502,13 @@ class ProductTypeApi
   void delete(@PathVariable Long id, @ApiIgnore MerchantStore merchantStore, @ApiIgnore Language language)
 
 # sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/references/ReferencesApi.java [java]
-imports: java.util.Arrays, java.util.List, javax.inject.Inject, javax.servlet.http.HttpServletRequest, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.web.bind.annotation.GetMapping, org.springframework.web.bind.annotation.RequestMapping, org.springframework.web.bind.annotation.RequestParam, org.springframework.web.bind.annotation.RestController, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.currency.Currency, com.salesmanager.core.model.reference.language.Language, com.salesmanager.shop.model.references.MeasureUnit, com.salesmanager.shop.model.references.ReadableCountry, com.salesmanager.shop.model.references.ReadableZone, com.salesmanager.shop.model.references.SizeReferences, com.salesmanager.shop.model.references.WeightUnit, com.salesmanager.shop.store.controller.country.facade.CountryFacade, com.salesmanager.shop.store.controller.currency.facade.CurrencyFacade, com.salesmanager.shop.store.controller.language.facade.LanguageFacade, com.salesmanager.shop.store.controller.store.facade.StoreFacade, com.salesmanager.shop.store.controller.zone.facade.ZoneFacade, com.salesmanager.shop.utils.LanguageUtils, springfox.documentation.annotations.ApiIgnore
+imports: java.util.Arrays, java.util.List, java.util.stream.Collectors, javax.inject.Inject, javax.servlet.http.HttpServletRequest, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.web.bind.annotation.GetMapping, org.springframework.web.bind.annotation.RequestMapping, org.springframework.web.bind.annotation.RequestParam, org.springframework.web.bind.annotation.RestController, com.salesmanager.contracts.reference.ReadableCurrency, com.salesmanager.contracts.reference.ReadableLanguage, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.shop.model.references.MeasureUnit, com.salesmanager.shop.populator.references.ReadableCurrencyMapper, com.salesmanager.shop.populator.references.ReadableLanguageMapper, com.salesmanager.shop.model.references.ReadableCountry, com.salesmanager.shop.model.references.ReadableZone, com.salesmanager.shop.model.references.SizeReferences, com.salesmanager.shop.model.references.WeightUnit, com.salesmanager.shop.store.controller.country.facade.CountryFacade, com.salesmanager.shop.store.controller.currency.facade.CurrencyFacade, com.salesmanager.shop.store.controller.language.facade.LanguageFacade, com.salesmanager.shop.store.controller.store.facade.StoreFacade, com.salesmanager.shop.store.controller.zone.facade.ZoneFacade, com.salesmanager.shop.utils.LanguageUtils, springfox.documentation.annotations.ApiIgnore
 class ReferencesApi
-  List<Language> getLanguages()
+  List<ReadableLanguage> getLanguages()
   List<ReadableCountry> getCountry(@ApiIgnore Language language, HttpServletRequest request)
   List<ReadableZone> getZones(
       @RequestParam("code") String code, @ApiIgnore Language language, HttpServletRequest request)
-  List<Currency> getCurrency()
+  List<ReadableCurrency> getCurrency()
   SizeReferences measures()
 
 # sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/search/SearchApi.java [java]
@@ -15589,6 +15599,19 @@ class CorrelationIdFilterTest
   void generatesIdWhenHeaderAbsent()
   void propagatesExistingHeader()
 
+# sm-shop/src/test/java/com/salesmanager/shop/populator/references/ReferenceDtoMappersTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.junit.jupiter.api.Test, com.salesmanager.contracts.reference.ReadableCurrency, com.salesmanager.contracts.reference.ReadableLanguage, com.salesmanager.core.model.reference.currency.Currency, com.salesmanager.core.model.reference.language.Language
+class ReferenceDtoMappersTest
+  void readableLanguageMapper_mapsEntityToContractDto()
+  void readableCurrencyMapper_mapsEntityToContractDto()
+
+# sm-shop/src/test/java/com/salesmanager/shop/store/api/v1/references/ReferencesApiTest.java [java]
+imports: org.hamcrest.Matchers.containsString, org.hamcrest.Matchers.hasSize, org.hamcrest.Matchers.not, org.mockito.Mockito.when, org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get, org.springframework.test.web.servlet.result.MockMvcResultMatchers.content, org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath, org.springframework.test.web.servlet.result.MockMvcResultMatchers.status, java.util.Collections, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.InjectMocks, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.springframework.http.MediaType, org.springframework.test.web.servlet.MockMvc, org.springframework.test.web.servlet.setup.MockMvcBuilders, com.salesmanager.core.model.reference.currency.Currency, com.salesmanager.core.model.reference.language.Language, com.salesmanager.shop.store.controller.country.facade.CountryFacade, com.salesmanager.shop.store.controller.currency.facade.CurrencyFacade, com.salesmanager.shop.store.controller.language.facade.LanguageFacade, com.salesmanager.shop.store.controller.store.facade.StoreFacade, com.salesmanager.shop.store.controller.zone.facade.ZoneFacade, com.salesmanager.shop.utils.LanguageUtils
+class ReferencesApiTest
+  void setUp()
+  void getLanguages_returnsReadableLanguageShapeWithoutJpaEntityFields()
+  void getCurrency_returnsReadableCurrencyShapeWithoutJpaEntityFields()
+
 # sm-shop/src/test/java/com/salesmanager/shop/store/facade/order/OrderFacadeImplTenantBridgeTest.java [java]
 imports: org.junit.jupiter.api.Assertions.assertNotNull, org.mockito.ArgumentMatchers.any, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.verify, org.mockito.Mockito.when, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.InjectMocks, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.contracts.tenant.LanguageCode, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.core.model.customer.Customer, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.order.Order, com.salesmanager.core.model.reference.language.Language, com.salesmanager.shop.mapper.customer.ReadableCustomerMapper, com.salesmanager.shop.mapper.order.ReadableOrderProductMapper, com.salesmanager.shop.mapper.order.ReadableOrderTotalMapper, com.salesmanager.shop.model.customer.ReadableCustomer, com.salesmanager.shop.model.order.v1.ReadableOrderConfirmation, com.salesmanager.shop.tenant.TenantEntityBridge, com.salesmanager.shop.utils.LabelUtils
 class OrderFacadeImplTenantBridgeTest
@@ -15852,6 +15875,12 @@ class ProductManagementAPIIntegrationTest
 imports: org.junit.Assert.assertNotNull, org.junit.Assert.assertTrue, org.springframework.http.HttpStatus.CREATED, java.math.BigDecimal, java.util.ArrayList, java.util.List, org.junit.Test, org.junit.runner.RunWith, org.springframework.boot.test.context.SpringBootTest, org.springframework.boot.test.context.SpringBootTest.WebEnvironment, org.springframework.http.HttpEntity, org.springframework.http.ResponseEntity, org.springframework.test.context.junit4.SpringRunner, com.salesmanager.core.business.constants.Constants, com.salesmanager.shop.application.ShopApplication, com.salesmanager.shop.model.catalog.category.Category, com.salesmanager.shop.model.catalog.category.CategoryDescription, com.salesmanager.shop.model.catalog.category.PersistableCategory, com.salesmanager.shop.model.catalog.product.attribute.PersistableProductOption, com.salesmanager.shop.model.catalog.product.attribute.PersistableProductOptionValue, com.salesmanager.shop.model.catalog.product.attribute.ProductOptionDescription, com.salesmanager.shop.model.catalog.product.attribute.ProductOptionValueDescription, com.salesmanager.shop.model.catalog.product.product.PersistableProduct, com.salesmanager.shop.model.catalog.product.product.ProductSpecification, com.salesmanager.shop.model.catalog.product.variation.PersistableProductVariation, com.salesmanager.test.shop.common.ServicesTestSupport
 class ProductV2ManagementAPIIntegrationTest
   void createProductWithCategory()
+
+# sm-shop/src/test/java/com/salesmanager/test/shop/integration/references/ReferencesApiIntegrationTest.java [java]
+imports: org.hamcrest.MatcherAssert.assertThat, org.hamcrest.Matchers.containsString, org.hamcrest.Matchers.greaterThanOrEqualTo, org.hamcrest.Matchers.is, org.hamcrest.Matchers.not, org.hamcrest.Matchers.notNullValue, org.junit.Assert.assertNotNull, javax.inject.Inject, org.junit.Test, org.junit.runner.RunWith, org.springframework.boot.test.context.SpringBootTest, org.springframework.boot.test.context.SpringBootTest.WebEnvironment, org.springframework.boot.test.web.client.TestRestTemplate, org.springframework.http.HttpEntity, org.springframework.http.HttpMethod, org.springframework.http.HttpStatus, org.springframework.http.ResponseEntity, org.springframework.test.context.junit4.SpringRunner, com.fasterxml.jackson.databind.JsonNode, com.fasterxml.jackson.databind.ObjectMapper, com.salesmanager.shop.application.ShopApplication, com.salesmanager.test.shop.common.ServicesTestSupport
+class ReferencesApiIntegrationTest
+  void getLanguages_returnsReadableLanguageShape()
+  void getCurrency_returnsReadableCurrencyShape()
 
 # sm-shop/src/test/java/com/salesmanager/test/shop/integration/search/SearchApiIntegrationTest.java [java]
 imports: org.hamcrest.core.Is.is, org.junit.Assert.assertThat, org.springframework.http.HttpStatus.CREATED, org.junit.Ignore, org.junit.Test, org.junit.runner.RunWith, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.test.context.SpringBootTest, org.springframework.boot.test.context.SpringBootTest.WebEnvironment, org.springframework.boot.test.web.client.TestRestTemplate, org.springframework.http.HttpEntity, org.springframework.http.ResponseEntity, org.springframework.test.context.junit4.SpringRunner, com.salesmanager.core.business.constants.Constants, com.salesmanager.shop.application.ShopApplication, com.salesmanager.shop.model.catalog.SearchProductList, com.salesmanager.shop.model.catalog.SearchProductRequest, com.salesmanager.shop.model.catalog.product.product.PersistableProduct, com.salesmanager.test.shop.common.ServicesTestSupport
