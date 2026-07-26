@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-26 10:29 | 1418 files | 216940 tokens
+# rtt index | generated 2026-07-26 10:37 | 1423 files | 218248 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -893,6 +893,364 @@ imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.As
 class TaxDtoJacksonTest
   void persistableAndReadableTaxRateRoundTripWithI18nDescriptions()
   void taxClassAndFullRateRoundTrip()
+
+# sm-content-core/src/main/java/com/salesmanager/core/business/modules/cms/common/AssetsManager.java [java]
+interface AssetsManager
+
+# sm-content-core/src/main/java/com/salesmanager/core/business/modules/cms/common/ImageGet.java [java]
+imports: com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.content.OutputContentFile, java.util.List
+interface ImageGet
+
+# sm-content-core/src/main/java/com/salesmanager/core/business/modules/cms/common/ImageRemove.java [java]
+imports: com.salesmanager.core.business.exception.ServiceException
+interface ImageRemove
+
+# sm-content-core/src/main/java/com/salesmanager/core/business/modules/cms/content/ContentAssetsManager.java [java]
+imports: java.io.ByteArrayOutputStream, java.io.Serializable, com.salesmanager.core.business.constants.Constants, com.salesmanager.core.business.modules.cms.common.AssetsManager, com.salesmanager.core.business.modules.cms.impl.CMSManager, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.content.OutputContentFile, org.apache.commons.lang3.StringUtils
+interface ContentAssetsManager
+
+# sm-content-core/src/main/java/com/salesmanager/core/business/modules/cms/content/ContentImageGet.java [java]
+imports: java.util.List, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.modules.cms.common.ImageGet, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.content.OutputContentFile
+interface ContentImageGet
+
+# sm-content-core/src/main/java/com/salesmanager/core/business/modules/cms/content/ContentImageRemove.java [java]
+imports: com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.modules.cms.common.ImageRemove, com.salesmanager.core.model.content.FileContentType
+interface ContentImageRemove
+
+# sm-content-core/src/main/java/com/salesmanager/core/business/modules/cms/content/FileGet.java [java]
+imports: java.util.List, java.util.Optional, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.content.OutputContentFile
+interface FileGet
+
+# sm-content-core/src/main/java/com/salesmanager/core/business/modules/cms/content/FilePut.java [java]
+imports: java.util.List, java.util.Optional, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.model.content.InputContentFile
+interface FilePut
+
+# sm-content-core/src/main/java/com/salesmanager/core/business/modules/cms/content/FileRemove.java [java]
+imports: java.util.Optional, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.model.content.FileContentType
+interface FileRemove
+
+# sm-content-core/src/main/java/com/salesmanager/core/business/modules/cms/content/FolderList.java [java]
+imports: java.util.List, java.util.Optional, com.salesmanager.core.business.exception.ServiceException
+interface FolderList
+
+# sm-content-core/src/main/java/com/salesmanager/core/business/modules/cms/content/FolderPut.java [java]
+imports: java.util.Optional, com.salesmanager.core.business.exception.ServiceException
+interface FolderPut
+
+# sm-content-core/src/main/java/com/salesmanager/core/business/modules/cms/content/FolderRemove.java [java]
+imports: java.util.Optional, com.salesmanager.core.business.exception.ServiceException
+interface FolderRemove
+
+# sm-content-core/src/main/java/com/salesmanager/core/business/modules/cms/content/ImagePut.java [java]
+imports: java.util.List, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.model.content.InputContentFile
+interface ImagePut
+
+# sm-content-core/src/main/java/com/salesmanager/core/business/modules/cms/content/StaticContentFileManager.java [java]
+class StaticContentFileManager
+
+# sm-content-core/src/main/java/com/salesmanager/core/business/modules/cms/content/StaticContentFileManagerImpl.java [java]
+imports: java.util.List, java.util.Optional, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.modules.cms.content.infinispan.CmsStaticContentFileManagerImpl, com.salesmanager.core.business.modules.cms.impl.CMSManager, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.content.InputContentFile, com.salesmanager.core.model.content.OutputContentFile
+class StaticContentFileManagerImpl
+  void addFile(final String merchantStoreCode, Optional<String> path, final InputContentFile inputContentFile)
+  void addFiles(final String merchantStoreCode, Optional<String> path, final List<InputContentFile> inputStaticContentDataList)
+  void removeFile(final String merchantStoreCode, final FileContentType staticContentType,
+			final String fileName, Optional<String> path)
+  OutputContentFile getFile(String merchantStoreCode, Optional<String> path, FileContentType fileContentType, String contentName)
+  List<String> getFileNames(String merchantStoreCode, Optional<String> path, FileContentType fileContentType)
+  List<OutputContentFile> getFiles(String merchantStoreCode, Optional<String> path, FileContentType fileContentType)
+  void removeFiles(String merchantStoreCode, Optional<String> path)
+  void setRemoveFile(FileRemove removeFile)
+  FileRemove getRemoveFile()
+  void setGetFile(FileGet getFile)
+  FileGet getGetFile()
+  void setUploadFile(FilePut uploadFile)
+  FilePut getUploadFile()
+  void removeFolder(String merchantStoreCode, String folderName, Optional<String> path)
+  void addFolder(String merchantStoreCode, String folderName, Optional<String> path)
+  FolderRemove getRemoveFolder()
+  void setRemoveFolder(FolderRemove removeFolder)
+  FolderPut getAddFolder()
+  void setAddFolder(FolderPut addFolder)
+  List<String> listFolders(String merchantStoreCode, Optional<String> path)
+  FolderList getListFolder()
+  void setListFolder(FolderList listFolder)
+  CMSManager getCmsManager()
+
+# sm-content-core/src/main/java/com/salesmanager/core/business/modules/cms/content/aws/S3StaticContentAssetsManagerImpl.java [java]
+imports: java.io.ByteArrayOutputStream, java.net.URLConnection, java.util.ArrayList, java.util.List, java.util.Optional, org.apache.commons.collections4.CollectionUtils, org.apache.commons.io.IOUtils, org.apache.commons.lang3.StringUtils, org.slf4j.Logger, org.slf4j.LoggerFactory, com.amazonaws.services.s3.AmazonS3, com.amazonaws.services.s3.AmazonS3ClientBuilder, com.amazonaws.services.s3.model.AmazonS3Exception, com.amazonaws.services.s3.model.Bucket, com.amazonaws.services.s3.model.CannedAccessControlList, com.amazonaws.services.s3.model.ListObjectsV2Request, com.amazonaws.services.s3.model.ListObjectsV2Result, com.amazonaws.services.s3.model.ObjectMetadata, com.amazonaws.services.s3.model.PutObjectRequest, com.amazonaws.services.s3.model.S3Object, com.amazonaws.services.s3.model.S3ObjectSummary, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.modules.cms.content.ContentAssetsManager, com.salesmanager.core.business.modules.cms.impl.CMSManager, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.content.InputContentFile, com.salesmanager.core.model.content.OutputContentFile
+class S3StaticContentAssetsManagerImpl
+  S3StaticContentAssetsManagerImpl getInstance()
+  OutputContentFile getFile(String merchantStoreCode, Optional<String> folderPath, FileContentType fileContentType, String contentName)
+  List<String> getFileNames(String merchantStoreCode, Optional<String> folderPath, FileContentType fileContentType)
+  List<OutputContentFile> getFiles(String merchantStoreCode, Optional<String> folderPath, FileContentType fileContentType)
+  void addFile(String merchantStoreCode, Optional<String> folderPath, InputContentFile inputStaticContentData)
+  void addFiles(String merchantStoreCode, Optional<String> folderPath, List<InputContentFile> inputStaticContentDataList)
+  void removeFile(String merchantStoreCode, FileContentType staticContentType, String fileName, Optional<String> folderPath)
+  void removeFiles(String merchantStoreCode, Optional<String> folderPath)
+  Bucket getBucket(String bucket_name)
+  Bucket createBucket(String bucket_name)
+  AmazonS3 s3Client()
+  String regionName()
+  CMSManager getCmsManager()
+  void setCmsManager(CMSManager cmsManager)
+  void addFolder(String merchantStoreCode, String folderName, Optional<String> folderPath)
+  void removeFolder(String merchantStoreCode, String folderName, Optional<String> folderPath)
+  List<String> listFolders(String merchantStoreCode, Optional<String> path)
+
+# sm-content-core/src/main/java/com/salesmanager/core/business/modules/cms/content/gcp/GCPDownloadsManagerImpl.java [java]
+imports: org.springframework.stereotype.Component
+class GCPDownloadsManagerImpl
+
+# sm-content-core/src/main/java/com/salesmanager/core/business/modules/cms/content/gcp/GCPStaticContentAssetsManagerImpl.java [java]
+imports: java.io.IOException, java.net.URLConnection, java.util.ArrayList, java.util.List, java.util.Optional, org.apache.commons.collections4.CollectionUtils, org.apache.commons.lang3.StringUtils, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.beans.factory.annotation.Autowired, org.springframework.beans.factory.annotation.Qualifier, org.springframework.stereotype.Component, com.google.api.gax.paging.Page, com.google.cloud.storage.Blob, com.google.cloud.storage.BlobId, com.google.cloud.storage.BlobInfo, com.google.cloud.storage.Bucket, com.google.cloud.storage.Storage, com.google.cloud.storage.StorageOptions, com.google.cloud.storage.Blob.BlobSourceOption, com.google.cloud.storage.Storage.BlobField, com.google.cloud.storage.Storage.BucketGetOption, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.modules.cms.content.ContentAssetsManager, com.salesmanager.core.business.modules.cms.impl.CMSManager, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.content.InputContentFile, com.salesmanager.core.model.content.OutputContentFile
+class GCPStaticContentAssetsManagerImpl
+  OutputContentFile getFile(String merchantStoreCode, Optional<String> folderPath, FileContentType fileContentType, String contentName)
+  List<String> getFileNames(String merchantStoreCode, Optional<String> folderPath, FileContentType fileContentType)
+  List<OutputContentFile> getFiles(String merchantStoreCode, Optional<String> folderPath, FileContentType fileContentType)
+  void addFile(String merchantStoreCode, Optional<String> folderPath, InputContentFile inputStaticContentData)
+  void addFiles(String merchantStoreCode, Optional<String> folderPath, List<InputContentFile> inputStaticContentDataList)
+  void removeFile(String merchantStoreCode, FileContentType staticContentType, String fileName, Optional<String> folderPath)
+  void removeFiles(String merchantStoreCode, Optional<String> folderPath)
+  CMSManager getCmsManager()
+  void setCmsManager(CMSManager cmsManager)
+  void addFolder(String merchantStoreCode, String folderName, Optional<String> folderPath)
+  void removeFolder(String merchantStoreCode, String folderName, Optional<String> folderPath)
+  List<String> listFolders(String merchantStoreCode, Optional<String> folderPath)
+
+# sm-content-core/src/main/java/com/salesmanager/core/business/modules/cms/content/infinispan/CmsStaticContentFileManagerImpl.java [java]
+imports: java.io.ByteArrayInputStream, java.io.ByteArrayOutputStream, java.io.InputStream, java.net.FileNameMap, java.net.URLConnection, java.util.ArrayList, java.util.Collections, java.util.List, java.util.Optional, javax.annotation.PostConstruct, org.apache.commons.io.IOUtils, org.infinispan.tree.Fqn, org.infinispan.tree.Node, org.slf4j.Logger, org.slf4j.LoggerFactory, com.salesmanager.core.business.constants.Constants, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.modules.cms.content.ContentAssetsManager, com.salesmanager.core.business.modules.cms.impl.CMSManager, com.salesmanager.core.business.modules.cms.impl.CacheManager, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.content.InputContentFile, com.salesmanager.core.model.content.OutputContentFile
+class CmsStaticContentFileManagerImpl
+  void stopFileManager()
+  void init()
+  CmsStaticContentFileManagerImpl getInstance()
+  void addFile(final String merchantStoreCode, Optional<String>path, final InputContentFile inputStaticContentData)
+  void addFiles(final String merchantStoreCode, Optional<String> path, final List<InputContentFile> inputStaticContentDataList)
+  OutputContentFile getFile(final String merchantStoreCode, Optional<String> path, final FileContentType fileContentType,
+			final String contentFileName)
+  List<OutputContentFile> getFiles(final String merchantStoreCode, Optional<String> path, final FileContentType staticContentType)
+  void removeFile(final String merchantStoreCode, final FileContentType staticContentType,
+			final String fileName, Optional<String> path)
+  void removeFiles(final String merchantStoreCode, Optional<String> path)
+  Node<String, Object> getNode(final String node)
+  String getNodePath(final String storeCode, final FileContentType contentType)
+  String getFolder(final String storeCode, String folder)
+  CacheManager getCacheManager()
+  void setCacheManager(CacheManager cacheManager)
+  List<String> getFileNames(final String merchantStoreCode, Optional<String> path, final FileContentType staticContentType)
+  void setRootName(String rootName)
+  String getRootName()
+  void addFolder(String merchantStoreCode, String folderName, Optional<String> path)
+  void removeFolder(String merchantStoreCode, String folderName, Optional<String> path)
+  List<String> listFolders(String merchantStoreCode, Optional<String> path)
+  CMSManager getCmsManager()
+
+# sm-content-core/src/main/java/com/salesmanager/core/business/modules/cms/content/local/CmsStaticContentFileManagerImpl.java [java]
+imports: java.io.IOException, java.net.URLConnection, java.nio.file.DirectoryStream, java.nio.file.Files, java.nio.file.Path, java.nio.file.Paths, java.nio.file.StandardCopyOption, java.util.ArrayList, java.util.List, java.util.Optional, javax.annotation.PostConstruct, org.apache.commons.lang3.StringUtils, org.slf4j.Logger, org.slf4j.LoggerFactory, com.salesmanager.core.business.constants.Constants, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.modules.cms.content.ContentAssetsManager, com.salesmanager.core.business.modules.cms.impl.CMSManager, com.salesmanager.core.business.modules.cms.impl.LocalCacheManagerImpl, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.content.InputContentFile, com.salesmanager.core.model.content.OutputContentFile
+class CmsStaticContentFileManagerImpl
+  void init()
+  CmsStaticContentFileManagerImpl getInstance()
+  void addFile(final String merchantStoreCode, Optional<String> folderPath,
+			final InputContentFile inputStaticContentData)
+  void addFiles(final String merchantStoreCode, Optional<String> folderPath,
+			final List<InputContentFile> inputStaticContentDataList)
+  OutputContentFile getFile(final String merchantStoreCode, Optional<String> folderPath,
+			final FileContentType fileContentType, final String contentFileName)
+  List<OutputContentFile> getFiles(final String merchantStoreCode, Optional<String> folderPath,
+			final FileContentType staticContentType)
+  void removeFile(final String merchantStoreCode, final FileContentType staticContentType,
+			final String fileName, Optional<String> folderPath)
+  void removeFiles(final String merchantStoreCode, Optional<String> folderPath)
+  List<String> getFileNames(final String merchantStoreCode, Optional<String> folderPath,
+			final FileContentType staticContentType)
+  void setRootName(String rootName)
+  String getRootName()
+  String buildRootPath()
+  void createDirectoryIfNorExist(Path path)
+  LocalCacheManagerImpl getCacheManager()
+  void setCacheManager(LocalCacheManagerImpl cacheManager)
+  void addFolder(String merchantStoreCode, String folderName, Optional<String> folderPath)
+  Path buildMerchantPath(String merchantCode)
+  void removeFolder(String merchantStoreCode, String folderName, Optional<String> folderPath)
+  List<String> listFolders(String merchantStoreCode, Optional<String> folderPath)
+  CMSManager getCmsManager()
+
+# sm-content-core/src/main/java/com/salesmanager/core/business/modules/cms/impl/CMSManager.java [java]
+interface CMSManager
+
+# sm-content-core/src/main/java/com/salesmanager/core/business/modules/cms/impl/CacheManager.java [java]
+imports: org.infinispan.manager.EmbeddedCacheManager, org.infinispan.tree.TreeCache
+interface CacheManager
+
+# sm-content-core/src/main/java/com/salesmanager/core/business/modules/cms/impl/CacheManagerImpl.java [java]
+imports: org.infinispan.Cache, org.infinispan.configuration.cache.Configuration, org.infinispan.configuration.cache.ConfigurationBuilder, org.infinispan.manager.EmbeddedCacheManager, org.infinispan.tree.TreeCache, org.infinispan.tree.TreeCacheFactory, org.slf4j.Logger, org.slf4j.LoggerFactory
+class CacheManagerImpl
+  void init(String namedCache, String locationFolder)
+  EmbeddedCacheManager getManager()
+  TreeCache getTreeCache()
+
+# sm-content-core/src/main/java/com/salesmanager/core/business/modules/cms/impl/GCPCacheManagerImpl.java [java]
+imports: org.springframework.beans.factory.annotation.Value, org.springframework.stereotype.Component
+class GCPCacheManagerImpl
+  String getRootName()
+  String getBucketName()
+  String getLocation()
+  void setBucketName(String bucketName)
+
+# sm-content-core/src/main/java/com/salesmanager/core/business/modules/cms/impl/LocalCacheManagerImpl.java [java]
+class LocalCacheManagerImpl
+  String getRootName()
+  String getLocation()
+
+# sm-content-core/src/main/java/com/salesmanager/core/business/modules/cms/impl/S3CacheManagerImpl.java [java]
+class S3CacheManagerImpl
+  String getRootName()
+  String getLocation()
+  String getBucketName()
+  String getRegionName()
+
+# sm-content-core/src/main/java/com/salesmanager/core/business/modules/cms/impl/StaticContentCacheManagerImpl.java [java]
+class StaticContentCacheManagerImpl
+  String getLocation()
+  String getRootName()
+
+# sm-content-core/src/main/java/com/salesmanager/core/business/modules/cms/impl/VendorCacheManager.java [java]
+imports: org.infinispan.manager.DefaultCacheManager, org.infinispan.manager.EmbeddedCacheManager, org.slf4j.Logger, org.slf4j.LoggerFactory
+class VendorCacheManager
+  VendorCacheManager getInstance()
+  EmbeddedCacheManager getManager()
+
+# sm-content-core/src/main/java/com/salesmanager/core/business/repositories/content/ContentRepository.java [java]
+imports: java.util.List, org.springframework.data.jpa.repository.JpaRepository, org.springframework.data.jpa.repository.Query, com.salesmanager.core.model.content.Content, com.salesmanager.core.model.content.ContentType
+interface ContentRepository
+
+# sm-content-core/src/main/java/com/salesmanager/core/business/repositories/content/ContentRepositoryCustom.java [java]
+imports: java.util.List, com.salesmanager.core.model.content.ContentDescription, com.salesmanager.core.model.content.ContentType, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language
+interface ContentRepositoryCustom
+
+# sm-content-core/src/main/java/com/salesmanager/core/business/repositories/content/ContentRepositoryImpl.java [java]
+imports: java.util.ArrayList, java.util.List, javax.persistence.EntityManager, javax.persistence.PersistenceContext, javax.persistence.Query, com.salesmanager.core.model.content.Content, com.salesmanager.core.model.content.ContentDescription, com.salesmanager.core.model.content.ContentType, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language
+class ContentRepositoryImpl
+  List<ContentDescription> listNameByType(List<ContentType> contentType, MerchantStore store, Language language)
+  ContentDescription getBySeUrl(MerchantStore store,String seUrl)
+
+# sm-content-core/src/main/java/com/salesmanager/core/business/repositories/content/PageContentRepository.java [java]
+imports: org.springframework.data.domain.Page, org.springframework.data.domain.Pageable, org.springframework.data.jpa.repository.Query, org.springframework.data.repository.PagingAndSortingRepository, com.salesmanager.core.model.content.Content, com.salesmanager.core.model.content.ContentType, com.salesmanager.core.model.merchant.MerchantStore
+interface PageContentRepository
+
+# sm-content-core/src/main/java/com/salesmanager/core/business/services/content/ContentService.java [java]
+imports: java.util.List, java.util.Optional, org.springframework.data.domain.Page, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.common.generic.SalesManagerEntityService, com.salesmanager.core.model.content.Content, com.salesmanager.core.model.content.ContentDescription, com.salesmanager.core.model.content.ContentType, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.content.InputContentFile, com.salesmanager.core.model.content.OutputContentFile, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language
+interface ContentService
+
+# sm-content-core/src/main/java/com/salesmanager/core/business/services/content/ContentServiceImpl.java [java]
+imports: java.io.ByteArrayInputStream, java.io.ByteArrayOutputStream, java.io.InputStream, java.net.URLConnection, java.util.List, java.util.Optional, java.util.regex.Pattern, javax.inject.Inject, org.apache.commons.lang3.Validate, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.beans.factory.annotation.Autowired, org.springframework.data.domain.Page, org.springframework.data.domain.PageRequest, org.springframework.data.domain.Pageable, org.springframework.stereotype.Service, org.springframework.util.Assert, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.modules.cms.content.StaticContentFileManager, com.salesmanager.core.business.repositories.content.ContentRepository, com.salesmanager.core.business.repositories.content.PageContentRepository, com.salesmanager.core.business.services.common.generic.SalesManagerEntityServiceImpl, com.salesmanager.core.model.content.Content, com.salesmanager.core.model.content.ContentDescription, com.salesmanager.core.model.content.ContentType, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.content.InputContentFile, com.salesmanager.core.model.content.OutputContentFile, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language
+class ContentServiceImpl
+  List<Content> listByType(ContentType contentType, MerchantStore store, Language language)
+  void delete(Content content)
+  Content getByLanguage(Long id, Language language)
+  List<Content> listByType(List<ContentType> contentType, MerchantStore store, Language language)
+  List<ContentDescription> listNameByType(List<ContentType> contentType, MerchantStore store,
+			Language language)
+  List<Content> listByType(List<ContentType> contentType, MerchantStore store)
+  Content getByCode(String code, MerchantStore store)
+  Content getById(Long id)
+  void saveOrUpdate(final Content content)
+  Content getByCode(String code, MerchantStore store, Language language)
+  void addContentFile(String merchantStoreCode, InputContentFile contentFile)
+  void addLogo(String merchantStoreCode, InputContentFile cmsContentImage)
+  void addOptionImage(String merchantStoreCode, InputContentFile cmsContentImage)
+  void addImage(String merchantStoreCode, InputContentFile contentImage)
+  void addFile(final String merchantStoreCode, InputContentFile contentImage)
+  void addContentFiles(String merchantStoreCode, List<InputContentFile> contentFilesList)
+  void removeFile(String merchantStoreCode, FileContentType fileContentType, String fileName)
+  void removeFile(String storeCode, String fileName)
+  void removeFiles(String merchantStoreCode)
+  OutputContentFile getContentFile(String merchantStoreCode, FileContentType fileContentType, String fileName)
+  List<OutputContentFile> getContentFiles(String merchantStoreCode, FileContentType fileContentType)
+  List<String> getContentFilesNames(String merchantStoreCode, FileContentType fileContentType)
+  ContentDescription getBySeUrl(MerchantStore store, String seUrl)
+  List<Content> getByCodeLike(ContentType type, String codeLike, MerchantStore store, Language language)
+  Content getById(Long id, MerchantStore store, Language language)
+  Content getById(Long id, MerchantStore store)
+  void addFolder(MerchantStore store, Optional<String> path, String folderName)
+  List<String> listFolders(MerchantStore store, Optional<String> path)
+  void removeFolder(MerchantStore store, Optional<String> path, String folderName)
+  boolean isValidLinuxDirectory(String path)
+  void renameFile(String merchantStoreCode, FileContentType fileContentType, Optional<String> path,
+			String originalName, String newName)
+  Page<Content> listByType(ContentType contentType, MerchantStore store, int page, int count)
+  Page<Content> listByType(ContentType contentType, MerchantStore store, Language language, int page,
+			int count)
+  boolean exists(String code, ContentType type, MerchantStore store)
+
+# sm-content-core/src/test/java/com/salesmanager/core/business/NoProductFileManagerInModuleTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertFalse, java.io.IOException, java.nio.file.Files, java.nio.file.Path, java.nio.file.Paths, java.util.stream.Stream, org.junit.jupiter.api.Test
+class NoProductFileManagerInModuleTest
+  void moduleSourcesAndResourcesExcludeProductFileManager()
+  boolean containsProductFileManager(Path root)
+
+# sm-content-core/src/test/java/com/salesmanager/core/business/modules/cms/ContentCmsBeansTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertNotNull, org.junit.jupiter.api.Assertions.assertThrows, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.springframework.beans.factory.NoSuchBeanDefinitionException, org.springframework.beans.factory.annotation.Autowired, org.springframework.beans.factory.annotation.Qualifier, org.springframework.context.annotation.Bean, org.springframework.context.annotation.Configuration, org.springframework.context.annotation.ImportResource, org.springframework.context.annotation.PropertySource, org.springframework.context.support.PropertySourcesPlaceholderConfigurer, org.springframework.test.context.ContextConfiguration, org.springframework.test.context.junit.jupiter.SpringExtension, com.salesmanager.core.business.modules.cms.content.StaticContentFileManager
+class ContentCmsBeansTest
+  class CmsConfig
+  void contentFileManagerResolvesViaImportResource()
+  void productFileManagerBeanIsNotRegistered()
+
+# sm-content-core/src/test/java/com/salesmanager/core/business/repositories/content/ContentRepositoryImplTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertNotNull, org.junit.jupiter.api.Assertions.assertThrows, java.util.Collections, java.util.List, javax.persistence.EntityManager, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.autoconfigure.domain.EntityScan, org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest, org.springframework.data.jpa.repository.config.EnableJpaRepositories, org.springframework.test.context.ContextConfiguration, com.salesmanager.core.model.content.Content, com.salesmanager.core.model.content.ContentDescription, com.salesmanager.core.model.content.ContentType, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.country.Country, com.salesmanager.core.model.reference.currency.Currency, com.salesmanager.core.model.reference.language.Language
+class ContentRepositoryImplTest
+  class Config
+  void seedStore()
+  void listNameByType_returnsVisibleContentDescriptions()
+  void getBySeUrl_returnsMatchingDescription()
+  void getBySeUrl_whenMissing_throwsEmptyResult()
+  Content visibleContent(String code, ContentType type, String name, String seUrl)
+
+# sm-content-core/src/test/java/com/salesmanager/core/business/repositories/content/ContentRepositoryTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertNotNull, javax.persistence.EntityManager, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.autoconfigure.domain.EntityScan, org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest, org.springframework.data.jpa.repository.config.EnableJpaRepositories, org.springframework.test.context.ContextConfiguration, com.salesmanager.core.model.content.Content, com.salesmanager.core.model.content.ContentType, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.country.Country, com.salesmanager.core.model.reference.currency.Currency, com.salesmanager.core.model.reference.language.Language
+class ContentRepositoryTest
+  class Config
+  void findByCode_returnsPersistedContent()
+
+# sm-content-core/src/test/java/com/salesmanager/core/business/services/content/ContentServiceImplTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertFalse, org.junit.jupiter.api.Assertions.assertSame, org.junit.jupiter.api.Assertions.assertThrows, org.junit.jupiter.api.Assertions.assertTrue, org.mockito.ArgumentMatchers.any, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.verify, org.mockito.Mockito.when, org.mockito.Mockito.never, java.io.ByteArrayInputStream, java.lang.reflect.Field, java.util.Arrays, java.util.Collections, java.util.List, java.util.Optional, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.springframework.data.domain.Page, org.springframework.data.domain.PageImpl, org.springframework.data.domain.PageRequest, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.modules.cms.content.StaticContentFileManager, com.salesmanager.core.business.repositories.content.ContentRepository, com.salesmanager.core.business.repositories.content.PageContentRepository, com.salesmanager.core.model.content.Content, com.salesmanager.core.model.content.ContentDescription
+class ContentServiceImplTest
+  void setUp()
+  void pageAndBoxQueries_usePageContentRepository_notProductFileManager()
+  void listByType_delegatesToContentRepository()
+  void getByCodeAndLanguage_delegatesToRepository()
+  void getById_withStore_filtersOtherStores()
+  void addLogo_delegatesToContentFileManager()
+  void getContentFile_delegatesToContentFileManager()
+  void addFolder_invalidPath_throwsServiceException()
+  void addFolder_validPath_delegatesToContentFileManager()
+  void renameFile_whenMissing_throwsServiceException()
+  void isValidLinuxDirectory_acceptsAbsolutePaths()
+  void exists_whenPresent_returnsTrue()
+  void exists_whenAbsent_returnsFalse()
+  void getBySeUrl_delegatesToRepository()
+  void listFolders_delegatesToContentFileManager()
+  void saveOrUpdate_newEntity_saves()
+  void saveOrUpdate_existingEntity_updates()
+  void delete_loadsAndRemovesEntity()
+  void getByLanguage_delegatesToRepository()
+  void listByTypes_delegatesToRepository()
+  void getByCodeLike_delegatesToRepository()
+  void removeFiles_delegatesToContentFileManager()
+  void getContentFilesNames_delegatesToContentFileManager()
+  void addContentFile_image_delegatesToContentFileManager()
+  void addContentFile_staticFile_delegatesToContentFileManager()
+  void addContentFiles_delegatesToContentFileManager()
+  void getContentFiles_delegatesToContentFileManager()
+  void removeFile_byName_delegatesToContentFileManager()
+  void renameFile_whenPresent_replacesFile()
+  void addOptionImage_setsPropertyType()
+  void removeFolder_delegatesToContentFileManager()
+  boolean hasProductFileManagerField()
+  void setField(Object target, String name, Object value)
+  MerchantStore store(int id)
+  Language language(int id)
+  Content content(String code, ContentType type)
+  InputContentFile inputFile(String name)
 
 # sm-core-model/.mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -3737,240 +4095,15 @@ class ShippingConstants
 # sm-core/src/main/java/com/salesmanager/core/business/constants/SystemConstants.java [java]
 class SystemConstants
 
-# sm-core/src/main/java/com/salesmanager/core/business/modules/cms/common/AssetsManager.java [java]
-interface AssetsManager
-
-# sm-core/src/main/java/com/salesmanager/core/business/modules/cms/common/ImageGet.java [java]
-imports: com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.content.OutputContentFile, java.util.List
-interface ImageGet
-
-# sm-core/src/main/java/com/salesmanager/core/business/modules/cms/common/ImageRemove.java [java]
-imports: com.salesmanager.core.business.exception.ServiceException
-interface ImageRemove
-
-# sm-core/src/main/java/com/salesmanager/core/business/modules/cms/content/ContentAssetsManager.java [java]
-imports: java.io.ByteArrayOutputStream, java.io.Serializable, com.salesmanager.core.business.constants.Constants, com.salesmanager.core.business.modules.cms.common.AssetsManager, com.salesmanager.core.business.modules.cms.impl.CMSManager, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.content.OutputContentFile, org.apache.commons.lang3.StringUtils
-interface ContentAssetsManager
-
-# sm-core/src/main/java/com/salesmanager/core/business/modules/cms/content/ContentImageGet.java [java]
-imports: java.util.List, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.modules.cms.common.ImageGet, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.content.OutputContentFile
-interface ContentImageGet
-
-# sm-core/src/main/java/com/salesmanager/core/business/modules/cms/content/ContentImageRemove.java [java]
-imports: com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.modules.cms.common.ImageRemove, com.salesmanager.core.model.content.FileContentType
-interface ContentImageRemove
-
-# sm-core/src/main/java/com/salesmanager/core/business/modules/cms/content/FileGet.java [java]
-imports: java.util.List, java.util.Optional, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.content.OutputContentFile
-interface FileGet
-
-# sm-core/src/main/java/com/salesmanager/core/business/modules/cms/content/FilePut.java [java]
-imports: java.util.List, java.util.Optional, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.model.content.InputContentFile
-interface FilePut
-
-# sm-core/src/main/java/com/salesmanager/core/business/modules/cms/content/FileRemove.java [java]
-imports: java.util.Optional, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.model.content.FileContentType
-interface FileRemove
-
-# sm-core/src/main/java/com/salesmanager/core/business/modules/cms/content/FolderList.java [java]
-imports: java.util.List, java.util.Optional, com.salesmanager.core.business.exception.ServiceException
-interface FolderList
-
-# sm-core/src/main/java/com/salesmanager/core/business/modules/cms/content/FolderPut.java [java]
-imports: java.util.Optional, com.salesmanager.core.business.exception.ServiceException
-interface FolderPut
-
-# sm-core/src/main/java/com/salesmanager/core/business/modules/cms/content/FolderRemove.java [java]
-imports: java.util.Optional, com.salesmanager.core.business.exception.ServiceException
-interface FolderRemove
-
-# sm-core/src/main/java/com/salesmanager/core/business/modules/cms/content/ImagePut.java [java]
-imports: java.util.List, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.model.content.InputContentFile
-interface ImagePut
-
-# sm-core/src/main/java/com/salesmanager/core/business/modules/cms/content/StaticContentFileManager.java [java]
-class StaticContentFileManager
-
-# sm-core/src/main/java/com/salesmanager/core/business/modules/cms/content/StaticContentFileManagerImpl.java [java]
-imports: java.util.List, java.util.Optional, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.modules.cms.content.infinispan.CmsStaticContentFileManagerImpl, com.salesmanager.core.business.modules.cms.impl.CMSManager, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.content.InputContentFile, com.salesmanager.core.model.content.OutputContentFile
-class StaticContentFileManagerImpl
-  void addFile(final String merchantStoreCode, Optional<String> path, final InputContentFile inputContentFile)
-  void addFiles(final String merchantStoreCode, Optional<String> path, final List<InputContentFile> inputStaticContentDataList)
-  void removeFile(final String merchantStoreCode, final FileContentType staticContentType,
-			final String fileName, Optional<String> path)
-  OutputContentFile getFile(String merchantStoreCode, Optional<String> path, FileContentType fileContentType, String contentName)
-  List<String> getFileNames(String merchantStoreCode, Optional<String> path, FileContentType fileContentType)
-  List<OutputContentFile> getFiles(String merchantStoreCode, Optional<String> path, FileContentType fileContentType)
-  void removeFiles(String merchantStoreCode, Optional<String> path)
-  void setRemoveFile(FileRemove removeFile)
-  FileRemove getRemoveFile()
-  void setGetFile(FileGet getFile)
-  FileGet getGetFile()
-  void setUploadFile(FilePut uploadFile)
-  FilePut getUploadFile()
-  void removeFolder(String merchantStoreCode, String folderName, Optional<String> path)
-  void addFolder(String merchantStoreCode, String folderName, Optional<String> path)
-  FolderRemove getRemoveFolder()
-  void setRemoveFolder(FolderRemove removeFolder)
-  FolderPut getAddFolder()
-  void setAddFolder(FolderPut addFolder)
-  List<String> listFolders(String merchantStoreCode, Optional<String> path)
-  FolderList getListFolder()
-  void setListFolder(FolderList listFolder)
-  CMSManager getCmsManager()
-
-# sm-core/src/main/java/com/salesmanager/core/business/modules/cms/content/aws/S3StaticContentAssetsManagerImpl.java [java]
-imports: java.io.ByteArrayOutputStream, java.net.URLConnection, java.util.ArrayList, java.util.List, java.util.Optional, org.apache.commons.collections4.CollectionUtils, org.apache.commons.io.IOUtils, org.apache.commons.lang3.StringUtils, org.slf4j.Logger, org.slf4j.LoggerFactory, com.amazonaws.services.s3.AmazonS3, com.amazonaws.services.s3.AmazonS3ClientBuilder, com.amazonaws.services.s3.model.AmazonS3Exception, com.amazonaws.services.s3.model.Bucket, com.amazonaws.services.s3.model.CannedAccessControlList, com.amazonaws.services.s3.model.ListObjectsV2Request, com.amazonaws.services.s3.model.ListObjectsV2Result, com.amazonaws.services.s3.model.ObjectMetadata, com.amazonaws.services.s3.model.PutObjectRequest, com.amazonaws.services.s3.model.S3Object, com.amazonaws.services.s3.model.S3ObjectSummary, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.modules.cms.content.ContentAssetsManager, com.salesmanager.core.business.modules.cms.impl.CMSManager, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.content.InputContentFile, com.salesmanager.core.model.content.OutputContentFile
-class S3StaticContentAssetsManagerImpl
-  S3StaticContentAssetsManagerImpl getInstance()
-  OutputContentFile getFile(String merchantStoreCode, Optional<String> folderPath, FileContentType fileContentType, String contentName)
-  List<String> getFileNames(String merchantStoreCode, Optional<String> folderPath, FileContentType fileContentType)
-  List<OutputContentFile> getFiles(String merchantStoreCode, Optional<String> folderPath, FileContentType fileContentType)
-  void addFile(String merchantStoreCode, Optional<String> folderPath, InputContentFile inputStaticContentData)
-  void addFiles(String merchantStoreCode, Optional<String> folderPath, List<InputContentFile> inputStaticContentDataList)
-  void removeFile(String merchantStoreCode, FileContentType staticContentType, String fileName, Optional<String> folderPath)
-  void removeFiles(String merchantStoreCode, Optional<String> folderPath)
-  Bucket getBucket(String bucket_name)
-  Bucket createBucket(String bucket_name)
-  AmazonS3 s3Client()
-  String regionName()
-  CMSManager getCmsManager()
-  void setCmsManager(CMSManager cmsManager)
-  void addFolder(String merchantStoreCode, String folderName, Optional<String> folderPath)
-  void removeFolder(String merchantStoreCode, String folderName, Optional<String> folderPath)
-  List<String> listFolders(String merchantStoreCode, Optional<String> path)
-
-# sm-core/src/main/java/com/salesmanager/core/business/modules/cms/content/gcp/GCPDownloadsManagerImpl.java [java]
-imports: org.springframework.stereotype.Component
-class GCPDownloadsManagerImpl
-
-# sm-core/src/main/java/com/salesmanager/core/business/modules/cms/content/gcp/GCPStaticContentAssetsManagerImpl.java [java]
-imports: java.io.IOException, java.net.URLConnection, java.util.ArrayList, java.util.List, java.util.Optional, org.apache.commons.collections4.CollectionUtils, org.apache.commons.lang3.StringUtils, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.beans.factory.annotation.Autowired, org.springframework.beans.factory.annotation.Qualifier, org.springframework.stereotype.Component, com.google.api.gax.paging.Page, com.google.cloud.storage.Blob, com.google.cloud.storage.BlobId, com.google.cloud.storage.BlobInfo, com.google.cloud.storage.Bucket, com.google.cloud.storage.Storage, com.google.cloud.storage.StorageOptions, com.google.cloud.storage.Blob.BlobSourceOption, com.google.cloud.storage.Storage.BlobField, com.google.cloud.storage.Storage.BucketGetOption, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.modules.cms.content.ContentAssetsManager, com.salesmanager.core.business.modules.cms.impl.CMSManager, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.content.InputContentFile, com.salesmanager.core.model.content.OutputContentFile
-class GCPStaticContentAssetsManagerImpl
-  OutputContentFile getFile(String merchantStoreCode, Optional<String> folderPath, FileContentType fileContentType, String contentName)
-  List<String> getFileNames(String merchantStoreCode, Optional<String> folderPath, FileContentType fileContentType)
-  List<OutputContentFile> getFiles(String merchantStoreCode, Optional<String> folderPath, FileContentType fileContentType)
-  void addFile(String merchantStoreCode, Optional<String> folderPath, InputContentFile inputStaticContentData)
-  void addFiles(String merchantStoreCode, Optional<String> folderPath, List<InputContentFile> inputStaticContentDataList)
-  void removeFile(String merchantStoreCode, FileContentType staticContentType, String fileName, Optional<String> folderPath)
-  void removeFiles(String merchantStoreCode, Optional<String> folderPath)
-  CMSManager getCmsManager()
-  void setCmsManager(CMSManager cmsManager)
-  void addFolder(String merchantStoreCode, String folderName, Optional<String> folderPath)
-  void removeFolder(String merchantStoreCode, String folderName, Optional<String> folderPath)
-  List<String> listFolders(String merchantStoreCode, Optional<String> folderPath)
-
-# sm-core/src/main/java/com/salesmanager/core/business/modules/cms/content/infinispan/CmsStaticContentFileManagerImpl.java [java]
-imports: java.io.ByteArrayInputStream, java.io.ByteArrayOutputStream, java.io.InputStream, java.net.FileNameMap, java.net.URLConnection, java.util.ArrayList, java.util.Collections, java.util.List, java.util.Optional, javax.annotation.PostConstruct, org.apache.commons.io.IOUtils, org.infinispan.tree.Fqn, org.infinispan.tree.Node, org.slf4j.Logger, org.slf4j.LoggerFactory, com.salesmanager.core.business.constants.Constants, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.modules.cms.content.ContentAssetsManager, com.salesmanager.core.business.modules.cms.impl.CMSManager, com.salesmanager.core.business.modules.cms.impl.CacheManager, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.content.InputContentFile, com.salesmanager.core.model.content.OutputContentFile
-class CmsStaticContentFileManagerImpl
-  void stopFileManager()
-  void init()
-  CmsStaticContentFileManagerImpl getInstance()
-  void addFile(final String merchantStoreCode, Optional<String>path, final InputContentFile inputStaticContentData)
-  void addFiles(final String merchantStoreCode, Optional<String> path, final List<InputContentFile> inputStaticContentDataList)
-  OutputContentFile getFile(final String merchantStoreCode, Optional<String> path, final FileContentType fileContentType,
-			final String contentFileName)
-  List<OutputContentFile> getFiles(final String merchantStoreCode, Optional<String> path, final FileContentType staticContentType)
-  void removeFile(final String merchantStoreCode, final FileContentType staticContentType,
-			final String fileName, Optional<String> path)
-  void removeFiles(final String merchantStoreCode, Optional<String> path)
-  Node<String, Object> getNode(final String node)
-  String getNodePath(final String storeCode, final FileContentType contentType)
-  String getFolder(final String storeCode, String folder)
-  CacheManager getCacheManager()
-  void setCacheManager(CacheManager cacheManager)
-  List<String> getFileNames(final String merchantStoreCode, Optional<String> path, final FileContentType staticContentType)
-  void setRootName(String rootName)
-  String getRootName()
-  void addFolder(String merchantStoreCode, String folderName, Optional<String> path)
-  void removeFolder(String merchantStoreCode, String folderName, Optional<String> path)
-  List<String> listFolders(String merchantStoreCode, Optional<String> path)
-  CMSManager getCmsManager()
-
-# sm-core/src/main/java/com/salesmanager/core/business/modules/cms/content/local/CmsStaticContentFileManagerImpl.java [java]
-imports: java.io.IOException, java.net.URLConnection, java.nio.file.DirectoryStream, java.nio.file.Files, java.nio.file.Path, java.nio.file.Paths, java.nio.file.StandardCopyOption, java.util.ArrayList, java.util.List, java.util.Optional, javax.annotation.PostConstruct, org.apache.commons.lang3.StringUtils, org.slf4j.Logger, org.slf4j.LoggerFactory, com.salesmanager.core.business.constants.Constants, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.modules.cms.content.ContentAssetsManager, com.salesmanager.core.business.modules.cms.impl.CMSManager, com.salesmanager.core.business.modules.cms.impl.LocalCacheManagerImpl, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.content.InputContentFile, com.salesmanager.core.model.content.OutputContentFile
-class CmsStaticContentFileManagerImpl
-  void init()
-  CmsStaticContentFileManagerImpl getInstance()
-  void addFile(final String merchantStoreCode, Optional<String> folderPath,
-			final InputContentFile inputStaticContentData)
-  void addFiles(final String merchantStoreCode, Optional<String> folderPath,
-			final List<InputContentFile> inputStaticContentDataList)
-  OutputContentFile getFile(final String merchantStoreCode, Optional<String> folderPath,
-			final FileContentType fileContentType, final String contentFileName)
-  List<OutputContentFile> getFiles(final String merchantStoreCode, Optional<String> folderPath,
-			final FileContentType staticContentType)
-  void removeFile(final String merchantStoreCode, final FileContentType staticContentType,
-			final String fileName, Optional<String> folderPath)
-  void removeFiles(final String merchantStoreCode, Optional<String> folderPath)
-  List<String> getFileNames(final String merchantStoreCode, Optional<String> folderPath,
-			final FileContentType staticContentType)
-  void setRootName(String rootName)
-  String getRootName()
-  String buildRootPath()
-  void createDirectoryIfNorExist(Path path)
-  LocalCacheManagerImpl getCacheManager()
-  void setCacheManager(LocalCacheManagerImpl cacheManager)
-  void addFolder(String merchantStoreCode, String folderName, Optional<String> folderPath)
-  Path buildMerchantPath(String merchantCode)
-  void removeFolder(String merchantStoreCode, String folderName, Optional<String> folderPath)
-  List<String> listFolders(String merchantStoreCode, Optional<String> folderPath)
-  CMSManager getCmsManager()
-
-# sm-core/src/main/java/com/salesmanager/core/business/modules/cms/impl/CMSManager.java [java]
-interface CMSManager
-
-# sm-core/src/main/java/com/salesmanager/core/business/modules/cms/impl/CacheManager.java [java]
-imports: org.infinispan.manager.EmbeddedCacheManager, org.infinispan.tree.TreeCache
-interface CacheManager
-
-# sm-core/src/main/java/com/salesmanager/core/business/modules/cms/impl/CacheManagerImpl.java [java]
-imports: org.infinispan.Cache, org.infinispan.configuration.cache.Configuration, org.infinispan.configuration.cache.ConfigurationBuilder, org.infinispan.manager.EmbeddedCacheManager, org.infinispan.tree.TreeCache, org.infinispan.tree.TreeCacheFactory, org.slf4j.Logger, org.slf4j.LoggerFactory
-class CacheManagerImpl
-  void init(String namedCache, String locationFolder)
-  EmbeddedCacheManager getManager()
-  TreeCache getTreeCache()
-
 # sm-core/src/main/java/com/salesmanager/core/business/modules/cms/impl/DownloadCacheManagerImpl.java [java]
 class DownloadCacheManagerImpl
   String getRootName()
   String getLocation()
 
-# sm-core/src/main/java/com/salesmanager/core/business/modules/cms/impl/GCPCacheManagerImpl.java [java]
-imports: org.springframework.beans.factory.annotation.Value, org.springframework.stereotype.Component
-class GCPCacheManagerImpl
-  String getRootName()
-  String getBucketName()
-  String getLocation()
-  void setBucketName(String bucketName)
-
-# sm-core/src/main/java/com/salesmanager/core/business/modules/cms/impl/LocalCacheManagerImpl.java [java]
-class LocalCacheManagerImpl
-  String getRootName()
-  String getLocation()
-
-# sm-core/src/main/java/com/salesmanager/core/business/modules/cms/impl/S3CacheManagerImpl.java [java]
-class S3CacheManagerImpl
-  String getRootName()
-  String getLocation()
-  String getBucketName()
-  String getRegionName()
-
-# sm-core/src/main/java/com/salesmanager/core/business/modules/cms/impl/StaticContentCacheManagerImpl.java [java]
-class StaticContentCacheManagerImpl
-  String getLocation()
-  String getRootName()
-
 # sm-core/src/main/java/com/salesmanager/core/business/modules/cms/impl/StoreCacheManagerImpl.java [java]
 class StoreCacheManagerImpl
   String getRootName()
   String getLocation()
-
-# sm-core/src/main/java/com/salesmanager/core/business/modules/cms/impl/VendorCacheManager.java [java]
-imports: org.infinispan.manager.DefaultCacheManager, org.infinispan.manager.EmbeddedCacheManager, org.slf4j.Logger, org.slf4j.LoggerFactory
-class VendorCacheManager
-  VendorCacheManager getInstance()
-  EmbeddedCacheManager getManager()
 
 # sm-core/src/main/java/com/salesmanager/core/business/modules/cms/product/ProductAssetsManager.java [java]
 imports: java.io.Serializable, com.salesmanager.core.business.modules.cms.common.AssetsManager
@@ -4832,24 +4965,6 @@ interface PageableProductVariationRepository
 imports: java.util.List, java.util.Optional, org.springframework.data.jpa.repository.JpaRepository, org.springframework.data.jpa.repository.Query, com.salesmanager.core.model.catalog.product.variation.ProductVariation
 interface ProductVariationRepository
 
-# sm-core/src/main/java/com/salesmanager/core/business/repositories/content/ContentRepository.java [java]
-imports: java.util.List, org.springframework.data.jpa.repository.JpaRepository, org.springframework.data.jpa.repository.Query, com.salesmanager.core.model.content.Content, com.salesmanager.core.model.content.ContentType
-interface ContentRepository
-
-# sm-core/src/main/java/com/salesmanager/core/business/repositories/content/ContentRepositoryCustom.java [java]
-imports: java.util.List, com.salesmanager.core.model.content.ContentDescription, com.salesmanager.core.model.content.ContentType, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language
-interface ContentRepositoryCustom
-
-# sm-core/src/main/java/com/salesmanager/core/business/repositories/content/ContentRepositoryImpl.java [java]
-imports: java.util.ArrayList, java.util.List, javax.persistence.EntityManager, javax.persistence.PersistenceContext, javax.persistence.Query, com.salesmanager.core.model.content.Content, com.salesmanager.core.model.content.ContentDescription, com.salesmanager.core.model.content.ContentType, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language
-class ContentRepositoryImpl
-  List<ContentDescription> listNameByType(List<ContentType> contentType, MerchantStore store, Language language)
-  ContentDescription getBySeUrl(MerchantStore store,String seUrl)
-
-# sm-core/src/main/java/com/salesmanager/core/business/repositories/content/PageContentRepository.java [java]
-imports: org.springframework.data.domain.Page, org.springframework.data.domain.Pageable, org.springframework.data.jpa.repository.Query, org.springframework.data.repository.PagingAndSortingRepository, com.salesmanager.core.model.content.Content, com.salesmanager.core.model.content.ContentType, com.salesmanager.core.model.merchant.MerchantStore
-interface PageContentRepository
-
 # sm-core/src/main/java/com/salesmanager/core/business/repositories/customer/CustomerRepository.java [java]
 imports: java.util.List, org.springframework.data.jpa.repository.JpaRepository, org.springframework.data.jpa.repository.Query, com.salesmanager.core.model.customer.Customer
 interface CustomerRepository
@@ -5424,51 +5539,6 @@ class ProductVariationServiceImpl
   Optional<ProductVariation> getById(MerchantStore store, Long id)
   void saveOrUpdate(ProductVariation entity)
   List<ProductVariation> getByIds(List<Long> ids, MerchantStore store)
-
-# sm-core/src/main/java/com/salesmanager/core/business/services/content/ContentService.java [java]
-imports: java.util.List, java.util.Optional, org.springframework.data.domain.Page, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.common.generic.SalesManagerEntityService, com.salesmanager.core.model.content.Content, com.salesmanager.core.model.content.ContentDescription, com.salesmanager.core.model.content.ContentType, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.content.InputContentFile, com.salesmanager.core.model.content.OutputContentFile, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language
-interface ContentService
-
-# sm-core/src/main/java/com/salesmanager/core/business/services/content/ContentServiceImpl.java [java]
-imports: java.io.ByteArrayInputStream, java.io.ByteArrayOutputStream, java.io.InputStream, java.net.URLConnection, java.util.List, java.util.Optional, java.util.regex.Pattern, javax.inject.Inject, org.apache.commons.lang3.Validate, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.beans.factory.annotation.Autowired, org.springframework.data.domain.Page, org.springframework.data.domain.PageRequest, org.springframework.data.domain.Pageable, org.springframework.stereotype.Service, org.springframework.util.Assert, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.modules.cms.content.StaticContentFileManager, com.salesmanager.core.business.repositories.content.ContentRepository, com.salesmanager.core.business.repositories.content.PageContentRepository, com.salesmanager.core.business.services.common.generic.SalesManagerEntityServiceImpl, com.salesmanager.core.model.content.Content, com.salesmanager.core.model.content.ContentDescription, com.salesmanager.core.model.content.ContentType, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.content.InputContentFile, com.salesmanager.core.model.content.OutputContentFile, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language
-class ContentServiceImpl
-  List<Content> listByType(ContentType contentType, MerchantStore store, Language language)
-  void delete(Content content)
-  Content getByLanguage(Long id, Language language)
-  List<Content> listByType(List<ContentType> contentType, MerchantStore store, Language language)
-  List<ContentDescription> listNameByType(List<ContentType> contentType, MerchantStore store,
-			Language language)
-  List<Content> listByType(List<ContentType> contentType, MerchantStore store)
-  Content getByCode(String code, MerchantStore store)
-  Content getById(Long id)
-  void saveOrUpdate(final Content content)
-  Content getByCode(String code, MerchantStore store, Language language)
-  void addContentFile(String merchantStoreCode, InputContentFile contentFile)
-  void addLogo(String merchantStoreCode, InputContentFile cmsContentImage)
-  void addOptionImage(String merchantStoreCode, InputContentFile cmsContentImage)
-  void addImage(String merchantStoreCode, InputContentFile contentImage)
-  void addFile(final String merchantStoreCode, InputContentFile contentImage)
-  void addContentFiles(String merchantStoreCode, List<InputContentFile> contentFilesList)
-  void removeFile(String merchantStoreCode, FileContentType fileContentType, String fileName)
-  void removeFile(String storeCode, String fileName)
-  void removeFiles(String merchantStoreCode)
-  OutputContentFile getContentFile(String merchantStoreCode, FileContentType fileContentType, String fileName)
-  List<OutputContentFile> getContentFiles(String merchantStoreCode, FileContentType fileContentType)
-  List<String> getContentFilesNames(String merchantStoreCode, FileContentType fileContentType)
-  ContentDescription getBySeUrl(MerchantStore store, String seUrl)
-  List<Content> getByCodeLike(ContentType type, String codeLike, MerchantStore store, Language language)
-  Content getById(Long id, MerchantStore store, Language language)
-  Content getById(Long id, MerchantStore store)
-  void addFolder(MerchantStore store, Optional<String> path, String folderName)
-  List<String> listFolders(MerchantStore store, Optional<String> path)
-  void removeFolder(MerchantStore store, Optional<String> path, String folderName)
-  boolean isValidLinuxDirectory(String path)
-  void renameFile(String merchantStoreCode, FileContentType fileContentType, Optional<String> path,
-			String originalName, String newName)
-  Page<Content> listByType(ContentType contentType, MerchantStore store, int page, int count)
-  Page<Content> listByType(ContentType contentType, MerchantStore store, Language language, int page,
-			int count)
-  boolean exists(String code, ContentType type, MerchantStore store)
 
 # sm-core/src/main/java/com/salesmanager/core/business/services/customer/CustomerService.java [java]
 imports: java.util.List, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.common.generic.SalesManagerEntityService, com.salesmanager.core.model.common.Address, com.salesmanager.core.model.customer.Customer, com.salesmanager.core.model.customer.CustomerCriteria, com.salesmanager.core.model.customer.CustomerList, com.salesmanager.core.model.merchant.MerchantStore

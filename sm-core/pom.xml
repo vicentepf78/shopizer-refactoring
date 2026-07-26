@@ -52,6 +52,12 @@
 			<artifactId>sm-tax-core</artifactId>
 		</dependency>
 
+		<!-- content CRUD + CMS content backends (no product file managers) -->
+		<dependency>
+			<groupId>com.shopizer</groupId>
+			<artifactId>sm-content-core</artifactId>
+		</dependency>
+
 		<!-- sm-core-modules -->
 		<dependency>
 			<groupId>com.shopizer</groupId>
