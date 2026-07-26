@@ -58,6 +58,10 @@ public class CategoryApi {
 
 	private static final int DEFAULT_CATEGORY_DEPTH = 0;
 
+	private static LanguageCode languageCode(Language language) {
+		return language != null ? LanguageCode.of(language.getCode()) : null;
+	}
+
 	@Inject
 	private CategoryFacade categoryFacade;
 
@@ -75,7 +79,7 @@ public class CategoryApi {
 			@ApiIgnore MerchantStore merchantStore,
 			@ApiIgnore Language language) {
 		ReadableCategory category = categoryFacade.getById(MerchantStoreId.of(merchantStore.getCode()), categoryId,
-				LanguageCode.of(language.getCode()));
+				languageCode(language));
 		return category;
 	}
 
@@ -92,7 +96,7 @@ public class CategoryApi {
 								@ApiIgnore MerchantStore merchantStore,
 								@ApiIgnore Language language) throws Exception {
 		ReadableCategory category = categoryFacade.getCategoryByFriendlyUrl(MerchantStoreId.of(merchantStore.getCode()),
-				friendlyUrl, LanguageCode.of(language.getCode()));
+				friendlyUrl, languageCode(language));
 		return category;
 	}
 
@@ -129,7 +133,7 @@ public class CategoryApi {
 		ListCriteria criteria = new ListCriteria();
 		criteria.setName(name);
 		return categoryFacade.getCategoryHierarchy(MerchantStoreId.of(merchantStore.getCode()), criteria,
-				DEFAULT_CATEGORY_DEPTH, LanguageCode.of(language.getCode()), filter,
+				DEFAULT_CATEGORY_DEPTH, languageCode(language), filter,
 				page, count);
 	}
 	
@@ -145,7 +149,7 @@ public class CategoryApi {
 
 
 		return categoryFacade.listByProduct(MerchantStoreId.of(merchantStore.getCode()), id,
-				LanguageCode.of(lang.getCode()));
+				languageCode(lang));
 
 	}
 

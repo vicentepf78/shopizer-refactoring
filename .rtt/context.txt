@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-26 19:27 | 1697 files | 266532 tokens
+# rtt index | generated 2026-07-26 19:34 | 1699 files | 266989 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -8324,6 +8324,16 @@ class CheckoutOutboxIntegrationTest
   void appendAllowsSameAggregateWithDifferentEventTypes()
   void findPendingAndMarkProcessedAgainstDatabase()
 
+# sm-core/src/test/java/com/salesmanager/core/business/services/checkout/outbox/CheckoutOutboxPayloadBuilderTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, java.math.BigDecimal, java.util.Collections, java.util.LinkedHashSet, java.util.Set, org.junit.jupiter.api.Test, com.fasterxml.jackson.databind.JsonNode, com.fasterxml.jackson.databind.ObjectMapper, com.salesmanager.core.model.common.Billing, com.salesmanager.core.model.common.Delivery, com.salesmanager.core.model.customer.Customer, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.order.Order, com.salesmanager.core.model.order.OrderTotal, com.salesmanager.core.model.order.OrderTotalType, com.salesmanager.core.model.order.orderproduct.OrderProduct, com.salesmanager.core.model.order.orderstatus.OrderStatus, com.salesmanager.core.model.payments.Payment, com.salesmanager.core.model.payments.PaymentType, com.salesmanager.core.model.payments.Transaction, com.salesmanager.core.model.reference.country.Country, com.salesmanager.core.model.reference.currency.Currency, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.reference.zone.Zone
+class CheckoutOutboxPayloadBuilderTest
+  void paymentRequestedEmbedsCustomerSnapshotWithoutJpaGraphFields()
+  void paymentConfirmedIncludesTransactionIdWhenPresent()
+  void orderPersistedMapsOrderEntityToSnapshotWithoutJpaCollections()
+  void inventoryDecrementedUsesSameOrderSnapshotShape()
+  Customer registeredCustomer()
+  Order sampleOrder()
+
 # sm-core/src/test/java/com/salesmanager/core/business/services/checkout/outbox/CheckoutOutboxRepositoryTest.java [java]
 imports: org.assertj.core.api.Assertions.assertThat, org.assertj.core.api.Assertions.assertThatThrownBy, org.mockito.ArgumentMatchers.any, org.mockito.Mockito.never, org.mockito.Mockito.verify, org.mockito.Mockito.when, java.sql.SQLException, java.util.Collections, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.ArgumentCaptor, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.springframework.dao.DataIntegrityViolationException, org.springframework.dao.DuplicateKeyException, org.springframework.data.domain.Pageable, com.salesmanager.core.business.repositories.checkout.CheckoutOutboxJpaRepository, com.salesmanager.core.model.checkout.outbox.CheckoutOutboxEvent
 class CheckoutOutboxRepositoryTest
@@ -12882,6 +12892,7 @@ class CatalogApi
 # sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/category/CategoryApi.java [java]
 imports: org.springframework.http.HttpStatus.OK, org.springframework.http.MediaType.APPLICATION_JSON_VALUE, java.util.List, java.util.stream.Collectors, java.util.stream.Stream, javax.inject.Inject, javax.validation.Valid, org.springframework.http.HttpStatus, org.springframework.http.MediaType, org.springframework.http.ResponseEntity, org.springframework.web.bind.annotation.DeleteMapping, org.springframework.web.bind.annotation.GetMapping, org.springframework.web.bind.annotation.PatchMapping, org.springframework.web.bind.annotation.PathVariable, org.springframework.web.bind.annotation.PostMapping, org.springframework.web.bind.annotation.PutMapping, org.springframework.web.bind.annotation.RequestBody, org.springframework.web.bind.annotation.RequestMapping, org.springframework.web.bind.annotation.RequestParam, org.springframework.web.bind.annotation.ResponseStatus, org.springframework.web.bind.annotation.RestController, com.salesmanager.contracts.tenant.LanguageCode, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.shop.constants.Constants, com.salesmanager.shop.model.catalog.category.PersistableCategory, com.salesmanager.shop.model.catalog.category.ReadableCategory, com.salesmanager.shop.model.catalog.category.ReadableCategoryList, com.salesmanager.shop.model.entity.EntityExists
 class CategoryApi
+  LanguageCode languageCode(Language language)
   ReadableCategory get(
 			@PathVariable(name = "id") Long categoryId, 
 			@ApiIgnore MerchantStore merchantStore,
@@ -15773,6 +15784,11 @@ imports: org.assertj.core.api.Assertions.assertThat, org.junit.jupiter.api.Test,
 class ReferenceDtoMappersTest
   void readableLanguageMapper_mapsEntityToContractDto()
   void readableCurrencyMapper_mapsEntityToContractDto()
+
+# sm-shop/src/test/java/com/salesmanager/shop/store/api/v1/category/CategoryApiTest.java [java]
+imports: org.mockito.ArgumentMatchers.eq, org.mockito.ArgumentMatchers.isNull, org.mockito.Mockito.verify, org.mockito.Mockito.when, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.InjectMocks, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.shop.model.catalog.category.ReadableCategory, com.salesmanager.shop.store.controller.category.facade.CategoryFacade, com.salesmanager.shop.store.controller.user.facade.UserFacade
+class CategoryApiTest
+  void getById_withNullLanguage_passesNullLanguageCodeForAllLanguages()
 
 # sm-shop/src/test/java/com/salesmanager/shop/store/api/v1/references/ReferencesApiTest.java [java]
 imports: org.hamcrest.Matchers.containsString, org.hamcrest.Matchers.hasSize, org.hamcrest.Matchers.not, org.mockito.Mockito.when, org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get, org.springframework.test.web.servlet.result.MockMvcResultMatchers.content, org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath, org.springframework.test.web.servlet.result.MockMvcResultMatchers.status, java.util.Collections, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.InjectMocks, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.springframework.http.MediaType, org.springframework.test.web.servlet.MockMvc, org.springframework.test.web.servlet.setup.MockMvcBuilders, com.salesmanager.core.model.reference.currency.Currency, com.salesmanager.core.model.reference.language.Language, com.salesmanager.shop.store.controller.country.facade.CountryFacade, com.salesmanager.shop.store.controller.currency.facade.CurrencyFacade, com.salesmanager.shop.store.controller.language.facade.LanguageFacade, com.salesmanager.shop.store.controller.store.facade.StoreFacade, com.salesmanager.shop.store.controller.zone.facade.ZoneFacade, com.salesmanager.shop.utils.LanguageUtils

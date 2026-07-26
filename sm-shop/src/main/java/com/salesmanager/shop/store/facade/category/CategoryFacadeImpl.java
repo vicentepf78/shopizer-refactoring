@@ -593,6 +593,9 @@ public class CategoryFacadeImpl implements CategoryFacade {
 	}
 
 	private Language resolveLanguage(LanguageCode languageCode) {
+		if (languageCode == null) {
+			return null;
+		}
 		try {
 			return tenantEntityBridge.resolveLanguage(languageCode);
 		} catch (ConversionException e) {
