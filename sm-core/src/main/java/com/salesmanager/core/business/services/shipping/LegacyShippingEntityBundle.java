@@ -23,10 +23,11 @@ final class LegacyShippingEntityBundle {
 	private final MerchantStore store;
 	private final ShippingConfiguration shippingConfiguration;
 	private final Locale locale;
+	private final IntegrationModule integrationModule;
 
 	LegacyShippingEntityBundle(ShippingQuote quote, List<PackageDetails> packages, BigDecimal orderTotal,
 			Delivery delivery, ShippingOrigin origin, MerchantStore store, ShippingConfiguration shippingConfiguration,
-			Locale locale) {
+			Locale locale, IntegrationModule integrationModule) {
 		this.quote = quote;
 		this.packages = packages;
 		this.orderTotal = orderTotal;
@@ -35,6 +36,7 @@ final class LegacyShippingEntityBundle {
 		this.store = store;
 		this.shippingConfiguration = shippingConfiguration;
 		this.locale = locale;
+		this.integrationModule = integrationModule;
 	}
 
 	ShippingQuote getQuote() {
@@ -67,6 +69,10 @@ final class LegacyShippingEntityBundle {
 
 	Locale getLocale() {
 		return locale;
+	}
+
+	IntegrationModule getIntegrationModule() {
+		return integrationModule;
 	}
 
 }

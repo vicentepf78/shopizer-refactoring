@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.salesmanager.core.business.services.payments.IntegrationContextMapper;
 import com.salesmanager.core.model.system.IntegrationConfiguration;
+import com.salesmanager.core.model.system.IntegrationModule;
+import com.salesmanager.core.modules.integration.common.dto.IntegrationModuleDto;
 import com.salesmanager.core.modules.integration.IntegrationException;
 import com.salesmanager.core.modules.integration.common.dto.IntegrationStoreContext;
 import com.salesmanager.core.modules.integration.shipping.dto.ShippingOptionDto;
@@ -31,9 +33,15 @@ public class LegacyShippingQuoteModuleBridge implements ShippingQuoteModuleV2 {
 	public List<ShippingOptionDto> getShippingQuotes(ShippingQuoteRequestContext context) throws IntegrationException {
 		return IntegrationContextMapper.toShippingOptionDtos(delegate.getShippingQuotes(entities.getQuote(),
 				entities.getPackages(), entities.getOrderTotal(), entities.getDelivery(), entities.getOrigin(),
-				entities.getStore(), context.getConfiguration(),
-				IntegrationContextMapper.toModule(context.getModule()),
+				entities.getStore(), context.getConfiguration(), resolveModule(context.getModule()),
 				entities.getShippingConfiguration(), entities.getLocale()));
+	}
+
+	private IntegrationModule resolveModule(IntegrationModuleDto module) {
+		if (entities.getIntegrationModule() != null) {
+			return entities.getIntegrationModule();
+		}
+		return IntegrationContextMapper.toModule(module);
 	}
 
 }

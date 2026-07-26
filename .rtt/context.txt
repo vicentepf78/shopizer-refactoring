@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-26 19:42 | 1700 files | 267239 tokens
+# rtt index | generated 2026-07-26 20:03 | 1701 files | 267574 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -7906,12 +7906,14 @@ class LegacyShippingEntityBundle
   MerchantStore getStore()
   ShippingConfiguration getShippingConfiguration()
   Locale getLocale()
+  IntegrationModule getIntegrationModule()
 
 # sm-core/src/main/java/com/salesmanager/core/business/services/shipping/LegacyShippingQuoteModuleBridge.java [java]
-imports: java.util.List, com.salesmanager.core.business.services.payments.IntegrationContextMapper, com.salesmanager.core.model.system.IntegrationConfiguration, com.salesmanager.core.modules.integration.IntegrationException, com.salesmanager.core.modules.integration.common.dto.IntegrationStoreContext, com.salesmanager.core.modules.integration.shipping.dto.ShippingOptionDto, com.salesmanager.core.modules.integration.shipping.dto.ShippingQuoteRequestContext, com.salesmanager.core.modules.integration.shipping.model.ShippingQuoteModule, com.salesmanager.core.modules.integration.shipping.model.ShippingQuoteModuleV2
+imports: java.util.List, com.salesmanager.core.business.services.payments.IntegrationContextMapper, com.salesmanager.core.model.system.IntegrationConfiguration, com.salesmanager.core.model.system.IntegrationModule, com.salesmanager.core.modules.integration.common.dto.IntegrationModuleDto, com.salesmanager.core.modules.integration.IntegrationException, com.salesmanager.core.modules.integration.common.dto.IntegrationStoreContext, com.salesmanager.core.modules.integration.shipping.dto.ShippingOptionDto, com.salesmanager.core.modules.integration.shipping.dto.ShippingQuoteRequestContext, com.salesmanager.core.modules.integration.shipping.model.ShippingQuoteModule, com.salesmanager.core.modules.integration.shipping.model.ShippingQuoteModuleV2
 class LegacyShippingQuoteModuleBridge
   void validateModuleConfiguration(IntegrationConfiguration configuration, IntegrationStoreContext store)
   List<ShippingOptionDto> getShippingQuotes(ShippingQuoteRequestContext context)
+  IntegrationModule resolveModule(IntegrationModuleDto module)
 
 # sm-core/src/main/java/com/salesmanager/core/business/services/shipping/ShippingOriginService.java [java]
 imports: com.salesmanager.core.business.services.common.generic.SalesManagerEntityService, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.shipping.ShippingOrigin
@@ -8406,6 +8408,14 @@ class SearchIndexProducerInProcessTest
   void setUp()
   void index_delegatesToLegacySearchService()
   void deleteDocument_delegatesToLegacySearchService()
+
+# sm-core/src/test/java/com/salesmanager/core/business/services/shipping/LegacyShippingQuoteModuleBridgeTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, java.math.BigDecimal, java.util.Collections, java.util.HashMap, java.util.List, java.util.Locale, java.util.Map, org.junit.jupiter.api.Test, com.salesmanager.core.business.services.payments.IntegrationContextMapper, com.salesmanager.core.model.common.Delivery, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.shipping.PackageDetails, com.salesmanager.core.model.shipping.ShippingConfiguration, com.salesmanager.core.model.shipping.ShippingOption, com.salesmanager.core.model.shipping.ShippingOrigin, com.salesmanager.core.model.shipping.ShippingQuote, com.salesmanager.core.model.system.CustomIntegrationConfiguration, com.salesmanager.core.model.system.IntegrationConfiguration, com.salesmanager.core.model.system.IntegrationModule, com.salesmanager.core.model.system.ModuleConfig, com.salesmanager.core.modules.integration.IntegrationException, com.salesmanager.core.modules.integration.shipping.dto.ShippingQuoteRequestContext, com.salesmanager.core.modules.integration.shipping.model.ShippingQuoteModule, com.salesmanager.core.modules.integration.shipping.model.ShippingQuoteModuleV2
+class LegacyShippingQuoteModuleBridgeTest
+  void getShippingQuotesPrefersHydratedIntegrationModuleFromEntityBundle()
+  MerchantStore sampleStore()
+  IntegrationModule sampleHydratedModule()
+  class CapturingShippingQuoteModule
 
 # sm-core/src/test/java/com/salesmanager/test/business/utils/DataUtilsTest.java [java]
 imports: com.salesmanager.core.business.utils.DataUtils, com.salesmanager.core.constants.MeasureUnit, com.salesmanager.core.model.merchant.MerchantStore, org.junit.Test, org.junit.Assert, org.mockito.Mockito

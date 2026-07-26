@@ -249,7 +249,7 @@ public class ShippingServiceImpl implements ShippingService {
 				}
 				IntegrationStoreContext storeContext = IntegrationContextMapper.toStoreContext(store);
 				ShippingQuoteModuleV2 moduleV2 = ShippingQuoteModuleV2Support.resolve(quoteModule,
-						new LegacyShippingEntityBundle(null, null, null, null, null, store, null, null));
+						new LegacyShippingEntityBundle(null, null, null, null, null, store, null, null, null));
 				moduleV2.validateModuleConfiguration(configuration, storeContext);
 				
 			} catch (IntegrationException ie) {
@@ -568,7 +568,7 @@ public class ShippingServiceImpl implements ShippingService {
 					
 			try {
 				LegacyShippingEntityBundle entityBundle = new LegacyShippingEntityBundle(shippingQuote, packages,
-						orderTotal, delivery, shippingOrigin, store, shippingConfiguration, locale);
+						orderTotal, delivery, shippingOrigin, store, shippingConfiguration, locale, shippingModule);
 				ShippingQuoteModuleV2 moduleV2 = ShippingQuoteModuleV2Support.resolve(shippingQuoteModule, entityBundle);
 				ShippingQuoteRequestContext requestContext = IntegrationContextMapper.toShippingQuoteRequestContext(
 						store, packages, orderTotal, delivery, shippingOrigin, configuration, shippingModule, locale);
