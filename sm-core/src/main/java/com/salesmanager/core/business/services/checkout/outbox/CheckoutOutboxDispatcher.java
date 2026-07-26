@@ -28,7 +28,7 @@ public class CheckoutOutboxDispatcher {
 		this.outboxRepository = outboxRepository;
 	}
 
-	@Scheduled(fixedDelayString = "${checkout.outbox.dispatcher.interval-ms:5000}")
+	@Scheduled(fixedDelayString = "#{@checkoutOutboxProperties.dispatcherIntervalMs}")
 	public void dispatchPendingEvents() {
 		synchronized (DISPATCH_LOCK) {
 			List<CheckoutOutboxEvent> pending = outboxRepository.findPending(BATCH_SIZE);

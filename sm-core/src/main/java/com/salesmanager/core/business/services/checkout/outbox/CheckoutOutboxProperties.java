@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 public class CheckoutOutboxProperties {
 
 	private boolean enabled = false;
-	private long dispatcherIntervalMs = 5000L;
+	private Dispatcher dispatcher = new Dispatcher();
 
 	public boolean isEnabled() {
 		return enabled;
@@ -18,12 +18,30 @@ public class CheckoutOutboxProperties {
 		this.enabled = enabled;
 	}
 
-	public long getDispatcherIntervalMs() {
-		return dispatcherIntervalMs;
+	public Dispatcher getDispatcher() {
+		return dispatcher;
 	}
 
-	public void setDispatcherIntervalMs(long dispatcherIntervalMs) {
-		this.dispatcherIntervalMs = dispatcherIntervalMs;
+	public void setDispatcher(Dispatcher dispatcher) {
+		this.dispatcher = dispatcher;
+	}
+
+	public long getDispatcherIntervalMs() {
+		return dispatcher.getIntervalMs();
+	}
+
+	public static class Dispatcher {
+
+		private long intervalMs = 5000L;
+
+		public long getIntervalMs() {
+			return intervalMs;
+		}
+
+		public void setIntervalMs(long intervalMs) {
+			this.intervalMs = intervalMs;
+		}
+
 	}
 
 }

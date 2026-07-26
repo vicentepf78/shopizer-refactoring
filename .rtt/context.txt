@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-26 20:24 | 1707 files | 269084 tokens
+# rtt index | generated 2026-07-26 20:26 | 1708 files | 269184 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -7508,8 +7508,10 @@ imports: org.springframework.boot.context.properties.ConfigurationProperties, or
 class CheckoutOutboxProperties
   boolean isEnabled()
   void setEnabled(boolean enabled)
+  Dispatcher getDispatcher()
+  void setDispatcher(Dispatcher dispatcher)
   long getDispatcherIntervalMs()
-  void setDispatcherIntervalMs(long dispatcherIntervalMs)
+  class Dispatcher
 
 # sm-core/src/main/java/com/salesmanager/core/business/services/checkout/outbox/CheckoutOutboxRepository.java [java]
 imports: java.util.List, com.salesmanager.core.model.checkout.outbox.CheckoutOutboxEvent
@@ -8356,6 +8358,11 @@ class CheckoutOutboxPayloadBuilderTest
   void inventoryDecrementedUsesSameOrderSnapshotShape()
   Customer registeredCustomer()
   Order sampleOrder()
+
+# sm-core/src/test/java/com/salesmanager/core/business/services/checkout/outbox/CheckoutOutboxPropertiesTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.context.properties.EnableConfigurationProperties, org.springframework.test.context.TestPropertySource, org.springframework.test.context.junit.jupiter.SpringJUnitConfig
+class CheckoutOutboxPropertiesTest
+  void bindsDispatcherIntervalMsFromNestedPropertyKey()
 
 # sm-core/src/test/java/com/salesmanager/core/business/services/checkout/outbox/CheckoutOutboxRepositoryTest.java [java]
 imports: org.assertj.core.api.Assertions.assertThat, org.assertj.core.api.Assertions.assertThatThrownBy, org.mockito.ArgumentMatchers.any, org.mockito.Mockito.never, org.mockito.Mockito.verify, org.mockito.Mockito.when, java.sql.SQLException, java.util.Collections, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.ArgumentCaptor, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.springframework.dao.DataIntegrityViolationException, org.springframework.dao.DuplicateKeyException, org.springframework.data.domain.Pageable, com.salesmanager.core.business.repositories.checkout.CheckoutOutboxJpaRepository, com.salesmanager.core.model.checkout.outbox.CheckoutOutboxEvent
