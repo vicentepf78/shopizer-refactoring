@@ -65,7 +65,7 @@ public class CheckoutStagedOrderProcessor {
 		this.outboxProperties = outboxProperties;
 	}
 
-	@Transactional
+	@Transactional(rollbackFor = ServiceException.class)
 	public Order processOrder(Order order, Customer customer, List<ShoppingCartItem> items, OrderTotalSummary summary,
 			Payment payment, Transaction transaction, MerchantStore store, String idempotencyKey) throws ServiceException {
 		validate(order, customer, items, payment, store, summary);
