@@ -1,7 +1,5 @@
 package com.salesmanager.shop.tenant;
 
-import javax.annotation.PostConstruct;
-
 import org.springframework.stereotype.Component;
 
 import com.salesmanager.contracts.tenant.LanguageCode;
@@ -10,7 +8,6 @@ import com.salesmanager.core.business.exception.ConversionException;
 import com.salesmanager.core.business.exception.ServiceException;
 import com.salesmanager.core.business.services.merchant.MerchantStoreService;
 import com.salesmanager.core.business.services.reference.language.LanguageService;
-import com.salesmanager.core.business.tenant.TenantEntityBridgeRegistry;
 import com.salesmanager.core.model.merchant.MerchantStore;
 import com.salesmanager.core.model.reference.language.Language;
 
@@ -23,11 +20,6 @@ public class TenantEntityBridgeImpl implements TenantEntityBridge {
 	public TenantEntityBridgeImpl(MerchantStoreService merchantStoreService, LanguageService languageService) {
 		this.merchantStoreService = merchantStoreService;
 		this.languageService = languageService;
-	}
-
-	@PostConstruct
-	void registerBridge() {
-		TenantEntityBridgeRegistry.register(this);
 	}
 
 	@Override
