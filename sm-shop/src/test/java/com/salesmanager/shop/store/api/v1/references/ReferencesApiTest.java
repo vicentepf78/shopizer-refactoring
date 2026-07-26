@@ -3,6 +3,10 @@ package com.salesmanager.shop.store.api.v1.references;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.not;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -10,6 +14,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.Collections;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,6 +27,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import com.salesmanager.core.model.merchant.MerchantStore;
 import com.salesmanager.core.model.reference.currency.Currency;
 import com.salesmanager.core.model.reference.language.Language;
 import com.salesmanager.shop.store.controller.country.facade.CountryFacade;
@@ -72,6 +79,42 @@ class ReferencesApiTest {
 				.andExpect(content().string(not(containsString("hibernateLazyInitializer"))))
 				.andExpect(content().string(not(containsString("auditSection"))))
 				.andExpect(content().string(not(containsString("com.salesmanager.core.model"))));
+	}
+
+	@Test
+	void getCountry_withNullLanguage_resolvesDefaultLanguageBeforeFacade() throws Exception {
+		MerchantStore store = new MerchantStore();
+		store.setCode("DEFAULT");
+		Language defaultLanguage = new Language("en");
+		defaultLanguage.setId(1);
+		HttpServletRequest request = mock(HttpServletRequest.class);
+
+		when(storeFacade.getByCode(request)).thenReturn(store);
+		when(languageUtils.getServiceLanguage(isNull())).thenReturn(defaultLanguage);
+		when(countryFacade.getListCountryZones(defaultLanguage, store)).thenReturn(Collections.emptyList());
+
+		referencesApi.getCountry(null, request);
+
+		verify(languageUtils).getServiceLanguage(isNull());
+		verify(countryFacade).getListCountryZones(eq(defaultLanguage), eq(store));
+	}
+
+	@Test
+	void getZones_withNullLanguage_resolvesDefaultLanguageBeforeFacade() throws Exception {
+		MerchantStore store = new MerchantStore();
+		store.setCode("DEFAULT");
+		Language defaultLanguage = new Language("en");
+		defaultLanguage.setId(1);
+		HttpServletRequest request = mock(HttpServletRequest.class);
+
+		when(storeFacade.getByCode(request)).thenReturn(store);
+		when(languageUtils.getServiceLanguage(isNull())).thenReturn(defaultLanguage);
+		when(zoneFacade.getZones("US", defaultLanguage, store)).thenReturn(Collections.emptyList());
+
+		referencesApi.getZones("US", null, request);
+
+		verify(languageUtils).getServiceLanguage(isNull());
+		verify(zoneFacade).getZones(eq("US"), eq(defaultLanguage), eq(store));
 	}
 
 	@Test

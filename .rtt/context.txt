@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-26 20:09 | 1703 files | 268000 tokens
+# rtt index | generated 2026-07-26 20:10 | 1703 files | 268053 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -13717,6 +13717,7 @@ class ReferencesApi
   List<ReadableCountry> getCountry(@ApiIgnore Language language, HttpServletRequest request)
   List<ReadableZone> getZones(
       @RequestParam("code") String code, @ApiIgnore Language language, HttpServletRequest request)
+  Language resolveLanguage(Language language)
   List<ReadableCurrency> getCurrency()
   SizeReferences measures()
 
@@ -15821,10 +15822,12 @@ class CategoryApiTest
   void getById_withNullLanguage_passesNullLanguageCodeForAllLanguages()
 
 # sm-shop/src/test/java/com/salesmanager/shop/store/api/v1/references/ReferencesApiTest.java [java]
-imports: org.hamcrest.Matchers.containsString, org.hamcrest.Matchers.hasSize, org.hamcrest.Matchers.not, org.mockito.Mockito.when, org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get, org.springframework.test.web.servlet.result.MockMvcResultMatchers.content, org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath, org.springframework.test.web.servlet.result.MockMvcResultMatchers.status, java.util.Collections, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.InjectMocks, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.springframework.http.MediaType, org.springframework.test.web.servlet.MockMvc, org.springframework.test.web.servlet.setup.MockMvcBuilders, com.salesmanager.core.model.reference.currency.Currency, com.salesmanager.core.model.reference.language.Language, com.salesmanager.shop.store.controller.country.facade.CountryFacade, com.salesmanager.shop.store.controller.currency.facade.CurrencyFacade, com.salesmanager.shop.store.controller.language.facade.LanguageFacade, com.salesmanager.shop.store.controller.store.facade.StoreFacade, com.salesmanager.shop.store.controller.zone.facade.ZoneFacade, com.salesmanager.shop.utils.LanguageUtils
+imports: org.hamcrest.Matchers.containsString, org.hamcrest.Matchers.hasSize, org.hamcrest.Matchers.not, org.mockito.ArgumentMatchers.eq, org.mockito.ArgumentMatchers.isNull, org.mockito.Mockito.mock, org.mockito.Mockito.verify, org.mockito.Mockito.when, org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get, org.springframework.test.web.servlet.result.MockMvcResultMatchers.content, org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath, org.springframework.test.web.servlet.result.MockMvcResultMatchers.status, java.util.Collections, javax.servlet.http.HttpServletRequest, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.InjectMocks, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.springframework.http.MediaType, org.springframework.test.web.servlet.MockMvc, org.springframework.test.web.servlet.setup.MockMvcBuilders, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.currency.Currency, com.salesmanager.core.model.reference.language.Language, com.salesmanager.shop.store.controller.country.facade.CountryFacade, com.salesmanager.shop.store.controller.currency.facade.CurrencyFacade, com.salesmanager.shop.store.controller.language.facade.LanguageFacade, com.salesmanager.shop.store.controller.store.facade.StoreFacade
 class ReferencesApiTest
   void setUp()
   void getLanguages_returnsReadableLanguageShapeWithoutJpaEntityFields()
+  void getCountry_withNullLanguage_resolvesDefaultLanguageBeforeFacade()
+  void getZones_withNullLanguage_resolvesDefaultLanguageBeforeFacade()
   void getCurrency_returnsReadableCurrencyShapeWithoutJpaEntityFields()
 
 # sm-shop/src/test/java/com/salesmanager/shop/store/api/v1/search/SearchApiTest.java [java]

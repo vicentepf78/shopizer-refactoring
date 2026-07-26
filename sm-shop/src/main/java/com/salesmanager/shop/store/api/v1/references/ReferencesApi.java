@@ -80,14 +80,19 @@ public class ReferencesApi {
   @GetMapping("/country")
   public List<ReadableCountry> getCountry(@ApiIgnore Language language, HttpServletRequest request) {
     MerchantStore merchantStore = storeFacade.getByCode(request);
-    return countryFacade.getListCountryZones(language, merchantStore);
+    return countryFacade.getListCountryZones(resolveLanguage(language), merchantStore);
   }
 
   @GetMapping("/zones")
   public List<ReadableZone> getZones(
       @RequestParam("code") String code, @ApiIgnore Language language, HttpServletRequest request) {
     MerchantStore merchantStore = storeFacade.getByCode(request);
-    return zoneFacade.getZones(code, language, merchantStore);
+    return zoneFacade.getZones(code, resolveLanguage(language), merchantStore);
+  }
+
+  /** {@code lang=_all} yields null from {@link LanguageUtils#getRESTLanguage}; facades need a language. */
+  private Language resolveLanguage(Language language) {
+    return language != null ? language : languageUtils.getServiceLanguage(null);
   }
 
   /**
