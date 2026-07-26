@@ -12,6 +12,12 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
+/**
+ * Transactional outbox for staged checkout (SAG-01 / ADR-005).
+ * <p>
+ * Schema source of truth: this entity's JPA annotations. Shopizer has no Flyway/Liquibase
+ * runner; {@code hibernate.hbm2ddl.auto} creates/updates {@code CHECKOUT_OUTBOX} from here.
+ */
 @Entity
 @Table(name = "CHECKOUT_OUTBOX", uniqueConstraints = {
 		@UniqueConstraint(name = "UK_OUTBOX_AGG_TYPE", columnNames = { "AGGREGATE_ID", "EVENT_TYPE" }) })
