@@ -1,5 +1,5 @@
 ---
-status: pending
+status: completed
 title: content-service Boot, JWT, REST e APIs internas (C-ready)
 type: backend
 complexity: high
@@ -30,13 +30,13 @@ Consolida TLC T8–T16. Entrega o app Spring Boot `content-service` (:8083) com 
 </requirements>
 
 ## Subtasks
-- [ ] 3.1 Scaffold Boot + health actuator (T8)
-- [ ] 3.2 Security JWT private/public (T9)
-- [ ] 3.3 ReferenceServiceClient HTTP (T10)
-- [ ] 3.4 Controllers pages/boxes/files/admin + stubs (T11–T14)
-- [ ] 3.5 APIs internas static + logo C-ready (T15)
-- [ ] 3.6 Port ContentFacade + mappers (T16)
-- [ ] 3.7 Suite de integração do módulo
+- [x] 3.1 Scaffold Boot + health actuator (T8)
+- [x] 3.2 Security JWT private/public (T9)
+- [x] 3.3 ReferenceServiceClient HTTP (T10)
+- [x] 3.4 Controllers pages/boxes/files/admin + stubs (T11–T14)
+- [x] 3.5 APIs internas static + logo C-ready (T15)
+- [x] 3.6 Port ContentFacade + mappers (T16)
+- [x] 3.7 Suite de integração do módulo
 
 ## Implementation Details
 Ver TechSpec: **Endpoints content-service**, **Pontos de integração** (content→reference), **Ordem de construção** passos 9–13. Paths espelham `ContentApi` / `ContentAdministrationApi` no sm-shop.
@@ -70,15 +70,15 @@ Ver TechSpec: **Endpoints content-service**, **Pontos de integração** (content
 
 ## Tests
 - Unit tests:
-  - [ ] Facade retorna DTOs contracts (não entidades JPA)
-  - [ ] ReferenceServiceClient resolve language por code (mock HTTP)
-  - [ ] Stub admin retorna null/no-op como monólito
+  - [x] Facade retorna DTOs contracts (não entidades JPA)
+  - [x] ReferenceServiceClient resolve language por code (mock HTTP)
+  - [x] Stub admin retorna null/no-op como monólito
 - Integration tests:
-  - [ ] Private sem JWT → 401; public aberto
-  - [ ] CRUD página com 2 idiomas retorna DTOs legíveis
-  - [ ] Upload IMAGE persiste blob; GET static interno retorna bytes + content-type
-  - [ ] Logo POST/DELETE interno funcional
-  - [ ] `./mvnw test -pl content-service` verde
+  - [x] Private sem JWT → 401; public aberto
+  - [x] CRUD página com 2 idiomas retorna DTOs legíveis
+  - [x] Upload IMAGE persiste blob; GET static interno retorna bytes + content-type
+  - [x] Logo POST/DELETE interno funcional
+  - [x] `./mvnw test -pl content-service` verde
 - Test coverage target: >=80%
 - All tests must pass
 

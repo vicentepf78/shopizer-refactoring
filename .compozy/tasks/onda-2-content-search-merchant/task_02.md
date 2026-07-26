@@ -1,5 +1,5 @@
 ---
-status: pending
+status: completed
 title: Extrair sm-content-core e CMS content
 type: backend
 complexity: high
@@ -29,11 +29,11 @@ Consolida TLC T5–T7. Cria o módulo thin `sm-content-core`, extrai repositóri
 </requirements>
 
 ## Subtasks
-- [ ] 2.1 Scaffold módulo + mover repositórios content (T5)
-- [ ] 2.2 Mover ContentService e CMS content modules (T6)
-- [ ] 2.3 Split `shopizer-content-cms.xml` content-only (T7)
-- [ ] 2.4 Registrar módulo no reactor e smoke `@DataJpaTest`
-- [ ] 2.5 Garantir zero beans de product file manager no módulo
+- [x] 2.1 Scaffold módulo + mover repositórios content (T5)
+- [x] 2.2 Mover ContentService e CMS content modules (T6)
+- [x] 2.3 Split `shopizer-content-cms.xml` content-only (T7)
+- [x] 2.4 Registrar módulo no reactor e smoke `@DataJpaTest`
+- [x] 2.5 Garantir zero beans de product file manager no módulo
 
 ## Implementation Details
 Ver TechSpec: **Arquitetura** (`sm-content-core`), **Blobs**, **Ordem de construção** passos 6–8. Reutilizar padrão `sm-reference-core` da Onda 1 (ADR-004).
@@ -64,12 +64,12 @@ Ver TechSpec: **Arquitetura** (`sm-content-core`), **Blobs**, **Ordem de constru
 
 ## Tests
 - Unit tests:
-  - [ ] ContentService métodos de pages/boxes não referenciam productFileManager
-  - [ ] Beans CMS content resolvem via ImportResource (smoke)
+  - [x] ContentService métodos de pages/boxes não referenciam productFileManager
+  - [x] Beans CMS content resolvem via ImportResource (smoke)
 - Integration tests:
-  - [ ] `@DataJpaTest` smoke de ContentRepository passa
-  - [ ] `./mvnw test -pl sm-content-core` verde
-  - [ ] Grep/assert: zero `productFileManager` no módulo
+  - [x] `@DataJpaTest` smoke de ContentRepository passa
+  - [x] `./mvnw test -pl sm-content-core` verde
+  - [x] Grep/assert: zero `productFileManager` no módulo
 - Test coverage target: >=80%
 - All tests must pass
 

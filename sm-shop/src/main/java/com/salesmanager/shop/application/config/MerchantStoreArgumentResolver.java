@@ -17,10 +17,12 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import com.salesmanager.contracts.client.MerchantServiceClient;
 import com.salesmanager.core.model.merchant.MerchantStore;
 import com.salesmanager.shop.store.api.exception.UnauthorizedException;
 import com.salesmanager.shop.store.controller.store.facade.StoreFacade;
 import com.salesmanager.shop.store.controller.user.facade.UserFacade;
+import com.salesmanager.shop.strangler.merchant.MerchantStoreEntityHydrator;
 
 @Component
 public class MerchantStoreArgumentResolver implements HandlerMethodArgumentResolver {
@@ -34,6 +36,12 @@ public class MerchantStoreArgumentResolver implements HandlerMethodArgumentResol
 	@Autowired
 	private UserFacade userFacade;
 
+	@Autowired(required = false)
+	private MerchantServiceClient merchantServiceClient;
+
+	@Autowired(required = false)
+	private MerchantStoreEntityHydrator merchantStoreEntityHydrator;
+
 	@Override
 	public boolean supportsParameter(MethodParameter parameter) {
 		return parameter.getParameterType().equals(MerchantStore.class);
@@ -44,8 +52,7 @@ public class MerchantStoreArgumentResolver implements HandlerMethodArgumentResol
 			NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
 		String storeValue = Optional.ofNullable(webRequest.getParameter(REQUEST_PARAMATER_STORE))
 				.filter(StringUtils::isNotBlank).orElse(DEFAULT_STORE);
-		// todo get from cache
-		MerchantStore storeModel = storeFacade.get(storeValue);
+		MerchantStore storeModel = resolveStore(storeValue);
 
 		HttpServletRequest httpServletRequest = webRequest.getNativeRequest(HttpServletRequest.class);
 
@@ -58,5 +65,12 @@ public class MerchantStoreArgumentResolver implements HandlerMethodArgumentResol
 			throw new UnauthorizedException("Cannot authorize user for store " + storeModel.getCode());
 		}
 		return storeModel;
+	}
+
+	private MerchantStore resolveStore(String storeValue) {
+		if (merchantServiceClient != null && merchantStoreEntityHydrator != null) {
+			return merchantStoreEntityHydrator.hydrate(merchantServiceClient.getStoreSnapshot(storeValue));
+		}
+		return storeFacade.get(storeValue);
 	}
 }

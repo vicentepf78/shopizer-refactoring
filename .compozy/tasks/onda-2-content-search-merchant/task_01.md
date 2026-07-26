@@ -1,5 +1,5 @@
 ---
-status: pending
+status: completed
 title: Contracts Content/Search/Merchant e properties Strangler Wave2
 type: backend
 complexity: medium

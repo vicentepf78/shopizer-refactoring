@@ -52,6 +52,24 @@
 			<artifactId>sm-tax-core</artifactId>
 		</dependency>
 
+		<!-- content CRUD + CMS content backends (no product file managers) -->
+		<dependency>
+			<groupId>com.shopizer</groupId>
+			<artifactId>sm-content-core</artifactId>
+		</dependency>
+
+		<!-- merchant store/config/log CRUD; ProductType stays in this module -->
+		<dependency>
+			<groupId>com.shopizer</groupId>
+			<artifactId>sm-merchant-core</artifactId>
+		</dependency>
+
+		<!-- wave2 index payloads (ProductIndexPayloadBuilder) -->
+		<dependency>
+			<groupId>com.shopizer</groupId>
+			<artifactId>shopizer-api-contracts</artifactId>
+		</dependency>
+
 		<!-- sm-core-modules -->
 		<dependency>
 			<groupId>com.shopizer</groupId>

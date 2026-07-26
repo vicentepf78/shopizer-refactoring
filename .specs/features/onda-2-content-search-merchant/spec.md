@@ -1,7 +1,7 @@
 # Onda 2 — Content, Search, Merchant Specification
 
 **Feature ID:** `onda-2-content-search-merchant`
-**Phase:** Tasks (aprovadas — pronto para Execute)
+**Phase:** Execute complete (gate verde 2026-07-26)
 **Complexity:** Large (3 serviços deployáveis + Strangler)
 **Source:** [MIGRATION-MASTER-PLAN.md](../../../docs/decomposition/MIGRATION-MASTER-PLAN.md) § Onda 2
 **Exploração:** Subagentes Content, Search e Merchant (2026-07-04)
@@ -22,14 +22,14 @@ Sem especificação formal, a Onda 2 repete erros da Fase 3 original (extração
 
 ## Goals
 
-- [ ] `content-service`, `search-service` e `merchant-service` deployáveis como aplicações Spring Boot independentes
-- [ ] Monólito consome os três serviços via HTTP Strangler nas fronteiras REST já existentes
-- [ ] Zero entidades JPA nas respostas REST dos endpoints migrados (mesmo critério Onda 1)
-- [ ] Content: DB + blob storage co-localizados no `content-service` (mitigação split-brain)
-- [ ] Search: `search-service` dono do cluster OpenSearch, mappings e APIs de query; pipeline de indexação desacoplado de `Product` JPA
-- [ ] Merchant: CRUD de loja + configuração pública **sem** `ProductTypeApi` / seed de product types
-- [ ] Testes de contrato (Pact) cobrindo endpoints P1 — padrão Onda 1
-- [ ] Reutilizar `shopizer-api-contracts` (Onda 1) para DTOs compartilhados novos
+- [x] `content-service`, `search-service` e `merchant-service` deployáveis como aplicações Spring Boot independentes
+- [x] Monólito consome os três serviços via HTTP Strangler nas fronteiras REST já existentes
+- [x] Zero entidades JPA nas respostas REST dos endpoints migrados (mesmo critério Onda 1)
+- [x] Content: DB + blob storage co-localizados no `content-service` (mitigação split-brain)
+- [x] Search: `search-service` dono do cluster OpenSearch, mappings e APIs de query; pipeline de indexação desacoplado de `Product` JPA
+- [x] Merchant: CRUD de loja + configuração pública **sem** `ProductTypeApi` / seed de product types
+- [x] Testes de contrato (Pact) cobrindo endpoints P1 — padrão Onda 1
+- [x] Reutilizar `shopizer-api-contracts` (Onda 1) para DTOs compartilhados novos
 
 ---
 
@@ -278,40 +278,40 @@ Sem especificação formal, a Onda 2 repete erros da Fase 3 original (extração
 
 | Requirement ID | Story | Descrição resumida | Phase | Status |
 | -------------- | ----- | ------------------ | ----- | ------ |
-| CNT-01 | P1: Content | `content-service` deployável Spring Boot | Design | In Design ✅ |
-| CNT-02 | P1: Content | CRUD pages/boxes espelha paths monólito | Design | In Design ✅ |
-| CNT-03 | P1: Content | File upload/list/rename/remove | Design | In Design ✅ |
-| CNT-04 | P1: Content | CMS backends (infinispan/local/aws/gcp) migrados | Design | In Design ✅ |
-| CNT-05 | P1: Content | JPA `Content`/`ContentDescription` no serviço | Design | In Design ✅ |
-| CNT-06 | P1: Content | Zero entidade JPA em responses | Design | In Design ✅ |
-| CNT-07 | P1: Content | `reference-service` HTTP para Language | Design | In Design ✅ |
-| CNT-08 | P2: Static | Rotas `/static/files/**` resolvidas | Design | In Design ✅ |
-| CNT-09 | P1: Strangler | HTTP adapter `ContentFacadeImpl` | Design | In Design ✅ |
-| SRCH-01 | P1: Search | `search-service` deployável | Design | In Design ✅ |
-| SRCH-02 | P1: Search | `POST /search` + `/autocomplete` preservados | Design | In Design ✅ |
-| SRCH-03 | P1: Search | OpenSearch mappings/settings no serviço | Design | In Design ✅ |
-| SRCH-04 | P1: Search | `POST /internal/v1/index` com `ProductIndexPayload` | Design | In Design ✅ |
-| SRCH-05 | P1: Strangler | `SearchFacadeImpl` HTTP adapter | Design | In Design ✅ |
-| SRCH-06 | P1: Strangler | `IndexProductEventListener` → HTTP producer | Design | In Design ✅ |
-| SRCH-07 | P2: Payload | `ProductIndexPayload` em `shopizer-api-contracts` | Design | In Design ✅ |
-| SRCH-08 | P1: Search | Admin reindex API preservada | Design | In Design ✅ |
+| CNT-01 | P1: Content | `content-service` deployável Spring Boot | Execute | Verified ✅ |
+| CNT-02 | P1: Content | CRUD pages/boxes espelha paths monólito | Execute | Verified ✅ |
+| CNT-03 | P1: Content | File upload/list/rename/remove | Execute | Verified ✅ |
+| CNT-04 | P1: Content | CMS backends (infinispan/local/aws/gcp) migrados | Execute | Verified ✅ |
+| CNT-05 | P1: Content | JPA `Content`/`ContentDescription` no serviço | Execute | Verified ✅ |
+| CNT-06 | P1: Content | Zero entidade JPA em responses | Execute | Verified ✅ |
+| CNT-07 | P1: Content | `reference-service` HTTP para Language | Execute | Verified ✅ |
+| CNT-08 | P2: Static | Rotas `/static/files/**` resolvidas | Execute | Verified ✅ |
+| CNT-09 | P1: Strangler | HTTP adapter `ContentFacadeImpl` | Execute | Verified ✅ |
+| SRCH-01 | P1: Search | `search-service` deployável | Execute | Verified ✅ |
+| SRCH-02 | P1: Search | `POST /search` + `/autocomplete` preservados | Execute | Verified ✅ |
+| SRCH-03 | P1: Search | OpenSearch mappings/settings no serviço | Execute | Verified ✅ |
+| SRCH-04 | P1: Search | `POST /internal/v1/index` com `ProductIndexPayload` | Execute | Verified ✅ |
+| SRCH-05 | P1: Strangler | `SearchFacadeImpl` HTTP adapter | Execute | Verified ✅ |
+| SRCH-06 | P1: Strangler | `IndexProductEventListener` → HTTP producer | Execute | Verified ✅ |
+| SRCH-07 | P2: Payload | `ProductIndexPayload` em `shopizer-api-contracts` | Execute | Verified ✅ |
+| SRCH-08 | P1: Search | Admin reindex API preservada | Execute | Verified ✅ |
 | SRCH-09 | Out of Scope | `ProductSnapshot` completo → Onda 3 | — | Confirmed |
-| MCH-01 | P1: Merchant | `merchant-service` deployável | Design | In Design ✅ |
-| MCH-02 | P1: Merchant | Store CRUD + hierarchy APIs | Design | In Design ✅ |
-| MCH-03 | P1: Merchant | `GET /config` público | Design | In Design ✅ |
-| MCH-04 | P1: Merchant | Logo via `content-service` HTTP | Design | In Design ✅ |
-| MCH-05 | P1: Merchant | `reference-service` HTTP para refs | Design | In Design ✅ |
+| MCH-01 | P1: Merchant | `merchant-service` deployável | Execute | Verified ✅ |
+| MCH-02 | P1: Merchant | Store CRUD + hierarchy APIs | Execute | Verified ✅ |
+| MCH-03 | P1: Merchant | `GET /config` público | Execute | Verified ✅ |
+| MCH-04 | P1: Merchant | Logo via `content-service` HTTP | Execute | Verified ✅ |
+| MCH-05 | P1: Merchant | `reference-service` HTTP para refs | Execute | Verified ✅ |
 | MCH-06 | P1: Merchant | Zero `ProductType` APIs | — | Confirmed |
-| MCH-07 | P1: Merchant | `MerchantStoreArgumentResolver` no monólito | Design | In Design ✅ |
-| MCH-08 | P1: Strangler | HTTP adapters Store + Config facades | Design | In Design ✅ |
-| STR-01 | P1: Strangler | Feature flag `monolith` vs HTTP (Onda 2 URLs) | Design | In Design ✅ |
-| STR-02 | P2: Pact | Contract tests 3 serviços | Tasks | Mapped → T49–T50 |
-| STR-03 | AD-003 | DB compartilhado herdado | Design | In Design ✅ |
-| STR-04 | P1 | Paths REST sem breaking change | Design | In Design ✅ |
-| STR-05 | P3 | Actuator health + correlation id | Tasks | Mapped → T47–T48 |
-| STR-06 | P1 | Cross-service: merchant→content, content→reference | Design | In Design ✅ |
+| MCH-07 | P1: Merchant | `MerchantStoreArgumentResolver` no monólito | Execute | Verified ✅ |
+| MCH-08 | P1: Strangler | HTTP adapters Store + Config facades | Execute | Verified ✅ |
+| STR-01 | P1: Strangler | Feature flag `monolith` vs HTTP (Onda 2 URLs) | Execute | Verified ✅ |
+| STR-02 | P2: Pact | Contract tests 3 serviços | Execute | Verified ✅ |
+| STR-03 | AD-003 | DB compartilhado herdado | Execute | Verified ✅ |
+| STR-04 | P1 | Paths REST sem breaking change | Execute | Verified ✅ |
+| STR-05 | P3 | Actuator health + correlation id | Execute | Verified ✅ |
+| STR-06 | P1 | Cross-service: merchant→content, content→reference | Execute | Verified ✅ |
 
-**Coverage:** 28 total, 28 mapped to tasks (T1–T54) ✅
+**Coverage:** 28 total, 28 mapped, 0 unmapped ✅
 
 ---
 

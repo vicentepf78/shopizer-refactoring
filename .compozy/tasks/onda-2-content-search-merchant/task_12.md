@@ -1,5 +1,5 @@
 ---
-status: pending
+status: completed
 title: Correlation ID e health indicators Wave2
 type: infra
 complexity: medium
@@ -28,11 +28,11 @@ Consolida TLC T47–T48. Propaga `X-Correlation-Id` nos apps Wave2 + sm-shop (fi
 </requirements>
 
 ## Subtasks
-- [ ] 12.1 CorrelationIdFilter nos 3 serviços + sm-shop (T47)
-- [ ] 12.2 Interceptor RestTemplate de propagação (T47)
-- [ ] 12.3 Health indicators content (T48)
-- [ ] 12.4 Health indicators search (T48)
-- [ ] 12.5 Health indicators merchant (T48)
+- [x] 12.1 CorrelationIdFilter nos 3 serviços + sm-shop (T47)
+- [x] 12.2 Interceptor RestTemplate de propagação (T47)
+- [x] 12.3 Health indicators content (T48)
+- [x] 12.4 Health indicators search (T48)
+- [x] 12.5 Health indicators merchant (T48)
 
 ## Implementation Details
 Ver TechSpec: **Monitoramento e observabilidade**, **Ordem de construção** passo 28. Requisito STR-05.
@@ -58,15 +58,15 @@ Ver TechSpec: **Monitoramento e observabilidade**, **Ordem de construção** pas
 
 ## Tests
 - Unit tests:
-  - [ ] Filter gera UUID quando header ausente
-  - [ ] Filter preserva header inbound existente
-  - [ ] Interceptor copia correlation id para request outbound
-  - [ ] Health indicator openSearch DOWN quando client falha
-  - [ ] Health indicator cms DOWN quando backend blob inacessível
+  - [x] Filter gera UUID quando header ausente
+  - [x] Filter preserva header inbound existente
+  - [x] Interceptor copia correlation id para request outbound
+  - [x] Health indicator openSearch DOWN quando client falha
+  - [x] Health indicator cms DOWN quando backend blob inacessível
 - Integration tests:
-  - [ ] `./mvnw test -pl content-service,search-service,merchant-service,sm-shop -Dtest=CorrelationId*Test`
-  - [ ] `./mvnw test -pl content-service,search-service,merchant-service -Dtest=*HealthIndicatorTest`
-  - [ ] `/actuator/health` lista componentes esperados por serviço
+  - [x] `./mvnw test -pl content-service,search-service,merchant-service,sm-shop -Dtest=CorrelationId*Test`
+  - [x] `./mvnw test -pl content-service,search-service,merchant-service -Dtest=*HealthIndicatorTest`
+  - [x] `/actuator/health` lista componentes esperados por serviço
 - Test coverage target: >=80%
 - All tests must pass
 

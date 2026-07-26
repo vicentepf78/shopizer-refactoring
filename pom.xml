@@ -28,10 +28,15 @@
 		<module>sm-core-modules</module>
 		<module>sm-reference-core</module>
 		<module>sm-tax-core</module>
+		<module>sm-content-core</module>
+		<module>sm-merchant-core</module>
 		<module>sm-core</module>
 		<module>shopizer-api-contracts</module>
 		<module>reference-service</module>
 		<module>tax-service</module>
+		<module>content-service</module>
+		<module>search-service</module>
+		<module>merchant-service</module>
 		<module>sm-shop-model</module>
 		<module>sm-shop</module>
 	</modules>
@@ -108,6 +113,16 @@
 			<dependency>
 				<groupId>com.shopizer</groupId>
 				<artifactId>sm-tax-core</artifactId>
+				<version>3.2.5</version>
+			</dependency>
+			<dependency>
+				<groupId>com.shopizer</groupId>
+				<artifactId>sm-content-core</artifactId>
+				<version>3.2.5</version>
+			</dependency>
+			<dependency>
+				<groupId>com.shopizer</groupId>
+				<artifactId>sm-merchant-core</artifactId>
 				<version>3.2.5</version>
 			</dependency>
 			<dependency>

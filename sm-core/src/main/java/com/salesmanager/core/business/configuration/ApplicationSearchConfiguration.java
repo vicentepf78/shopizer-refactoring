@@ -2,6 +2,7 @@ package com.salesmanager.core.business.configuration;
 
 import java.util.List;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -17,6 +18,7 @@ import modules.commons.search.configuration.SearchHost;
 
 
 @Configuration
+@ConditionalOnProperty(name = "wave2.strangler.enabled", havingValue = "false", matchIfMissing = true)
 @ConfigurationProperties(prefix = "search")
 @PropertySource("classpath:shopizer-core.properties")
 public class ApplicationSearchConfiguration {

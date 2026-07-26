@@ -1,5 +1,5 @@
 ---
-status: pending
+status: completed
 title: Extrair sm-merchant-core sem ProductType
 type: backend
 complexity: high

@@ -1,5 +1,5 @@
 ---
-status: pending
+status: completed
 title: Merchant REST, snapshot interno e logo AD-014
 type: backend
 complexity: high
@@ -29,12 +29,12 @@ Consolida TLC T35–T40. Porta Store/Config facades, REST de loja (~18 endpoints
 </requirements>
 
 ## Subtasks
-- [ ] 10.1 Port StoreFacade + populators (T35)
-- [ ] 10.2 Config facade + PublicConfigsController (T36)
-- [ ] 10.3 MerchantStoreController REST sem ProductType (T37)
-- [ ] 10.4 InternalStoreController snapshot (T38)
-- [ ] 10.5 Logo orchestration AD-014 (T39)
-- [ ] 10.6 Gate módulo merchant-service (T40)
+- [x] 10.1 Port StoreFacade + populators (T35)
+- [x] 10.2 Config facade + PublicConfigsController (T36)
+- [x] 10.3 MerchantStoreController REST sem ProductType (T37)
+- [x] 10.4 InternalStoreController snapshot (T38)
+- [x] 10.5 Logo orchestration AD-014 (T39)
+- [x] 10.6 Gate módulo merchant-service (T40)
 
 ## Implementation Details
 Ver TechSpec: **Endpoints merchant-service**, **Ordem de construção** passos 25–26. Fontes: `StoreFacadeImpl`, `MerchantStoreApi`, `PublicConfigsApi`.
@@ -67,16 +67,16 @@ Ver TechSpec: **Endpoints merchant-service**, **Ordem de construção** passos 2
 
 ## Tests
 - Unit tests:
-  - [ ] StoreFacade create/update usa ReferenceServiceClient (mock)
-  - [ ] Populators não serializam entidades JPA
+  - [x] StoreFacade create/update usa ReferenceServiceClient (mock)
+  - [x] Populators não serializam entidades JPA
 - Integration tests:
-  - [ ] Zero rotas ProductType registradas
-  - [ ] GET /config retorna flags + social
-  - [ ] Snapshot interno retorna MerchantStoreSnapshot por code
-  - [ ] Upload logo: falha DB dispara compensate (delete blob)
-  - [ ] Delete logo: falha content → orphan WARN sem rollback DB
-  - [ ] Default store delete → erro de negócio
-  - [ ] `./mvnw test -pl merchant-service` verde
+  - [x] Zero rotas ProductType registradas
+  - [x] GET /config retorna flags + social
+  - [x] Snapshot interno retorna MerchantStoreSnapshot por code
+  - [x] Upload logo: falha DB dispara compensate (delete blob)
+  - [x] Delete logo: falha content → orphan WARN sem rollback DB
+  - [x] Default store delete → erro de negócio
+  - [x] `./mvnw test -pl merchant-service` verde
 - Test coverage target: >=80%
 - All tests must pass
 

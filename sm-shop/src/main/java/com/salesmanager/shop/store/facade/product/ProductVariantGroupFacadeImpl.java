@@ -34,6 +34,7 @@ import com.salesmanager.shop.model.entity.ReadableEntityList;
 import com.salesmanager.shop.store.api.exception.ResourceNotFoundException;
 import com.salesmanager.shop.store.api.exception.ServiceRuntimeException;
 import com.salesmanager.shop.store.controller.product.facade.ProductVariantGroupFacade;
+import com.salesmanager.shop.strangler.content.ContentBlobClient;
 
 
 @Component
@@ -56,6 +57,9 @@ public class ProductVariantGroupFacadeImpl implements ProductVariantGroupFacade 
 	
 	@Autowired
 	private ContentService contentService; //file management
+
+	@Autowired(required = false)
+	private ContentBlobClient contentBlobClient;
 
 	@Override
 	public ReadableProductVariantGroup get(Long instanceGroupId, MerchantStore store, Language language) {
@@ -176,7 +180,11 @@ public class ProductVariantGroupFacadeImpl implements ProductVariantGroupFacade 
 			cmsContentImage.setPath(path);
 			cmsContentImage.setFileContentType(FileContentType.VARIANT);
 
-			contentService.addContentFile(store.getCode(), cmsContentImage);
+			if (contentBlobClient != null) {
+				contentBlobClient.addContentFile(store.getCode(), cmsContentImage);
+			} else {
+				contentService.addContentFile(store.getCode(), cmsContentImage);
+			}
 
 			group.getImages().add(instanceImage);
 			
@@ -205,7 +213,12 @@ public class ProductVariantGroupFacadeImpl implements ProductVariantGroupFacade 
 
 		
 		try {
-			contentService.removeFile(Constants.SLASH + store.getCode() + Constants.SLASH + productVariantGroupId, FileContentType.VARIANT, image.getProductImage());
+			String removeStoreCode = Constants.SLASH + store.getCode() + Constants.SLASH + productVariantGroupId;
+			if (contentBlobClient != null) {
+				contentBlobClient.removeFile(removeStoreCode, FileContentType.VARIANT, image.getProductImage());
+			} else {
+				contentService.removeFile(removeStoreCode, FileContentType.VARIANT, image.getProductImage());
+			}
 			group.getImages().removeIf(i -> (i.getId() == image.getId()));
 			//update productVariantroup
 			productVariantGroupService.update(group);

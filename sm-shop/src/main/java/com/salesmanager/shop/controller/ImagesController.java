@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +24,7 @@ import com.salesmanager.core.business.services.content.ContentService;
 import com.salesmanager.core.model.catalog.product.file.ProductImageSize;
 import com.salesmanager.core.model.content.FileContentType;
 import com.salesmanager.core.model.content.OutputContentFile;
+import com.salesmanager.shop.strangler.content.StaticContentProxy;
 
 /**
  * When handling images and files from the application server
@@ -41,6 +43,9 @@ public class ImagesController {
 	
 	@Inject
 	private ProductImageService productImageService;
+
+	@Autowired(required = false)
+	private StaticContentProxy staticContentProxy;
 	
 	private byte[] tempImage = null;
 	
@@ -87,7 +92,21 @@ public class ImagesController {
 			imgType = FileContentType.PROPERTY;
 		}
 		
-		OutputContentFile image =contentService.getContentFile(storeCode, imgType, new StringBuilder().append(imageName).append(".").append(extension).toString());
+		if(imgType == null) {
+			return tempImage;
+		}
+
+		String fileName = new StringBuilder().append(imageName).append(".").append(extension).toString();
+		if (staticContentProxy != null) {
+			try {
+				return staticContentProxy.getStaticFile(storeCode, imgType, fileName);
+			} catch (Exception e) {
+				LOGGER.debug("Static proxy miss for {}: {}", fileName, e.getMessage());
+				return tempImage;
+			}
+		}
+
+		OutputContentFile image = contentService.getContentFile(storeCode, imgType, fileName);
 		
 		
 		if(image!=null) {

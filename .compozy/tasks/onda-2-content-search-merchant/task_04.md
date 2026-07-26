@@ -1,5 +1,5 @@
 ---
-status: pending
+status: completed
 title: Rewire sm-core content e trim CMS de produto
 type: backend
 complexity: medium
@@ -28,11 +28,11 @@ Consolida TLC T17. Remove do `sm-core` as classes de content já movidas, adicio
 </requirements>
 
 ## Subtasks
-- [ ] 4.1 Remover classes content movidas de sm-core
-- [ ] 4.2 Adicionar dep `sm-content-core` no pom sm-core
-- [ ] 4.3 Trim CMS XML para product-only
-- [ ] 4.4 Gate `./mvnw test -pl sm-core`
-- [ ] 4.5 Smoke: ContentService disponível no contexto monólito
+- [x] 4.1 Remover classes content movidas de sm-core
+- [x] 4.2 Adicionar dep `sm-content-core` no pom sm-core
+- [x] 4.3 Trim CMS XML para product-only
+- [x] 4.4 Gate `./mvnw test -pl sm-core`
+- [x] 4.5 Smoke: ContentService disponível no contexto monólito
 
 ## Implementation Details
 Ver TechSpec: **Análise de impacto** (`sm-core`), **Ordem de construção** passo 14. Coordenar com task_02/task_03 já concluídas.
@@ -59,11 +59,11 @@ Ver TechSpec: **Análise de impacto** (`sm-core`), **Ordem de construção** pas
 
 ## Tests
 - Unit tests:
-  - [ ] Contexto Spring resolve ContentService a partir do thin core
-- [ ] Beans product CMS permanecem no XML do sm-core
+  - [x] Contexto Spring resolve ContentService a partir do thin core
+- [x] Beans product CMS permanecem no XML do sm-core
 - Integration tests:
-  - [ ] `./mvnw test -pl sm-core` verde
-  - [ ] Ausência de classes duplicadas content no classpath sm-core source
+  - [x] `./mvnw test -pl sm-core` verde
+  - [x] Ausência de classes duplicadas content no classpath sm-core source
 - Test coverage target: >=80%
 - All tests must pass
 

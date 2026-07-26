@@ -10,6 +10,7 @@ import org.jsoup.helper.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +40,7 @@ import modules.commons.search.request.SearchRequest;
 import modules.commons.search.request.SearchResponse;
 
 @Service("searchFacade")
+@ConditionalOnProperty(name = "wave2.strangler.enabled", havingValue = "false", matchIfMissing = true)
 public class SearchFacadeImpl implements SearchFacade {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SearchFacadeImpl.class);

@@ -1,5 +1,5 @@
 ---
-status: pending
+status: completed
 title: search-service OpenSearch, query e índice (S-ready)
 type: backend
 complexity: high

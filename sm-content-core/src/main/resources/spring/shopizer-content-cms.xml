@@ -1,0 +1,77 @@
+<beans:beans xmlns:beans="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+  <!-- Content-only CMS wiring (ADR-008): contentFileManager + backends; no product CMS beans -->
+
+  <beans:bean id="contentFileManager"
+    class="com.salesmanager.core.business.modules.cms.content.StaticContentFileManagerImpl">
+    <beans:property name="uploadFile">
+      <beans:ref bean="${config.cms.method}ContentAssetsManager" />
+    </beans:property>
+    <beans:property name="getFile">
+      <beans:ref bean="${config.cms.method}ContentAssetsManager" />
+    </beans:property>
+    <beans:property name="removeFile">
+      <beans:ref bean="${config.cms.method}ContentAssetsManager" />
+    </beans:property>
+    <beans:property name="addFolder">
+      <beans:ref bean="${config.cms.method}ContentAssetsManager" />
+    </beans:property>
+    <beans:property name="removeFolder">
+      <beans:ref bean="${config.cms.method}ContentAssetsManager" />
+    </beans:property>
+    <beans:property name="listFolder">
+      <beans:ref bean="${config.cms.method}ContentAssetsManager" />
+    </beans:property>
+  </beans:bean>
+
+  <!-- Infinispan (default) -->
+  <beans:bean id="defaultContentAssetsManager"
+    class="com.salesmanager.core.business.modules.cms.content.infinispan.CmsStaticContentFileManagerImpl"
+    factory-method="getInstance">
+    <beans:property name="cacheManager">
+      <beans:ref bean="infinispanStaticAssetsManager" />
+    </beans:property>
+  </beans:bean>
+
+  <!-- Httpd (local disk) -->
+  <beans:bean id="httpdContentAssetsManager"
+    class="com.salesmanager.core.business.modules.cms.content.local.CmsStaticContentFileManagerImpl"
+    factory-method="getInstance">
+    <beans:property name="cacheManager">
+      <beans:ref bean="httpdAssetsManager" />
+    </beans:property>
+  </beans:bean>
+
+  <!-- AWS S3 -->
+  <beans:bean id="awsContentAssetsManager"
+    class="com.salesmanager.core.business.modules.cms.content.aws.S3StaticContentAssetsManagerImpl"
+    factory-method="getInstance">
+    <beans:property name="cmsManager">
+      <beans:ref bean="awsAssetsManager" />
+    </beans:property>
+  </beans:bean>
+
+  <!-- GCP: gcpContentAssetsManager via @Component scan (ADR-008) -->
+
+  <!-- Cache managers for content backends -->
+  <beans:bean id="infinispanStaticAssetsManager"
+    class="com.salesmanager.core.business.modules.cms.impl.StaticContentCacheManagerImpl">
+    <beans:constructor-arg value="${config.cms.files.location}" />
+    <beans:constructor-arg value="store-merchant" />
+  </beans:bean>
+
+  <beans:bean id="httpdAssetsManager"
+    class="com.salesmanager.core.business.modules.cms.impl.LocalCacheManagerImpl">
+    <beans:constructor-arg value="${config.cms.http.path.location}" />
+  </beans:bean>
+
+  <beans:bean id="awsAssetsManager"
+    class="com.salesmanager.core.business.modules.cms.impl.S3CacheManagerImpl">
+    <beans:constructor-arg value="${config.cms.aws.bucket}" />
+    <beans:constructor-arg value="${config.cms.aws.region}" />
+  </beans:bean>
+
+</beans:beans>

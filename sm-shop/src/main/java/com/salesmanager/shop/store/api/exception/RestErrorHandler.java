@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.salesmanager.shop.filter.CorrelationIdFilter;
 import com.salesmanager.shop.strangler.support.DownstreamHttpException;
 import com.salesmanager.shop.strangler.support.ServiceUnavailableException;
 
@@ -129,6 +131,10 @@ public class RestErrorHandler {
         }
         Optional.ofNullable(resultMessage)
                 .ifPresent(errorEntity::setMessage);
+        String correlationId = MDC.get(CorrelationIdFilter.MDC_KEY);
+        if (StringUtils.isNotBlank(correlationId)) {
+            errorEntity.setCorrelationId(correlationId);
+        }
         return errorEntity;
     }
 }
