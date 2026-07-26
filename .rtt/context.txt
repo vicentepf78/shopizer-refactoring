@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-26 12:52 | 1593 files | 248326 tokens
+# rtt index | generated 2026-07-26 12:56 | 1604 files | 250075 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -465,6 +465,12 @@ class ReferenceServiceClientTest
   void getZoneByCode_withoutLang_omitsLangQueryParam()
   void getLanguageByCode_unknown_returnsNull()
 
+# content-service/src/test/java/com/salesmanager/content/config/RestClientConfigTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.springframework.test.web.client.match.MockRestRequestMatchers.header, org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo, org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess, org.junit.jupiter.api.AfterEach, org.junit.jupiter.api.Test, org.springframework.boot.web.client.RestTemplateBuilder, org.springframework.http.MediaType, org.springframework.mock.web.MockHttpServletRequest, org.springframework.test.web.client.MockRestServiceServer, org.springframework.web.client.RestTemplate, org.springframework.web.context.request.RequestContextHolder, org.springframework.web.context.request.ServletRequestAttributes, com.salesmanager.content.web.CorrelationIdFilter
+class RestClientConfigTest
+  void tearDown()
+  void correlationInterceptorCopiesInboundHeader()
+
 # content-service/src/test/java/com/salesmanager/content/facade/ContentFacadeImplTest.java [java]
 imports: org.assertj.core.api.Assertions.assertThat, org.assertj.core.api.Assertions.assertThatThrownBy, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.when, java.util.Arrays, java.util.Collections, java.util.Optional, java.util.UUID, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.test.context.SpringBootTest, org.springframework.boot.test.mock.mockito.MockBean, org.springframework.context.annotation.Import, org.springframework.test.context.ActiveProfiles, com.salesmanager.contracts.client.ReferenceServiceClient, com.salesmanager.contracts.content.ContentFile, com.salesmanager.contracts.content.box.PersistableContentBox, com.salesmanager.contracts.content.box.ReadableContentBox, com.salesmanager.contracts.content.common.ContentDescription, com.salesmanager.contracts.content.page.PersistableContentPage, com.salesmanager.contracts.content.page.ReadableContentPage, com.salesmanager.contracts.reference.ReadableLanguage, com.salesmanager.core.model.content.ContentType, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.content.facade.content.ContentFacade, com.salesmanager.content.support.ConstraintException, com.salesmanager.content.support.ResourceNotFoundException
 class ContentFacadeImplTest
@@ -496,6 +502,18 @@ class ContentFacadeImplTest
   PersistableContentBox box(String code, String name)
   ContentDescription desc(String lang, String name, String url)
 
+# content-service/src/test/java/com/salesmanager/content/health/ActuatorHealthIntegrationTest.java [java]
+imports: org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get, org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath, org.springframework.test.web.servlet.result.MockMvcResultMatchers.status, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc, org.springframework.boot.test.context.SpringBootTest, org.springframework.boot.test.mock.mockito.MockBean, org.springframework.http.HttpStatus, org.springframework.http.ResponseEntity, org.springframework.test.context.ActiveProfiles, org.springframework.test.web.servlet.MockMvc, org.springframework.web.client.RestTemplate, com.salesmanager.contracts.client.ReferenceServiceClient
+class ActuatorHealthIntegrationTest
+  void healthListsContentHealthComponents()
+
+# content-service/src/test/java/com/salesmanager/content/health/ContentHealthIndicatorTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.mockito.ArgumentMatchers.anyInt, org.mockito.ArgumentMatchers.anyString, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.mock, org.mockito.Mockito.when, java.nio.file.Files, java.sql.Connection, javax.sql.DataSource, org.junit.jupiter.api.Test, org.junit.jupiter.api.io.TempDir, org.springframework.boot.actuate.health.Health, org.springframework.boot.actuate.health.Status, org.springframework.http.HttpStatus, org.springframework.http.ResponseEntity, org.springframework.web.client.RestClientException, org.springframework.web.client.RestTemplate
+class ContentHealthIndicatorTest
+  void reportsUpWhenDatabaseCmsAndReferenceOk()
+  void reportsDownWhenCmsBackendInaccessible()
+  void reportsDownWhenReferenceHttpFails()
+
 # content-service/src/test/java/com/salesmanager/content/security/ContentSecurityIntegrationTest.java [java]
 imports: org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get, org.springframework.test.web.servlet.result.MockMvcResultMatchers.status, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc, org.springframework.boot.test.context.SpringBootTest, org.springframework.boot.test.mock.mockito.MockBean, org.springframework.context.annotation.Import, org.springframework.test.context.ActiveProfiles, org.springframework.test.web.servlet.MockMvc, com.salesmanager.contracts.client.ReferenceServiceClient, com.salesmanager.content.support.TestDataFactory
 class ContentSecurityIntegrationTest
@@ -512,6 +530,13 @@ class TestDataFactory
   Zone seedZone(String code, Country country)
   Language ensureLanguage(String code)
   class Seed
+
+# content-service/src/test/java/com/salesmanager/content/web/CorrelationIdFilterTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, java.util.concurrent.atomic.AtomicReference, javax.servlet.http.HttpServletRequest, org.junit.jupiter.api.AfterEach, org.junit.jupiter.api.Test, org.slf4j.MDC, org.springframework.mock.web.MockHttpServletRequest, org.springframework.mock.web.MockHttpServletResponse
+class CorrelationIdFilterTest
+  void clearMdc()
+  void generatesIdWhenHeaderAbsent()
+  void propagatesExistingHeader()
 
 # merchant-service/src/main/java/com/salesmanager/merchant/MerchantServiceApplication.java [java]
 imports: org.springframework.boot.SpringApplication, org.springframework.boot.autoconfigure.SpringBootApplication
@@ -689,6 +714,19 @@ class StoreFacadeImpl
 			MerchantConfigEntity config, MerchantConfigurationType configurationType)
   void saveMerchantStore(MerchantStore store)
   ReadableMerchantStore convertStoreName(MerchantStore store)
+
+# merchant-service/src/main/java/com/salesmanager/merchant/health/MerchantHealthIndicator.java [java]
+imports: java.sql.Connection, javax.sql.DataSource, org.apache.commons.lang3.StringUtils, org.springframework.beans.factory.annotation.Value, org.springframework.boot.actuate.health.Health, org.springframework.boot.actuate.health.HealthIndicator, org.springframework.http.ResponseEntity, org.springframework.stereotype.Component, org.springframework.web.client.RestClientException, org.springframework.web.client.RestTemplate
+class MerchantHealthIndicator
+  Health health()
+  boolean checkDatabase(Health.Builder builder)
+  boolean checkReference(Health.Builder builder)
+  boolean checkContent(Health.Builder builder)
+  boolean checkRemote(
+			Health.Builder builder,
+			RestTemplate restTemplate,
+			String healthUrl,
+			String detailKey)
 
 # merchant-service/src/main/java/com/salesmanager/merchant/populator/MerchantStoreSnapshotPopulator.java [java]
 imports: org.springframework.stereotype.Component, com.salesmanager.contracts.merchant.MerchantStoreSnapshot, com.salesmanager.contracts.merchant.ReadableMerchantStore
@@ -937,6 +975,12 @@ class ReferenceServiceClientTest
   void getCountryByCode_unknown_returnsNull()
   void blankInputs_returnNullWithoutHttpCall()
 
+# merchant-service/src/test/java/com/salesmanager/merchant/config/RestClientConfigTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.springframework.test.web.client.match.MockRestRequestMatchers.header, org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo, org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess, org.junit.jupiter.api.AfterEach, org.junit.jupiter.api.Test, org.springframework.boot.web.client.RestTemplateBuilder, org.springframework.http.MediaType, org.springframework.mock.web.MockHttpServletRequest, org.springframework.test.web.client.MockRestServiceServer, org.springframework.web.client.RestTemplate, org.springframework.web.context.request.RequestContextHolder, org.springframework.web.context.request.ServletRequestAttributes, com.salesmanager.merchant.web.CorrelationIdFilter
+class RestClientConfigTest
+  void tearDown()
+  void correlationInterceptorCopiesInboundHeader()
+
 # merchant-service/src/test/java/com/salesmanager/merchant/facade/LogoOrchestrationTest.java [java]
 imports: org.assertj.core.api.Assertions.assertThat, org.mockito.ArgumentMatchers.any, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.doAnswer, org.mockito.Mockito.doThrow, org.mockito.Mockito.verify, org.mockito.Mockito.when, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.contracts.client.ContentServiceClient, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.merchant.MerchantStoreService, com.salesmanager.core.business.services.reference.language.LanguageService, com.salesmanager.core.business.services.system.MerchantConfigurationService, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.merchant.populator.MerchantStoreSnapshotPopulator, com.salesmanager.merchant.populator.PersistableMerchantStorePopulator, com.salesmanager.merchant.populator.ReadableMerchantStorePopulator, com.salesmanager.merchant.util.MerchantLogoPath
 class LogoOrchestrationTest
@@ -995,6 +1039,18 @@ class StoreFacadeImplUnitTest
   MerchantStoreCriteria criteriaWithCode(String code)
   Page<MerchantStore> pageOf(MerchantStore store)
 
+# merchant-service/src/test/java/com/salesmanager/merchant/health/ActuatorHealthIntegrationTest.java [java]
+imports: org.mockito.ArgumentMatchers.anyString, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.when, org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get, org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath, org.springframework.test.web.servlet.result.MockMvcResultMatchers.status, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc, org.springframework.boot.test.context.SpringBootTest, org.springframework.boot.test.mock.mockito.MockBean, org.springframework.http.HttpStatus, org.springframework.http.ResponseEntity, org.springframework.test.context.ActiveProfiles, org.springframework.test.web.servlet.MockMvc, org.springframework.web.client.RestTemplate, com.salesmanager.contracts.client.ContentServiceClient, com.salesmanager.contracts.client.ReferenceServiceClient
+class ActuatorHealthIntegrationTest
+  void stubRemoteHealth()
+  void healthListsMerchantHealthComponents()
+
+# merchant-service/src/test/java/com/salesmanager/merchant/health/MerchantHealthIndicatorTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.mockito.ArgumentMatchers.anyInt, org.mockito.ArgumentMatchers.anyString, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.mock, org.mockito.Mockito.when, java.sql.Connection, javax.sql.DataSource, org.junit.jupiter.api.Test, org.springframework.boot.actuate.health.Health, org.springframework.boot.actuate.health.Status, org.springframework.http.HttpStatus, org.springframework.http.ResponseEntity, org.springframework.web.client.RestClientException, org.springframework.web.client.RestTemplate
+class MerchantHealthIndicatorTest
+  void reportsUpWhenDatabaseReferenceAndContentOk()
+  void reportsDownWhenContentHttpFails()
+
 # merchant-service/src/test/java/com/salesmanager/merchant/populator/PersistableMerchantStorePopulatorTest.java [java]
 imports: org.assertj.core.api.Assertions.assertThat, org.assertj.core.api.Assertions.assertThatThrownBy, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.when, java.util.Arrays, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.test.context.SpringBootTest, org.springframework.boot.test.mock.mockito.MockBean, org.springframework.context.annotation.Import, org.springframework.test.context.ActiveProfiles, com.salesmanager.contracts.client.ReferenceServiceClient, com.salesmanager.contracts.merchant.PersistableMerchantStore, com.salesmanager.contracts.reference.PersistableAddress, com.salesmanager.contracts.reference.ReadableCountry, com.salesmanager.contracts.reference.ReadableLanguage, com.salesmanager.core.business.exception.ConversionException, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.merchant.support.TestDataFactory
 class PersistableMerchantStorePopulatorTest
@@ -1023,6 +1079,13 @@ class TestDataFactory
   void seedSocialConfig(MerchantStore store, String key, String value)
   Language ensureLanguage(String code)
   class Seed
+
+# merchant-service/src/test/java/com/salesmanager/merchant/web/CorrelationIdFilterTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, java.util.concurrent.atomic.AtomicReference, javax.servlet.http.HttpServletRequest, org.junit.jupiter.api.AfterEach, org.junit.jupiter.api.Test, org.slf4j.MDC, org.springframework.mock.web.MockHttpServletRequest, org.springframework.mock.web.MockHttpServletResponse
+class CorrelationIdFilterTest
+  void clearMdc()
+  void generatesIdWhenHeaderAbsent()
+  void propagatesExistingHeader()
 
 # reference-service/src/main/java/com/salesmanager/reference/ReferenceServiceApplication.java [java]
 imports: org.springframework.boot.SpringApplication, org.springframework.boot.autoconfigure.SpringBootApplication
@@ -1377,6 +1440,13 @@ class SearchModuleBootstrapTest
   void buildConfigurationLoadsMappingsAndSettings()
   void initConfiguresSearchModuleWhenEnabled()
 
+# search-service/src/test/java/com/salesmanager/search/health/SearchHealthIndicatorTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.mockito.Mockito.mock, org.mockito.Mockito.when, org.junit.jupiter.api.Test, org.springframework.boot.actuate.health.Health, org.springframework.boot.actuate.health.Status, modules.commons.search.SearchModule
+class SearchHealthIndicatorTest
+  void reportsDownWhenOpenSearchClientFails()
+  void reportsUpWhenOpenSearchConnectionAvailable()
+  void reportsDownWhenSearchModuleNotConfigured()
+
 # search-service/src/test/java/com/salesmanager/search/services/SearchIndexServiceImplTest.java [java]
 imports: org.assertj.core.api.Assertions.assertThat, org.assertj.core.api.Assertions.assertThatThrownBy, org.mockito.ArgumentMatchers.any, org.mockito.ArgumentMatchers.anyList, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.doThrow, org.mockito.Mockito.verify, java.util.Collections, java.util.HashMap, java.util.List, java.util.Map, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.ArgumentCaptor, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.contracts.search.ProductIndexPayload, com.salesmanager.search.support.SearchUnavailableException, modules.commons.search.SearchModule, modules.commons.search.request.IndexItem
 class SearchIndexServiceImplTest
@@ -1397,6 +1467,13 @@ class SearchQueryServiceImplTest
   void openSearchFailureMapsToSearchUnavailable()
   void missingSearchModuleReturns503Exception()
   void hasNoSmCoreModelImports()
+
+# search-service/src/test/java/com/salesmanager/search/web/CorrelationIdFilterTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, java.util.concurrent.atomic.AtomicReference, javax.servlet.http.HttpServletRequest, org.junit.jupiter.api.AfterEach, org.junit.jupiter.api.Test, org.slf4j.MDC, org.springframework.mock.web.MockHttpServletRequest, org.springframework.mock.web.MockHttpServletResponse
+class CorrelationIdFilterTest
+  void clearMdc()
+  void generatesIdWhenHeaderAbsent()
+  void propagatesExistingHeader()
 
 # search-service/src/test/java/com/salesmanager/search/web/RestErrorHandlerTest.java [java]
 imports: org.assertj.core.api.Assertions.assertThat, org.junit.jupiter.api.Test, org.slf4j.MDC, com.salesmanager.search.support.SearchUnavailableException
@@ -11789,6 +11866,8 @@ class ErrorEntity
   void setErrorCode(String errorCode)
   String getMessage()
   void setMessage(String message)
+  String getCorrelationId()
+  void setCorrelationId(String correlationId)
 
 # sm-shop/src/main/java/com/salesmanager/shop/store/api/exception/FileUploadExceptionAdvice.java [java]
 imports: java.util.Optional, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.http.HttpStatus, org.springframework.web.bind.annotation.ControllerAdvice, org.springframework.web.bind.annotation.ExceptionHandler, org.springframework.web.bind.annotation.ResponseBody, org.springframework.web.bind.annotation.ResponseStatus, org.springframework.web.multipart.MaxUploadSizeExceededException
@@ -11813,7 +11892,7 @@ class ResourceNotFoundException
 class RestApiException
 
 # sm-shop/src/main/java/com/salesmanager/shop/store/api/exception/RestErrorHandler.java [java]
-imports: java.util.Objects, java.util.Optional, org.apache.commons.lang3.StringUtils, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.core.Ordered, org.springframework.core.annotation.Order, org.springframework.http.HttpStatus, org.springframework.http.ResponseEntity, org.springframework.web.bind.annotation.ControllerAdvice, org.springframework.web.bind.annotation.ExceptionHandler, org.springframework.web.bind.annotation.RequestMapping, org.springframework.web.bind.annotation.ResponseBody, org.springframework.web.bind.annotation.ResponseStatus, com.salesmanager.shop.strangler.support.DownstreamHttpException, com.salesmanager.shop.strangler.support.ServiceUnavailableException
+imports: java.util.Objects, java.util.Optional, org.apache.commons.lang3.StringUtils, org.slf4j.Logger, org.slf4j.LoggerFactory, org.slf4j.MDC, org.springframework.core.Ordered, org.springframework.core.annotation.Order, org.springframework.http.HttpStatus, org.springframework.http.ResponseEntity, org.springframework.web.bind.annotation.ControllerAdvice, org.springframework.web.bind.annotation.ExceptionHandler, org.springframework.web.bind.annotation.RequestMapping, org.springframework.web.bind.annotation.ResponseBody, org.springframework.web.bind.annotation.ResponseStatus, com.salesmanager.shop.filter.CorrelationIdFilter, com.salesmanager.shop.strangler.support.DownstreamHttpException, com.salesmanager.shop.strangler.support.ServiceUnavailableException
 class RestErrorHandler
   ErrorEntity handleServiceException(Exception exception)
   ErrorEntity handleServiceException(ServiceRuntimeException exception)
@@ -14739,12 +14818,14 @@ class Wave1ClientConfigTest
   void bindsWave1Properties()
 
 # sm-shop/src/test/java/com/salesmanager/shop/strangler/config/Wave2ClientConfigTest.java [java]
-imports: org.assertj.core.api.Assertions.assertThat, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.context.properties.EnableConfigurationProperties, org.springframework.boot.test.context.SpringBootTest, org.springframework.boot.web.client.RestTemplateBuilder, org.springframework.context.annotation.Bean, org.springframework.context.annotation.Configuration, org.springframework.test.context.TestPropertySource, org.springframework.web.client.RestTemplate, com.salesmanager.contracts.client.SearchIndexClient
+imports: org.assertj.core.api.Assertions.assertThat, org.springframework.test.web.client.match.MockRestRequestMatchers.header, org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo, org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess, org.junit.jupiter.api.AfterEach, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.context.properties.EnableConfigurationProperties, org.springframework.boot.test.context.SpringBootTest, org.springframework.boot.web.client.RestTemplateBuilder, org.springframework.context.annotation.Bean, org.springframework.context.annotation.Configuration, org.springframework.http.MediaType, org.springframework.mock.web.MockHttpServletRequest, org.springframework.test.context.TestPropertySource, org.springframework.test.web.client.MockRestServiceServer, org.springframework.web.client.RestTemplate, org.springframework.web.context.request.RequestContextHolder, org.springframework.web.context.request.ServletRequestAttributes, com.salesmanager.contracts.client.SearchIndexClient, com.salesmanager.shop.filter.CorrelationIdFilter
 class Wave2ClientConfigTest
   class TestConfig
   void bindsWave2Properties()
   void wave2CoexistsWithWave1Properties()
   void registersWave2RestTemplateAndSearchIndexClient()
+  void tearDown()
+  void wave2RestTemplatePropagatesCorrelationId()
 
 # sm-shop/src/test/java/com/salesmanager/shop/strangler/content/ContentBlobClientTest.java [java]
 imports: org.assertj.core.api.Assertions.assertThatThrownBy, org.springframework.test.web.client.match.MockRestRequestMatchers.method, org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo, org.springframework.test.web.client.response.MockRestResponseCreators.withException, org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess, java.io.ByteArrayInputStream, java.net.ConnectException, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.http.HttpMethod, org.springframework.http.MediaType, org.springframework.test.web.client.MockRestServiceServer, org.springframework.web.client.RestTemplate, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.content.InputContentFile, com.salesmanager.shop.strangler.support.ServiceUnavailableException
@@ -14842,8 +14923,9 @@ class Wave2OpenSearchDisabledTest
   void assertConditionalOnWave2Disabled(Class<?> type)
 
 # sm-shop/src/test/java/com/salesmanager/shop/strangler/support/RestErrorHandlerStranglerTest.java [java]
-imports: org.assertj.core.api.Assertions.assertThat, org.junit.jupiter.api.Test, org.springframework.http.HttpStatus, org.springframework.http.ResponseEntity, com.salesmanager.shop.store.api.exception.ErrorEntity, com.salesmanager.shop.store.api.exception.RestErrorHandler
+imports: org.assertj.core.api.Assertions.assertThat, org.junit.jupiter.api.AfterEach, org.junit.jupiter.api.Test, org.slf4j.MDC, org.springframework.http.HttpStatus, org.springframework.http.ResponseEntity, com.salesmanager.shop.filter.CorrelationIdFilter, com.salesmanager.shop.store.api.exception.ErrorEntity, com.salesmanager.shop.store.api.exception.RestErrorHandler
 class RestErrorHandlerStranglerTest
+  void clearMdc()
   void serviceUnavailable_mapsTo503Body()
   void downstreamHttp_preservesStatus()
 

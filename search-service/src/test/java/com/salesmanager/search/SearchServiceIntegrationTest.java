@@ -64,7 +64,9 @@ class SearchServiceIntegrationTest {
 	@Test
 	void healthEndpointIsReachable() throws Exception {
 		mockMvc.perform(get("/actuator/health"))
-				.andExpect(status().isOk());
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.components.search.status").value("UP"))
+				.andExpect(jsonPath("$.components.search.details.openSearch").value("available"));
 	}
 
 	@Test

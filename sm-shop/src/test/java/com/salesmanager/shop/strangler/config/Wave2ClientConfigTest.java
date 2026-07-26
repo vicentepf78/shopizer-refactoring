@@ -1,7 +1,11 @@
 package com.salesmanager.shop.strangler.config;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -9,10 +13,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.salesmanager.contracts.client.SearchIndexClient;
+import com.salesmanager.shop.filter.CorrelationIdFilter;
 
 @SpringBootTest(classes = Wave2ClientConfigTest.TestConfig.class)
 @TestPropertySource(properties = {
@@ -75,5 +85,27 @@ class Wave2ClientConfigTest {
 	void registersWave2RestTemplateAndSearchIndexClient() {
 		assertThat(wave2RestTemplate).isNotNull();
 		assertThat(searchIndexClient).isNotNull();
+	}
+
+	@AfterEach
+	void tearDown() {
+		RequestContextHolder.resetRequestAttributes();
+	}
+
+	@Test
+	void wave2RestTemplatePropagatesCorrelationId() {
+		MockRestServiceServer server = MockRestServiceServer.createServer(wave2RestTemplate);
+		MockHttpServletRequest servletRequest = new MockHttpServletRequest();
+		servletRequest.addHeader(CorrelationIdFilter.HEADER, "corr-wave2-client");
+		RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(servletRequest));
+
+		server.expect(requestTo("http://example/ping"))
+				.andExpect(header(CorrelationIdFilter.HEADER, "corr-wave2-client"))
+				.andRespond(withSuccess("ok", MediaType.TEXT_PLAIN));
+
+		String body = wave2RestTemplate.getForObject("http://example/ping", String.class);
+
+		assertThat(body).isEqualTo("ok");
+		server.verify();
 	}
 }
