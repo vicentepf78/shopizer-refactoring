@@ -99,9 +99,12 @@ public class SearchFacadeImpl implements SearchFacade {
 		Language language;
 		try {
 			store = tenantEntityBridge.resolveStore(storeId);
-			language = tenantEntityBridge.resolveLanguage(languageCode);
+			language = resolveLanguage(languageCode);
 		} catch (ConversionException e) {
 			throw new ConversionRuntimeException(e);
+		}
+		if (language == null) {
+			language = store.getDefaultLanguage();
 		}
 		SearchResponse response = search(store, language.getCode(), searchRequest.getQuery(), searchRequest.getCount(),
 				searchRequest.getStart());
@@ -197,9 +200,12 @@ public class SearchFacadeImpl implements SearchFacade {
 		Language language;
 		try {
 			store = tenantEntityBridge.resolveStore(storeId);
-			language = tenantEntityBridge.resolveLanguage(languageCode);
+			language = resolveLanguage(languageCode);
 		} catch (ConversionException e) {
 			throw new ConversionRuntimeException(e);
+		}
+		if (language == null) {
+			language = store.getDefaultLanguage();
 		}
 		Validate.notNull(word,"Search Keyword must not be null");
 		Validate.notNull(language, "Language cannot be null");
@@ -234,5 +240,11 @@ public class SearchFacadeImpl implements SearchFacade {
 		return MAPPER.convertValue(source, SearchItem.class);
 	}
 
+	private Language resolveLanguage(LanguageCode languageCode) throws ConversionException {
+		if (languageCode == null) {
+			return null;
+		}
+		return tenantEntityBridge.resolveLanguage(languageCode);
+	}
 
 }

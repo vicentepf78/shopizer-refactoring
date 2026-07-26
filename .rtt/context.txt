@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-26 20:03 | 1701 files | 267574 tokens
+# rtt index | generated 2026-07-26 20:06 | 1702 files | 267762 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -13723,6 +13723,7 @@ class ReferencesApi
 # sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/search/SearchApi.java [java]
 imports: java.util.List, javax.inject.Inject, org.springframework.web.bind.annotation.PostMapping, org.springframework.web.bind.annotation.RequestBody, org.springframework.web.bind.annotation.RequestMapping, org.springframework.web.bind.annotation.ResponseBody, org.springframework.web.bind.annotation.RestController, com.salesmanager.contracts.search.SearchItem, com.salesmanager.contracts.search.SearchProductRequest, com.salesmanager.contracts.tenant.LanguageCode, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.shop.model.entity.ValueList, com.salesmanager.shop.store.controller.search.facade.SearchFacade, io.swagger.annotations.Api, io.swagger.annotations.ApiImplicitParam, io.swagger.annotations.ApiImplicitParams, io.swagger.annotations.SwaggerDefinition, io.swagger.annotations.Tag, springfox.documentation.annotations.ApiIgnore
 class SearchApi
+  LanguageCode languageCode(Language language)
   List<SearchItem> search(
       @RequestBody SearchProductRequest searchRequest,
       @ApiIgnore MerchantStore merchantStore,
@@ -14377,6 +14378,7 @@ class SearchFacadeImpl
 			Language language)
   ValueList autocompleteRequest(String word, MerchantStoreId storeId, LanguageCode languageCode)
   SearchItem toContractItem(modules.commons.search.request.SearchItem source)
+  Language resolveLanguage(LanguageCode languageCode)
 
 # sm-shop/src/main/java/com/salesmanager/shop/store/controller/security/facade/SecurityFacade.java [java]
 imports: java.util.List, com.salesmanager.shop.model.security.ReadablePermission
@@ -15824,6 +15826,12 @@ class ReferencesApiTest
   void setUp()
   void getLanguages_returnsReadableLanguageShapeWithoutJpaEntityFields()
   void getCurrency_returnsReadableCurrencyShapeWithoutJpaEntityFields()
+
+# sm-shop/src/test/java/com/salesmanager/shop/store/api/v1/search/SearchApiTest.java [java]
+imports: org.mockito.ArgumentMatchers.eq, org.mockito.ArgumentMatchers.isNull, org.mockito.Mockito.verify, org.mockito.Mockito.when, java.util.Collections, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.InjectMocks, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.contracts.search.SearchProductRequest, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.shop.model.entity.ValueList, com.salesmanager.shop.store.controller.search.facade.SearchFacade
+class SearchApiTest
+  void search_withNullLanguage_passesNullLanguageCodeForAllLanguages()
+  void autocomplete_withNullLanguage_passesNullLanguageCodeForAllLanguages()
 
 # sm-shop/src/test/java/com/salesmanager/shop/store/facade/order/OrderFacadeImplTenantBridgeTest.java [java]
 imports: org.junit.jupiter.api.Assertions.assertNotNull, org.mockito.ArgumentMatchers.any, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.verify, org.mockito.Mockito.when, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.InjectMocks, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.contracts.tenant.LanguageCode, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.core.model.customer.Customer, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.order.Order, com.salesmanager.core.model.reference.language.Language, com.salesmanager.shop.mapper.customer.ReadableCustomerMapper, com.salesmanager.shop.mapper.order.ReadableOrderProductMapper, com.salesmanager.shop.mapper.order.ReadableOrderTotalMapper, com.salesmanager.shop.model.customer.ReadableCustomer, com.salesmanager.shop.model.order.v1.ReadableOrderConfirmation, com.salesmanager.shop.tenant.TenantEntityBridge, com.salesmanager.shop.utils.LabelUtils

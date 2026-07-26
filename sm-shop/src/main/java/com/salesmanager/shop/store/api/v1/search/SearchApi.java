@@ -40,6 +40,10 @@ import springfox.documentation.annotations.ApiIgnore;
 })
 public class SearchApi {
 
+  private static LanguageCode languageCode(Language language) {
+    return language != null ? LanguageCode.of(language.getCode()) : null;
+  }
+
   @Inject private SearchFacade searchFacade;
 
 
@@ -58,7 +62,7 @@ public class SearchApi {
       @ApiIgnore MerchantStore merchantStore,
       @ApiIgnore Language language) {
 
-    return searchFacade.search(MerchantStoreId.of(merchantStore.getCode()), LanguageCode.of(language.getCode()),
+    return searchFacade.search(MerchantStoreId.of(merchantStore.getCode()), languageCode(language),
         searchRequest);
   }
 
@@ -72,6 +76,6 @@ public class SearchApi {
       @ApiIgnore MerchantStore merchantStore,
       @ApiIgnore Language language) {
     return searchFacade.autocompleteRequest(searchRequest.getQuery(), MerchantStoreId.of(merchantStore.getCode()),
-        LanguageCode.of(language.getCode()));
+        languageCode(language));
   }
 }
