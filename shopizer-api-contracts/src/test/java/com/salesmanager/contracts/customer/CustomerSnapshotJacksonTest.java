@@ -34,7 +34,7 @@ class CustomerSnapshotJacksonTest {
 		snapshot.setNick("ada");
 		snapshot.setCompany("Analytical Engines");
 		snapshot.setAnonymous(false);
-		snapshot.setLanguageCode("en");
+		snapshot.setLanguage("en");
 		snapshot.setBilling(billing);
 		snapshot.setDelivery(delivery);
 
@@ -46,6 +46,8 @@ class CustomerSnapshotJacksonTest {
 		assertEquals("GB", restored.getBilling().getCountryCode());
 		assertEquals("ada@example.com", tree.get("emailAddress").asText());
 		assertEquals("GB", tree.get("billing").get("countryCode").asText());
+		assertEquals("en", tree.get("language").asText());
+		assertFalse(tree.has("languageCode"));
 		assertFalse(tree.has("attributes"));
 		assertFalse(tree.has("reviews"));
 		assertFalse(tree.has("groups"));

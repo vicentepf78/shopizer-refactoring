@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-26 19:18 | 1697 files | 266453 tokens
+# rtt index | generated 2026-07-26 19:20 | 1697 files | 266443 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -1891,8 +1891,8 @@ class CustomerSnapshot
   void setCompany(String company)
   boolean isAnonymous()
   void setAnonymous(boolean anonymous)
-  String getLanguageCode()
-  void setLanguageCode(String languageCode)
+  String getLanguage()
+  void setLanguage(String language)
   AddressSnapshot getBilling()
   void setBilling(AddressSnapshot billing)
   AddressSnapshot getDelivery()
@@ -8333,10 +8333,11 @@ class CheckoutOutboxRepositoryTest
   void markProcessedUpdatesStatusAndTimestamp()
 
 # sm-core/src/test/java/com/salesmanager/core/business/services/checkout/outbox/CheckoutStagedOrderProcessorTest.java [java]
-imports: org.mockito.ArgumentMatchers.any, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.times, org.mockito.Mockito.verify, org.mockito.Mockito.when, java.math.BigDecimal, java.util.Collections, java.util.LinkedHashSet, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.core.business.services.catalog.product.ProductService, com.salesmanager.core.business.services.checkout.CheckoutStagedOrderProcessor, com.salesmanager.core.business.services.customer.CustomerService, com.salesmanager.core.business.services.order.OrderService, com.salesmanager.core.business.services.payments.PaymentService, com.salesmanager.core.business.services.payments.TransactionService, com.salesmanager.core.model.catalog.product.Product, com.salesmanager.core.model.catalog.product.availability.ProductAvailability, com.salesmanager.core.model.customer.Customer, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.order.Order, com.salesmanager.core.model.order.OrderTotalSummary, com.salesmanager.core.model.order.orderproduct.OrderProduct, com.salesmanager.core.model.payments.Payment, com.salesmanager.core.model.payments.PaymentType, com.salesmanager.core.model.payments.Transaction, com.salesmanager.core.model.shoppingcart.ShoppingCartItem
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertFalse, org.mockito.ArgumentMatchers.any, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.times, org.mockito.Mockito.verify, org.mockito.Mockito.when, java.math.BigDecimal, java.util.Collections, java.util.LinkedHashSet, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.ArgumentCaptor, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.fasterxml.jackson.databind.JsonNode, com.fasterxml.jackson.databind.ObjectMapper, com.salesmanager.core.business.services.catalog.product.ProductService, com.salesmanager.core.business.services.checkout.CheckoutStagedOrderProcessor, com.salesmanager.core.business.services.customer.CustomerService, com.salesmanager.core.business.services.order.OrderService, com.salesmanager.core.business.services.payments.PaymentService, com.salesmanager.core.business.services.payments.TransactionService, com.salesmanager.core.model.catalog.product.Product, com.salesmanager.core.model.catalog.product.availability.ProductAvailability, com.salesmanager.core.model.customer.Customer, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.order.Order, com.salesmanager.core.model.order.OrderTotalSummary
 class CheckoutStagedOrderProcessorTest
   void setUp()
   void writesFourOutboxEventsWhenFlagEnabled()
+  void outboxCustomerSnapshotUsesLanguageFieldName()
 
 # sm-core/src/test/java/com/salesmanager/core/business/services/content/ContentServiceThinCoreWiringTest.java [java]
 imports: org.assertj.core.api.Assertions.assertThat, org.junit.jupiter.api.Assertions.assertTrue, org.junit.jupiter.api.Test, org.springframework.stereotype.Service

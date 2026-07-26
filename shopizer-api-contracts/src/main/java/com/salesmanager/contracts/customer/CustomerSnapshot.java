@@ -20,7 +20,7 @@ public class CustomerSnapshot implements Serializable {
 	private String nick;
 	private String company;
 	private boolean anonymous;
-	private String languageCode;
+	private String language;
 	private AddressSnapshot billing;
 	private AddressSnapshot delivery;
 
@@ -72,12 +72,12 @@ public class CustomerSnapshot implements Serializable {
 		this.anonymous = anonymous;
 	}
 
-	public String getLanguageCode() {
-		return languageCode;
+	public String getLanguage() {
+		return language;
 	}
 
-	public void setLanguageCode(String languageCode) {
-		this.languageCode = languageCode;
+	public void setLanguage(String language) {
+		this.language = language;
 	}
 
 	public AddressSnapshot getBilling() {

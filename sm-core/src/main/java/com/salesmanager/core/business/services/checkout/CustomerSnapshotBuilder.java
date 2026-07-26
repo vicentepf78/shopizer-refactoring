@@ -32,7 +32,7 @@ public final class CustomerSnapshotBuilder {
 
 		Language language = customer.getDefaultLanguage();
 		if (language != null) {
-			snapshot.setLanguageCode(language.getCode());
+			snapshot.setLanguage(language.getCode());
 		}
 
 		return snapshot;

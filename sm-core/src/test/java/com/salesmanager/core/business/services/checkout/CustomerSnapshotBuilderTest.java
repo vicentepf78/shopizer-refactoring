@@ -28,7 +28,9 @@ class CustomerSnapshotBuilderTest {
 		assertThat(snapshot.getId()).isEqualTo(12L);
 		assertThat(snapshot.getEmailAddress()).isEqualTo("buyer@example.com");
 		assertThat(snapshot.isAnonymous()).isFalse();
-		assertThat(snapshot.getLanguageCode()).isEqualTo("en");
+		assertThat(snapshot.getLanguage()).isEqualTo("en");
+		assertThat(tree.get("language").asText()).isEqualTo("en");
+		assertThat(tree.has("languageCode")).isFalse();
 		assertThat(snapshot.getBilling().getCountryCode()).isEqualTo("US");
 		assertThat(snapshot.getDelivery().getZoneCode()).isEqualTo("NY");
 		assertThat(tree.has("attributes")).isFalse();
