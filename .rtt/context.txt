@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-26 20:19 | 1705 files | 268575 tokens
+# rtt index | generated 2026-07-26 20:21 | 1706 files | 268881 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -8425,6 +8425,17 @@ class SearchIndexProducerInProcessTest
   void setUp()
   void index_delegatesToLegacySearchService()
   void deleteDocument_delegatesToLegacySearchService()
+
+# sm-core/src/test/java/com/salesmanager/core/business/services/shipping/LegacyShippingQuoteModuleBridgeIntegrationTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, java.math.BigDecimal, java.util.Collections, java.util.HashMap, java.util.List, java.util.Locale, java.util.Map, org.junit.jupiter.api.Test, com.salesmanager.core.business.modules.integration.shipping.impl.PriceByDistanceShippingQuoteRules, com.salesmanager.core.business.services.payments.IntegrationContextMapper, com.salesmanager.core.model.common.Delivery, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.country.Country, com.salesmanager.core.model.shipping.PackageDetails, com.salesmanager.core.model.shipping.ShippingConfiguration, com.salesmanager.core.model.shipping.ShippingOrigin, com.salesmanager.core.model.shipping.ShippingQuote, com.salesmanager.core.model.system.IntegrationConfiguration, com.salesmanager.core.model.system.IntegrationModule, com.salesmanager.core.modules.constants.Constants, com.salesmanager.core.modules.integration.shipping.dto.ShippingOptionDto, com.salesmanager.core.modules.integration.shipping.dto.ShippingQuoteRequestContext, com.salesmanager.core.modules.integration.shipping.model.ShippingQuoteModuleV2
+class LegacyShippingQuoteModuleBridgeIntegrationTest
+  void priceByDistanceGetShippingQuotesViaLegacyBridgeReturnsOptions()
+  MerchantStore sampleStore()
+  ShippingQuote sampleQuoteWithDistance(double distanceKm)
+  PackageDetails samplePackage()
+  Delivery sampleDelivery()
+  IntegrationConfiguration sampleConfiguration()
+  IntegrationModule sampleModule()
 
 # sm-core/src/test/java/com/salesmanager/core/business/services/shipping/LegacyShippingQuoteModuleBridgeTest.java [java]
 imports: org.assertj.core.api.Assertions.assertThat, java.math.BigDecimal, java.util.Collections, java.util.HashMap, java.util.List, java.util.Locale, java.util.Map, org.junit.jupiter.api.Test, com.salesmanager.core.business.services.payments.IntegrationContextMapper, com.salesmanager.core.model.common.Delivery, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.shipping.PackageDetails, com.salesmanager.core.model.shipping.ShippingConfiguration, com.salesmanager.core.model.shipping.ShippingOption, com.salesmanager.core.model.shipping.ShippingOrigin, com.salesmanager.core.model.shipping.ShippingQuote, com.salesmanager.core.model.system.CustomIntegrationConfiguration, com.salesmanager.core.model.system.IntegrationConfiguration, com.salesmanager.core.model.system.IntegrationModule, com.salesmanager.core.model.system.ModuleConfig, com.salesmanager.core.modules.integration.IntegrationException, com.salesmanager.core.modules.integration.shipping.dto.ShippingQuoteRequestContext, com.salesmanager.core.modules.integration.shipping.model.ShippingQuoteModule, com.salesmanager.core.modules.integration.shipping.model.ShippingQuoteModuleV2
