@@ -1,5 +1,5 @@
 ---
-status: pending
+status: completed
 title: Strangler Search no monolito e documentação GAP-SRCH
 type: backend
 complexity: medium
@@ -28,11 +28,11 @@ Consolida TLC T27–T29. Adiciona `SearchFacadeHttpAdapter`, desabilita o client
 </requirements>
 
 ## Subtasks
-- [ ] 7.1 SearchFacadeHttpAdapter query/autocomplete (T27)
-- [ ] 7.2 Wiring condicional + desabilitar OpenSearch monólito (T28)
-- [ ] 7.3 Documentar GAP-SRCH-01…10 (T29)
-- [ ] 7.4 Testes adapter + profile monolith/strangler
-- [ ] 7.5 Verificar reindex admin usa orchestrator local
+- [x] 7.1 SearchFacadeHttpAdapter query/autocomplete (T27)
+- [x] 7.2 Wiring condicional + desabilitar OpenSearch monólito (T28)
+- [x] 7.3 Documentar GAP-SRCH-01…10 (T29)
+- [x] 7.4 Testes adapter + profile monolith/strangler
+- [x] 7.5 Verificar reindex admin usa orchestrator local
 
 ## Implementation Details
 Ver TechSpec: **Matriz de adapters**, **Lacunas conhecidas**, **Ordem de construção** passos 20–21. Controllers `SearchApi` permanecem no BFF.
@@ -61,13 +61,13 @@ Ver TechSpec: **Matriz de adapters**, **Lacunas conhecidas**, **Ordem de constru
 
 ## Tests
 - Unit tests:
-  - [ ] Adapter encaminha search/autocomplete com headers store/lang
-  - [ ] Falha remota → 503 sem chamar impl in-process
+  - [x] Adapter encaminha search/autocomplete com headers store/lang
+  - [x] Falha remota → 503 sem chamar impl in-process
 - Integration tests:
-  - [ ] `./mvnw test -pl sm-shop -Dtest=SearchFacadeHttpAdapterTest`
-  - [ ] Profile `monolith` regressão verde
-  - [ ] Profile strangler não conecta OpenSearch no monólito
-  - [ ] README lista GAP-SRCH-01 até GAP-SRCH-10
+  - [x] `./mvnw test -pl sm-shop -Dtest=SearchFacadeHttpAdapterTest`
+  - [x] Profile `monolith` regressão verde
+  - [x] Profile strangler não conecta OpenSearch no monólito
+  - [x] README lista GAP-SRCH-01 até GAP-SRCH-10
 - Test coverage target: >=80%
 - All tests must pass
 

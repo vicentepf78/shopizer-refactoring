@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-26 11:49 | 1501 files | 231121 tokens
+# rtt index | generated 2026-07-26 11:54 | 1516 files | 234289 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -4637,7 +4637,7 @@ class MavenWrapperDownloader
   void downloadFileFromURL(String urlString, File destination)
 
 # sm-core/src/main/java/com/salesmanager/core/business/configuration/ApplicationSearchConfiguration.java [java]
-imports: java.util.List, org.springframework.boot.context.properties.ConfigurationProperties, org.springframework.context.annotation.Configuration, org.springframework.context.annotation.PropertySource, modules.commons.search.configuration.Credentials, modules.commons.search.configuration.SearchHost
+imports: java.util.List, org.springframework.boot.autoconfigure.condition.ConditionalOnProperty, org.springframework.boot.context.properties.ConfigurationProperties, org.springframework.context.annotation.Configuration, org.springframework.context.annotation.PropertySource, modules.commons.search.configuration.Credentials, modules.commons.search.configuration.SearchHost
 class ApplicationSearchConfiguration
   String getClusterName()
   void setClusterName(String clusterName)
@@ -6443,7 +6443,7 @@ imports: java.util.Optional, com.salesmanager.core.business.exception.ServiceExc
 interface SearchService
 
 # sm-core/src/main/java/com/salesmanager/core/business/services/search/SearchServiceImpl.java [java]
-imports: java.io.File, java.nio.file.Files, java.util.ArrayList, java.util.Collections, java.util.HashMap, java.util.List, java.util.Map, java.util.Optional, java.util.Set, java.util.stream.Collectors, javax.annotation.PostConstruct, javax.inject.Inject, org.apache.commons.collections4.CollectionUtils, org.apache.commons.lang3.StringUtils, org.jsoup.helper.Validate, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.beans.factory.annotation.Autowired, org.springframework.beans.factory.annotation.Value, org.springframework.boot.context.properties.EnableConfigurationProperties, org.springframework.core.io.ClassPathResource, org.springframework.core.io.Resource, org.springframework.stereotype.Service, com.salesmanager.core.business.configuration.ApplicationSearchConfiguration, com.salesmanager.core.business.constants.Constants, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.catalog.inventory.ProductInventoryService, com.salesmanager.core.business.utils.CoreConfiguration, com.salesmanager.core.model.catalog.category.Category, com.salesmanager.core.model.catalog.category.CategoryDescription
+imports: java.io.File, java.nio.file.Files, java.util.ArrayList, java.util.Collections, java.util.HashMap, java.util.List, java.util.Map, java.util.Optional, java.util.Set, java.util.stream.Collectors, javax.annotation.PostConstruct, javax.inject.Inject, org.apache.commons.collections4.CollectionUtils, org.apache.commons.lang3.StringUtils, org.jsoup.helper.Validate, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.beans.factory.annotation.Autowired, org.springframework.beans.factory.annotation.Value, org.springframework.boot.autoconfigure.condition.ConditionalOnProperty, org.springframework.boot.context.properties.EnableConfigurationProperties, org.springframework.core.io.ClassPathResource, org.springframework.core.io.Resource, org.springframework.stereotype.Service, com.salesmanager.core.business.configuration.ApplicationSearchConfiguration, com.salesmanager.core.business.constants.Constants, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.catalog.inventory.ProductInventoryService, com.salesmanager.core.business.utils.CoreConfiguration, com.salesmanager.core.model.catalog.category.Category
 class SearchServiceImpl
   void init()
   void index(MerchantStore store, Product product)
@@ -12792,7 +12792,7 @@ imports: java.util.List, com.salesmanager.core.model.merchant.MerchantStore, com
 interface SearchFacade
 
 # sm-shop/src/main/java/com/salesmanager/shop/store/controller/search/facade/SearchFacadeImpl.java [java]
-imports: java.util.List, java.util.Map, java.util.stream.Collectors, javax.inject.Inject, org.jsoup.helper.Validate, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.beans.factory.annotation.Qualifier, org.springframework.scheduling.annotation.Async, org.springframework.stereotype.Service, com.salesmanager.core.business.exception.ConversionException, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.catalog.category.CategoryService, com.salesmanager.core.business.services.catalog.pricing.PricingService, com.salesmanager.core.business.services.catalog.product.ProductService, com.salesmanager.core.business.services.search.SearchService, com.salesmanager.core.model.catalog.category.Category, com.salesmanager.core.model.catalog.product.Product, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.shop.model.catalog.SearchProductRequest, com.salesmanager.shop.model.catalog.category.ReadableCategory, com.salesmanager.shop.model.catalog.product.ReadableProduct, com.salesmanager.shop.model.entity.ValueList, com.salesmanager.shop.populator.catalog.ReadableCategoryPopulator, com.salesmanager.shop.populator.catalog.ReadableProductPopulator, com.salesmanager.shop.store.api.exception.ConversionRuntimeException, com.salesmanager.shop.store.api.exception.ServiceRuntimeException, com.salesmanager.shop.utils.ImageFilePath, modules.commons.search.request.Aggregation
+imports: java.util.List, java.util.Map, java.util.stream.Collectors, javax.inject.Inject, org.jsoup.helper.Validate, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.beans.factory.annotation.Qualifier, org.springframework.boot.autoconfigure.condition.ConditionalOnProperty, org.springframework.scheduling.annotation.Async, org.springframework.stereotype.Service, com.salesmanager.core.business.exception.ConversionException, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.catalog.category.CategoryService, com.salesmanager.core.business.services.catalog.pricing.PricingService, com.salesmanager.core.business.services.catalog.product.ProductService, com.salesmanager.core.business.services.search.SearchService, com.salesmanager.core.model.catalog.category.Category, com.salesmanager.core.model.catalog.product.Product, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.shop.model.catalog.SearchProductRequest, com.salesmanager.shop.model.catalog.category.ReadableCategory, com.salesmanager.shop.model.catalog.product.ReadableProduct, com.salesmanager.shop.model.entity.ValueList, com.salesmanager.shop.populator.catalog.ReadableCategoryPopulator, com.salesmanager.shop.populator.catalog.ReadableProductPopulator, com.salesmanager.shop.store.api.exception.ConversionRuntimeException, com.salesmanager.shop.store.api.exception.ServiceRuntimeException, com.salesmanager.shop.utils.ImageFilePath
 class SearchFacadeImpl
   void indexAllData(MerchantStore store)
   List<SearchItem> search(MerchantStore store, Language language, SearchProductRequest searchRequest)
@@ -13726,6 +13726,14 @@ imports: java.util.List, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springfr
 class SearchBulkIndexOrchestrator
   void indexAllData(MerchantStore store)
 
+# sm-shop/src/main/java/com/salesmanager/shop/strangler/search/SearchFacadeHttpAdapter.java [java]
+imports: java.util.Collections, java.util.List, org.apache.commons.lang3.StringUtils, org.apache.commons.lang3.Validate, org.springframework.beans.factory.annotation.Value, org.springframework.boot.autoconfigure.condition.ConditionalOnProperty, org.springframework.core.ParameterizedTypeReference, org.springframework.http.HttpMethod, org.springframework.scheduling.annotation.Async, org.springframework.stereotype.Service, org.springframework.web.client.RestTemplate, org.springframework.web.util.UriComponentsBuilder, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.shop.model.catalog.SearchProductRequest, com.salesmanager.shop.model.entity.ValueList, com.salesmanager.shop.store.controller.search.facade.SearchFacade, com.salesmanager.shop.strangler.support.StranglerRestClient, modules.commons.search.request.SearchItem
+class SearchFacadeHttpAdapter
+  void indexAllData(MerchantStore store)
+  List<SearchItem> search(MerchantStore store, Language language, SearchProductRequest searchRequest)
+  ValueList autocompleteRequest(String word, MerchantStore store, Language language)
+  String searchUrl(String path, MerchantStore store, Language language)
+
 # sm-shop/src/main/java/com/salesmanager/shop/strangler/search/SearchIndexClientRestTemplateImpl.java [java]
 imports: java.util.List, java.util.stream.Collectors, org.springframework.http.HttpEntity, org.springframework.http.HttpHeaders, org.springframework.http.HttpMethod, org.springframework.util.CollectionUtils, org.springframework.web.client.RestTemplate, org.springframework.web.util.UriComponentsBuilder, com.salesmanager.contracts.client.SearchIndexClient, com.salesmanager.contracts.search.ProductIndexBulkPayload, com.salesmanager.contracts.search.ProductIndexPayload, com.salesmanager.shop.strangler.config.Wave2Properties
 class SearchIndexClientRestTemplateImpl
@@ -14099,12 +14107,35 @@ class SearchBulkIndexOrchestratorTest
   void indexAllData_listsProductsByStoreAndIndexesEach()
   void indexAllData_appliesConfiguredDelayBetweenProducts()
 
+# sm-shop/src/test/java/com/salesmanager/shop/strangler/search/SearchFacadeHttpAdapterTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.assertj.core.api.Assertions.assertThatThrownBy, org.mockito.Mockito.verify, org.mockito.Mockito.verifyNoInteractions, org.springframework.test.web.client.match.MockRestRequestMatchers.header, org.springframework.test.web.client.match.MockRestRequestMatchers.method, org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo, org.springframework.test.web.client.response.MockRestResponseCreators.withException, org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess, java.net.ConnectException, java.util.List, org.junit.jupiter.api.AfterEach, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.springframework.http.HttpMethod, org.springframework.http.MediaType, org.springframework.mock.web.MockHttpServletRequest, org.springframework.test.web.client.MockRestServiceServer, org.springframework.web.client.RestTemplate, org.springframework.web.context.request.RequestContextHolder, org.springframework.web.context.request.ServletRequestAttributes, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.shop.model.catalog.SearchProductRequest, com.salesmanager.shop.model.entity.ValueList, com.salesmanager.shop.strangler.support.ServiceUnavailableException, com.salesmanager.shop.strangler.support.StranglerRestClient
+class SearchFacadeHttpAdapterTest
+  void setUp()
+  void tearDown()
+  void search_forwardsQueryWithStoreAndLangHeaders()
+  void autocomplete_forwardsQueryWithStoreAndLang()
+  void connectFailure_mapsTo503WithoutCallingInProcessFacade()
+  void autocompleteConnectFailure_mapsTo503()
+  void indexAllData_delegatesToBulkOrchestrator()
+
 # sm-shop/src/test/java/com/salesmanager/shop/strangler/search/SearchIndexProducerHttpTest.java [java]
 imports: org.mockito.Mockito.when, org.springframework.test.web.client.match.MockRestRequestMatchers.header, org.springframework.test.web.client.match.MockRestRequestMatchers.method, org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo, org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess, java.util.Collections, java.util.List, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.springframework.http.HttpMethod, org.springframework.http.MediaType, org.springframework.test.web.client.MockRestServiceServer, org.springframework.web.client.RestTemplate, com.salesmanager.contracts.search.ProductIndexPayload, com.salesmanager.core.business.services.search.index.SearchIndexProducer, com.salesmanager.core.model.catalog.product.Product, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.shop.strangler.config.Wave2Properties, com.salesmanager.shop.strangler.search.SearchIndexClientRestTemplateImpl
 class SearchIndexProducerHttpTest
   void setUp()
   void index_emitsDeleteThenBulkPostWithInternalToken()
   void deleteDocument_emitsDeleteWithInternalToken()
+
+# sm-shop/src/test/java/com/salesmanager/shop/strangler/search/SearchServiceReadmeGapsTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, java.io.IOException, java.nio.charset.StandardCharsets, java.nio.file.Files, java.nio.file.Path, java.nio.file.Paths, java.util.stream.IntStream, org.junit.jupiter.api.Test
+class SearchServiceReadmeGapsTest
+  void readmeDocumentsGapSrch01Through10()
+
+# sm-shop/src/test/java/com/salesmanager/shop/strangler/search/Wave2OpenSearchDisabledTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, java.io.IOException, java.nio.charset.StandardCharsets, java.nio.file.Files, java.nio.file.Path, java.nio.file.Paths, org.junit.jupiter.api.Test, org.springframework.boot.autoconfigure.condition.ConditionalOnProperty, com.salesmanager.core.business.configuration.ApplicationSearchConfiguration, com.salesmanager.core.business.services.search.SearchServiceImpl, com.salesmanager.shop.store.controller.search.facade.SearchFacadeImpl
+class Wave2OpenSearchDisabledTest
+  void wave2ProfilePropertiesExcludeOpenSearchAutoConfiguration()
+  void legacySearchBeansActiveOnlyWhenWave2StranglerDisabled()
+  void assertConditionalOnWave2Disabled(Class<?> type)
 
 # sm-shop/src/test/java/com/salesmanager/shop/strangler/support/RestErrorHandlerStranglerTest.java [java]
 imports: org.assertj.core.api.Assertions.assertThat, org.junit.jupiter.api.Test, org.springframework.http.HttpStatus, org.springframework.http.ResponseEntity, com.salesmanager.shop.store.api.exception.ErrorEntity, com.salesmanager.shop.store.api.exception.RestErrorHandler
@@ -14237,6 +14268,16 @@ imports: org.junit.Assert.assertNotNull, javax.inject.Inject, org.junit.Test, or
 class UserApiIntegrationTest
   void getUser()
   void createUserChangePassword()
+
+# sm-shop/src/test/java/com/salesmanager/test/shop/strangler/SearchStranglerConditionalBeanTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, java.util.Collections, java.util.List, org.junit.jupiter.api.Test, org.springframework.boot.autoconfigure.condition.ConditionalOnProperty, org.springframework.context.annotation.AnnotationConfigApplicationContext, org.springframework.context.annotation.Bean, org.springframework.context.annotation.Configuration, org.springframework.mock.env.MockEnvironment, org.springframework.web.client.RestTemplate, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.shop.model.catalog.SearchProductRequest, com.salesmanager.shop.model.entity.ValueList, com.salesmanager.shop.store.controller.search.facade.SearchFacade, com.salesmanager.shop.strangler.search.SearchBulkIndexOrchestrator, com.salesmanager.shop.strangler.search.SearchFacadeHttpAdapter
+class SearchStranglerConditionalBeanTest
+  void wave2StranglerOn_searchFacadeIsHttpAdapter()
+  void wave2StranglerOff_searchFacadeIsInProcess()
+  void wave2StranglerMissing_defaultsToInProcess()
+  class Wave2OnConfig
+  class MonolithConfig
+  class InProcessSearchFacade
 
 # sm-shop/src/test/java/com/salesmanager/test/shop/strangler/StranglerConditionalBeanTest.java [java]
 imports: org.assertj.core.api.Assertions.assertThat, java.util.Collections, java.util.List, org.junit.jupiter.api.Test, org.springframework.boot.autoconfigure.condition.ConditionalOnProperty, org.springframework.context.annotation.AnnotationConfigApplicationContext, org.springframework.context.annotation.Bean, org.springframework.context.annotation.Configuration, org.springframework.mock.env.MockEnvironment, org.springframework.web.client.RestTemplate, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.shop.model.references.ReadableCountry, com.salesmanager.shop.store.controller.country.facade.CountryFacade, com.salesmanager.shop.strangler.reference.CountryFacadeHttpAdapter, com.salesmanager.shop.strangler.support.StranglerRestClient
