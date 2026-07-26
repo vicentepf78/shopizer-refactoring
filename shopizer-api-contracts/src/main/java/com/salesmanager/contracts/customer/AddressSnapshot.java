@@ -2,9 +2,12 @@ package com.salesmanager.contracts.customer;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * Flat billing or delivery address for checkout snapshots and outbox payloads.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class AddressSnapshot implements Serializable {
 
 	private static final long serialVersionUID = 1L;

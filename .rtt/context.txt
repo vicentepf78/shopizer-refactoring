@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-26 19:17 | 1697 files | 266363 tokens
+# rtt index | generated 2026-07-26 19:18 | 1697 files | 266453 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -1527,7 +1527,7 @@ class NamedEntity
   void setTitle(String title)
 
 # shopizer-api-contracts/src/main/java/com/salesmanager/contracts/catalog/ProductSnapshot.java [java]
-imports: java.io.Serializable, java.util.ArrayList, java.util.List
+imports: java.io.Serializable, java.util.ArrayList, java.util.List, com.fasterxml.jackson.annotation.JsonIgnoreProperties
 class ProductSnapshot
   int getSchemaVersion()
   void setSchemaVersion(int schemaVersion)
@@ -1563,7 +1563,7 @@ class ProductSnapshot
   void setAddToCart(Boolean addToCart)
 
 # shopizer-api-contracts/src/main/java/com/salesmanager/contracts/catalog/ProductSnapshotAttribute.java [java]
-imports: java.io.Serializable
+imports: java.io.Serializable, com.fasterxml.jackson.annotation.JsonIgnoreProperties
 class ProductSnapshotAttribute
   String getName()
   void setName(String name)
@@ -1571,7 +1571,7 @@ class ProductSnapshotAttribute
   void setValue(String value)
 
 # shopizer-api-contracts/src/main/java/com/salesmanager/contracts/catalog/ProductSnapshotInventory.java [java]
-imports: java.io.Serializable
+imports: java.io.Serializable, com.fasterxml.jackson.annotation.JsonIgnoreProperties
 class ProductSnapshotInventory
   String getSku()
   void setSku(String sku)
@@ -1583,7 +1583,7 @@ class ProductSnapshotInventory
   void setDiscountPrice(String discountPrice)
 
 # shopizer-api-contracts/src/main/java/com/salesmanager/contracts/catalog/ProductSnapshotVariant.java [java]
-imports: java.io.Serializable, java.util.LinkedHashMap, java.util.Map
+imports: java.io.Serializable, java.util.LinkedHashMap, java.util.Map, com.fasterxml.jackson.annotation.JsonIgnoreProperties
 class ProductSnapshotVariant
   Map<String, String> getOptions()
   void setOptions(Map<String, String> options)
@@ -1849,7 +1849,7 @@ class ReadableContentPageFull
   void setDescriptions(List<ContentDescription> descriptions)
 
 # shopizer-api-contracts/src/main/java/com/salesmanager/contracts/customer/AddressSnapshot.java [java]
-imports: java.io.Serializable
+imports: java.io.Serializable, com.fasterxml.jackson.annotation.JsonIgnoreProperties
 class AddressSnapshot
   String getFirstName()
   void setFirstName(String firstName)
@@ -1877,7 +1877,7 @@ imports: java.io.Serializable, com.salesmanager.contracts.common.ShopEntity
 class CustomerEntity
 
 # shopizer-api-contracts/src/main/java/com/salesmanager/contracts/customer/CustomerSnapshot.java [java]
-imports: java.io.Serializable
+imports: java.io.Serializable, com.fasterxml.jackson.annotation.JsonIgnoreProperties
 class CustomerSnapshot
   int getSchemaVersion()
   void setSchemaVersion(int schemaVersion)
@@ -2063,7 +2063,7 @@ imports: java.io.Serializable, com.salesmanager.contracts.common.ShopEntity
 class OrderEntity
 
 # shopizer-api-contracts/src/main/java/com/salesmanager/contracts/order/OrderLineSnapshot.java [java]
-imports: java.io.Serializable, java.math.BigDecimal
+imports: java.io.Serializable, java.math.BigDecimal, com.fasterxml.jackson.annotation.JsonIgnoreProperties
 class OrderLineSnapshot
   String getSku()
   void setSku(String sku)
@@ -2075,7 +2075,7 @@ class OrderLineSnapshot
   void setOneTimeCharge(BigDecimal oneTimeCharge)
 
 # shopizer-api-contracts/src/main/java/com/salesmanager/contracts/order/OrderSnapshot.java [java]
-imports: java.io.Serializable, java.math.BigDecimal, java.util.ArrayList, java.util.List
+imports: java.io.Serializable, java.math.BigDecimal, java.util.ArrayList, java.util.List, com.fasterxml.jackson.annotation.JsonIgnoreProperties
 class OrderSnapshot
   int getSchemaVersion()
   void setSchemaVersion(int schemaVersion)
@@ -2109,7 +2109,7 @@ class OrderSnapshot
   void setTotals(List<OrderTotalSnapshot> totals)
 
 # shopizer-api-contracts/src/main/java/com/salesmanager/contracts/order/OrderTotalSnapshot.java [java]
-imports: java.io.Serializable, java.math.BigDecimal
+imports: java.io.Serializable, java.math.BigDecimal, com.fasterxml.jackson.annotation.JsonIgnoreProperties
 class OrderTotalSnapshot
   String getCode()
   void setCode(String code)
@@ -2412,6 +2412,7 @@ imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.As
 class ProductSnapshotJacksonTest
   void productSnapshotSerializesSchemaVersionDefaultOne()
   void nestedTypesRoundTrip()
+  void ignoresUnknownFieldsDuringDeserialization()
 
 # shopizer-api-contracts/src/test/java/com/salesmanager/contracts/client/ServiceClientContractTest.java [java]
 imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertFalse, org.junit.jupiter.api.Assertions.assertTrue, java.lang.reflect.Method, java.lang.reflect.Parameter, java.math.BigDecimal, java.util.Arrays, org.junit.jupiter.api.Test, com.salesmanager.contracts.common.Entity, com.salesmanager.contracts.common.ReadableEntityList, com.salesmanager.contracts.reference.ReadableCountry, com.salesmanager.contracts.reference.ReadableLanguage, com.salesmanager.contracts.reference.ReadableZone, com.salesmanager.contracts.tax.PersistableTaxClass, com.salesmanager.contracts.tax.PersistableTaxRate, com.salesmanager.contracts.tax.ReadableTaxClass, com.salesmanager.contracts.tax.ReadableTaxRate, com.salesmanager.contracts.tax.TaxRateDescription
@@ -2447,6 +2448,7 @@ imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.As
 class CustomerSnapshotJacksonTest
   void roundTripPreservesCheckoutFieldsWithoutLazyCollections()
   void anonymousSnapshotHasNoLazyGraphFields()
+  void ignoresUnknownFieldsDuringDeserialization()
 
 # shopizer-api-contracts/src/test/java/com/salesmanager/contracts/merchant/MerchantDtoJacksonTest.java [java]
 imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertNotNull, java.io.IOException, java.lang.reflect.Modifier, java.nio.file.Files, java.nio.file.Path, java.nio.file.Paths, java.util.ArrayList, java.util.List, java.util.stream.Stream, org.junit.jupiter.api.Test, org.junit.jupiter.params.ParameterizedTest, org.junit.jupiter.params.provider.MethodSource, com.fasterxml.jackson.databind.JsonNode, com.fasterxml.jackson.databind.ObjectMapper, com.salesmanager.contracts.content.ReadableImage, com.salesmanager.contracts.reference.ReadableAddress, com.salesmanager.contracts.reference.ReadableLanguage
@@ -2461,6 +2463,7 @@ imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.As
 class OrderSnapshotJacksonTest
   void roundTripPreservesStatusTotalsAndLineSkuQuantity()
   void emptySnapshotSerializesStableFieldNames()
+  void ignoresUnknownFieldsDuringDeserialization()
 
 # shopizer-api-contracts/src/test/java/com/salesmanager/contracts/reference/ReferenceDtoJacksonTest.java [java]
 imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertFalse, org.junit.jupiter.api.Assertions.assertTrue, java.util.Arrays, java.util.Iterator, org.junit.jupiter.api.Test, com.fasterxml.jackson.databind.JsonNode, com.fasterxml.jackson.databind.ObjectMapper

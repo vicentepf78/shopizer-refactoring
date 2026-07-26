@@ -5,12 +5,15 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * Checkout-relevant order projection for {@code CheckoutCommand} and outbox JSON payloads.
  * <p>
  * Outbox stage field usage is documented in
  * {@code com.salesmanager.core.business.services.checkout.CheckoutOutboxSnapshotDesign}.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class OrderSnapshot implements Serializable {
 
 	private static final long serialVersionUID = 1L;

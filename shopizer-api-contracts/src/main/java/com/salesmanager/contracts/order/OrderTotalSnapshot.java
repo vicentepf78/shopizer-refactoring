@@ -3,6 +3,9 @@ package com.salesmanager.contracts.order;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class OrderTotalSnapshot implements Serializable {
 
 	private static final long serialVersionUID = 1L;

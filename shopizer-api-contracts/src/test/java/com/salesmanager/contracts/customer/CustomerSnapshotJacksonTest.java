@@ -67,4 +67,18 @@ class CustomerSnapshotJacksonTest {
 		assertFalse(tree.has("attributes"));
 	}
 
+	@Test
+	void ignoresUnknownFieldsDuringDeserialization() throws Exception {
+		String json = "{\"schemaVersion\":2,\"emailAddress\":\"ada@example.com\",\"futureField\":\"ignored\","
+				+ "\"billing\":{\"countryCode\":\"GB\",\"futureAddressField\":true},"
+				+ "\"delivery\":{\"countryCode\":\"GB\",\"zoneCode\":\"LDN\"}}";
+
+		CustomerSnapshot snapshot = mapper.readValue(json, CustomerSnapshot.class);
+
+		assertEquals(2, snapshot.getSchemaVersion());
+		assertEquals("ada@example.com", snapshot.getEmailAddress());
+		assertEquals("GB", snapshot.getBilling().getCountryCode());
+		assertEquals("LDN", snapshot.getDelivery().getZoneCode());
+	}
+
 }

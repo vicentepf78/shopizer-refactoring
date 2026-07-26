@@ -2,11 +2,14 @@ package com.salesmanager.contracts.customer;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * Checkout-relevant customer projection without lazy JPA collections.
  * <p>
  * Used by {@code CheckoutCommand} and checkout outbox payloads (ADR-005).
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CustomerSnapshot implements Serializable {
 
 	private static final long serialVersionUID = 1L;

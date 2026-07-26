@@ -75,4 +75,20 @@ class ProductSnapshotJacksonTest {
 		assertTrue(roundTrip.getInventory().get(0).getPrice().contains("9.99"));
 	}
 
+	@Test
+	void ignoresUnknownFieldsDuringDeserialization() throws Exception {
+		String json = "{\"schemaVersion\":2,\"productId\":42,\"futureField\":\"ignored\","
+				+ "\"attributes\":[{\"name\":\"Color\",\"value\":\"Red\",\"futureAttr\":true}],"
+				+ "\"variants\":[{\"sku\":\"V-1\",\"options\":{\"size\":\"M\"},\"futureVariant\":1}],"
+				+ "\"inventory\":[{\"sku\":\"SKU-1\",\"quantity\":1,\"price\":\"9.99\",\"futurePrice\":\"0\"}]}";
+
+		ProductSnapshot snapshot = mapper.readValue(json, ProductSnapshot.class);
+
+		assertEquals(2, snapshot.getSchemaVersion());
+		assertEquals(Long.valueOf(42L), snapshot.getProductId());
+		assertEquals("Color", snapshot.getAttributes().get(0).getName());
+		assertEquals("V-1", snapshot.getVariants().get(0).getSku());
+		assertEquals("SKU-1", snapshot.getInventory().get(0).getSku());
+	}
+
 }

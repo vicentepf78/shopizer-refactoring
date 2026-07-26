@@ -71,4 +71,19 @@ class OrderSnapshotJacksonTest {
 		assertEquals(1, tree.get("schemaVersion").asInt());
 	}
 
+	@Test
+	void ignoresUnknownFieldsDuringDeserialization() throws Exception {
+		String json = "{\"schemaVersion\":2,\"status\":\"ORDERED\",\"futureField\":\"ignored\","
+				+ "\"lines\":[{\"sku\":\"SKU-42\",\"quantity\":3,\"futureLine\":true}],"
+				+ "\"totals\":[{\"code\":\"order.total.total\",\"value\":\"89.97\",\"futureTotal\":1}]}";
+
+		OrderSnapshot snapshot = mapper.readValue(json, OrderSnapshot.class);
+
+		assertEquals(2, snapshot.getSchemaVersion());
+		assertEquals("ORDERED", snapshot.getStatus());
+		assertEquals("SKU-42", snapshot.getLines().get(0).getSku());
+		assertEquals(3, snapshot.getLines().get(0).getQuantity());
+		assertEquals("order.total.total", snapshot.getTotals().get(0).getCode());
+	}
+
 }
