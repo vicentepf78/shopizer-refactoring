@@ -64,6 +64,10 @@ public class JWTTokenUtil implements Serializable {
 		return doGenerateToken(claims, userDetails.getUsername());
 	}
 
+	public String generateToken(String username) {
+		return doGenerateToken(new HashMap<>(), username);
+	}
+
 	private String doGenerateToken(Map<String, Object> claims, String subject) {
 		final Date createdDate = new Date();
 		final Date expirationDate = new Date(createdDate.getTime() + expiration * 1000);

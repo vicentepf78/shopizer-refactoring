@@ -21,6 +21,35 @@ public class RestErrorHandler {
 
 	private static final Logger log = LoggerFactory.getLogger(RestErrorHandler.class);
 
+	@ExceptionHandler(ResourceNotFoundException.class)
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	@ResponseBody
+	public Map<String, String> handleNotFound(ResourceNotFoundException ex) {
+		return error(ex.getErrorCode(), ex.getErrorMessage());
+	}
+
+	@ExceptionHandler(UnauthorizedException.class)
+	@ResponseStatus(HttpStatus.UNAUTHORIZED)
+	@ResponseBody
+	public Map<String, String> handleUnauthorized(UnauthorizedException ex) {
+		return error(ex.getErrorCode(), ex.getErrorMessage());
+	}
+
+	@ExceptionHandler({ RestApiException.class, ServiceRuntimeException.class })
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ResponseBody
+	public Map<String, String> handleBadRequest(ServiceRuntimeException ex) {
+		log.error(ex.getErrorMessage(), ex);
+		return error(ex.getErrorCode(), ex.getErrorMessage());
+	}
+
+	private Map<String, String> error(String code, String message) {
+		Map<String, String> body = new HashMap<>();
+		body.put("errorCode", code);
+		body.put("message", message);
+		return body;
+	}
+
 	@ExceptionHandler({ ReferenceUnavailableException.class, ContentUnavailableException.class })
 	@ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
 	@ResponseBody

@@ -11,4 +11,8 @@
   <cache name="com.shopizer.OBJECT_CACHE" maxEntriesLocalHeap="5000" eternal="false"
          timeToIdleSeconds="600" timeToLiveSeconds="1800"
          memoryStoreEvictionPolicy="LRU"/>
+
+  <cache name="languageByCode" maxEntriesLocalHeap="100" eternal="false"
+         timeToIdleSeconds="600" timeToLiveSeconds="1800"
+         memoryStoreEvictionPolicy="LRU"/>
 </ehcache>

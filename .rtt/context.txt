@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-26 12:21 | 1543 files | 237604 tokens
+# rtt index | generated 2026-07-26 12:42 | 1577 files | 244135 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -506,6 +506,66 @@ imports: org.springframework.boot.SpringApplication, org.springframework.boot.au
 class MerchantServiceApplication
   void main(String[] args)
 
+# merchant-service/src/main/java/com/salesmanager/merchant/api/internal/InternalStoreController.java [java]
+imports: org.springframework.http.MediaType, org.springframework.web.bind.annotation.GetMapping, org.springframework.web.bind.annotation.PathVariable, org.springframework.web.bind.annotation.RequestMapping, org.springframework.web.bind.annotation.RestController, com.salesmanager.contracts.merchant.MerchantStoreSnapshot, com.salesmanager.core.model.reference.language.Language, com.salesmanager.merchant.facade.StoreFacade
+class InternalStoreController
+  MerchantStoreSnapshot getSnapshot(@PathVariable String code, Language language)
+
+# merchant-service/src/main/java/com/salesmanager/merchant/api/v1/store/MerchantStoreController.java [java]
+imports: java.io.IOException, java.security.Principal, java.util.Arrays, java.util.List, java.util.Map, java.util.stream.Collectors, java.util.stream.Stream, javax.servlet.http.HttpServletRequest, javax.validation.Valid, org.springframework.http.HttpStatus, org.springframework.http.MediaType, org.springframework.http.ResponseEntity, org.springframework.web.bind.annotation.DeleteMapping, org.springframework.web.bind.annotation.GetMapping, org.springframework.web.bind.annotation.PathVariable, org.springframework.web.bind.annotation.PostMapping, org.springframework.web.bind.annotation.PutMapping, org.springframework.web.bind.annotation.RequestBody, org.springframework.web.bind.annotation.RequestMapping, org.springframework.web.bind.annotation.RequestParam, org.springframework.web.bind.annotation.ResponseStatus, org.springframework.web.bind.annotation.RestController, org.springframework.web.multipart.MultipartFile, com.salesmanager.contracts.common.EntityExists, com.salesmanager.contracts.merchant.PersistableBrand, com.salesmanager.contracts.merchant.PersistableMerchantStore, com.salesmanager.contracts.merchant.ReadableBrand, com.salesmanager.contracts.merchant.ReadableMerchantStore, com.salesmanager.contracts.merchant.ReadableMerchantStoreList, com.salesmanager.core.model.merchant.MerchantStore
+class MerchantStoreController
+  ReadableMerchantStore store(
+			@PathVariable String code,
+			@RequestParam(value = "lang", required = false) String lang)
+  ReadableMerchantStore storeFull(@PathVariable String code, Language language)
+  ReadableMerchantStoreList list(
+			@PathVariable String code,
+			Language language,
+			@RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
+			@RequestParam(value = "count", required = false, defaultValue = "10") Integer count)
+  ReadableMerchantStoreList get(
+			MerchantStore merchantStore,
+			Language language,
+			@RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
+			@RequestParam(value = "count", required = false, defaultValue = "10") Integer count,
+			HttpServletRequest request)
+  List<ReadableMerchantStore> listNames(
+			MerchantStore merchantStore,
+			Language language,
+			@RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
+			@RequestParam(value = "count", required = false, defaultValue = "10") Integer count,
+			HttpServletRequest request)
+  List<Language> supportedLanguages(MerchantStore merchantStore)
+  void create(@Valid @RequestBody PersistableMerchantStore store)
+  void update(
+			@PathVariable String code,
+			@Valid @RequestBody PersistableMerchantStore store,
+			HttpServletRequest request)
+  ReadableBrand getStoreMarketing(@PathVariable String code, HttpServletRequest request)
+  ReadableMerchantStoreList children(
+			@PathVariable String code,
+			Language language,
+			@RequestParam(value = "page", required = false, defaultValue = "0") Integer page,
+			@RequestParam(value = "count", required = false, defaultValue = "10") Integer count,
+			HttpServletRequest request)
+  void saveStoreMarketing(
+			@PathVariable String code,
+			@RequestBody PersistableBrand brand,
+			HttpServletRequest request)
+  void addLogo(
+			@PathVariable String code,
+			@RequestParam("file") MultipartFile uploadfile,
+			HttpServletRequest request)
+  void deleteStoreLogo(@PathVariable String code, HttpServletRequest request)
+  ResponseEntity<EntityExists> exists(@RequestParam(value = "code") String code)
+  void delete(@PathVariable String code, HttpServletRequest request)
+  String getUserFromRequest(HttpServletRequest request)
+
+# merchant-service/src/main/java/com/salesmanager/merchant/api/v1/system/PublicConfigsController.java [java]
+imports: org.springframework.web.bind.annotation.GetMapping, org.springframework.web.bind.annotation.RequestMapping, org.springframework.web.bind.annotation.RestController, com.salesmanager.contracts.merchant.Configs, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.merchant.facade.MerchantConfigurationFacade
+class PublicConfigsController
+  Configs getConfig(MerchantStore merchantStore, Language language)
+
 # merchant-service/src/main/java/com/salesmanager/merchant/client/ContentServiceClientRestTemplateImpl.java [java]
 imports: org.apache.commons.lang3.StringUtils, org.springframework.beans.factory.annotation.Qualifier, org.springframework.beans.factory.annotation.Value, org.springframework.http.HttpEntity, org.springframework.http.HttpHeaders, org.springframework.http.HttpMethod, org.springframework.http.MediaType, org.springframework.http.ResponseEntity, org.springframework.stereotype.Component, org.springframework.web.client.RestClientException, org.springframework.web.client.RestTemplate, org.springframework.web.util.UriComponentsBuilder, com.salesmanager.contracts.client.ContentServiceClient, com.salesmanager.merchant.support.ContentUnavailableException
 class ContentServiceClientRestTemplateImpl
@@ -550,10 +610,107 @@ class RestClientConfig
   ClientHttpRequestInterceptor correlationInterceptor()
   String resolveCorrelationId()
 
+# merchant-service/src/main/java/com/salesmanager/merchant/config/WebMvcConfig.java [java]
+imports: java.util.List, org.springframework.context.annotation.Configuration, org.springframework.web.method.support.HandlerMethodArgumentResolver, org.springframework.web.servlet.config.annotation.WebMvcConfigurer, com.salesmanager.merchant.web.LanguageArgumentResolver, com.salesmanager.merchant.web.MerchantStoreArgumentResolver
+class WebMvcConfig
+  void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers)
+
 # merchant-service/src/main/java/com/salesmanager/merchant/controller/MerchantPrivateProbeController.java [java]
 imports: org.springframework.http.ResponseEntity, org.springframework.web.bind.annotation.GetMapping, org.springframework.web.bind.annotation.RequestMapping, org.springframework.web.bind.annotation.RestController
 class MerchantPrivateProbeController
   ResponseEntity<String> probe()
+
+# merchant-service/src/main/java/com/salesmanager/merchant/facade/MerchantConfigurationFacade.java [java]
+imports: com.salesmanager.contracts.merchant.Configs, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language
+interface MerchantConfigurationFacade
+
+# merchant-service/src/main/java/com/salesmanager/merchant/facade/MerchantConfigurationFacadeImpl.java [java]
+imports: com.salesmanager.merchant.support.MerchantConstants.KEY_FACEBOOK_PAGE_URL, com.salesmanager.merchant.support.MerchantConstants.KEY_GOOGLE_ANALYTICS_URL, com.salesmanager.merchant.support.MerchantConstants.KEY_INSTAGRAM_URL, com.salesmanager.merchant.support.MerchantConstants.KEY_PINTEREST_PAGE_URL, java.util.Optional, org.apache.commons.lang3.StringUtils, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.beans.factory.annotation.Value, org.springframework.stereotype.Service, com.salesmanager.contracts.merchant.Configs, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.system.MerchantConfigurationService, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.system.MerchantConfig, com.salesmanager.core.model.system.MerchantConfiguration, com.salesmanager.merchant.support.ServiceRuntimeException
+class MerchantConfigurationFacadeImpl
+  Configs getMerchantConfig(MerchantStore merchantStore, Language language)
+  MerchantConfig getMerchantConfig(MerchantStore merchantStore)
+  Optional<String> getConfigValue(String key, MerchantStore merchantStore)
+  Optional<MerchantConfiguration> getMerchantConfiguration(String key, MerchantStore merchantStore)
+
+# merchant-service/src/main/java/com/salesmanager/merchant/facade/StoreFacade.java [java]
+imports: java.util.List, com.salesmanager.contracts.merchant.MerchantStoreSnapshot, com.salesmanager.contracts.merchant.PersistableBrand, com.salesmanager.contracts.merchant.PersistableMerchantStore, com.salesmanager.contracts.merchant.ReadableBrand, com.salesmanager.contracts.merchant.ReadableMerchantStore, com.salesmanager.contracts.merchant.ReadableMerchantStoreList, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.merchant.MerchantStoreCriteria, com.salesmanager.core.model.reference.language.Language
+interface StoreFacade
+
+# merchant-service/src/main/java/com/salesmanager/merchant/facade/StoreFacadeImpl.java [java]
+imports: java.util.ArrayList, java.util.Collections, java.util.List, java.util.Optional, java.util.stream.Collectors, org.apache.commons.collections4.CollectionUtils, org.apache.commons.lang3.StringUtils, org.apache.commons.lang3.Validate, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.beans.factory.annotation.Qualifier, org.springframework.data.domain.Page, org.springframework.stereotype.Service, com.salesmanager.contracts.client.ContentServiceClient, com.salesmanager.contracts.content.ReadableImage, com.salesmanager.contracts.merchant.MerchantConfigEntity, com.salesmanager.contracts.merchant.MerchantStoreSnapshot, com.salesmanager.contracts.merchant.PersistableBrand, com.salesmanager.contracts.merchant.PersistableMerchantStore, com.salesmanager.contracts.merchant.ReadableBrand, com.salesmanager.contracts.merchant.ReadableMerchantStore, com.salesmanager.contracts.merchant.ReadableMerchantStoreList, com.salesmanager.core.business.exception.ConversionException, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.merchant.MerchantStoreService, com.salesmanager.core.business.services.reference.language.LanguageService, com.salesmanager.core.business.services.system.MerchantConfigurationService, com.salesmanager.core.constants.MeasureUnit, com.salesmanager.core.model.common.GenericEntityList, com.salesmanager.core.model.merchant.MerchantStore
+class StoreFacadeImpl
+  MerchantStore get(String code)
+  MerchantStore getByCode(String code)
+  ReadableMerchantStore getByCode(String code, String lang)
+  ReadableMerchantStore getFullByCode(String code, String lang)
+  ReadableMerchantStore getByCode(String code, Language language)
+  ReadableMerchantStore getFullByCode(String code, Language language)
+  boolean existByCode(String code)
+  void create(PersistableMerchantStore store)
+  void update(PersistableMerchantStore store)
+  ReadableMerchantStoreList getByCriteria(MerchantStoreCriteria criteria, Language lang)
+  void delete(String code)
+  ReadableBrand getBrand(String code)
+  void deleteLogo(String code)
+  void addStoreLogo(String code, String fileName, byte[] content, String contentType)
+  void createBrand(String merchantStoreCode, PersistableBrand brand)
+  ReadableMerchantStoreList getChildStores(Language language, String code, int page, int count)
+  ReadableMerchantStoreList findAll(MerchantStoreCriteria criteria, Language language, int page, int count)
+  List<ReadableMerchantStore> getMerchantStoreNames(MerchantStoreCriteria criteria)
+  List<Language> supportedLanguages(MerchantStore store)
+  MerchantStoreSnapshot getSnapshot(String code, Language language)
+  Language resolveLanguage(String lang)
+  ReadableMerchantStore convertMerchantStoreToReadableMerchantStore(Language language, MerchantStore store)
+  MerchantStore getMerchantStoreByCode(String code)
+  void createMerchantStore(MerchantStore mStore)
+  MerchantStore convertPersistableMerchantStoreToMerchantStore(
+			PersistableMerchantStore store, Language language)
+  void updateMerchantStore(MerchantStore mStore)
+  MerchantStore mergePersistableMerchantStoreToMerchantStore(
+			PersistableMerchantStore store, String code, Language language)
+  ReadableMerchantStoreList getMerchantStoresByCriteria(MerchantStoreCriteria criteria, Language language)
+  List<MerchantConfigEntity> getMerchantConfigEntities(MerchantStore mStore)
+  List<MerchantConfiguration> getMergeConfigurationsByStore(
+			MerchantConfigurationType configurationType, MerchantStore mStore)
+  MerchantConfigEntity convertToMerchantConfigEntity(MerchantConfiguration config)
+  MerchantConfiguration convertToMerchantConfiguration(
+			MerchantConfigEntity config, MerchantConfigurationType configurationType)
+  void saveMerchantStore(MerchantStore store)
+  ReadableMerchantStore convertStoreName(MerchantStore store)
+
+# merchant-service/src/main/java/com/salesmanager/merchant/populator/MerchantStoreSnapshotPopulator.java [java]
+imports: org.springframework.stereotype.Component, com.salesmanager.contracts.merchant.MerchantStoreSnapshot, com.salesmanager.contracts.merchant.ReadableMerchantStore
+class MerchantStoreSnapshotPopulator
+  MerchantStoreSnapshot toSnapshot(ReadableMerchantStore store)
+
+# merchant-service/src/main/java/com/salesmanager/merchant/populator/PersistableMerchantStorePopulator.java [java]
+imports: java.util.Date, java.util.List, org.apache.commons.collections4.CollectionUtils, org.apache.commons.lang3.StringUtils, org.apache.commons.lang3.Validate, org.springframework.stereotype.Component, com.salesmanager.contracts.merchant.PersistableMerchantStore, com.salesmanager.contracts.reference.PersistableAddress, com.salesmanager.core.business.exception.ConversionException, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.merchant.MerchantStoreService, com.salesmanager.core.business.constants.Constants, com.salesmanager.core.constants.MeasureUnit, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.currency.Currency, com.salesmanager.core.model.reference.language.Language, com.salesmanager.merchant.reference.CurrencyRepository, com.salesmanager.merchant.reference.ReferenceEntityMapper, com.salesmanager.merchant.support.ConversionRuntimeException, com.salesmanager.merchant.support.DateUtil
+class PersistableMerchantStorePopulator
+  MerchantStore populate(
+			PersistableMerchantStore source,
+			MerchantStore target,
+			MerchantStore store,
+			Language language)
+
+# merchant-service/src/main/java/com/salesmanager/merchant/populator/ReadableMerchantStorePopulator.java [java]
+imports: java.util.ArrayList, java.util.List, org.apache.commons.lang3.StringUtils, org.apache.commons.lang3.Validate, org.springframework.beans.factory.annotation.Qualifier, org.springframework.stereotype.Component, org.springframework.util.CollectionUtils, com.salesmanager.contracts.client.ReferenceServiceClient, com.salesmanager.contracts.content.ReadableImage, com.salesmanager.contracts.common.ReadableAudit, com.salesmanager.contracts.merchant.ReadableMerchantStore, com.salesmanager.contracts.reference.MeasureUnit, com.salesmanager.contracts.reference.ReadableAddress, com.salesmanager.contracts.reference.ReadableCountry, com.salesmanager.contracts.reference.ReadableLanguage, com.salesmanager.contracts.reference.ReadableZone, com.salesmanager.contracts.reference.WeightUnit, com.salesmanager.core.business.exception.ConversionException, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.merchant.support.DateUtil, com.salesmanager.merchant.util.MerchantLogoPath
+class ReadableMerchantStorePopulator
+  ReadableMerchantStore populate(
+			MerchantStore source,
+			ReadableMerchantStore target,
+			MerchantStore store,
+			Language language)
+
+# merchant-service/src/main/java/com/salesmanager/merchant/reference/CurrencyRepository.java [java]
+imports: org.springframework.data.jpa.repository.JpaRepository, com.salesmanager.core.model.reference.currency.Currency
+interface CurrencyRepository
+
+# merchant-service/src/main/java/com/salesmanager/merchant/reference/ReferenceEntityMapper.java [java]
+imports: org.apache.commons.lang3.StringUtils, org.springframework.stereotype.Component, com.salesmanager.contracts.client.ReferenceServiceClient, com.salesmanager.contracts.reference.ReadableCountry, com.salesmanager.contracts.reference.ReadableLanguage, com.salesmanager.contracts.reference.ReadableZone, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.repositories.reference.country.CountryRepository, com.salesmanager.core.business.services.reference.language.LanguageService, com.salesmanager.core.model.reference.country.Country, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.reference.zone.Zone, com.salesmanager.merchant.support.ConversionRuntimeException
+class ReferenceEntityMapper
+  Country toCountry(String isoCode, String langCode)
+  Zone toZone(String countryCode, String zoneCode, String langCode)
+  Language toLanguage(String code)
 
 # merchant-service/src/main/java/com/salesmanager/merchant/security/AdminUserRepository.java [java]
 imports: org.springframework.data.jpa.repository.JpaRepository, org.springframework.data.jpa.repository.Query, com.salesmanager.core.model.user.User
@@ -580,6 +737,7 @@ class JWTTokenUtil
   Boolean isTokenExpired(String token)
   Boolean isCreatedBeforeLastPasswordReset(Date created, Date lastPasswordReset)
   String generateToken(UserDetails userDetails)
+  String generateToken(String username)
   String doGenerateToken(Map<String, Object> claims, String subject)
   Boolean validateToken(String token, UserDetails userDetails)
 
@@ -606,24 +764,89 @@ class MerchantSecurityConfig
   class PrivateApiSecurity
   class PublicAndActuatorSecurity
 
+# merchant-service/src/main/java/com/salesmanager/merchant/security/MerchantStoreRepository.java [java]
+imports: org.springframework.data.jpa.repository.JpaRepository, org.springframework.data.jpa.repository.Query, com.salesmanager.core.model.merchant.MerchantStore
+interface MerchantStoreRepository
+
+# merchant-service/src/main/java/com/salesmanager/merchant/security/StoreAuthorizationService.java [java]
+imports: org.springframework.security.core.Authentication, org.springframework.security.core.GrantedAuthority, org.springframework.security.core.context.SecurityContextHolder, org.springframework.stereotype.Service, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.merchant.support.MerchantConstants, com.salesmanager.merchant.support.ResourceNotFoundException, com.salesmanager.merchant.support.UnauthorizedException
+class StoreAuthorizationService
+  void authorize(MerchantStore store, String requestUri)
+
+# merchant-service/src/main/java/com/salesmanager/merchant/security/UserAuthorizationService.java [java]
+imports: java.util.List, java.util.Set, java.util.stream.Collectors, org.springframework.security.authentication.AnonymousAuthenticationToken, org.springframework.security.core.Authentication, org.springframework.security.core.GrantedAuthority, org.springframework.security.core.context.SecurityContextHolder, org.springframework.stereotype.Service, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.merchant.MerchantStoreService, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.user.User, com.salesmanager.merchant.support.MerchantConstants, com.salesmanager.merchant.support.ServiceRuntimeException, com.salesmanager.merchant.support.UnauthorizedException
+class UserAuthorizationService
+  String authenticatedUser()
+  void authorizedGroup(String userName, List<String> groupNames)
+  boolean userInRoles(String userName, List<String> groupNames)
+  boolean authorizedStore(String userName, String merchantStoreCode)
+  void requireStoreAccess(String userName, String storeCode)
+
 # merchant-service/src/main/java/com/salesmanager/merchant/support/ContentUnavailableException.java [java]
 class ContentUnavailableException
   String getErrorCode()
+
+# merchant-service/src/main/java/com/salesmanager/merchant/support/ConversionRuntimeException.java [java]
+class ConversionRuntimeException
+
+# merchant-service/src/main/java/com/salesmanager/merchant/support/DateUtil.java [java]
+imports: java.text.ParseException, java.text.SimpleDateFormat, java.util.Date
+class DateUtil
+  String formatDate(Date dt)
+  Date getDate(String date)
+
+# merchant-service/src/main/java/com/salesmanager/merchant/support/MerchantConstants.java [java]
+class MerchantConstants
 
 # merchant-service/src/main/java/com/salesmanager/merchant/support/ReferenceUnavailableException.java [java]
 class ReferenceUnavailableException
   String getErrorCode()
 
+# merchant-service/src/main/java/com/salesmanager/merchant/support/ResourceNotFoundException.java [java]
+class ResourceNotFoundException
+
+# merchant-service/src/main/java/com/salesmanager/merchant/support/RestApiException.java [java]
+class RestApiException
+
 # merchant-service/src/main/java/com/salesmanager/merchant/support/RestErrorHandler.java [java]
 imports: java.util.HashMap, java.util.Map, java.util.UUID, javax.servlet.http.HttpServletRequest, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.http.HttpStatus, org.springframework.web.bind.annotation.ExceptionHandler, org.springframework.web.bind.annotation.ResponseBody, org.springframework.web.bind.annotation.ResponseStatus, org.springframework.web.bind.annotation.RestControllerAdvice, org.springframework.web.context.request.RequestContextHolder, org.springframework.web.context.request.ServletRequestAttributes
 class RestErrorHandler
+  Map<String, String> handleNotFound(ResourceNotFoundException ex)
+  Map<String, String> handleUnauthorized(UnauthorizedException ex)
+  Map<String, String> handleBadRequest(ServiceRuntimeException ex)
+  Map<String, String> error(String code, String message)
   Map<String, Object> handleRemoteUnavailable(ServiceRuntimeException ex)
   String correlationId()
+
+# merchant-service/src/main/java/com/salesmanager/merchant/support/ServiceRequestCriteriaBuilderUtils.java [java]
+imports: java.util.Map, javax.servlet.http.HttpServletRequest, org.springframework.beans.PropertyAccessor, org.springframework.beans.PropertyAccessorFactory, com.salesmanager.core.model.common.Criteria, com.salesmanager.core.model.merchant.MerchantStoreCriteria
+class ServiceRequestCriteriaBuilderUtils
+  Criteria buildRequestCriterias(
+			Criteria criteria,
+			Map<String, String> mappingFields,
+			HttpServletRequest request)
+  void setValue(
+			Criteria criteria,
+			HttpServletRequest request,
+			String parameterName,
+			String setterName)
+  MerchantStoreCriteria createMerchantStoreCriteria(
+			Map<String, String> mappingFields,
+			HttpServletRequest request)
 
 # merchant-service/src/main/java/com/salesmanager/merchant/support/ServiceRuntimeException.java [java]
 class ServiceRuntimeException
   String getErrorCode()
   String getErrorMessage()
+
+# merchant-service/src/main/java/com/salesmanager/merchant/support/UnauthorizedException.java [java]
+class UnauthorizedException
+
+# merchant-service/src/main/java/com/salesmanager/merchant/util/MerchantLogoPath.java [java]
+imports: org.apache.commons.lang3.StringUtils, org.springframework.beans.factory.annotation.Value, org.springframework.stereotype.Component, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.merchant.MerchantStore
+class MerchantLogoPath
+  String buildStoreLogoFilePath(MerchantStore store)
+  String buildStaticImageUtils(MerchantStore store, String type, String imageName)
 
 # merchant-service/src/main/java/com/salesmanager/merchant/web/CorrelationIdFilter.java [java]
 imports: java.io.IOException, java.util.Collections, java.util.Enumeration, java.util.UUID, javax.servlet.FilterChain, javax.servlet.ServletException, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletRequestWrapper, javax.servlet.http.HttpServletResponse, org.slf4j.Logger, org.slf4j.LoggerFactory, org.slf4j.MDC, org.springframework.core.Ordered, org.springframework.core.annotation.Order, org.springframework.stereotype.Component, org.springframework.util.StringUtils, org.springframework.web.filter.OncePerRequestFilter
@@ -633,6 +856,43 @@ class CorrelationIdFilter
 			HttpServletResponse response,
 			FilterChain filterChain)
   class CorrelationHeaderRequest
+
+# merchant-service/src/main/java/com/salesmanager/merchant/web/LanguageArgumentResolver.java [java]
+imports: java.util.Locale, java.util.Optional, org.apache.commons.lang3.StringUtils, org.springframework.core.MethodParameter, org.springframework.stereotype.Component, org.springframework.web.bind.support.WebDataBinderFactory, org.springframework.web.context.request.NativeWebRequest, org.springframework.web.method.support.HandlerMethodArgumentResolver, org.springframework.web.method.support.ModelAndViewContainer, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.reference.language.LanguageService, com.salesmanager.core.model.reference.language.Language, com.salesmanager.merchant.support.ServiceRuntimeException
+class LanguageArgumentResolver
+  boolean supportsParameter(MethodParameter parameter)
+  Object resolveArgument(
+			MethodParameter parameter,
+			ModelAndViewContainer mavContainer,
+			NativeWebRequest webRequest,
+			WebDataBinderFactory binderFactory)
+
+# merchant-service/src/main/java/com/salesmanager/merchant/web/MerchantStoreArgumentResolver.java [java]
+imports: java.util.Optional, javax.servlet.http.HttpServletRequest, org.apache.commons.lang3.StringUtils, org.springframework.core.MethodParameter, org.springframework.stereotype.Component, org.springframework.web.bind.support.WebDataBinderFactory, org.springframework.web.context.request.NativeWebRequest, org.springframework.web.method.support.HandlerMethodArgumentResolver, org.springframework.web.method.support.ModelAndViewContainer, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.merchant.security.MerchantStoreRepository, com.salesmanager.merchant.security.StoreAuthorizationService, com.salesmanager.merchant.support.ResourceNotFoundException
+class MerchantStoreArgumentResolver
+  boolean supportsParameter(MethodParameter parameter)
+  Object resolveArgument(
+			MethodParameter parameter,
+			ModelAndViewContainer mavContainer,
+			NativeWebRequest webRequest,
+			WebDataBinderFactory binderFactory)
+
+# merchant-service/src/test/java/com/salesmanager/merchant/api/internal/InternalStoreIntegrationTest.java [java]
+imports: org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get, org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath, org.springframework.test.web.servlet.result.MockMvcResultMatchers.status, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc, org.springframework.boot.test.context.SpringBootTest, org.springframework.boot.test.mock.mockito.MockBean, org.springframework.context.annotation.Import, org.springframework.test.context.ActiveProfiles, org.springframework.test.web.servlet.MockMvc, com.salesmanager.contracts.client.ContentServiceClient, com.salesmanager.contracts.client.ReferenceServiceClient, com.salesmanager.contracts.reference.ReadableCountry, com.salesmanager.contracts.reference.ReadableLanguage, com.salesmanager.merchant.support.TestDataFactory
+class InternalStoreIntegrationTest
+  void setUp()
+  void getSnapshot_returnsMerchantStoreSnapshot()
+
+# merchant-service/src/test/java/com/salesmanager/merchant/api/v1/MerchantStoreIntegrationTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete, org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get, org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath, org.springframework.test.web.servlet.result.MockMvcResultMatchers.status, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc, org.springframework.boot.test.context.SpringBootTest, org.springframework.boot.test.mock.mockito.MockBean, org.springframework.context.annotation.Import, org.springframework.test.context.ActiveProfiles, org.springframework.test.web.servlet.MockMvc, org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping, com.salesmanager.contracts.client.ContentServiceClient, com.salesmanager.contracts.client.ReferenceServiceClient, com.salesmanager.contracts.merchant.PersistableMerchantStore, com.salesmanager.contracts.reference.PersistableAddress, com.salesmanager.contracts.reference.ReadableCountry, com.salesmanager.contracts.reference.ReadableLanguage, com.salesmanager.merchant.security.JWTTokenUtil, com.salesmanager.merchant.support.MerchantConstants, com.salesmanager.merchant.support.TestDataFactory
+class MerchantStoreIntegrationTest
+  void setUp()
+  void noProductTypeRoutesRegistered()
+  void getPublicStore_returnsReadableDto()
+  void deleteDefaultStore_returnsBadRequest()
+  void getConfig_returnsFlagsAndSocial()
+  void createAndUpdateStore_viaPrivateApi()
+  void getMarketing_returnsBrand()
 
 # merchant-service/src/test/java/com/salesmanager/merchant/client/ContentServiceClientFailureTest.java [java]
 imports: org.assertj.core.api.Assertions.assertThatThrownBy, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.test.web.client.MockRestServiceServer, org.springframework.web.client.RestTemplate, com.salesmanager.merchant.support.ContentUnavailableException
@@ -665,16 +925,92 @@ class ReferenceServiceClientTest
   void getCountryByCode_unknown_returnsNull()
   void blankInputs_returnNullWithoutHttpCall()
 
+# merchant-service/src/test/java/com/salesmanager/merchant/facade/LogoOrchestrationTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.mockito.ArgumentMatchers.any, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.doAnswer, org.mockito.Mockito.doThrow, org.mockito.Mockito.verify, org.mockito.Mockito.when, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.contracts.client.ContentServiceClient, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.merchant.MerchantStoreService, com.salesmanager.core.business.services.reference.language.LanguageService, com.salesmanager.core.business.services.system.MerchantConfigurationService, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.merchant.populator.MerchantStoreSnapshotPopulator, com.salesmanager.merchant.populator.PersistableMerchantStorePopulator, com.salesmanager.merchant.populator.ReadableMerchantStorePopulator, com.salesmanager.merchant.util.MerchantLogoPath
+class LogoOrchestrationTest
+  void setUp()
+  void uploadLogo_dbFailure_compensatesBlobDelete()
+  void deleteLogo_contentFailure_keepsDbClear()
+
+# merchant-service/src/test/java/com/salesmanager/merchant/facade/MerchantConfigurationFacadeImplTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.test.context.SpringBootTest, org.springframework.context.annotation.Import, org.springframework.test.context.ActiveProfiles, com.salesmanager.core.model.reference.language.Language, com.salesmanager.merchant.support.MerchantConstants, com.salesmanager.merchant.support.TestDataFactory
+class MerchantConfigurationFacadeImplTest
+  void setUp()
+  void getMerchantConfig_returnsFlagsAndSocial()
+
+# merchant-service/src/test/java/com/salesmanager/merchant/facade/StoreFacadeImplTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.assertj.core.api.Assertions.assertThatThrownBy, org.mockito.ArgumentMatchers.any, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.atLeastOnce, org.mockito.Mockito.doNothing, org.mockito.Mockito.verify, org.mockito.Mockito.when, java.util.Arrays, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.test.context.SpringBootTest, org.springframework.boot.test.mock.mockito.MockBean, org.springframework.context.annotation.Import, org.springframework.test.context.ActiveProfiles, com.salesmanager.contracts.client.ContentServiceClient, com.salesmanager.contracts.client.ReferenceServiceClient, com.salesmanager.contracts.merchant.MerchantStoreSnapshot, com.salesmanager.contracts.merchant.PersistableMerchantStore, com.salesmanager.contracts.merchant.ReadableBrand, com.salesmanager.contracts.merchant.ReadableMerchantStore, com.salesmanager.contracts.reference.PersistableAddress, com.salesmanager.contracts.reference.ReadableCountry, com.salesmanager.contracts.reference.ReadableLanguage, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.merchant.support.MerchantConstants, com.salesmanager.merchant.support.ServiceRuntimeException, com.salesmanager.merchant.support.TestDataFactory
+class StoreFacadeImplTest
+  void setUp()
+  void createStore_usesReferenceServiceClient()
+  void getByCode_returnsContractDto_notJpaEntity()
+  void deleteDefaultStore_throwsBusinessError()
+  void getSnapshot_returnsMerchantStoreSnapshot()
+  void getBrand_returnsLogoAndSocialConfigs()
+  void supportedLanguages_returnsConfiguredLanguages()
+  void deleteLogo_clearsDbAndCallsContentClient()
+
+# merchant-service/src/test/java/com/salesmanager/merchant/facade/StoreFacadeImplUnitTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.assertj.core.api.Assertions.assertThatThrownBy, org.mockito.ArgumentMatchers.any, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.doAnswer, org.mockito.Mockito.doThrow, org.mockito.Mockito.verify, org.mockito.Mockito.when, java.util.Arrays, java.util.Collections, java.util.List, java.util.Optional, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.mockito.junit.jupiter.MockitoSettings, org.mockito.quality.Strictness, org.springframework.data.domain.Page, org.springframework.data.domain.PageImpl, com.salesmanager.contracts.client.ContentServiceClient, com.salesmanager.contracts.merchant.MerchantConfigEntity, com.salesmanager.contracts.merchant.MerchantStoreSnapshot, com.salesmanager.contracts.merchant.PersistableBrand, com.salesmanager.contracts.merchant.PersistableMerchantStore, com.salesmanager.contracts.merchant.ReadableBrand, com.salesmanager.contracts.merchant.ReadableMerchantStore, com.salesmanager.contracts.merchant.ReadableMerchantStoreList, com.salesmanager.core.business.exception.ConversionException
+class StoreFacadeImplUnitTest
+  void setUp()
+  void existByCode_delegatesToService()
+  void existByCode_serviceFailure_wrapsRuntime()
+  void findAll_retailers_usesListAllRetailers()
+  void findAll_allStores_usesListAll()
+  void findAll_byGroup_usesListByGroup()
+  void getChildStores_returnsReadableList()
+  void getChildStores_missingStore_throwsNotFound()
+  void getChildStores_notRetailer_throwsNotFound()
+  void getMerchantStoreNames_withStoreCode()
+  void getMerchantStoreNames_withoutStoreCode()
+  void getBrand_withoutLogo_returnsSocialOnly()
+  void getBrand_withLogo_buildsReadableImage()
+  void createBrand_savesSocialConfigs()
+  void createBrand_emptyValue_deletesExistingConfig()
+  void create_duplicateStore_throws()
+  void create_persistsNewStore()
+  void update_mergesPersistableStore()
+  void getByCode_withLangString_resolvesLanguage()
+  void getByCriteria_mapsStores()
+  void supportedLanguages_usesStoreLanguagesWhenPresent()
+  void supportedLanguages_refreshesFromServiceWhenEmpty()
+  void getSnapshot_delegatesToPopulator()
+  void convertPopulatorFailure_wrapsConversionRuntime()
+  void get_missingStore_throwsResourceNotFound()
+  void findAll_serviceFailure_wrapsRuntime()
+  void createBrand_serviceFailure_wrapsRuntime()
+  MerchantStoreCriteria criteriaWithCode(String code)
+  Page<MerchantStore> pageOf(MerchantStore store)
+
+# merchant-service/src/test/java/com/salesmanager/merchant/populator/PersistableMerchantStorePopulatorTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.assertj.core.api.Assertions.assertThatThrownBy, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.when, java.util.Arrays, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.test.context.SpringBootTest, org.springframework.boot.test.mock.mockito.MockBean, org.springframework.context.annotation.Import, org.springframework.test.context.ActiveProfiles, com.salesmanager.contracts.client.ReferenceServiceClient, com.salesmanager.contracts.merchant.PersistableMerchantStore, com.salesmanager.contracts.reference.PersistableAddress, com.salesmanager.contracts.reference.ReadableCountry, com.salesmanager.contracts.reference.ReadableLanguage, com.salesmanager.core.business.exception.ConversionException, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.merchant.support.TestDataFactory
+class PersistableMerchantStorePopulatorTest
+  void setUp()
+  void populate_mapsFieldsAndReferenceData()
+  void populate_invalidDate_throwsConversionException()
+
+# merchant-service/src/test/java/com/salesmanager/merchant/populator/ReadableMerchantStorePopulatorTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.when, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.test.context.SpringBootTest, org.springframework.boot.test.mock.mockito.MockBean, org.springframework.context.annotation.Import, org.springframework.test.context.ActiveProfiles, com.salesmanager.contracts.client.ReferenceServiceClient, com.salesmanager.contracts.merchant.ReadableMerchantStore, com.salesmanager.contracts.reference.ReadableCountry, com.salesmanager.contracts.reference.ReadableLanguage, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.merchant.support.TestDataFactory
+class ReadableMerchantStorePopulatorTest
+  void setUp()
+  void populate_returnsContractDto_notJpaEntity()
+
 # merchant-service/src/test/java/com/salesmanager/merchant/security/MerchantSecurityIntegrationTest.java [java]
 imports: org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get, org.springframework.test.web.servlet.result.MockMvcResultMatchers.status, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc, org.springframework.boot.test.context.SpringBootTest, org.springframework.boot.test.mock.mockito.MockBean, org.springframework.context.annotation.Import, org.springframework.test.context.ActiveProfiles, org.springframework.test.web.servlet.MockMvc, com.salesmanager.contracts.client.ContentServiceClient, com.salesmanager.contracts.client.ReferenceServiceClient, com.salesmanager.merchant.support.TestDataFactory
 class MerchantSecurityIntegrationTest
   void privateMerchantWithoutJwt_returns401()
 
 # merchant-service/src/test/java/com/salesmanager/merchant/support/TestDataFactory.java [java]
-imports: java.util.Collections, javax.persistence.EntityManager, javax.persistence.PersistenceContext, org.springframework.stereotype.Component, org.springframework.transaction.annotation.Transactional, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.country.Country, com.salesmanager.core.model.reference.currency.Currency, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.user.Group, com.salesmanager.core.model.user.GroupType, com.salesmanager.core.model.user.User, com.salesmanager.merchant.security.AdminUserRepository
+imports: java.util.Collections, javax.persistence.EntityManager, javax.persistence.PersistenceContext, org.springframework.stereotype.Component, org.springframework.transaction.annotation.Transactional, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.country.Country, com.salesmanager.core.model.reference.currency.Currency, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.system.MerchantConfiguration, com.salesmanager.core.model.system.MerchantConfigurationType, com.salesmanager.core.model.user.Group, com.salesmanager.core.model.user.GroupType, com.salesmanager.core.model.user.User, com.salesmanager.merchant.security.AdminUserRepository
 class TestDataFactory
-  void ensureDefaultAdmin()
-  void seedDefaultAdmin(String username, String storeCode)
+  Seed ensureDefaultAdmin()
+  void ensureGroup(User user, String groupName)
+  Seed seedDefaultAdmin(String username, String storeCode)
+  MerchantStore seedOtherStore(String storeCode, Seed seed)
+  void seedSocialConfig(MerchantStore store, String key, String value)
+  Language ensureLanguage(String code)
+  class Seed
 
 # reference-service/src/main/java/com/salesmanager/reference/ReferenceServiceApplication.java [java]
 imports: org.springframework.boot.SpringApplication, org.springframework.boot.autoconfigure.SpringBootApplication

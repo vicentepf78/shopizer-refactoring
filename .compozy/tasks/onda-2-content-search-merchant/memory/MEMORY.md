@@ -19,4 +19,6 @@ Wave 2 search strangler on BFF complete (task_07): `SearchFacadeHttpAdapter` act
 
 ## Handoffs
 
-- task_11+: remaining cross-track strangler adapters; search-service README lists gaps.
+- task_11+: Strangler BFF adapters for merchant REST + internal snapshot; search-service README lists gaps.
+- task_10 done: merchant-service exposes store REST (~18 endpoints, no ProductType), GET /api/v1/config, GET /internal/v1/store/{code}, AD-014 logo orchestration; gate `./mvnw verify -pl merchant-service -am` with JaCoCo ≥80% on facade/populator/client.
+- task_04 done: sm-core imports `shopizer-content-cms.xml` before product-only `shopizer-core-cms.xml`; ContentService resolves from sm-content-core via component scan.
