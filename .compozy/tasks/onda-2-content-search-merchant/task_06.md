@@ -1,5 +1,5 @@
 ---
-status: pending
+status: completed
 title: ProductIndexPayload, producers e listener de indexação
 type: backend
 complexity: high

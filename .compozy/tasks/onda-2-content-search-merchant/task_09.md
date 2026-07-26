@@ -1,5 +1,5 @@
 ---
-status: pending
+status: completed
 title: merchant-service Boot, JWT e clients Reference/Content
 type: backend
 complexity: high
