@@ -7,40 +7,40 @@ complexity: medium
 
 # Docker Compose wave4, gate, STATE
 
-## Overview
-Consolidates TLC T35–T38. Packages docker-compose-wave4.yml, Wave4 integration suite, reactor `./mvnw clean install` gate, updates STATE.md and requirement traceability to Verified.
+## Visão geral
+Consolida TLC T35–T38. Empacota docker-compose-wave4.yml, suite de integração Wave4, gate reator `./mvnw clean install`, atualiza STATE.md e rastreabilidade de requisitos para Verified.
 
 <requirements>
-1. MUST create `docker-compose-wave4.yml` extending Wave 2 with catalog:8086 + customer:8087 — T35.
-2. MUST consolidate `*Wave4*Integration*Test` suite — T36.
-3. MUST pass `./mvnw clean install` full reactor — T37.
-4. MUST update STATE.md, spec traceability 30/30 Verified, design status — T38.
-5. MUST validate `docker compose -f docker-compose-wave4.yml config`.
-6. MUST map all 30 requirement IDs (CAT/CUS/STR) without gaps.
+1. MUST criar `docker-compose-wave4.yml` estendendo Onda 2 com catalog:8086 + customer:8087 — T35.
+2. MUST consolidar suite `*Wave4*Integration*Test` — T36.
+3. MUST passar `./mvnw clean install` reator completo — T37.
+4. MUST atualizar STATE.md, rastreabilidade spec 30/30 Verified, status design — T38.
+5. MUST validar `docker compose -f docker-compose-wave4.yml config`.
+6. MUST mapear todos os 30 IDs de requisito (CAT/CUS/STR) sem gaps.
 </requirements>
 
-## Subtasks
+## Subtarefas
 - [ ] 15.1 docker-compose-wave4.yml (T35)
-- [ ] 15.2 Integration suite (T36)
-- [ ] 15.3 Reactor gate (T37)
-- [ ] 15.4 STATE + traceability (T38)
+- [ ] 15.2 Suite de integração (T36)
+- [ ] 15.3 Gate reator (T37)
+- [ ] 15.4 STATE + rastreabilidade (T38)
 
-## Related ADRs
+## ADRs relacionados
 - [ADR-001](adrs/adr-001.md)
 
-## Deliverables
+## Entregáveis
 - docker-compose-wave4.yml
-- Integration suite + install evidence **(REQUIRED)**
-- STATE.md updated
+- Suite de integração + evidência install **(OBRIGATÓRIO)**
+- STATE.md atualizado
 
-## Tests
+## Testes
 - `docker compose -f docker-compose-wave4.yml config`
 - `./mvnw test -pl sm-shop -Dtest=*Wave4*Integration*Test`
 - `./mvnw clean install`
 - `./mvnw test -pl sm-shop -Dtest=Wave4ConsumerPactTest -DfailIfNoTests=false`
 
-## Success Criteria
-- Wave 4 topology reproducible
-- Reactor gate green
-- 30/30 requirements Verified in spec.md
-- Onda 4 ready to declare Execute complete in STATE
+## Critérios de sucesso
+- Topologia Wave 4 reproduzível
+- Gate reator verde
+- 30/30 requisitos Verified em spec.md
+- Onda 4 pronta para declarar Execute completo no STATE

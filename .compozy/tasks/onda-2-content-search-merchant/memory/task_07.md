@@ -28,7 +28,7 @@ Strangler Search on BFF: `SearchFacadeHttpAdapter`, disable monolith OpenSearch 
 
 - Running `-pl sm-shop test` without `-am` causes NoClassDefFound / stale class failures; always `-am` for this module.
 
-## Ready for Next Run
+## Pronto para próxima execução
 
 - task_11 can wire cross-track strangler; search BFF trilha closed.
 - GAP-SRCH fixes remain document-only unless trivial.

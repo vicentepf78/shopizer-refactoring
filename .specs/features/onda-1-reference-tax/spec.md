@@ -1,14 +1,14 @@
 # Onda 1 — Reference + Tax Specification
 
-**Feature ID:** `onda-1-reference-tax`
-**Phase:** Tasks (aprovadas — pronto para Execute)
-**Complexity:** Large
-**Source:** [MIGRATION-MASTER-PLAN.md](../../docs/decomposition/MIGRATION-MASTER-PLAN.md) § Onda 1
+**ID da feature:** `onda-1-reference-tax`
+**Fase:** Tasks (aprovadas — pronto para Execute)
+**Complexidade:** Large
+**Fonte:** [MIGRATION-MASTER-PLAN.md](../../docs/decomposition/MIGRATION-MASTER-PLAN.md) § Onda 1
 **Exploração:** Subagentes Reference, Tax e Cross-domain consumers (2026-07-04)
 
 ---
 
-## Problem Statement
+## Declaração do problema
 
 O monólito Shopizer concentra dados de referência (país, zona, idioma, moeda) e administração fiscal (classes e alíquotas) no mesmo runtime que order, catalog e checkout. Com ~94% MODEL coupling nas facades e `LanguageService` injetado em 60+ pontos, qualquer tentativa de deploy independente falha sem fronteiras DTO e padrão Strangler.
 
@@ -16,7 +16,7 @@ A Onda 1 resolve isso extraindo os domínios de **menor risco** (reference 3/10,
 
 ---
 
-## Goals
+## Objetivos
 
 - [ ] `reference-service` e `tax-service` deployáveis como aplicações Spring Boot independentes
 - [ ] Monólito consome serviços extraídos via HTTP client (Strangler) nas fronteiras Reference/Tax definidas
@@ -44,13 +44,13 @@ Explicitamente excluído da Onda 1. Documentado para prevenir scope creep.
 
 ---
 
-## User Stories
+## Histórias de usuário
 
 ### P1: Reference Service — leitura pública de dados geográficos e idiomas ⭐ MVP
 
-**User Story**: Como consumidor da API Shopizer (storefront ou admin), quero consultar países, zonas, idiomas e moedas via endpoints estáveis, para configurar loja e checkout sem acoplamento a entidades JPA internas.
+**História de usuário**: Como consumidor da API Shopizer (storefront ou admin), quero consultar países, zonas, idiomas e moedas via endpoints estáveis, para configurar loja e checkout sem acoplamento a entidades JPA internas.
 
-**Why P1**: Reference é o domínio com menor score de extração (3/10), sem ciclos de serviço, e desbloqueia tax-service (resolução country/zone). É o candidato ideal para validar Strangler Fig.
+**Por quê P1**: Reference é o domínio com menor score de extração (3/10), sem ciclos de serviço, e desbloqueia tax-service (resolução country/zone). É o candidato ideal para validar Strangler Fig.
 
 **Acceptance Criteria**:
 
@@ -78,9 +78,9 @@ Explicitamente excluído da Onda 1. Documentado para prevenir scope creep.
 
 ### P1: Tax Service — administração de classes e alíquotas ⭐ MVP
 
-**User Story**: Como administrador de loja autenticado, quero gerenciar tax classes e tax rates via APIs privadas existentes, para configurar tributação sem depender do runtime monolítico.
+**História de usuário**: Como administrador de loja autenticado, quero gerenciar tax classes e tax rates via APIs privadas existentes, para configurar tributação sem depender do runtime monolítico.
 
-**Why P1**: Tax admin CRUD é isolado (mapper-based facade, APIs privadas JWT), sem ciclos de serviço. Compartilha onda com reference por dependência de country/zone na criação de rates.
+**Por quê P1**: Tax admin CRUD é isolado (mapper-based facade, APIs privadas JWT), sem ciclos de serviço. Compartilha onda com reference por dependência de country/zone na criação de rates.
 
 **Acceptance Criteria**:
 
@@ -111,9 +111,9 @@ Explicitamente excluído da Onda 1. Documentado para prevenir scope creep.
 
 ### P1: Strangler Fig — monólito como BFF com adapters HTTP ⭐ MVP
 
-**User Story**: Como equipe de plataforma, quero que o monólito delegue Reference/Tax para serviços remotos via adapters configuráveis, para validar extração sem reescrever 60+ callers de `LanguageService` de uma vez.
+**História de usuário**: Como equipe de plataforma, quero que o monólito delegue Reference/Tax para serviços remotos via adapters configuráveis, para validar extração sem reescrever 60+ callers de `LanguageService` de uma vez.
 
-**Why P1**: Sem Strangler, a extração exige big-bang. Onda 1 limita adapters às fronteiras já REST-shaped (ReferencesApi, TaxClassApi, TaxRatesApi, facades dedicadas).
+**Por quê P1**: Sem Strangler, a extração exige big-bang. Onda 1 limita adapters às fronteiras já REST-shaped (ReferencesApi, TaxClassApi, TaxRatesApi, facades dedicadas).
 
 **Acceptance Criteria**:
 
@@ -139,9 +139,9 @@ Explicitamente excluído da Onda 1. Documentado para prevenir scope creep.
 
 ### P2: Testes de contrato entre monólito e serviços extraídos
 
-**User Story**: Como desenvolvedor, quero testes de contrato automatizados entre monólito (consumer) e reference/tax-service (providers), para detectar breaking changes antes de deploy.
+**História de usuário**: Como desenvolvedor, quero testes de contrato automatizados entre monólito (consumer) e reference/tax-service (providers), para detectar breaking changes antes de deploy.
 
-**Why P2**: Onda 1 define padrão para 5 ondas seguintes; sem contratos, regressões silenciosas em DTOs.
+**Por quê P2**: Onda 1 define padrão para 5 ondas seguintes; sem contratos, regressões silenciosas em DTOs.
 
 **Acceptance Criteria**:
 
@@ -156,9 +156,9 @@ Explicitamente excluído da Onda 1. Documentado para prevenir scope creep.
 
 ### P2: DTOs e anti-corruption na fronteira Reference
 
-**User Story**: Como arquiteto, quero DTOs completos na API de referência, para eliminar vazamento de modelo JPA identificado no plano mestre.
+**História de usuário**: Como arquiteto, quero DTOs completos na API de referência, para eliminar vazamento de modelo JPA identificado no plano mestre.
 
-**Why P2**: Critério de sucesso explícito do plano: "`ReferencesApi` não retorna entidade `Language` diretamente".
+**Por quê P2**: Critério de sucesso explícito do plano: "`ReferencesApi` não retorna entidade `Language` diretamente".
 
 **Acceptance Criteria**:
 
@@ -173,9 +173,9 @@ Explicitamente excluído da Onda 1. Documentado para prevenir scope creep.
 
 ### P3: Observabilidade e health dos serviços extraídos
 
-**User Story**: Como operador, quero health checks e métricas básicas nos serviços extraídos, para monitorar a primeira onda em produção.
+**História de usuário**: Como operador, quero health checks e métricas básicas nos serviços extraídos, para monitorar a primeira onda em produção.
 
-**Why P3**: Não bloqueia MVP funcional; necessário antes de produção real.
+**Por quê P3**: Não bloqueia MVP funcional; necessário antes de produção real.
 
 **Acceptance Criteria**:
 
@@ -234,7 +234,7 @@ Explicitamente excluído da Onda 1. Documentado para prevenir scope creep.
 
 ---
 
-## Open Questions — Resolvidas ✅
+## Questões em aberto — Resolvidas ✅
 
 Decisões em [context.md](./context.md) e [design.md](./design.md).
 
@@ -249,7 +249,7 @@ Decisões em [context.md](./context.md) e [design.md](./design.md).
 
 ---
 
-## Success Criteria
+## Critérios de sucesso
 
 Como sabemos que a Onda 1 foi bem-sucedida:
 

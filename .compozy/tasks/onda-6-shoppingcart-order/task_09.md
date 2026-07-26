@@ -1,31 +1,31 @@
 ---
 status: pending
-title: ORDER_OUTBOX schema + relay + saga commit endpoints
+title: Schema ORDER_OUTBOX + relay + endpoints saga commit
 type: backend
 complexity: high
 ---
 
-# ORDER_OUTBOX schema + relay + saga commit endpoints
+# Schema ORDER_OUTBOX + relay + endpoints saga commit
 
-## Overview
-TLC T22–T25, T61. Transactional outbox table; relay scheduler; `POST /internal/v1/checkout/commit` with idempotency; `PATCH` payment status. ArchUnit: no PaymentService on commit path.
+## Visão geral
+TLC T22–T25, T61. Tabela transactional outbox; scheduler relay; `POST /internal/v1/checkout/commit` com idempotência; `PATCH` payment status. ArchUnit: sem PaymentService no caminho de commit.
 
 <requirements>
-1. MUST create ORDER_OUTBOX migration + repository — T22, CHK-03.
-2. MUST implement outbox relay scheduler — T23, CHK-10.
-3. MUST implement checkout commit with OrderPlaced outbox in same TX — T24, CHK-02, CHK-09.
-4. MUST implement payment status update + OrderPaid/OrderCancelled events — T25.
-5. MUST ArchUnit: no PaymentService in order-service commit package — T61.
+1. MUST criar migration ORDER_OUTBOX + repository — T22, CHK-03.
+2. MUST implementar scheduler relay outbox — T23, CHK-10.
+3. MUST implementar checkout commit com outbox OrderPlaced na mesma TX — T24, CHK-02, CHK-09.
+4. MUST implementar atualização payment status + eventos OrderPaid/OrderCancelled — T25.
+5. MUST ArchUnit: sem PaymentService no pacote commit de order-service — T61.
 </requirements>
 
-## Related ADRs
+## ADRs relacionados
 - [ADR-003: Saga](adrs/adr-003.md)
 - [ADR-004: Outbox](adrs/adr-004.md)
 
-## Deliverables
-- Outbox + saga internal APIs
-- `CheckoutCommitIntegrationTest`, `OrderOutboxRelayTest`, ArchUnit test **(REQUIRED)**
+## Entregáveis
+- Outbox + APIs internas saga
+- `CheckoutCommitIntegrationTest`, `OrderOutboxRelayTest`, teste ArchUnit **(REQUIRED)**
 
-## Success Criteria
-- Idempotent commit verified
-- Outbox relay publishes events
+## Critérios de sucesso
+- Commit idempotente verificado
+- Relay outbox publica eventos

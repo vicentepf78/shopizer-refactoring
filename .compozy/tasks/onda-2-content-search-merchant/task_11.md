@@ -7,7 +7,7 @@ complexity: high
 
 # Strangler Content/Merchant, StaticContentProxy e wiring
 
-## Overview
+## Visão geral
 Consolida TLC T41–T46. Liga o BFF sm-shop aos serviços content e merchant via adapters HTTP, proxy estático, ContentBlobClient (catálogo P2), hydrator do `MerchantStoreArgumentResolver` e gate de wiring condicional. Junta as três trilhas após task_04, task_07 e task_10.
 
 <critical>
@@ -28,7 +28,7 @@ Consolida TLC T41–T46. Liga o BFF sm-shop aos serviços content e merchant via
 7. MUST retornar 503 remoto sem fallback silencioso quando strangler ligado (STR-01).
 </requirements>
 
-## Subtasks
+## Subtarefas
 - [x] 11.1 ContentFacadeHttpAdapter (T41)
 - [x] 11.2 StaticContentProxy em Images/FilesController (T42)
 - [x] 11.3 ContentBlobClient catálogo P2 (T43)
@@ -36,17 +36,17 @@ Consolida TLC T41–T46. Liga o BFF sm-shop aos serviços content e merchant via
 - [x] 11.5 MerchantServiceClient + hydrator + resolver (T45)
 - [x] 11.6 Gate wiring condicional profiles (T46)
 
-## Implementation Details
+## Detalhes de implementação
 Ver TechSpec: **Matriz de adapters**, **Análise de impacto** (ImagesController, resolver), **Ordem de construção** passo 27. Search adapter já coberto em task_07.
 
-### Relevant Files
+### Arquivos relevantes
 - `sm-shop/src/main/java/com/salesmanager/shop/store/facade/content/ContentFacadeImpl.java` — in-process
 - `sm-shop/src/main/java/com/salesmanager/shop/controller/ImagesController.java` — static
 - `sm-shop/src/main/java/com/salesmanager/shop/application/config/MerchantStoreArgumentResolver.java` — resolver
 - `sm-shop/src/main/java/com/salesmanager/shop/store/controller/store/facade/StoreFacadeImpl.java` — merchant in-process
 - `sm-shop/.../strangler/search/SearchFacadeHttpAdapter.java` — já existente (task_07)
 
-### Dependent Files
+### Arquivos dependentes
 - `sm-shop/.../strangler/content/ContentFacadeHttpAdapter.java`
 - `sm-shop/.../strangler/content/StaticContentProxy.java`
 - `sm-shop/.../strangler/content/ContentBlobClient.java`
@@ -55,18 +55,18 @@ Ver TechSpec: **Matriz de adapters**, **Análise de impacto** (ImagesController,
 - `sm-shop/.../strangler/merchant/MerchantStoreEntityHydrator.java`
 - `MerchantStoreArgumentResolver.java` — atualizado
 
-### Related ADRs
+### ADRs relacionados
 - [ADR-009: Thin proxy estático](adrs/adr-009.md) — StaticContentProxy
 - [ADR-005: APIs internas](adrs/adr-005.md) — static/snapshot
 - [ADR-001: workflow único](adrs/adr-001.md) — Strangler compartilhado
 
-## Deliverables
+## Entregáveis
 - Adapters Content/Merchant + proxy + blob client + hydrator
 - Gate profiles monolith e strangler-wave2
 - Integration tests adapters 80%+ **(REQUIRED)**
 - Regressão ambos profiles **(REQUIRED)**
 
-## Tests
+## Testes
 - Unit tests:
   - [x] ContentFacadeHttpAdapter propaga JWT e X-Correlation-Id
   - [x] Hydrator mapeia MerchantStoreSnapshot → entidade usada pelo resolver
@@ -81,7 +81,7 @@ Ver TechSpec: **Matriz de adapters**, **Análise de impacto** (ImagesController,
 - Test coverage target: >=80%
 - All tests must pass
 
-## Success Criteria
+## Critérios de sucesso
 - All tests passing
 - Test coverage >=80%
 - Strangler Wave2 content+search+merchant wired

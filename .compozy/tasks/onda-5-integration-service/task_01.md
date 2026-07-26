@@ -1,75 +1,75 @@
 ---
 status: pending
-title: Integration contracts, client, Wave5 Strangler config
+title: Contratos integration, client, config Strangler Wave5
 type: backend
 complexity: medium
 ---
 
-# Integration contracts, client, Wave5 Strangler config
+# Contratos integration, client, config Strangler Wave5
 
-## Overview
-Consolidates TLC T1–T5. Delivers integration DTOs and `IntegrationServiceClient` in `shopizer-api-contracts`, registers `sm-integration-core` module, and adds Wave5 Strangler profile/properties in the monolith. **External gates:** Onda 3 Execute + Onda 4 partial catalog read MUST be complete before starting.
+## Visão geral
+Consolida TLC T1–T5. Entrega DTOs de integration e `IntegrationServiceClient` em `shopizer-api-contracts`, registra módulo `sm-integration-core` e adiciona profile/properties Strangler Wave5 no monólito. **Gates externos:** Execute da Onda 3 + leitura parcial de catálogo da Onda 4 DEVEM estar completos antes de iniciar.
 
 <critical>
-- ALWAYS READ the PRD and TechSpec before starting
-- REFERENCE TECHSPEC for implementation details — do not duplicate here
-- FOCUS ON "WHAT" — describe what needs to be accomplished, not how
-- MINIMIZE CODE — show code only to illustrate current structure or problem areas
-- TESTS REQUIRED — every task MUST include tests in deliverables
+- SEMPRE LER o PRD e a TechSpec antes de iniciar
+- CONSULTAR a TechSpec para detalhes de implementação — não duplicar aqui
+- FOCAR NO "O QUÊ" — descrever o que precisa ser feito, não como
+- MINIMIZAR CÓDIGO — mostrar código só para ilustrar estrutura atual ou áreas problemáticas
+- TESTES OBRIGATÓRIOS — toda task DEVE incluir testes nos entregáveis
 </critical>
 
 <requirements>
-1. MUST verify Onda 3 artifacts compile: `PaymentModuleV2`, `ShippingQuoteModuleV2`, snapshots, checkout service — TLC T1.
-2. MUST add integration DTOs in `com.salesmanager.contracts.integration` — TLC T2.
-3. MUST create `IntegrationServiceClient` in `com.salesmanager.contracts.client` — TLC T3.
-4. MUST add profile `strangler-wave5`, properties `wave5.*`, `Wave5ClientConfig`, RestTemplate with correlation — TLC T4.
-5. MUST register `sm-integration-core` Maven module in reactor — TLC T5.
-6. MUST NOT import `com.salesmanager.core.model` in contracts.
-7. MUST compile `shopizer-api-contracts` and pass `Wave5ClientConfigTest`.
+1. MUST verificar artefatos Onda 3 compilando: `PaymentModuleV2`, `ShippingQuoteModuleV2`, snapshots, checkout service — TLC T1.
+2. MUST adicionar DTOs de integration em `com.salesmanager.contracts.integration` — TLC T2.
+3. MUST criar `IntegrationServiceClient` em `com.salesmanager.contracts.client` — TLC T3.
+4. MUST adicionar profile `strangler-wave5`, properties `wave5.*`, `Wave5ClientConfig`, RestTemplate com correlation — TLC T4.
+5. MUST registrar módulo Maven `sm-integration-core` no reactor — TLC T5.
+6. MUST NOT importar `com.salesmanager.core.model` nos contracts.
+7. MUST compilar `shopizer-api-contracts` e passar `Wave5ClientConfigTest`.
 </requirements>
 
-## Subtasks
-- [ ] 1.1 Gate check script/test for Onda 3 + Onda 4 prerequisites (T1)
-- [ ] 1.2 Integration request/response DTOs (T2)
-- [ ] 1.3 `IntegrationServiceClient` interface (T3)
-- [ ] 1.4 Wave5 properties + config beans (T4)
-- [ ] 1.5 `sm-integration-core` pom + reactor entry (T5)
+## Subtarefas
+- [ ] 1.1 Script/teste de gate para pré-requisitos Onda 3 + Onda 4 (T1)
+- [ ] 1.2 DTOs request/response de integration (T2)
+- [ ] 1.3 Interface `IntegrationServiceClient` (T3)
+- [ ] 1.4 Properties Wave5 + beans de config (T4)
+- [ ] 1.5 pom `sm-integration-core` + entrada no reactor (T5)
 
-## Implementation Details
-See TechSpec: **Key interfaces**, **Data models**, **Strangler properties**. Reuse `Wave1ClientConfig` / `Wave2ClientConfig` patterns.
+## Detalhes de implementação
+Ver TechSpec: **Interfaces principais**, **Modelos de dados**, **Properties Strangler**. Reutilizar padrões `Wave1ClientConfig` / `Wave2ClientConfig`.
 
-### Relevant Files
-- `shopizer-api-contracts/` — new integration package
-- `sm-shop-model/.../order/transaction/` — source payment DTO shapes
-- `sm-shop-model/.../order/shipping/` — source shipping DTO shapes
-- `sm-core-modules/.../PaymentModule.java` — legacy contract reference
+### Arquivos relevantes
+- `shopizer-api-contracts/` — novo pacote integration
+- `sm-shop-model/.../order/transaction/` — formas fonte de DTOs de pagamento
+- `sm-shop-model/.../order/shipping/` — formas fonte de DTOs de frete
+- `sm-core-modules/.../PaymentModule.java` — referência de contrato legado
 
-### Dependent Files
-- `sm-integration-core/pom.xml` — to create
-- `sm-shop/.../strangler/config/Wave5ClientConfig.java` — to create
-- `sm-shop/src/main/resources/application-strangler-wave5.properties` — to create
+### Arquivos dependentes
+- `sm-integration-core/pom.xml` — a criar
+- `sm-shop/.../strangler/config/Wave5ClientConfig.java` — a criar
+- `sm-shop/src/main/resources/application-strangler-wave5.properties` — a criar
 
-### Related ADRs
-- [ADR-001](adrs/adr-001.md) — single workflow
-- [ADR-004](adrs/adr-004.md) — V2 contracts from Onda 3
+### ADRs relacionados
+- [ADR-001](adrs/adr-001.md) — workflow único
+- [ADR-004](adrs/adr-004.md) — contratos V2 da Onda 3
 
-## Deliverables
-- Integration DTOs + client interface in contracts
-- `sm-integration-core` module skeleton
-- Wave5 Strangler config in sm-shop
-- Unit tests for DTO serialization **(REQUIRED)**
+## Entregáveis
+- DTOs integration + interface client nos contracts
+- Esqueleto do módulo `sm-integration-core`
+- Config Strangler Wave5 em sm-shop
+- Testes unitários de serialização DTO **(REQUIRED)**
 - `Wave5ClientConfigTest` **(REQUIRED)**
 
-## Tests
+## Testes
 - Unit tests:
-  - [ ] DTOs serialize/deserialize without JPA types
-  - [ ] `Wave5ClientConfig` loads `wave5.integration-service.base-url`
+  - [ ] DTOs serializam/deserializam sem tipos JPA
+  - [ ] `Wave5ClientConfig` carrega `wave5.integration-service.base-url`
 - Integration tests:
   - [ ] `./mvnw compile -pl shopizer-api-contracts,sm-integration-core -am`
-- Test coverage target: >=80% on new DTOs
-- All tests must pass
+- Test coverage target: >=80% nos novos DTOs
+- Todos os testes devem passar
 
-## Success Criteria
-- All tests passing
-- External gates verified and documented
-- `wave5.*` coexists with `wave1.*`–`wave4.*`
+## Critérios de sucesso
+- Todos os testes passando
+- Gates externos verificados e documentados
+- `wave5.*` coexiste com `wave1.*`–`wave4.*`

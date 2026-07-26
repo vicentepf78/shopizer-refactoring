@@ -24,6 +24,6 @@ Extract TaxClass/TaxRate CRUD into `sm-tax-core`, DELETE 409 guard + TAX-09 exis
 
 ## Errors / Corrections
 
-## Ready for Next Run
+## Pronto para próxima execução
 
 Done. Hand off: task_07 maps `TaxClassInUseException` → HTTP 409; task_06 parallel for reference-service.

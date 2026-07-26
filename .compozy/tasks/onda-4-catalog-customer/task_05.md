@@ -7,33 +7,33 @@ complexity: high
 
 # customer-service Boot, REST, snapshot (CUS-ready)
 
-## Overview
-Consolidates TLC T18–T20. Delivers `customer-service` (:8087): Boot, profile/address/optin REST, reference client, internal CustomerSnapshot, JWT. Excludes AuthenticateCustomerApi (OQ-06). **CUS-ready** milestone.
+## Visão geral
+Consolida TLC T18–T20. Entrega `customer-service` (:8087): Boot, REST profile/address/optin, client reference, CustomerSnapshot interno, JWT. Exclui AuthenticateCustomerApi (OQ-06). Marco **CUS-ready**.
 
 <requirements>
-1. MUST scaffold Boot + JPA + sm-customer-core — T18.
-2. MUST port CustomerApi profile/address/optin sections — T19.
-3. MUST expose `GET /internal/v1/customers/{id}/snapshot` — T20.
-4. MUST replicate JWT for private routes — T20.
-5. MUST NOT expose login/register/password endpoints.
+1. MUST criar Boot + JPA + sm-customer-core — T18.
+2. MUST portar seções profile/address/optin do CustomerApi — T19.
+3. MUST expor `GET /internal/v1/customers/{id}/snapshot` — T20.
+4. MUST replicar JWT para rotas privadas — T20.
+5. MUST NOT expor endpoints login/register/password.
 </requirements>
 
-## Subtasks
-- [ ] 5.1 Boot scaffold (T18)
-- [ ] 5.2 Profile REST + reference client (T19)
-- [ ] 5.3 Internal snapshot + security (T20)
+## Subtarefas
+- [ ] 5.1 Scaffold Boot (T18)
+- [ ] 5.2 REST profile + client reference (T19)
+- [ ] 5.3 Snapshot interno + security (T20)
 
-## Related ADRs
+## ADRs relacionados
 - [ADR-005](adrs/adr-005.md)
-- OQ-06 auth stays monolith
+- OQ-06 auth permanece no monólito
 
-## Deliverables
-- Deployable customer-service
-- Integration tests profile update + snapshot **(REQUIRED)**
+## Entregáveis
+- customer-service implantável
+- Testes de integração profile update + snapshot **(OBRIGATÓRIO)**
 
-## Tests
+## Testes
 - `./mvnw test -pl customer-service`
 
-## Success Criteria
-- CUS-ready milestone
-- Port 8087 health UP
+## Critérios de sucesso
+- Marco CUS-ready
+- Porta 8087 health UP

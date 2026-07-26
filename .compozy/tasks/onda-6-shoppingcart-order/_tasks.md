@@ -74,56 +74,56 @@ graph:
 
 # Onda 6 — ShoppingCart + Order Task List
 
-Consolidated Wave 6 task list: **16 Compozy tasks** mapped from TLC T1–T62 and TechSpec build order.
+Lista consolidada da Onda 6: **16 tasks Compozy** mapeadas a partir das TLC T1–T62 e da ordem de construção da TechSpec.
 
-**Hard prerequisite:** Ondas 3, 4, 5 Execute MUST be complete before `task_01` — snapshots, saga/outbox PoC, `CheckoutApplicationService` skeleton, catalog-service, customer-service, integration-service.
+**Pré-requisito rígido:** Execute das Ondas 3, 4, 5 DEVE estar completo antes de `task_01` — snapshots, PoC saga/outbox, esqueleto `CheckoutApplicationService`, catalog-service, customer-service, integration-service.
 
-## TLC → Compozy mapping
+## Mapeamento TLC → Compozy
 
-| Task | Title | TLC | Type | Complexity |
+| Task | Título | TLC | Tipo | Complexidade |
 |------|-------|-----|------|------------|
-| task_01 | Gate Ondas 3–5 + Wave6 contracts and Strangler config | T1–T5, T46–T51 | backend | medium |
-| task_02 | Cart totals API — break cart↔order cycle (`TOT-ready`) | T6, T56 | backend | high |
-| task_03 | Extract sm-shoppingcart-core + catalog validation | T7–T9, T60 | backend | high |
-| task_04 | shoppingcart-service Boot, REST, internal clear (`SC-ready` partial) | T10–T12, T52, T54 | backend | high |
-| task_05 | ShoppingCart Strangler adapter + shadow mode (`SC-ready`) | T13–T14, T50 | backend | high |
-| task_06 | Extract sm-order-core + cart totals service | T15–T17 | backend | high |
-| task_07 | order-service Boot + read REST + internal totals (`OR-read-ready` partial) | T18–T20, T53, T55 | backend | high |
-| task_08 | Order read Strangler adapter (`OR-read-ready`) | T21, T49 | backend | medium |
-| task_09 | ORDER_OUTBOX schema + relay + saga commit endpoints | T22–T25, T61 | backend | high |
-| task_10 | Legacy processOrder saga delegation + compensation tests | T26–T27, T59 | backend | high |
-| task_11 | CheckoutApplicationService orchestration + tax at BFF (`CHK-ready` partial) | T28–T31, T57, T58 | backend | high |
-| task_12 | Hub decomposition — thin OrderFacade + bypass APIs | T33–T36 | refactor | high |
-| task_13 | Cart merge on login + correlation/health Wave6 | T37–T38 | backend | medium |
-| task_14 | CHK-ready runbook + checkout cutover docs | T32, T62 | docs | medium |
-| task_15 | Pact consumer/provider + JaCoCo Wave6 gates | T39–T42 | test | medium |
-| task_16 | Docker Compose wave6, E2E, STATE/ROADMAP gate | T43–T45 | infra | medium |
+| task_01 | Gate Ondas 3–5 + contratos Wave6 e config Strangler | T1–T5, T46–T51 | backend | medium |
+| task_02 | API cart totals — quebra ciclo cart↔order (`TOT-ready`) | T6, T56 | backend | high |
+| task_03 | Extrair sm-shoppingcart-core + validação catalog | T7–T9, T60 | backend | high |
+| task_04 | shoppingcart-service Boot, REST, internal clear (`SC-ready` parcial) | T10–T12, T52, T54 | backend | high |
+| task_05 | Adaptador Strangler ShoppingCart + shadow mode (`SC-ready`) | T13–T14, T50 | backend | high |
+| task_06 | Extrair sm-order-core + serviço cart totals | T15–T17 | backend | high |
+| task_07 | order-service Boot + read REST + internal totals (`OR-read-ready` parcial) | T18–T20, T53, T55 | backend | high |
+| task_08 | Adaptador Strangler order read (`OR-read-ready`) | T21, T49 | backend | medium |
+| task_09 | Schema ORDER_OUTBOX + relay + endpoints saga commit | T22–T25, T61 | backend | high |
+| task_10 | Delegação saga processOrder legado + testes compensação | T26–T27, T59 | backend | high |
+| task_11 | Orquestração CheckoutApplicationService + tax no BFF (`CHK-ready` parcial) | T28–T31, T57, T58 | backend | high |
+| task_12 | Decomposição hub — OrderFacade fino + bypass APIs | T33–T36 | refactor | high |
+| task_13 | Merge cart no login + correlation/health Wave6 | T37–T38 | backend | medium |
+| task_14 | Runbook CHK-ready + docs cutover checkout | T32, T62 | docs | medium |
+| task_15 | Pact consumer/provider + gates JaCoCo Wave6 | T39–T42 | test | medium |
+| task_16 | Docker Compose wave6, E2E, gate STATE/ROADMAP | T43–T45 | infra | medium |
 
-## Milestones
+## Marcos
 
-- **TOT-ready:** end of `task_02` — totals HTTP live
-- **SC-ready:** end of `task_05` — cart CRUD remote + strangler
-- **OR-read-ready:** end of `task_08` — order reads remote
-- **CHK-ready:** end of `task_14` — saga checkout + runbook
+- **TOT-ready:** fim de `task_02` — totals HTTP live
+- **SC-ready:** fim de `task_05` — cart CRUD remoto + strangler
+- **OR-read-ready:** fim de `task_08` — leituras de order remotas
+- **CHK-ready:** fim de `task_14` — checkout saga + runbook
 
-## Parallelism
+## Paralelismo
 
-After `task_05` (`TOT-ready` + cart track started):
+Após `task_05` (`TOT-ready` + trilha cart iniciada):
 
-- Track cart: `task_03` → `task_04` → `task_05`
-- Track order: `task_06` → `task_07` → `task_08` (starts after `task_02`)
+- Trilha cart: `task_03` → `task_04` → `task_05`
+- Trilha order: `task_06` → `task_07` → `task_08` (inicia após `task_02`)
 
-After `task_08` and `task_05`:
+Após `task_08` e `task_05`:
 
 - Saga: `task_09` → `task_10`
-- Checkout: `task_11` (needs `task_09`, `task_05`)
-- Hub: `task_12` (needs `task_11`)
+- Checkout: `task_11` (precisa `task_09`, `task_05`)
+- Hub: `task_12` (precisa `task_11`)
 
-Tail: `task_13`, `task_14` → `task_15` → `task_16`
+Cauda: `task_13`, `task_14` → `task_15` → `task_16`
 
-## Source
+## Fonte
 
 - PRD: `_prd.md`
 - TechSpec: `_techspec.md`
 - ADRs: `adrs/adr-001.md` … `adr-008.md`
-- TLC: `.specs/features/onda-6-shoppingcart-order/tasks.md` — authoritative WHAT
+- TLC: `.specs/features/onda-6-shoppingcart-order/tasks.md` — O QUÊ autoritativo

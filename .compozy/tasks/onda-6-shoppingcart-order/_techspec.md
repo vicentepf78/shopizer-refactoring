@@ -1,24 +1,24 @@
 # TechSpec: Onda 6 — ShoppingCart + Order
 
 **PRD:** [_prd.md](_prd.md)
-**Authoritative TLC design:** `.specs/features/onda-6-shoppingcart-order/design.md`
-**Slug:** `onda-6-shoppingcart-order`
-**Date:** 2026-07-26
-**Status:** Ready for `cy-create-tasks`
+**Design TLC autoritativo:** `.specs/features/onda-6-shoppingcart-order/design.md`
+**Slug da feature:** `onda-6-shoppingcart-order`
+**Data:** 2026-07-26
+**Status:** Pronto para `cy-create-tasks`
 
 ---
 
-## Executive summary
+## Resumo executivo
 
-Onda 6 extracts **two Spring Boot services** — `shoppingcart-service` (:8086) and `order-service` (:8087) — while `sm-shop` retains **Checkout Application Service** as the checkout orchestration boundary. The cart↔order cycle breaks via `POST /internal/v1/orders/totals`. `processOrder` becomes **saga choreography + transactional outbox** (Onda 3). Tax stays at BFF calling `tax-service` (ADR-006). Hub `OrderFacadeImpl` (12 services) decomposes into thin delegation.
+A Onda 6 extrai **dois serviços Spring Boot** — `shoppingcart-service` (:8086) e `order-service` (:8087) — enquanto `sm-shop` mantém **Checkout Application Service** como fronteira de orquestração de checkout. O ciclo cart↔order quebra via `POST /internal/v1/orders/totals`. `processOrder` torna-se **saga choreography + transactional outbox** (Onda 3). Tax permanece no BFF chamando `tax-service` (ADR-006). Hub `OrderFacadeImpl` (12 serviços) decompõe-se em delegação fina.
 
-**Primary trade-off:** Accept shared MySQL and BFF-hosted checkout orchestration to avoid a third deployable during the highest-risk wave — upgrade path documented for post-Wave 6.
+**Trade-off principal:** Aceitar MySQL compartilhado e orquestração de checkout hospedada no BFF para evitar um terceiro deployable na onda de maior risco — caminho de upgrade documentado para pós-Onda 6.
 
-**Prerequisite:** Ondas 3, 4, 5 Execute complete (snapshots, saga PoC, catalog-service, customer-service, integration-service).
+**Pré-requisito:** Execute das Ondas 3, 4, 5 completo (snapshots, PoC saga, catalog-service, customer-service, integration-service).
 
 ---
 
-## System architecture
+## Arquitetura do sistema
 
 ```mermaid
 flowchart TB
@@ -47,21 +47,21 @@ flowchart TB
     ORD --> INT
 ```
 
-| Component | Responsibility | Boundary |
+| Componente | Responsabilidade | Fronteira |
 |-----------|----------------|----------|
-| `shopizer-api-contracts` | Cart/order/checkout DTOs + clients | No JPA |
-| `sm-shoppingcart-core` | Cart repos + ShoppingCartService | No OrderService |
-| `shoppingcart-service` | Cart REST + internal clear | :8086 |
-| `sm-order-core` | Order repos, totals, saga commit, outbox | No PaymentService on commit |
-| `order-service` | Order REST + internal APIs + outbox relay | :8087 |
-| `CheckoutApplicationService` | Checkout saga orchestration | sm-shop only |
-| Wave6 strangler adapters | HTTP facades + flags | sm-shop |
+| `shopizer-api-contracts` | DTOs cart/order/checkout + clients | Sem JPA |
+| `sm-shoppingcart-core` | Repos cart + ShoppingCartService | Sem OrderService |
+| `shoppingcart-service` | REST cart + internal clear | :8086 |
+| `sm-order-core` | Repos order, totals, saga commit, outbox | Sem PaymentService no commit |
+| `order-service` | REST order + APIs internas + relay outbox | :8087 |
+| `CheckoutApplicationService` | Orquestração saga checkout | somente sm-shop |
+| Adaptadores Strangler Wave6 | Facades HTTP + flags | sm-shop |
 
 ---
 
-## Implementation design
+## Design de implementação
 
-### Key interfaces
+### Interfaces principais
 
 ```java
 // shopizer-api-contracts
@@ -80,7 +80,7 @@ public interface ShoppingCartServiceClient {
 ```
 
 ```java
-// sm-shop — checkout boundary
+// sm-shop — fronteira checkout
 @Service
 public class CheckoutApplicationService {
   CheckoutCommitResponse placeOrder(PlaceOrderCommand cmd);
@@ -89,17 +89,17 @@ public class CheckoutApplicationService {
 }
 ```
 
-### Saga steps (reference)
+### Passos da saga (referência)
 
-1. Validate cart + catalog inventory (HTTP)
-2. Tax at BFF (tax-service) + shipping quote (integration-service)
+1. Validar cart + inventário catalog (HTTP)
+2. Tax no BFF (tax-service) + cotação de frete (integration-service)
 3. `order-service` commit + outbox `OrderPlaced`
-4. Payment via integration-service
-5. Update payment status on order + outbox `OrderPaid`
-6. Clear cart via shoppingcart-service
-7. Outbox relay → email/inventory
+4. Pagamento via integration-service
+5. Atualizar status de pagamento no pedido + outbox `OrderPaid`
+6. Limpar carrinho via shoppingcart-service
+7. Relay outbox → email/inventário
 
-### Configuration
+### Configuração
 
 ```properties
 wave6.shoppingcart-service.base-url=http://localhost:8086
@@ -113,18 +113,18 @@ wave6.order-service.internal-token=${WAVE6_ORDER_INTERNAL_TOKEN:dev-token}
 
 Profile: `strangler-wave6`
 
-### Build order
+### Ordem de construção
 
-1. Gate script (Ondas 3–5)
-2. Contracts T1–T5 (TLC)
-3. Totals API T6 (`TOT-ready`)
-4. Parallel: cart track T7–T14 (`SC-ready`) | order core T15–T21 (`OR-read-ready`)
+1. Script de gate (Ondas 3–5)
+2. Contratos T1–T5 (TLC)
+3. API Totals T6 (`TOT-ready`)
+4. Paralelo: trilha cart T7–T14 (`SC-ready`) | order core T15–T21 (`OR-read-ready`)
 5. Saga T22–T27
 6. CheckoutApplicationService T28–T32 (`CHK-ready`)
 7. Hub T33–T38
 8. Pact + Docker T39–T45
 
-### Testing gates
+### Gates de teste
 
 ```bash
 ./mvnw -pl sm-shop,shoppingcart-service,order-service -am test \
@@ -134,38 +134,38 @@ Profile: `strangler-wave6`
 
 ---
 
-## Security
+## Segurança
 
-- JWT on `/private/**` (wave1 pattern)
-- `X-Internal-Token` on `/internal/v1/**`
-- `X-Correlation-Id` propagated on all wave6 RestTemplate calls
-- Idempotency-Key on checkout commit (24h dedup)
+- JWT em `/private/**` (padrão wave1)
+- `X-Internal-Token` em `/internal/v1/**`
+- `X-Correlation-Id` propagado em todas as chamadas RestTemplate wave6
+- Idempotency-Key no checkout commit (dedup 24h)
 
 ---
 
-## Observability
+## Observabilidade
 
-- Actuator health: DB, catalog, customer, integration dependencies
-- Metrics: outbox depth, saga step duration, strangler adapter error rate
+- Health actuator: deps DB, catalog, customer, integration
+- Métricas: profundidade outbox, duração passo saga, taxa de erro adaptador strangler
 - Runbooks: `docs/runbooks/wave6-{cart,checkout}-cutover.md`
 
 ---
 
-## Related ADRs
+## ADRs relacionados
 
-| ADR | Topic |
+| ADR | Tópico |
 |-----|-------|
-| 001 | Single workflow |
-| 002 | Checkout boundary |
+| 001 | Workflow único |
+| 002 | Fronteira checkout |
 | 003 | Saga choreography |
 | 004 | Transactional outbox |
-| 005 | Hub decomposition |
-| 006 | Tax at BFF |
-| 007 | Cart before order |
+| 005 | Decomposição do hub |
+| 006 | Tax no BFF |
+| 007 | Cart antes de order |
 | 008 | Flags + rollback |
 
 ---
 
-## TLC traceability
+## Rastreabilidade TLC
 
-62 TLC tasks (T1–T62) in `.specs/features/onda-6-shoppingcart-order/tasks.md` map to 16 Compozy tasks in `_tasks.md`.
+62 tasks TLC (T1–T62) em `.specs/features/onda-6-shoppingcart-order/tasks.md` mapeiam para 16 tasks Compozy em `_tasks.md`.

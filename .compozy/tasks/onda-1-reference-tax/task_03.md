@@ -7,7 +7,7 @@ complexity: low
 
 # Wire sm-shop-model → shopizer-api-contracts
 
-## Overview
+## Visão geral
 Consolida TLC T6. Liga `sm-shop-model` ao JAR `shopizer-api-contracts` (TechSpec **Ordem de build** passo 3) para que o monolito e futuros adapters consumam DTOs de contrato sem quebrar a compilação existente. DTOs duplicados em `com.salesmanager.shop.model.*` devem ser re-exportados ou marcados `@Deprecated` como aliases.
 
 <critical>
@@ -26,36 +26,36 @@ Consolida TLC T6. Liga `sm-shop-model` ao JAR `shopizer-api-contracts` (TechSpec
 5. MUST garantir que tipos contracts sejam transitivamente visíveis a `sm-shop`.
 </requirements>
 
-## Subtasks
+## Subtarefas
 - [x] 3.1 Adicionar dep `shopizer-api-contracts` em `sm-shop-model`
 - [x] 3.2 Aplicar aliases/@Deprecated nos DTOs duplicados de reference/tax/entity
 - [x] 3.3 Validar compile de `sm-shop-model` e `sm-shop -am`
 - [x] 3.4 Smoke: classe do monolito resolve tipo contracts no classpath
 
-## Implementation Details
+## Detalhes de implementação
 Ver TechSpec: **Análise de impacto** (`sm-shop-model`), **Ordem de build** passo 3. Preferir churn mínimo: dep Maven + aliases, sem reescrever todos os imports do monolito nesta task.
 
-### Relevant Files
+### Arquivos relevantes
 - `sm-shop-model/pom.xml` — ponto de wiring
 - `sm-shop-model/src/main/java/com/salesmanager/shop/model/entity/` — DTOs a deprecar/re-exportar
 - `sm-shop-model/src/main/java/com/salesmanager/shop/model/references/` — DTOs reference legados
 - `sm-shop-model/src/main/java/com/salesmanager/shop/model/tax/` — DTOs tax legados
 - `shopizer-api-contracts/` — fonte canônica pós task_02
 
-### Dependent Files
+### Arquivos dependentes
 - `sm-shop/pom.xml` — consome transitivamente via sm-shop-model
 - Controllers/facades em `sm-shop` que importam `com.salesmanager.shop.model.*` — devem continuar compilando
 
-### Related ADRs
+### ADRs relacionados
 - [ADR-005: Contract DTOs / no JPA in REST responses; Pact](adrs/adr-005.md) — DTOs canônicos no JAR contracts
 
-## Deliverables
+## Entregáveis
 - `sm-shop-model` depende de `shopizer-api-contracts`
 - Aliases/deprecations documentados nos packages legados
 - Unit/smoke tests de classpath **(REQUIRED)**
 - Compile gate monolito **(REQUIRED)**
 
-## Tests
+## Testes
 - Unit tests:
   - [x] Tipo contracts (`ReadableCountry` ou equivalente) é carregável a partir do classpath de `sm-shop-model`
   - [x] Alias/@Deprecated legado ainda resolve no compile (se re-export usado)
@@ -65,7 +65,7 @@ Ver TechSpec: **Análise de impacto** (`sm-shop-model`), **Ordem de build** pass
 - Test coverage target: >=80% (código novo/alterado nesta task)
 - All tests must pass
 
-## Success Criteria
+## Critérios de sucesso
 - All tests passing
 - Test coverage >=80%
 - Monolito compila sem breaking change de API path

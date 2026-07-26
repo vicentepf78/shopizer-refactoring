@@ -2,12 +2,12 @@
 
 **Spec:** `.specs/features/onda-2-content-search-merchant/spec.md`
 **Context:** `.specs/features/onda-2-content-search-merchant/context.md` (OQ-01..06 confirmadas)
-**Status:** Approved — Execute complete (T1–T54, gate 2026-07-26)
+**Status:** Aprovado — Execute complete (T1–T54, gate 2026-07-26)
 **Exploração Design:** Subagentes content, search, merchant (2026-07-04)
 
 ---
 
-## Architecture Overview
+## Visão geral da arquitetura
 
 A Onda 2 extrai **três serviços Spring Boot** mantendo **schema DB compartilhado** (AD-003) e o monólito como **BFF Strangler**. Cada serviço replica o padrão Onda 1: DTOs em `shopizer-api-contracts`, lógica de domínio em módulos thin (`sm-*-core`), adapters HTTP no `sm-shop`.
 

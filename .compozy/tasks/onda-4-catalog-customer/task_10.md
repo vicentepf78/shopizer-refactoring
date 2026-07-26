@@ -1,31 +1,31 @@
 ---
 status: pending
-title: Cross-track integration checkpoint
+title: Checkpoint de integração cross-track
 type: backend
 complexity: medium
 ---
 
-# Cross-track integration checkpoint
+# Checkpoint de integração cross-track
 
-## Overview
-Consolidates convergence after CAT-ready (task_03) and CUS-ready (task_05). Verifies both services healthy together with Wave 1–2 dependencies before search migration and cart merge tasks proceed in parallel.
+## Visão geral
+Consolida convergência após CAT-ready (task_03) e CUS-ready (task_05). Verifica ambos os serviços saudáveis juntos com dependências Onda 1–2 antes de migração search e tasks de merge de carrinho prosseguirem em paralelo.
 
 <requirements>
-1. MUST verify catalog-service + customer-service start against shared Testcontainers MySQL.
-2. MUST smoke: catalog GET product + customer GET snapshot internal APIs.
-3. MUST verify reference-service + merchant-service reachable from catalog-service.
-4. MUST document any parity gaps found vs monolith baseline.
-5. MUST unblock task_06 and task_07 parallel execution after checkpoint pass.
+1. MUST verificar catalog-service + customer-service iniciam contra Testcontainers MySQL compartilhado.
+2. MUST smoke: catalog GET product + customer GET snapshot APIs internas.
+3. MUST verificar reference-service + merchant-service alcançáveis a partir de catalog-service.
+4. MUST documentar gaps de paridade encontrados vs baseline monólito.
+5. MUST desbloquear execução paralela de task_06 e task_07 após checkpoint passar.
 </requirements>
 
-## Deliverables
-- `Wave4ServicesCheckpointTest` or equivalent **(REQUIRED)**
-- Short checkpoint report in task memory (if using Compozy memory)
+## Entregáveis
+- `Wave4ServicesCheckpointTest` ou equivalente **(OBRIGATÓRIO)**
+- Relatório curto de checkpoint na memória da task (se usar memória Compozy)
 
-## Tests
+## Testes
 - `./mvnw test -pl catalog-service,customer-service -Dtest=*Checkpoint*Test`
 
-## Success Criteria
-- Both services UP with deps
-- CAT-ready + CUS-ready confirmed
-- No blocker defects for downstream tasks
+## Critérios de sucesso
+- Ambos os serviços UP com deps
+- CAT-ready + CUS-ready confirmados
+- Sem defeitos bloqueantes para tasks downstream

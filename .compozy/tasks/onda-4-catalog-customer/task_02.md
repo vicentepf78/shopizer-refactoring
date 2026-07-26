@@ -1,42 +1,42 @@
 ---
 status: pending
-title: Extract sm-catalog-core read services
+title: Extrair serviços de leitura sm-catalog-core
 type: backend
 complexity: high
 ---
 
-# Extract sm-catalog-core read services
+# Extrair serviços de leitura sm-catalog-core
 
-## Overview
-Consolidates TLC T5–T8. Creates `sm-catalog-core` with read repositories, read service methods, mappers, and wires sm-core delegation. Admin write methods remain in sm-core (ADR-006).
+## Visão geral
+Consolida TLC T5–T8. Cria `sm-catalog-core` com repositories de leitura, métodos de serviço de leitura, mappers e wiring de delegação sm-core. Métodos de write admin permanecem em sm-core (ADR-006).
 
 <requirements>
-1. MUST scaffold `sm-catalog-core` Maven module in reactor — T5.
-2. MUST move read methods from Product, Category, Manufacturer, Inventory, Pricing services — T6.
-3. MUST add ReadableProduct/Category mappers without entity leakage — T7.
-4. MUST wire sm-core to delegate reads to sm-catalog-core; writes unchanged — T8.
-5. MUST pass sm-catalog-core and sm-core product read tests.
+1. MUST criar módulo Maven `sm-catalog-core` no reactor — T5.
+2. MUST mover métodos de leitura de Product, Category, Manufacturer, Inventory, Pricing services — T6.
+3. MUST adicionar mappers ReadableProduct/Category sem vazamento de entidade — T7.
+4. MUST wire sm-core para delegar leituras a sm-catalog-core; writes inalterados — T8.
+5. MUST passar testes de leitura de produto sm-catalog-core e sm-core.
 </requirements>
 
-## Subtasks
-- [ ] 2.1 Module scaffold + repositories (T5)
-- [ ] 2.2 Read service extraction (T6)
+## Subtarefas
+- [ ] 2.1 Scaffold do módulo + repositories (T5)
+- [ ] 2.2 Extração de serviços de leitura (T6)
 - [ ] 2.3 Mappers (T7)
-- [ ] 2.4 sm-core delegation (T8)
+- [ ] 2.4 Delegação sm-core (T8)
 
-## Related ADRs
-- [ADR-002](adrs/adr-002.md) — read-only boundary
+## ADRs relacionados
+- [ADR-002](adrs/adr-002.md) — fronteira read-only
 - [ADR-004](adrs/adr-004.md) — thin core
-- [ADR-006](adrs/adr-006.md) — writes stay monolith
+- [ADR-006](adrs/adr-006.md) — writes permanecem no monólito
 
-## Deliverables
-- `sm-catalog-core` module with read services
-- Unit tests 80%+ on mappers/services **(REQUIRED)**
+## Entregáveis
+- Módulo `sm-catalog-core` com serviços de leitura
+- Testes unitários 80%+ em mappers/serviços **(OBRIGATÓRIO)**
 
-## Tests
+## Testes
 - `./mvnw test -pl sm-catalog-core`
 - `./mvnw test -pl sm-core -Dtest=*Product*Test -DfailIfNoTests=false`
 
-## Success Criteria
-- Read paths delegate; write paths local
-- No circular Maven dependencies
+## Critérios de sucesso
+- Caminhos de leitura delegam; caminhos de write locais
+- Sem dependências Maven circulares

@@ -36,6 +36,6 @@ Merchant-service C-ready: Store/Config facades, ~18 REST endpoints (no ProductTy
 - 401 on PUT new store: expected — use DEFAULT for update path in test.
 - JaCoCo 61% → expanded `StoreFacadeImplUnitTest` + `PersistableMerchantStorePopulatorTest` → 83.2%.
 
-## Ready for Next Run
+## Pronto para próxima execução
 
 - task_11: Strangler BFF adapters consuming merchant-service REST + internal snapshot.

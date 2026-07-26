@@ -27,6 +27,6 @@ Migrate reference + tax DTOs into `shopizer-api-contracts` and define JPA-free c
 
 ## Errors / Corrections
 
-## Ready for Next Run
+## Pronto para próxima execução
 
 Done. Hand off to task_03: wire `sm-shop-model` → contracts; optionally migrate Address DTOs if consumers need them.

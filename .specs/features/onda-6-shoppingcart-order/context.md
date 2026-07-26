@@ -1,33 +1,33 @@
-# OQ Resolutions — Onda 6 Design (2026-07-26)
+# Resoluções OQ — Design Onda 6 (2026-07-26)
 
-Decisions confirmed for the final extraction wave. Details in `design.md`.
+Decisões confirmadas para a onda final de extração. Detalhes em `design.md`.
 
-| ID | Decision | Choice |
+| ID | Decisão | Escolha |
 |----|----------|--------|
-| OQ-01 | Cart↔order cycle break | **Checkout totals API** — `CartTotalsClient` calls order-service (or checkout boundary) for `OrderTotalSummary`; cart-service SHALL NOT inject `OrderService` in-process |
-| OQ-02 | `processOrder` consistency | **Saga choreography + transactional outbox** (Onda 3 deliverable) — no distributed 2PC; compensating steps for payment/shipping failures |
-| OQ-03 | Tax at checkout | **Stay in monolith BFF** for Wave 6 Execute — `CheckoutApplicationService` calls `tax-service` HTTP; order-service receives pre-computed tax lines in `OrderSnapshot` (ADR-006) |
-| OQ-04 | Hub `OrderFacadeImpl` (12 services) | **Decompose into Checkout Application Service + thin facades** — checkout orchestration leaves facade; read/update paths split by concern |
-| OQ-05 | Extraction order | **ShoppingCart first (shadow), Order second (saga-ready)** — cart cutover before `processOrder` remote |
-| OQ-06 | Shared DB | **Retain shared MySQL** (AD-003 inherited) — physical DB split deferred post-Wave 6 |
-| OQ-07 | Rollback | **Per-domain feature flags** `wave6.shoppingcart.strangler.enabled`, `wave6.order.strangler.enabled`, `wave6.checkout.saga.enabled` — independent rollback |
-| OQ-08 | Bypass APIs (`OrderPaymentApi`, `OrderTotalApi`, `OrderShippingApi`) | **Route through Checkout Application Service** in BFF — no direct sm-core service injection after hub decomposition |
+| OQ-01 | Quebra do ciclo cart↔order | **API de totals no checkout** — `CartTotalsClient` chama order-service (ou fronteira de checkout) para `OrderTotalSummary`; cart-service NÃO DEVE injetar `OrderService` in-process |
+| OQ-02 | Consistência de `processOrder` | **Saga choreography + transactional outbox** (entregável Onda 3) — sem 2PC distribuído; passos compensatórios para falhas de payment/shipping |
+| OQ-03 | Tax no checkout | **Permanece no BFF do monólito** no Execute da Onda 6 — `CheckoutApplicationService` chama `tax-service` HTTP; order-service recebe linhas de tax pré-computadas em `OrderSnapshot` (ADR-006) |
+| OQ-04 | Hub `OrderFacadeImpl` (12 serviços) | **Decompor em Checkout Application Service + facades finas** — orquestração de checkout sai da facade; caminhos read/update divididos por concern |
+| OQ-05 | Ordem de extração | **ShoppingCart primeiro (shadow), Order segundo (saga-ready)** — cutover de cart antes de `processOrder` remoto |
+| OQ-06 | DB compartilhado | **Manter MySQL compartilhado** (AD-003 herdado) — split físico de DB adiado pós-Onda 6 |
+| OQ-07 | Rollback | **Feature flags por domínio** `wave6.shoppingcart.strangler.enabled`, `wave6.order.strangler.enabled`, `wave6.checkout.saga.enabled` — rollback independente |
+| OQ-08 | Bypass APIs (`OrderPaymentApi`, `OrderTotalApi`, `OrderShippingApi`) | **Rotear pelo Checkout Application Service** no BFF — sem injeção direta de sm-core service após decomposição do hub |
 
-**Additional design decisions:**
+**Decisões adicionais de design:**
 
-| ID | Decision |
+| ID | Decisão |
 |----|----------|
-| AD-020 | One Compozy workflow `onda-6-shoppingcart-order` for both services |
-| AD-021 | `sm-shoppingcart-core` and `sm-order-core` thin modules |
+| AD-020 | Um workflow Compozy `onda-6-shoppingcart-order` para ambos os serviços |
+| AD-021 | Módulos thin `sm-shoppingcart-core` e `sm-order-core` |
 | AD-022 | `shoppingcart-service` :8086, `order-service` :8087 |
-| AD-023 | Outbox table `ORDER_OUTBOX` owned by order-service; relay in-process initially |
-| AD-024 | `CheckoutApplicationService` lives in `sm-shop` until post-Wave 6 optional extraction |
-| AD-025 | Pact covers cart CRUD, cart totals, order read, checkout commit (saga start) |
+| AD-023 | Tabela outbox `ORDER_OUTBOX` de order-service; relay in-process inicialmente |
+| AD-024 | `CheckoutApplicationService` vive em `sm-shop` até extração opcional pós-Onda 6 |
+| AD-025 | Pact cobre cart CRUD, cart totals, order read, checkout commit (início saga) |
 
-**Prerequisites (assumed complete):**
+**Pré-requisitos (assumidos completos):**
 
-- Onda 3: `OrderSnapshot`, `CustomerSnapshot`, `ProductLineSnapshot`, `CheckoutApplicationService` skeleton, saga/outbox PoC on `processOrder`
-- Onda 4: `catalog-service` read + `customer-service` with `CustomerSnapshot`
-- Onda 5: `integration-service` (payments/shipping stateless); DTO `PaymentModule` / `ShippingQuoteModule`
+- Onda 3: `OrderSnapshot`, `CustomerSnapshot`, `ProductLineSnapshot`, esqueleto `CheckoutApplicationService`, PoC saga/outbox em `processOrder`
+- Onda 4: `catalog-service` read + `customer-service` com `CustomerSnapshot`
+- Onda 5: `integration-service` (payments/shipping stateless); DTOs `PaymentModule` / `ShippingQuoteModule`
 
-**Status:** Ready for Tasks
+**Status:** Pronto para Tasks

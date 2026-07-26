@@ -7,7 +7,7 @@ complexity: high
 
 # Extrair sm-merchant-core sem ProductType
 
-## Overview
+## Visão geral
 Consolida TLC T30–T32. Cria o thin `sm-merchant-core`, move repositórios e serviços de merchant store/config/log, remove a injeção morta de `ProductTypeService` e rewire o `sm-core`. Pode fan-out em paralelo às trilhas content/search após `task_01`.
 
 <critical>
@@ -28,17 +28,17 @@ Consolida TLC T30–T32. Cria o thin `sm-merchant-core`, move repositórios e se
 7. MUST passar `./mvnw test -pl sm-merchant-core` e `./mvnw test -pl sm-core`.
 </requirements>
 
-## Subtasks
+## Subtarefas
 - [ ] 8.1 Scaffold módulo + mover repositórios (T30)
 - [ ] 8.2 Mover serviços merchant e dropar ProductType (T31)
 - [ ] 8.3 Wire sm-core → sm-merchant-core (T32)
 - [ ] 8.4 Registrar módulo no reactor
 - [ ] 8.5 Gates de teste sm-merchant-core e sm-core
 
-## Implementation Details
+## Detalhes de implementação
 Ver TechSpec: **Arquitetura** (`sm-merchant-core`), **Ordem de construção** passo 22. Padrão thin core da Onda 1 / ADR-004.
 
-### Relevant Files
+### Arquivos relevantes
 - `sm-core/src/main/java/com/salesmanager/core/business/repositories/merchant/` — repos store
 - `sm-core/src/main/java/com/salesmanager/core/business/repositories/system/MerchantConfigurationRepository.java` — config
 - `sm-core/src/main/java/com/salesmanager/core/business/repositories/system/MerchantLogRepository.java` — log
@@ -46,24 +46,24 @@ Ver TechSpec: **Arquitetura** (`sm-merchant-core`), **Ordem de construção** pa
 - `sm-core/src/main/java/com/salesmanager/core/business/services/merchant/MerchantStoreServiceImpl.java` — impl
 - `sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/store/MerchantStoreApi.java` — superfície a NÃO portar ProductType
 
-### Dependent Files
+### Arquivos dependentes
 - `sm-merchant-core/pom.xml` — novo módulo
 - `sm-merchant-core/src/main/java/.../repositories/` — repos movidos
 - `sm-merchant-core/src/main/java/.../services/` — serviços movidos
 - `sm-core/pom.xml` — dep + remoção classes
 - `pom.xml` — registro reactor
 
-### Related ADRs
+### ADRs relacionados
 - [ADR-004: thin cores](adrs/adr-004.md) — padrão módulo
 - [ADR-007: Sem ProductType na Onda 2](adrs/adr-007.md) — exclusão explícita
 
-## Deliverables
+## Entregáveis
 - Módulo `sm-merchant-core` sem ProductType
 - sm-core rewired
 - Integration tests 80%+ superfícies movidas **(REQUIRED)**
 - Gates sm-merchant-core + sm-core **(REQUIRED)**
 
-## Tests
+## Testes
 - Unit tests:
   - [ ] MerchantStoreService não referencia ProductTypeService
   - [ ] Default store delete protection permanece
@@ -74,7 +74,7 @@ Ver TechSpec: **Arquitetura** (`sm-merchant-core`), **Ordem de construção** pa
 - Test coverage target: >=80%
 - All tests must pass
 
-## Success Criteria
+## Critérios de sucesso
 - All tests passing
 - Test coverage >=80%
 - ProductType fora do BC merchant Wave2

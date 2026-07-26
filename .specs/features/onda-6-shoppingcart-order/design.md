@@ -1,15 +1,15 @@
-# Onda 6 — ShoppingCart + Order Design
+# Onda 6 — Design ShoppingCart + Order
 
 **Spec:** `.specs/features/onda-6-shoppingcart-order/spec.md`
-**Context:** `.specs/features/onda-6-shoppingcart-order/context.md` (OQ-01..08 confirmed)
-**Status:** Approved — Execute blocked until Ondas 3–5 gate
-**Prerequisites:** Onda 3 (snapshots, saga/outbox, CheckoutApplicationService), Onda 4 (catalog, customer), Onda 5 (integration-service)
+**Context:** `.specs/features/onda-6-shoppingcart-order/context.md` (OQ-01..08 confirmadas)
+**Status:** Aprovado — Execute bloqueado até gate Ondas 3–5
+**Pré-requisitos:** Onda 3 (snapshots, saga/outbox, CheckoutApplicationService), Onda 4 (catalog, customer), Onda 5 (integration-service)
 
 ---
 
-## Architecture Overview
+## Visão geral da arquitetura
 
-Onda 6 extracts the **last two core commerce domains** while the monolith remains the **checkout orchestration BFF**. The Checkout Application Service (introduced in Onda 3) becomes the **only** entry point for `processOrder` and related checkout flows. Cart and order services own persistence and domain rules; cross-domain coordination uses HTTP + saga, not global AOP transactions.
+A Onda 6 extrai os **dois últimos domínios centrais de comércio** enquanto o monólito permanece **BFF de orquestração de checkout**. O Checkout Application Service (introduzido na Onda 3) torna-se o **único** ponto de entrada para `processOrder` e fluxos relacionados de checkout. Serviços cart e order são donos de persistência e regras de domínio; coordenação cross-domain usa HTTP + saga, não transações globais AOP.
 
 ```mermaid
 flowchart TB
@@ -71,122 +71,122 @@ flowchart TB
     bff --> DB
 ```
 
-### Principles (inherited + Wave 6)
+### Princípios (herdados + Wave 6)
 
-1. **Frozen REST paths** — STR/HUB-04; BFF keeps original controllers
-2. **DTOs without JPA** — `shopizer-api-contracts` extended with cart/order/checkout types
-3. **Checkout boundary** — AD-024; `CheckoutApplicationService` in `sm-shop`
-4. **Saga + outbox** — ADR-003/004; no `TransactionalAspectAwareService` for checkout commit
-5. **Cycle break** — cart totals via HTTP only (OQ-01)
-6. **Tax at BFF** — ADR-006; order receives computed tax lines
-7. **Phased flags** — `wave6.shoppingcart.strangler.enabled`, `wave6.order.strangler.enabled`, `wave6.checkout.saga.enabled`
-8. **RestTemplate** clients — `wave6.*.base-url`; correlation ID preserved
+1. **Caminhos REST congelados** — STR/HUB-04; BFF mantém controllers originais
+2. **DTOs sem JPA** — `shopizer-api-contracts` estendido com tipos cart/order/checkout
+3. **Fronteira checkout** — AD-024; `CheckoutApplicationService` em `sm-shop`
+4. **Saga + outbox** — ADR-003/004; sem `TransactionalAspectAwareService` para checkout commit
+5. **Quebra de ciclo** — totais de cart somente via HTTP (OQ-01)
+6. **Tax no BFF** — ADR-006; order recebe linhas de tax computadas
+7. **Flags faseadas** — `wave6.shoppingcart.strangler.enabled`, `wave6.order.strangler.enabled`, `wave6.checkout.saga.enabled`
+8. **Clients RestTemplate** — `wave6.*.base-url`; correlation ID preservado
 
 ---
 
-## Design Decisions (OQ-01 – OQ-08)
+## Decisões de design (OQ-01 – OQ-08)
 
-| ID | Decision | Choice | Rationale |
+| ID | Decisão | Escolha | Racional |
 |----|----------|--------|-----------|
-| OQ-01 | Cart↔order cycle | HTTP totals API | Eliminates `ShoppingCartCalculationServiceImpl` → `OrderService` in-process |
-| OQ-02 | processOrder | Saga + outbox | Breaks order↔payments cycle; eventual consistency with compensation |
-| OQ-03 | Tax | BFF calls tax-service | Avoids order-service depending on tax rules; pre-computed lines in snapshot |
-| OQ-04 | Hub facade | CheckoutApplicationService | Collapses 12-service injection into one orchestrator |
-| OQ-05 | Order | Cart before order cutover | Lower blast radius; totals API stable before saga |
-| OQ-06 | Database | Shared MySQL | AD-003; runtime split only |
-| OQ-07 | Rollback | Per-flag disable | Independent cart/order/checkout rollback |
-| OQ-08 | Bypass APIs | Through checkout | Single orchestration path |
+| OQ-01 | Ciclo cart↔order | API HTTP totals | Elimina `ShoppingCartCalculationServiceImpl` → `OrderService` in-process |
+| OQ-02 | processOrder | Saga + outbox | Quebra ciclo order↔payments; consistência eventual com compensação |
+| OQ-03 | Tax | BFF chama tax-service | Evita order-service depender de regras de tax; linhas pré-computadas no snapshot |
+| OQ-04 | Hub facade | CheckoutApplicationService | Colapsa injeção de 12 serviços em um orquestrador |
+| OQ-05 | Order | Cart antes de order cutover | Menor blast radius; API totals estável antes da saga |
+| OQ-06 | Database | MySQL compartilhado | AD-003; somente split de runtime |
+| OQ-07 | Rollback | Desabilitar por flag | Rollback independente cart/order/checkout |
+| OQ-08 | Bypass APIs | Pelo checkout | Caminho único de orquestração |
 
 ---
 
-## Cycle Break: Cart Totals
+## Quebra de ciclo: Cart Totals
 
-**Before (cycle):**
+**Antes (ciclo):**
 
 ```
 ShoppingCartCalculationServiceImpl → OrderService.calculateShoppingCartTotal
 OrderServiceImpl → ShoppingCartService
 ```
 
-**After:**
+**Depois:**
 
 ```
 shoppingcart-service → POST /internal/v1/orders/totals (order-service)
-order-service: stateless totals calculation from CartTotalsRequest (line snapshots + shipping/promo context)
-CheckoutApplicationService → order-service for checkout totals (same endpoint, richer context)
+order-service: cálculo stateless de totais a partir de CartTotalsRequest (snapshots de linha + contexto shipping/promo)
+CheckoutApplicationService → order-service para totais checkout (mesmo endpoint, contexto mais rico)
 ```
 
-`CartTotalsRequest` contains:
+`CartTotalsRequest` contém:
 
-- `storeCode`, `languageCode`, `customerId` (optional)
-- `List<CartLineSnapshot>` (productId, sku, qty, price snapshots from catalog)
-- `shippingAddress` snapshot (optional, for tax/shipping modules)
-- `promoCode` (optional)
+- `storeCode`, `languageCode`, `customerId` (opcional)
+- `List<CartLineSnapshot>` (productId, sku, qty, snapshots de preço do catalog)
+- snapshot `shippingAddress` (opcional, para módulos tax/shipping)
+- `promoCode` (opcional)
 
-`CartTotalsResponse` maps to existing `OrderTotalSummary` DTO shape for BFF compatibility.
+`CartTotalsResponse` mapeia para formato DTO `OrderTotalSummary` existente para compatibilidade BFF.
 
 ---
 
-## Saga: processOrder Choreography
+## Saga: choreography de processOrder
 
-Steps (happy path):
+Passos (happy path):
 
-| Step | Actor | Action | Compensation |
+| Passo | Ator | Ação | Compensação |
 |------|-------|--------|----------------|
-| 1 | CheckoutApplicationService | Validate cart + customer + inventory (catalog HTTP) | — |
-| 2 | CheckoutApplicationService | Compute tax (tax-service) + shipping quote (integration-service) | — |
-| 3 | CheckoutApplicationService | `POST /internal/v1/checkout/commit` → order-service | Cancel order if later steps fail |
-| 4 | order-service | Persist order + outbox in local transaction | Mark order CANCELLED |
-| 5 | CheckoutApplicationService | `integration-service` process payment | Void/refund per PaymentModule |
-| 6 | order-service | Update payment status + outbox `OrderPaid` | Reverse payment status |
-| 7 | CheckoutApplicationService | Clear cart (shoppingcart-service) | Restore cart from snapshot (best-effort) |
-| 8 | Outbox relay | Publish events (email, inventory) | Retry; DLQ after N attempts |
+| 1 | CheckoutApplicationService | Validar cart + cliente + inventário (HTTP catalog) | — |
+| 2 | CheckoutApplicationService | Computar tax (tax-service) + cotação frete (integration-service) | — |
+| 3 | CheckoutApplicationService | `POST /internal/v1/checkout/commit` → order-service | Cancelar pedido se passos posteriores falharem |
+| 4 | order-service | Persistir pedido + outbox em transação local | Marcar pedido CANCELLED |
+| 5 | CheckoutApplicationService | `integration-service` processa pagamento | Void/refund conforme PaymentModule |
+| 6 | order-service | Atualizar status pagamento + outbox `OrderPaid` | Reverter status pagamento |
+| 7 | CheckoutApplicationService | Limpar cart (shoppingcart-service) | Restaurar cart do snapshot (best-effort) |
+| 8 | Relay outbox | Publicar eventos (email, inventário) | Retry; DLQ após N tentativas |
 
-**Idempotency:** `Idempotency-Key` header on commit; order-service stores key → orderId mapping (24h TTL).
+**Idempotência:** header `Idempotency-Key` no commit; order-service armazena mapeamento key → orderId (TTL 24h).
 
-**Flag:** `wave6.checkout.saga.enabled=true` routes through saga; `false` uses legacy `orderService.processOrder`.
+**Flag:** `wave6.checkout.saga.enabled=true` roteia pela saga; `false` usa `orderService.processOrder` legado.
 
 ---
 
-## Transactional Outbox
+## Transactional outbox
 
-Table `ORDER_OUTBOX` (order-service):
+Tabela `ORDER_OUTBOX` (order-service):
 
-| Column | Type | Notes |
+| Coluna | Tipo | Notas |
 |--------|------|-------|
 | id | BIGINT PK | |
 | aggregate_id | BIGINT | order id |
 | event_type | VARCHAR | OrderPlaced, OrderPaid, OrderCancelled |
-| payload | JSON | OrderSnapshot fragment |
+| payload | JSON | fragmento OrderSnapshot |
 | created_at | TIMESTAMP | |
 | published_at | TIMESTAMP NULL | |
 | correlation_id | VARCHAR | |
 
-Relay: `@Scheduled` poller in `order-service` (ADR-023); upgrade path to standalone worker documented.
+Relay: poller `@Scheduled` em `order-service` (ADR-023); caminho de upgrade para worker standalone documentado.
 
 ---
 
-## Hub Decomposition
+## Decomposição do Hub
 
-### Current: `OrderFacadeImpl` injections (checkout hub)
+### Atual: injeções `OrderFacadeImpl` (hub checkout)
 
-12 sm-core services + facades:
+12 serviços sm-core + facades:
 
 - `OrderService`, `ProductService`, `ProductAttributeService`, `ShoppingCartService`
 - `DigitalProductService`, `ShippingService`, `PricingService`, `ShippingQuoteService`
 - `PaymentService`, `CountryService`, `ZoneService`, `TransactionService`
-- Plus `CustomerFacade`, `ShoppingCartFacade`
+- Mais `CustomerFacade`, `ShoppingCartFacade`
 
-### Target
+### Alvo
 
-| Component | Responsibility |
+| Componente | Responsabilidade |
 |-----------|----------------|
-| `CheckoutApplicationService` | place order, payment, shipping, totals orchestration |
-| `OrderFacadeHttpAdapter` | read order, list, history → order-service |
-| `ShoppingCartFacadeHttpAdapter` | cart CRUD → shoppingcart-service |
-| `OrderFacadeImpl` (thin) | Delegates checkout → CheckoutApplicationService; read → adapter |
+| `CheckoutApplicationService` | place order, payment, shipping, orquestração totals |
+| `OrderFacadeHttpAdapter` | ler order, list, history → order-service |
+| `ShoppingCartFacadeHttpAdapter` | CRUD cart → shoppingcart-service |
+| `OrderFacadeImpl` (fino) | Delega checkout → CheckoutApplicationService; leitura → adapter |
 
-Bypass APIs refactored:
+Bypass APIs refatoradas:
 
 - `OrderPaymentApi` → `CheckoutApplicationService.processPayment(...)`
 - `OrderTotalApi` → `CheckoutApplicationService.calculateTotals(...)`
@@ -194,22 +194,22 @@ Bypass APIs refactored:
 
 ---
 
-## Maven Module Structure
+## Estrutura de módulos Maven
 
 ```xml
-<!-- root pom.xml additions -->
+<!-- adições root pom.xml -->
 <module>sm-shoppingcart-core</module>
 <module>shoppingcart-service</module>
 <module>sm-order-core</module>
 <module>order-service</module>
 ```
 
-| Module | Port | JPA | Outbox | Key deps |
+| Módulo | Porta | JPA | Outbox | Deps principais |
 |--------|------|-----|--------|----------|
 | `shoppingcart-service` | 8086 | ✅ | — | catalog-service |
 | `order-service` | 8087 | ✅ | ✅ | customer, integration (HTTP) |
 
-### `shopizer-api-contracts` — Wave 6 extensions
+### `shopizer-api-contracts` — extensões Wave 6
 
 ```
 com.salesmanager.contracts.cart       → ReadableShoppingCart, PersistableCartLine, CartLineSnapshot
@@ -220,24 +220,24 @@ com.salesmanager.contracts.client     → ShoppingCartServiceClient, OrderServic
 
 ### `sm-shoppingcart-core`
 
-Extract from `sm-core`:
+Extrair de `sm-core`:
 
-- `services/shoppingcart/` (except calculation impl — replaced by HTTP totals client)
+- `services/shoppingcart/` (exceto impl calculation — substituída por client HTTP totals)
 - `repositories/shoppingcart/`
-- Entities remain in `sm-core-model` (shared)
+- Entidades permanecem em `sm-core-model` (compartilhado)
 
 ### `sm-order-core`
 
-Extract from `sm-core`:
+Extrair de `sm-core`:
 
 - `services/order/`, `services/ordertotal/`
 - `repositories/order/`
-- Saga commit handler, outbox repository
-- **Exclude** direct `PaymentService` calls from commit path — payment orchestration in BFF
+- Handler saga commit, repositório outbox
+- **Excluir** chamadas diretas `PaymentService` do caminho commit — orquestração payment no BFF
 
 ---
 
-## Strangler Configuration (`sm-shop`)
+## Configuração Strangler (`sm-shop`)
 
 ```properties
 # application-strangler-wave6.properties
@@ -249,59 +249,59 @@ wave6.checkout.saga.enabled=false
 wave6.order-service.internal-token=${WAVE6_ORDER_INTERNAL_TOKEN:dev-token}
 ```
 
-Profile: `strangler-wave6` (activates with `docker-compose-wave6.yml`).
+Profile: `strangler-wave6` (ativa com `docker-compose-wave6.yml`).
 
 ---
 
-## Internal APIs
+## APIs internas
 
-| Service | Path | Auth | Purpose |
+| Serviço | Caminho | Auth | Propósito |
 |---------|------|------|---------|
-| order-service | `POST /internal/v1/orders/totals` | `X-Internal-Token` | Cart/checkout totals (cycle break) |
-| order-service | `POST /internal/v1/checkout/commit` | `X-Internal-Token` | Saga step 3 — persist order |
-| order-service | `PATCH /internal/v1/orders/{id}/payment-status` | `X-Internal-Token` | Saga step 6 |
-| shoppingcart-service | `DELETE /internal/v1/carts/{id}/after-checkout` | `X-Internal-Token` | Saga step 7 |
+| order-service | `POST /internal/v1/orders/totals` | `X-Internal-Token` | Totais cart/checkout (quebra de ciclo) |
+| order-service | `POST /internal/v1/checkout/commit` | `X-Internal-Token` | Passo saga 3 — persistir pedido |
+| order-service | `PATCH /internal/v1/orders/{id}/payment-status` | `X-Internal-Token` | Passo saga 6 |
+| shoppingcart-service | `DELETE /internal/v1/carts/{id}/after-checkout` | `X-Internal-Token` | Passo saga 7 |
 
-Public APIs mirror existing monolith paths under `/api/v1/cart/**` and `/api/v1/orders/**`.
-
----
-
-## Tax Decision (ADR-006)
-
-**Decision:** Tax calculation remains invoked from **CheckoutApplicationService** (BFF) calling `tax-service` (Onda 1). Order-service stores tax lines from `OrderSnapshot.taxItems` — does not call `TaxService` in-process.
-
-**Rationale:**
-
-- Tax rules depend on shipping address, store config, product tax class — already integrated in monolith checkout flow
-- Moving tax into order-service adds another remote hop during highest-risk saga
-- `tax-service` admin CRUD already extracted; **checkout calculation** can move remote in a follow-up without blocking Wave 6
-
-**Upgrade path:** Optional `wave6.tax.remote-in-order-service` flag in future; document in ADR-006.
+APIs públicas espelham caminhos monólito existentes em `/api/v1/cart/**` e `/api/v1/orders/**`.
 
 ---
 
-## Phasing and Milestones
+## Decisão Tax (ADR-006)
 
-| Milestone | Criteria | Rollback |
+**Decisão:** Cálculo de tax permanece invocado do **CheckoutApplicationService** (BFF) chamando `tax-service` (Onda 1). Order-service armazena linhas de tax de `OrderSnapshot.taxItems` — não chama `TaxService` in-process.
+
+**Racional:**
+
+- Regras de tax dependem de endereço de frete, config de loja, classe fiscal de produto — já integradas no fluxo checkout do monólito
+- Mover tax para order-service adiciona outro hop remoto durante saga de maior risco
+- CRUD admin `tax-service` já extraído; **cálculo checkout** pode ir remoto em follow-up sem bloquear Onda 6
+
+**Caminho de upgrade:** Flag opcional `wave6.tax.remote-in-order-service` no futuro; documentar em ADR-006.
+
+---
+
+## Faseamento e marcos
+
+| Marco | Critérios | Rollback |
 |-----------|----------|----------|
-| `TOT-ready` | Totals API live (monolith or order-service); cart uses HTTP | N/A — backward compatible |
-| `SC-ready` | shoppingcart-service CRUD remote | `wave6.shoppingcart.strangler.enabled=false` |
-| `OR-read-ready` | Order GET/list remote | `wave6.order.strangler.enabled=false` |
+| `TOT-ready` | API Totals live (monólito ou order-service); cart usa HTTP | N/A — retrocompatível |
+| `SC-ready` | shoppingcart-service CRUD remoto | `wave6.shoppingcart.strangler.enabled=false` |
+| `OR-read-ready` | Order GET/list remoto | `wave6.order.strangler.enabled=false` |
 | `CHK-ready` | Saga checkout end-to-end | `wave6.checkout.saga.enabled=false` |
 
-**Recommended cutover sequence:**
+**Sequência de cutover recomendada:**
 
-1. Enable totals HTTP (no user-visible change)
-2. Shadow cart reads remote
-3. Cart writes remote
-4. Order reads remote
-5. Saga checkout in staging → canary → production
+1. Habilitar totals HTTP (sem mudança visível ao usuário)
+2. Shadow leituras cart remotas
+3. Escritas cart remotas
+4. Leituras order remotas
+5. Saga checkout em staging → canary → produção
 
 ---
 
 ## Docker Compose (wave6)
 
-Extends `docker-compose-wave1.yml` / wave2 topology:
+Estende topologia `docker-compose-wave1.yml` / wave2:
 
 ```yaml
 services:
@@ -317,21 +317,21 @@ services:
       WAVE6_INTEGRATION_BASE_URL: http://integration-service:8088
 ```
 
-`sm-shop` adds `spring.profiles.active=strangler-wave6` and enables flags per environment.
+`sm-shop` adiciona `spring.profiles.active=strangler-wave6` e habilita flags por ambiente.
 
 ---
 
-## Testing Strategy
+## Estratégia de testes
 
-| Layer | Scope |
+| Camada | Escopo |
 |-------|-------|
-| Unit | Saga step handlers, outbox relay, totals calculator |
-| Integration | `@DataJpaTest` cart/order repos; saga commit with H2 |
+| Unit | Handlers passo saga, relay outbox, calculadora totals |
+| Integração | `@DataJpaTest` repos cart/order; saga commit com H2 |
 | Contract | Pact consumer sm-shop; providers cart + order |
-| E2E | Place order happy path + payment failure compensation |
-| Chaos | Kill integration-service mid-saga → order CANCELLED, no orphan payment |
+| E2E | Happy path place order + compensação falha payment |
+| Chaos | Matar integration-service mid-saga → order CANCELLED, sem pagamento órfão |
 
-Gate command (full wave):
+Comando gate (onda completa):
 
 ```bash
 ./mvnw -pl sm-shop,shoppingcart-service,order-service -am test \
@@ -341,40 +341,40 @@ Gate command (full wave):
 
 ---
 
-## Key Source Files
+## Arquivos-fonte principais
 
-| Role | Path |
+| Papel | Caminho |
 |------|------|
-| Order hub facade | `sm-shop/.../order/facade/OrderFacadeImpl.java` |
-| Cart facade | `sm-shop/.../shoppingCart/facade/ShoppingCartFacadeImpl.java` |
-| Cart calculation cycle | `sm-core/.../shoppingcart/ShoppingCartCalculationServiceImpl.java` |
+| Hub facade order | `sm-shop/.../order/facade/OrderFacadeImpl.java` |
+| Facade cart | `sm-shop/.../shoppingCart/facade/ShoppingCartFacadeImpl.java` |
+| Ciclo calculation cart | `sm-core/.../shoppingcart/ShoppingCartCalculationServiceImpl.java` |
 | processOrder | `sm-core/.../order/OrderServiceImpl.java` |
-| Global transaction AOP | `sm-core/.../spring/shopizer-core-config.xml` |
-| Cart API | `sm-shop/.../api/v1/shoppingCart/ShoppingCartApi.java` |
-| Order APIs | `sm-shop/.../api/v1/order/OrderApi.java`, `OrderPaymentApi.java`, `OrderTotalApi.java`, `OrderShippingApi.java` |
+| AOP transação global | `sm-core/.../spring/shopizer-core-config.xml` |
+| API Cart | `sm-shop/.../api/v1/shoppingCart/ShoppingCartApi.java` |
+| APIs Order | `sm-shop/.../api/v1/order/OrderApi.java`, `OrderPaymentApi.java`, `OrderTotalApi.java`, `OrderShippingApi.java` |
 
 ---
 
-## ADR Index (Compozy)
+## Índice ADR (Compozy)
 
-| ADR | Topic |
+| ADR | Tópico |
 |-----|-------|
-| ADR-001 | Single workflow Cart + Order |
-| ADR-002 | Checkout Application Service boundary |
-| ADR-003 | Saga choreography for processOrder |
+| ADR-001 | Workflow único Cart + Order |
+| ADR-002 | Fronteira Checkout Application Service |
+| ADR-003 | Saga choreography para processOrder |
 | ADR-004 | Transactional outbox |
-| ADR-005 | Hub OrderFacade decomposition |
-| ADR-006 | Tax calculation at BFF (deferred remote in order-service) |
-| ADR-007 | ShoppingCart before Order phasing |
-| ADR-008 | Feature flags and rollback |
+| ADR-005 | Decomposição hub OrderFacade |
+| ADR-006 | Cálculo tax no BFF (remoto em order-service adiado) |
+| ADR-007 | ShoppingCart antes de Order phasing |
+| ADR-008 | Feature flags e rollback |
 
 ---
 
-## Gaps and Known Limitations (Wave 6)
+## Lacunas e limitações conhecidas (Wave 6)
 
-| ID | Gap | Mitigation |
+| ID | Lacuna | Mitigação |
 |----|-----|------------|
-| GAP-CHK-01 | Cart restore on saga failure is best-effort | Document; optional cart snapshot table |
-| GAP-CHK-02 | Global AOP still applies to non-checkout paths | Narrow pointcut in Wave 6 task; full removal post-wave |
-| GAP-CHK-03 | Email still triggered via outbox async | Accept latency vs in-process |
-| GAP-ORD-01 | Two `OrderFacadeImpl` packages | Consolidate to thin delegate in hub task |
+| GAP-CHK-01 | Restauração cart em falha saga é best-effort | Documentar; tabela opcional snapshot cart |
+| GAP-CHK-02 | AOP global ainda aplica a caminhos não-checkout | Estreitar pointcut na task Wave 6; remoção completa pós-onda |
+| GAP-CHK-03 | Email ainda disparado via outbox async | Aceitar latência vs in-process |
+| GAP-ORD-01 | Dois pacotes `OrderFacadeImpl` | Consolidar em delegate fino na task hub |

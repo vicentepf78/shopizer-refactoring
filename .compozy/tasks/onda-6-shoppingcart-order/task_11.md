@@ -1,31 +1,31 @@
 ---
 status: pending
-title: CheckoutApplicationService orchestration + tax at BFF (CHK-ready partial)
+title: Orquestração CheckoutApplicationService + tax no BFF (CHK-ready parcial)
 type: backend
 complexity: high
 ---
 
-# CheckoutApplicationService orchestration + tax at BFF (CHK-ready partial)
+# Orquestração CheckoutApplicationService + tax no BFF (CHK-ready parcial)
 
-## Overview
-TLC T28–T31, T57, T58. Full `CheckoutApplicationService` in sm-shop: tax via tax-service (ADR-006), integration-service payment/shipping, saga steps, OrderApi routing.
+## Visão geral
+TLC T28–T31, T57, T58. `CheckoutApplicationService` completo em sm-shop: tax via tax-service (ADR-006), payment/shipping integration-service, passos saga, roteamento OrderApi.
 
 <requirements>
-1. MUST implement CheckoutApplicationService with all Wave6 clients — T28, CHK-01, HUB-01.
-2. MUST compute tax at BFF via tax-service; pass taxItems in OrderSnapshot — T29, CHK-08, ADR-006.
-3. MUST implement placeOrder() full saga steps 1–8 — T30, CHK-01–06.
-4. MUST route OrderApi checkout through service when saga flag on — T31.
-5. MUST wire catalog inventory validation — T57; email outbox consumer — T58.
+1. MUST implementar CheckoutApplicationService com todos os clients Wave6 — T28, CHK-01, HUB-01.
+2. MUST computar tax no BFF via tax-service; passar taxItems em OrderSnapshot — T29, CHK-08, ADR-006.
+3. MUST implementar placeOrder() passos saga 1–8 completos — T30, CHK-01–06.
+4. MUST rotear checkout OrderApi pelo service quando flag saga on — T31.
+5. MUST conectar validação inventário catalog — T57; consumer outbox email — T58.
 </requirements>
 
-## Related ADRs
-- [ADR-002: Checkout boundary](adrs/adr-002.md)
-- [ADR-006: Tax at BFF](adrs/adr-006.md)
+## ADRs relacionados
+- [ADR-002: Fronteira checkout](adrs/adr-002.md)
+- [ADR-006: Tax no BFF](adrs/adr-006.md)
 
-## Deliverables
-- CheckoutApplicationService complete
+## Entregáveis
+- CheckoutApplicationService completo
 - `CheckoutPlaceOrderIntegrationTest`, `CheckoutTaxIntegrationTest` **(REQUIRED)**
 
-## Success Criteria
-- E2E happy path in integration test
-- order-service does not call TaxService
+## Critérios de sucesso
+- Caminho feliz E2E em teste de integração
+- order-service não chama TaxService

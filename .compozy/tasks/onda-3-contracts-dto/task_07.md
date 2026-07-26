@@ -1,67 +1,67 @@
 ---
 status: pending
-title: Facade P1 migration to tenant identifiers
+title: Migração facade P1 para identificadores tenant
 type: refactor
 complexity: high
 ---
 
-# Facade P1 migration to tenant identifiers
+# Migração facade P1 para identificadores tenant
 
-## Overview
-Consolidates TLC T30–T34. Migrates six P1 facade interfaces and implementations to use `MerchantStoreId` and `LanguageCode` per ADR-003.
+## Visão geral
+Consolida TLC T30–T34. Migra seis interfaces e implementações facade P1 para usar `MerchantStoreId` e `LanguageCode` conforme ADR-003.
 
 <critical>
-- ALWAYS READ the PRD and TechSpec before starting
-- REFERENCE TECHSPEC for implementation details — do not duplicate here
-- FOCUS ON "WHAT" — describe what needs to be accomplished, not how
-- MINIMIZE CODE — show code only to illustrate current structure or problem areas
-- TESTS REQUIRED — every task MUST include tests in deliverables
+- SEMPRE LER o PRD e a TechSpec antes de começar
+- REFERENCIAR A TECHSPEC para detalhes de implementação — não duplicar aqui
+- FOCAR NO "O QUÊ" — descrever o que precisa ser feito, não como
+- MINIMIZAR CÓDIGO — mostrar código apenas para ilustrar estrutura atual ou áreas problemáticas
+- TESTES OBRIGATÓRIOS — toda task DEVE incluir testes nos entregáveis
 </critical>
 
 <requirements>
-1. MUST update interfaces: `OrderFacade`, `ShoppingCartFacade`, `SearchFacade`, `ShippingFacade`, `CategoryFacade`, `ProductCommonFacade` — TLC T30.
-2. MUST update all implementations and HTTP adapters (Wave 2 search/content unaffected) — TLC T31–T32.
-3. MUST fix compile errors in controllers calling facades (convert entity → tenant at boundary) — TLC T33.
-4. MUST add ArchUnit `facades_no_new_entity_params` for sm-shop-model — TLC T34.
-5. MUST use `TenantEntityBridge` inside implementations only.
+1. MUST atualizar interfaces: `OrderFacade`, `ShoppingCartFacade`, `SearchFacade`, `ShippingFacade`, `CategoryFacade`, `ProductCommonFacade` — TLC T30.
+2. MUST atualizar todas as implementações e adapters HTTP (Wave 2 search/content inalterados) — TLC T31–T32.
+3. MUST corrigir erros de compilação em controllers chamando facades (converter entidade → tenant na fronteira) — TLC T33.
+4. MUST adicionar ArchUnit `facades_no_new_entity_params` para sm-shop-model — TLC T34.
+5. MUST usar `TenantEntityBridge` apenas dentro de implementações.
 </requirements>
 
-## Subtasks
-- [ ] 7.1 Interface signature updates (T30)
-- [ ] 7.2 Implementation + bridge hydration (T31–T32)
-- [ ] 7.3 Controller call-site fixes (T33)
-- [ ] 7.4 ArchUnit facade rule (T34)
+## Subtarefas
+- [ ] 7.1 Atualizações de assinatura de interface (T30)
+- [ ] 7.2 Implementação + hidratação bridge (T31–T32)
+- [ ] 7.3 Correções call-site controller (T33)
+- [ ] 7.4 Regra ArchUnit facade (T34)
 
-## Implementation Details
-See TechSpec: **Facade migration (Phase 1)**. `MerchantStoreArgumentResolver` still provides entities to controllers — convert at facade call.
+## Detalhes de implementação
+Ver TechSpec: **Migração facade (Fase 1)**. `MerchantStoreArgumentResolver` ainda fornece entidades a controllers — converter na chamada facade.
 
-### Relevant Files
+### Arquivos relevantes
 - `sm-shop-model/.../order/facade/v1/OrderFacade.java`
 - `sm-shop-model/.../shoppingCart/facade/v1/ShoppingCartFacade.java`
 - `sm-shop-model/.../search/facade/SearchFacade.java`
 - `sm-shop/.../facade/*Impl.java`
 
-### Dependent Files
-- All P1 facade interfaces and implementations
-- Controllers under `sm-shop/.../api/v1/order/`, `search/`, `shipping/`
+### Arquivos dependentes
+- Todas interfaces e implementações facade P1
+- Controllers sob `sm-shop/.../api/v1/order/`, `search/`, `shipping/`
 
-### Related ADRs
-- [ADR-003: Phased facade migration](../adrs/adr-003.md)
+### ADRs relacionados
+- [ADR-003: Migração facade faseada](../adrs/adr-003.md)
 
-## Deliverables
-- Six migrated facade interfaces + impls
-- Compiling sm-shop with updated call sites
-- ArchUnit test **(REQUIRED)**
+## Entregáveis
+- Seis interfaces facade migradas + impls
+- sm-shop compilando com call sites atualizados
+- Teste ArchUnit **(OBRIGATÓRIO)**
 
-## Tests
-- Unit tests:
-  - [ ] Facade impl hydrates store via bridge
-- Integration tests:
-  - [ ] Existing facade tests compile and pass
-- Test coverage target: >=80%
-- All tests must pass
+## Testes
+- Testes unitários:
+  - [ ] Impl facade hidrata store via bridge
+- Testes de integração:
+  - [ ] Testes facade existentes compilam e passam
+- Meta de cobertura: >=80%
+- Todos os testes devem passar
 
-## Success Criteria
-- All tests passing
-- B-001 partially resolved for P1 facades
-- No REST path changes
+## Critérios de sucesso
+- Todos os testes passando
+- B-001 parcialmente resolvido para facades P1
+- Sem mudanças de caminho REST

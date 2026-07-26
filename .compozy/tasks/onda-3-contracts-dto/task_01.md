@@ -1,77 +1,77 @@
 ---
 status: pending
-title: Tenant types and contracts foundation
+title: Tipos tenant e base de contracts
 type: backend
 complexity: medium
 ---
 
-# Tenant types and contracts foundation
+# Tipos tenant e base de contracts
 
-## Overview
-Consolidates TLC T1–T6. Introduces `MerchantStoreId`, `LanguageCode`, shared contract conventions, `TenantEntityBridge` stub, and ArchUnit baseline for contracts purity. **External prerequisite:** Wave 2 gate green.
+## Visão geral
+Consolida TLC T1–T6. Introduz `MerchantStoreId`, `LanguageCode`, convenções compartilhadas de contracts, stub `TenantEntityBridge` e baseline ArchUnit para pureza de contracts. **Pré-requisito externo:** gate Onda 2 verde.
 
 <critical>
-- ALWAYS READ the PRD and TechSpec before starting
-- REFERENCE TECHSPEC for implementation details — do not duplicate here
-- FOCUS ON "WHAT" — describe what needs to be accomplished, not how
-- MINIMIZE CODE — show code only to illustrate current structure or problem areas
-- TESTS REQUIRED — every task MUST include tests in deliverables
+- SEMPRE LER o PRD e a TechSpec antes de começar
+- REFERENCIAR A TECHSPEC para detalhes de implementação — não duplicar aqui
+- FOCAR NO "O QUÊ" — descrever o que precisa ser feito, não como
+- MINIMIZAR CÓDIGO — mostrar código apenas para ilustrar estrutura atual ou áreas problemáticas
+- TESTES OBRIGATÓRIOS — toda task DEVE incluir testes nos entregáveis
 </critical>
 
 <requirements>
-1. MUST add `MerchantStoreId` and `LanguageCode` to `shopizer-api-contracts` with validation and Jackson support — TLC T1–T2.
-2. MUST add `com.salesmanager.contracts.order` and `com.salesmanager.contracts.customer` package placeholders with `ShopEntity` conventions — TLC T3.
-3. MUST create `TenantEntityBridge` interface in `sm-shop` to resolve store/lang entities from codes — TLC T4.
-4. MUST add ArchUnit test `ContractsMustNotDependOnCoreModel` in `shopizer-api-contracts` or `sm-shop` — TLC T5.
-5. MUST extend `AbstractDataPopulator` with tenant-primitive overload (backward compatible) — TLC T6.
-6. MUST NOT introduce `com.salesmanager.core.model` imports in api-contracts.
-7. MUST compile `./mvnw compile -pl shopizer-api-contracts,sm-shop-model,sm-shop -am`.
+1. MUST adicionar `MerchantStoreId` e `LanguageCode` em `shopizer-api-contracts` com validação e suporte Jackson — TLC T1–T2.
+2. MUST adicionar placeholders de package `com.salesmanager.contracts.order` e `com.salesmanager.contracts.customer` com convenções `ShopEntity` — TLC T3.
+3. MUST criar interface `TenantEntityBridge` em `sm-shop` para resolver entidades store/lang a partir de códigos — TLC T4.
+4. MUST adicionar teste ArchUnit `ContractsMustNotDependOnCoreModel` em `shopizer-api-contracts` ou `sm-shop` — TLC T5.
+5. MUST estender `AbstractDataPopulator` com overload tenant-primitive (retrocompatível) — TLC T6.
+6. MUST NOT introduzir imports `com.salesmanager.core.model` em api-contracts.
+7. MUST compilar `./mvnw compile -pl shopizer-api-contracts,sm-shop-model,sm-shop -am`.
 </requirements>
 
-## Subtasks
-- [ ] 1.1 Value types `MerchantStoreId`, `LanguageCode` + unit tests (T1–T2)
-- [ ] 1.2 Package structure and shared serialization tests (T3)
-- [ ] 1.3 `TenantEntityBridge` + default impl using existing services (T4)
-- [ ] 1.4 ArchUnit contracts purity rule (T5)
-- [ ] 1.5 `AbstractDataPopulator` overload (T6)
+## Subtarefas
+- [ ] 1.1 Value types `MerchantStoreId`, `LanguageCode` + testes unitários (T1–T2)
+- [ ] 1.2 Estrutura de packages e testes de serialização compartilhados (T3)
+- [ ] 1.3 `TenantEntityBridge` + impl default usando serviços existentes (T4)
+- [ ] 1.4 Regra ArchUnit pureza contracts (T5)
+- [ ] 1.5 Overload `AbstractDataPopulator` (T6)
 
-## Implementation Details
-See TechSpec: **Key interfaces**, **Principles**. Reuse `ReadableLanguage` code patterns from reference contracts.
+## Detalhes de implementação
+Ver TechSpec: **Interfaces principais**, **Princípios**. Reutilizar padrões de código `ReadableLanguage` dos contracts de referência.
 
-### Relevant Files
-- `shopizer-api-contracts/src/main/java/com/salesmanager/contracts/` — target packages
+### Arquivos relevantes
+- `shopizer-api-contracts/src/main/java/com/salesmanager/contracts/` — packages destino
 - `sm-core/src/main/java/com/salesmanager/core/business/utils/AbstractDataPopulator.java`
-- `sm-shop-model/src/main/java/com/salesmanager/shop/store/controller/` — facade consumers
+- `sm-shop-model/src/main/java/com/salesmanager/shop/store/controller/` — consumidores facade
 
-### Dependent Files
-- `shopizer-api-contracts/.../tenant/MerchantStoreId.java` — create
-- `shopizer-api-contracts/.../tenant/LanguageCode.java` — create
-- `sm-shop/.../tenant/TenantEntityBridge.java` — create
-- `sm-shop/.../tenant/TenantEntityBridgeImpl.java` — create
+### Arquivos dependentes
+- `shopizer-api-contracts/.../tenant/MerchantStoreId.java` — criar
+- `shopizer-api-contracts/.../tenant/LanguageCode.java` — criar
+- `sm-shop/.../tenant/TenantEntityBridge.java` — criar
+- `sm-shop/.../tenant/TenantEntityBridgeImpl.java` — criar
 
-### Related ADRs
-- [ADR-003: Phased facade migration](../adrs/adr-003.md)
-- [ADR-001: Monolith-only wave](../adrs/adr-001.md)
+### ADRs relacionados
+- [ADR-003: Migração facade faseada](../adrs/adr-003.md)
+- [ADR-001: Onda apenas no monólito](../adrs/adr-001.md)
 
-## Deliverables
-- Tenant value types in api-contracts
-- Bridge interface + implementation
-- ArchUnit test for contracts module
-- Populator overload
-- Unit tests with 80%+ coverage on value types **(REQUIRED)**
+## Entregáveis
+- Value types tenant em api-contracts
+- Interface bridge + implementação
+- Teste ArchUnit para módulo contracts
+- Overload populator
+- Testes unitários com cobertura 80%+ nos value types **(OBRIGATÓRIO)**
 
-## Tests
-- Unit tests:
-  - [ ] `MerchantStoreId` rejects blank code
-  - [ ] `LanguageCode` serializes/deserializes in JSON
-  - [ ] Bridge returns store for valid code
-- Integration tests:
+## Testes
+- Testes unitários:
+  - [ ] `MerchantStoreId` rejeita código vazio
+  - [ ] `LanguageCode` serializa/deserializa em JSON
+  - [ ] Bridge retorna store para código válido
+- Testes de integração:
   - [ ] `./mvnw test -pl shopizer-api-contracts -Dtest=*Tenant*`
-- Test coverage target: >=80%
-- All tests must pass
+- Meta de cobertura: >=80%
+- Todos os testes devem passar
 
-## Success Criteria
-- All tests passing
-- Test coverage >=80%
-- Zero core.model imports in api-contracts
-- Wave 2 gate verified before start
+## Critérios de sucesso
+- Todos os testes passando
+- Cobertura de testes >=80%
+- Zero imports core.model em api-contracts
+- Gate Onda 2 verificado antes do início

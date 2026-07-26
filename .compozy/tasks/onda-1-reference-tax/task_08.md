@@ -7,7 +7,7 @@ complexity: high
 
 # Strangler monolito: RestTemplate, adapters e beans condicionais
 
-## Overview
+## Visão geral
 Consolida TLC T21–T24. Configura o Strangler no `sm-shop`: RestTemplate + properties `wave1.*`, adapters HTTP para facades de reference e tax, e wiring `@ConditionalOnProperty` para que exatamente um bean por facade exista — remoto quando `wave1.strangler.enabled=true`, in-process quando false (TechSpec **Ordem de build** passo 8; STR-01). Controllers BFF permanecem; falhas de connect → 503 sem fallback silencioso.
 
 <critical>
@@ -28,17 +28,17 @@ Consolida TLC T21–T24. Configura o Strangler no `sm-shop`: RestTemplate + prop
 7. MUST manter paths públicos de `ReferencesApi` / `TaxClassApi` / `TaxRatesApi` inalterados (STR-04).
 </requirements>
 
-## Subtasks
+## Subtarefas
 - [x] 8.1 Config RestTemplate + properties wave1 + testes de binding
 - [x] 8.2 Adapters HTTP das 4 facades de reference
 - [x] 8.3 Adapter HTTP de TaxFacade (JWT forward)
 - [x] 8.4 Conditional beans: exatamente um bean por interface facade
 - [x] 8.5 ITs em profiles monolith e strangler + 503 em downstream down
 
-## Implementation Details
+## Detalhes de implementação
 Ver TechSpec: **Interfaces principais** (padrão CountryFacadeHttpAdapter), **Pontos de integração** (monolito→services), **Configuração**, **Ordem de build** passo 8, **Abordagem de testes** (profiles).
 
-### Relevant Files
+### Arquivos relevantes
 - `sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/references/ReferencesApi.java` — BFF entrypoint
 - `sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/tax/TaxClassApi.java` — BFF tax
 - `sm-shop/src/main/java/com/salesmanager/shop/store/controller/country/facade/CountryFacade.java` — interface a adaptar
@@ -46,23 +46,23 @@ Ver TechSpec: **Interfaces principais** (padrão CountryFacadeHttpAdapter), **Po
 - `shopizer-api-contracts/.../client/` — contratos client
 - `reference-service/` / `tax-service/` — alvos HTTP (task_06/task_07)
 
-### Dependent Files
+### Arquivos dependentes
 - `sm-shop/.../strangler/config/Wave1ClientConfig.java` — a criar
 - `sm-shop/.../strangler/reference/*FacadeHttpAdapter.java` — a criar
 - `sm-shop/.../strangler/tax/TaxFacadeHttpAdapter.java` — a criar
 - `sm-shop/src/main/resources/application*.properties` — wave1 props / profiles
 
-### Related ADRs
+### ADRs relacionados
 - [ADR-004: RestTemplate Strangler clients](adrs/adr-004.md) — client HTTP
 - [ADR-001: TLC-sourced Compozy PRD for Wave 1 Reference+Tax](adrs/adr-001.md) — piloto Strangler
 
-## Deliverables
+## Entregáveis
 - Config wave1 + 5 adapters HTTP + wiring condicional
 - Profiles `monolith` / `strangler` documentados
 - Unit + ITs de adapters com 80%+ coverage **(REQUIRED)**
 - Sem mudança de path REST externo **(REQUIRED)**
 
-## Tests
+## Testes
 - Unit tests:
   - [x] Properties `wave1.*` fazem bind corretamente em `Wave1ClientConfig`
   - [x] Adapter reference propaga header `X-Correlation-Id`
@@ -76,7 +76,7 @@ Ver TechSpec: **Interfaces principais** (padrão CountryFacadeHttpAdapter), **Po
 - Test coverage target: >=80%
 - All tests must pass
 
-## Success Criteria
+## Critérios de sucesso
 - All tests passing
 - Test coverage >=80%
 - Exatamente um bean por facade interface em cada profile

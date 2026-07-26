@@ -1,72 +1,72 @@
 ---
 status: pending
-title: ProductSnapshot and index payload evolution
+title: ProductSnapshot e evolução do payload de índice
 type: backend
 complexity: high
 ---
 
-# ProductSnapshot and index payload evolution
+# ProductSnapshot e evolução do payload de índice
 
-## Overview
-Consolidates TLC T7–T12. Delivers canonical `ProductSnapshot` DTO, builder from JPA `Product`, and `ProductIndexPayload` mapper with `schemaVersion` 2 per ADR-002.
+## Visão geral
+Consolida TLC T7–T12. Entrega DTO canônico `ProductSnapshot`, builder a partir de JPA `Product` e mapper `ProductIndexPayload` com `schemaVersion` 2 conforme ADR-002.
 
 <critical>
-- ALWAYS READ the PRD and TechSpec before starting
-- REFERENCE TECHSPEC for implementation details — do not duplicate here
-- FOCUS ON "WHAT" — describe what needs to be accomplished, not how
-- MINIMIZE CODE — show code only to illustrate current structure or problem areas
-- TESTS REQUIRED — every task MUST include tests in deliverables
+- SEMPRE LER o PRD e a TechSpec antes de começar
+- REFERENCIAR A TECHSPEC para detalhes de implementação — não duplicar aqui
+- FOCAR NO "O QUÊ" — descrever o que precisa ser feito, não como
+- MINIMIZAR CÓDIGO — mostrar código apenas para ilustrar estrutura atual ou áreas problemáticas
+- TESTES OBRIGATÓRIOS — toda task DEVE incluir testes nos entregáveis
 </critical>
 
 <requirements>
-1. MUST define `ProductSnapshot` and nested DTOs in `shopizer-api-contracts` — TLC T7.
-2. MUST implement `ProductSnapshotBuilder` in monolith (sm-core or sm-shop) mapping from `Product` + store + language — TLC T8–T9.
-3. MUST refactor existing index producer to build snapshot first, then map to `ProductIndexPayload` — TLC T10.
-4. MUST bump `schemaVersion` default to 2 when snapshot-backed — TLC T11.
-5. MUST update `search-service` index handler to accept schema v1 and v2 — TLC T12.
-6. MUST NOT add JPA dependencies to api-contracts.
+1. MUST definir `ProductSnapshot` e DTOs aninhados em `shopizer-api-contracts` — TLC T7.
+2. MUST implementar `ProductSnapshotBuilder` no monólito (sm-core ou sm-shop) mapeando de `Product` + store + language — TLC T8–T9.
+3. MUST refatorar producer de índice existente para construir snapshot primeiro, depois mapear para `ProductIndexPayload` — TLC T10.
+4. MUST bump `schemaVersion` default para 2 quando snapshot-backed — TLC T11.
+5. MUST atualizar handler de índice `search-service` para aceitar schema v1 e v2 — TLC T12.
+6. MUST NOT adicionar dependências JPA em api-contracts.
 </requirements>
 
-## Subtasks
-- [ ] 2.1 `ProductSnapshot` DTO + Jackson tests (T7)
-- [ ] 2.2 `ProductSnapshotBuilder` from catalog services (T8–T9)
-- [ ] 2.3 `ProductIndexPayloadMapper` from snapshot (T10–T11)
-- [ ] 2.4 search-service v2 index acceptance (T12)
+## Subtarefas
+- [ ] 2.1 DTO `ProductSnapshot` + testes Jackson (T7)
+- [ ] 2.2 `ProductSnapshotBuilder` a partir de serviços de catálogo (T8–T9)
+- [ ] 2.3 `ProductIndexPayloadMapper` a partir de snapshot (T10–T11)
+- [ ] 2.4 Aceitação índice v2 em search-service (T12)
 
-## Implementation Details
-See TechSpec: **ProductIndexPayload evolution**, ADR-002. Source: existing `ProductIndexPayloadBuilder` / `SearchIndexProducerHttp` from Wave 2.
+## Detalhes de implementação
+Ver TechSpec: **Evolução ProductIndexPayload**, ADR-002. Fonte: `ProductIndexPayloadBuilder` / `SearchIndexProducerHttp` existentes da Onda 2.
 
-### Relevant Files
+### Arquivos relevantes
 - `shopizer-api-contracts/.../search/ProductIndexPayload.java`
-- `sm-core/.../events/products/` — index listeners
-- `sm-shop/.../strangler/search/` — HTTP producer
-- `search-service/.../index/` — internal index API
+- `sm-core/.../events/products/` — listeners de índice
+- `sm-shop/.../strangler/search/` — producer HTTP
+- `search-service/.../index/` — API interna de índice
 
-### Dependent Files
-- `shopizer-api-contracts/.../catalog/ProductSnapshot.java` — create
-- `sm-core/.../catalog/ProductSnapshotBuilder.java` — create
-- `sm-shop/.../search/ProductIndexPayloadMapper.java` — create
+### Arquivos dependentes
+- `shopizer-api-contracts/.../catalog/ProductSnapshot.java` — criar
+- `sm-core/.../catalog/ProductSnapshotBuilder.java` — criar
+- `sm-shop/.../search/ProductIndexPayloadMapper.java` — criar
 
-### Related ADRs
-- [ADR-002: ProductSnapshot supersedes ProductIndexPayload](../adrs/adr-002.md)
+### ADRs relacionados
+- [ADR-002: ProductSnapshot substitui ProductIndexPayload](../adrs/adr-002.md)
 
-## Deliverables
-- ProductSnapshot DTO family
-- Builder + payload mapper
-- search-service backward-compatible index handler
-- Unit tests 80%+ on DTOs and mapper **(REQUIRED)**
+## Entregáveis
+- Família DTO ProductSnapshot
+- Builder + mapper payload
+- Handler de índice retrocompatível em search-service
+- Testes unitários 80%+ em DTOs e mapper **(OBRIGATÓRIO)**
 
-## Tests
-- Unit tests:
-  - [ ] Snapshot builder maps SKU, name, store code
-  - [ ] Payload schemaVersion 2 when built from snapshot
-  - [ ] v1 payload still deserializes
-- Integration tests:
-  - [ ] Index producer posts v2 payload to search-service test slice
-- Test coverage target: >=80%
-- All tests must pass
+## Testes
+- Testes unitários:
+  - [ ] Builder snapshot mapea SKU, nome, store code
+  - [ ] Payload schemaVersion 2 quando construído de snapshot
+  - [ ] Payload v1 ainda deserializa
+- Testes de integração:
+  - [ ] Producer de índice posta payload v2 em slice de teste search-service
+- Meta de cobertura: >=80%
+- Todos os testes devem passar
 
-## Success Criteria
-- All tests passing
-- SNP-ready milestone
-- AD-009 evolution path implemented
+## Critérios de sucesso
+- Todos os testes passando
+- Milestone SNP-ready
+- Caminho de evolução AD-009 implementado

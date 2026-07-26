@@ -1,40 +1,40 @@
 ---
 status: pending
-title: Extract sm-customer-core
+title: Extrair sm-customer-core
 type: backend
 complexity: high
 ---
 
-# Extract sm-customer-core
+# Extrair sm-customer-core
 
-## Overview
-Consolidates TLC T14–T17. Creates `sm-customer-core` with customer, optin, attribute services and repositories; wires sm-core delegation. Order-checkout customer creation paths remain in sm-core (GAP-CUS-01).
+## Visão geral
+Consolida TLC T14–T17. Cria `sm-customer-core` com serviços customer, optin, attribute e repositories; wiring de delegação sm-core. Caminhos de criação de customer no checkout permanecem em sm-core (GAP-CUS-01).
 
 <requirements>
-1. MUST scaffold `sm-customer-core` module — T14.
-2. MUST move CustomerService, CustomerOptinService, attribute services (exclude order-only create) — T15.
-3. MUST add CustomerSnapshot mapper — T16.
-4. MUST wire sm-core delegation for profile paths — T17.
+1. MUST criar módulo `sm-customer-core` — T14.
+2. MUST mover CustomerService, CustomerOptinService, attribute services (excluir create só de order) — T15.
+3. MUST adicionar mapper CustomerSnapshot — T16.
+4. MUST wire delegação sm-core para caminhos de profile — T17.
 </requirements>
 
-## Subtasks
-- [ ] 4.1 Module + repositories (T14)
-- [ ] 4.2 Service extraction (T15)
+## Subtarefas
+- [ ] 4.1 Módulo + repositories (T14)
+- [ ] 4.2 Extração de serviços (T15)
 - [ ] 4.3 Mappers + snapshot (T16)
-- [ ] 4.4 sm-core wire (T17)
+- [ ] 4.4 Wire sm-core (T17)
 
-## Related ADRs
+## ADRs relacionados
 - [ADR-004](adrs/adr-004.md)
 - [ADR-005](adrs/adr-005.md)
 
-## Deliverables
-- sm-customer-core module
-- Unit tests 80%+ **(REQUIRED)**
+## Entregáveis
+- Módulo sm-customer-core
+- Testes unitários 80%+ **(OBRIGATÓRIO)**
 
-## Tests
+## Testes
 - `./mvnw test -pl sm-customer-core`
 - `./mvnw test -pl sm-core -Dtest=*Customer*Test -DfailIfNoTests=false`
 
-## Success Criteria
-- Profile CRUD works in-process via thin core
-- Order create customer unchanged in monolith
+## Critérios de sucesso
+- CRUD de profile funciona in-process via thin core
+- Criação customer em order inalterada no monólito

@@ -20,4 +20,4 @@ Decisões confirmadas assumindo recomendações padrão do Specify. Detalhes em 
 | AD-013 | Internal APIs: network policy + `X-Internal-Token` (search) |
 | AD-014 | Logo upload: blob primeiro, DB depois, com compensação |
 
-**Status:** Ready for Tasks
+**Status:** Pronto for Tasks

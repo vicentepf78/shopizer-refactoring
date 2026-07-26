@@ -7,7 +7,7 @@ complexity: medium
 
 # DTOs Reference/Tax e interfaces de client nos contracts
 
-## Overview
+## Visão geral
 Consolida TLC T3–T5. Completa o passo 2 da **Ordem de build**: migra DTOs de reference (incluindo o novo `ReadableCurrency`) e tax, e define `ReferenceServiceClient` / `TaxServiceClient` em `contracts/client` usando apenas tipos do JAR contracts (strings `storeCode`/`langCode`, sem entidades JPA).
 
 <critical>
@@ -28,17 +28,17 @@ Consolida TLC T3–T5. Completa o passo 2 da **Ordem de build**: migra DTOs de r
 7. MUST compilar `./mvnw compile -pl shopizer-api-contracts`.
 </requirements>
 
-## Subtasks
+## Subtarefas
 - [x] 2.1 Migrar DTOs/enums reference e criar `ReadableCurrency`
 - [x] 2.2 Migrar DTOs tax e `NamedEntity` slim
 - [x] 2.3 Definir `ReferenceServiceClient` e `TaxServiceClient`
 - [x] 2.4 Garantir ausência de imports JPA/core.model
 - [x] 2.5 Testes de serialização dos DTOs-chave (currency, tax rate, language)
 
-## Implementation Details
+## Detalhes de implementação
 Ver TechSpec: **Interfaces principais** (`ReferenceServiceClient`), **Modelos de dados**, **Endpoints da API**. Fontes: `sm-shop-model/.../model/references/*` e `.../model/tax/*`.
 
-### Relevant Files
+### Arquivos relevantes
 - `sm-shop-model/src/main/java/com/salesmanager/shop/model/references/ReadableCountry.java` — fonte country DTO
 - `sm-shop-model/src/main/java/com/salesmanager/shop/model/references/ReadableLanguage.java` — fonte language (só id/code/sortOrder no wire)
 - `sm-shop-model/src/main/java/com/salesmanager/shop/model/references/SizeReferences.java` — measures
@@ -46,23 +46,23 @@ Ver TechSpec: **Interfaces principais** (`ReferenceServiceClient`), **Modelos de
 - `sm-shop-model/src/main/java/com/salesmanager/shop/model/tax/ReadableTaxClass.java` — fonte tax class read
 - `shopizer-api-contracts/src/main/java/com/salesmanager/contracts/common/` — wrappers da task_01
 
-### Dependent Files
+### Arquivos dependentes
 - `shopizer-api-contracts/.../contracts/reference/*` — DTOs reference (a criar)
 - `shopizer-api-contracts/.../contracts/tax/*` — DTOs tax (a criar)
 - `shopizer-api-contracts/.../contracts/client/ReferenceServiceClient.java` — interface (a criar)
 - `shopizer-api-contracts/.../contracts/client/TaxServiceClient.java` — interface (a criar)
 
-### Related ADRs
+### ADRs relacionados
 - [ADR-005: Contract DTOs / no JPA in REST responses; Pact](adrs/adr-005.md) — pureza DTO + base Pact
 - [ADR-006: GeoZone excluded from Wave 1](adrs/adr-006.md) — não criar API/DTO GeoZone
 
-## Deliverables
+## Entregáveis
 - Packages reference + tax + client no contracts
 - `ReadableCurrency` novo e serializável
 - Unit tests com 80%+ coverage dos DTOs novos/críticos **(REQUIRED)**
 - Compile gate do módulo contracts **(REQUIRED)**
 
-## Tests
+## Testes
 - Unit tests:
   - [x] `ReadableCurrency` serializa id, code, name, symbol, supported
   - [x] `ReadableLanguage` JSON contém apenas id, code, sortOrder (sem campos JPA)
@@ -73,7 +73,7 @@ Ver TechSpec: **Interfaces principais** (`ReferenceServiceClient`), **Modelos de
 - Test coverage target: >=80%
 - All tests must pass
 
-## Success Criteria
+## Critérios de sucesso
 - All tests passing
 - Test coverage >=80%
 - Nenhum import `com.salesmanager.core.model` no módulo contracts

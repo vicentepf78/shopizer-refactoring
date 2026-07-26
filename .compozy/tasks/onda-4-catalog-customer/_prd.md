@@ -1,245 +1,245 @@
 # PRD: Onda 4 — Catalog + Customer
 
-**Feature slug:** `onda-4-catalog-customer`
-**Source of truth:** TLC at `.specs/features/onda-4-catalog-customer/` (Option A — authoritative; scope frozen)
-**Status:** Ready for TechSpec
-**Date:** 2026-07-26
+**Slug da feature:** `onda-4-catalog-customer`
+**Fonte da verdade:** TLC em `.specs/features/onda-4-catalog-customer/` (Opção A — autoritativa; escopo congelado)
+**Status:** Pronto para TechSpec
+**Data:** 2026-07-26
 
 ---
 
-## Overview
+## Visão geral
 
-After Waves 1–2 validated Strangler extraction for reference, tax, content, search, and merchant, and Wave 3 delivers cross-service contracts (`ProductSnapshot`, `CustomerSnapshot`, `LanguageCode`, `MerchantStoreId`), Wave 4 extracts **catalog read** and **customer profile** capabilities into independently deployable services.
+Após as Ondas 1–2 validarem a extração Strangler para reference, tax, content, search e merchant, e a Onda 3 entregar contratos cross-service (`ProductSnapshot`, `CustomerSnapshot`, `LanguageCode`, `MerchantStoreId`), a Onda 4 extrai capacidades de **leitura de catálogo** e **perfil de cliente** para serviços independentemente implantáveis.
 
-The problem is coupling: catalog has the **highest afferent coupling** in `sm-core` (10 inbound references). Extracting full catalog CRUD would drag order, cart, shipping, and search into a distributed monolith. Customer is service-isolated but **transactionally tied to order creation** and **shopping cart merge** on login.
+O problema é acoplamento: o catálogo tem o **maior acoplamento aferente** em `sm-core` (10 referências inbound). Extrair CRUD completo de catálogo arrastaria order, cart, shipping e search para um monólito distribuído. Customer é relativamente isolado no nível de serviço, mas está **transacionalmente ligado à criação de pedidos** e ao **merge de carrinho** no login.
 
-This PRD defines **what and why** for Wave 4: two services behind the existing BFF, frozen REST paths, read-first catalog boundary, and cart-merge decoupling via `CustomerSnapshot`. Technical how is in the TechSpec and ADRs.
+Este PRD define **o quê e o porquê** da Onda 4: dois serviços atrás do BFF existente, caminhos REST congelados, fronteira de catálogo read-first e desacoplamento de merge de carrinho via `CustomerSnapshot`. O como técnico fica na TechSpec e nos ADRs.
 
-**Primary users:** storefront visitors, store admins (read-only catalog from service; writes still monolith), registered customers, platform engineers running Strangler rollout.
+**Usuários primários:** visitantes da vitrine, admins de loja (catálogo read-only via serviço; writes ainda no monólito), clientes registrados, engenheiros de plataforma operando o rollout Strangler.
 
 ---
 
-## Objectives
+## Objetivos
 
-- Deliver deployable **catalog read** and **customer profile** services while `sm-shop` remains the customer-facing BFF.
-- Preserve existing storefront and admin journeys for product browse, category navigation, customer profile, addresses, and opt-in.
-- Enable search indexing to use canonical **`ProductSnapshot`** (Wave 3) instead of interim `ProductIndexPayload`.
-- Decouple **cart merge** from in-process `CustomerService` using **`CustomerSnapshot`** HTTP.
-- Keep **admin catalog mutations** (private product CRUD) in the monolith for Wave 4.
-- Prove contract stability (Pact) for P1 surfaces before declaring Wave 4 complete.
-- Extend `shopizer-api-contracts` and thin cores (`sm-catalog-core`, `sm-customer-core`).
-- **Blocked until Onda 3 Execute completes** — no Wave 4 code before contract gate.
+- Entregar serviços implantáveis de **leitura de catálogo** e **perfil de cliente** enquanto `sm-shop` permanece o BFF voltado ao cliente.
+- Preservar jornadas existentes de vitrine e admin para navegação de produtos/categorias, perfil de cliente, endereços e opt-in.
+- Permitir que a indexação de busca use **`ProductSnapshot`** canônico (Onda 3) em vez do `ProductIndexPayload` intermediário.
+- Desacoplar **merge de carrinho** do `CustomerService` in-process usando HTTP com **`CustomerSnapshot`**.
+- Manter **mutações admin de catálogo** (CRUD privado de produto) no monólito na Onda 4.
+- Provar estabilidade de contrato (Pact) para superfícies P1 antes de declarar a Onda 4 concluída.
+- Estender `shopizer-api-contracts` e thin cores (`sm-catalog-core`, `sm-customer-core`).
+- **Bloqueado até a conclusão do Execute da Onda 3** — nenhum código da Onda 4 antes do gate de contratos.
 
-### Business outcomes
+### Resultados de negócio
 
-| Outcome | Indicator |
+| Resultado | Indicador |
 | ------- | ----------- |
-| Safer catalog decomposition | Read path exits monolith without moving 22 catalog services' write graph |
-| Customer domain isolation | Profile CRUD owned by customer-service; auth stays centralized |
-| Search contract upgrade | `ProductSnapshot` v2 indexing end-to-end |
-| Cart merge readiness | Login merge works with remote customer snapshot |
-| Continuity | No breaking change on frozen REST paths |
+| Decomposição de catálogo mais segura | Caminho de leitura sai do monólito sem mover o grafo de write dos 22 serviços de catálogo |
+| Isolamento do domínio customer | CRUD de perfil pertence ao customer-service; auth permanece centralizada |
+| Upgrade do contrato de busca | Indexação `ProductSnapshot` v2 end-to-end |
+| Prontidão para merge de carrinho | Merge no login funciona com snapshot remoto de customer |
+| Continuidade | Sem breaking change nos caminhos REST congelados |
 
 ---
 
-## User stories
+## Histórias de usuário
 
-### Storefront visitor — browse products and categories (P1 / CAT)
+### Visitante da vitrine — navegar produtos e categorias (P1 / CAT)
 
-As a **storefront visitor**, I want to browse products and categories through the same public APIs, so product discovery does not require in-process catalog services.
+Como **visitante da vitrine**, quero navegar produtos e categorias pelas mesmas APIs públicas, para que a descoberta de produtos não exija serviços de catálogo in-process.
 
-**Acceptance (business):**
+**Aceite (negócio):**
 
-1. Paginated product lists, product detail, SKU lookup, related products, and groups return readable DTOs.
-2. Category tree and category detail are localized by language.
-3. Public inventory and price reads work without order/cart dependencies.
-4. Store and language context use Wave 3 value types via reference/merchant HTTP services.
-5. Catalog outage surfaces clear unavailability — no silent empty catalog.
+1. Listagens paginadas de produtos, detalhe, lookup por SKU, produtos relacionados e grupos retornam DTOs legíveis.
+2. Árvore de categorias e detalhe de categoria são localizados por idioma.
+3. Leituras públicas de inventário e preço funcionam sem dependências de order/cart.
+4. Contexto de loja e idioma usam value types da Onda 3 via serviços HTTP reference/merchant.
+5. Indisponibilidade do catálogo expõe falha clara — sem catálogo vazio silencioso.
 
-**Requirement IDs:** CAT-01…CAT-07, CAT-12
+**IDs de requisito:** CAT-01…CAT-07, CAT-12
 
-### Platform — ProductSnapshot for search and integrations (P1 / CAT)
+### Plataforma — ProductSnapshot para busca e integrações (P1 / CAT)
 
-As a **platform engineer**, I want a versioned product snapshot contract, so search indexing and future services share one product read model.
+Como **engenheiro de plataforma**, quero um contrato versionado de snapshot de produto, para que indexação de busca e serviços futuros compartilhem um modelo de leitura de produto.
 
 **IDs:** CAT-08, CAT-09, STR-07
 
-### Registered customer — profile and addresses (P1 / CUS)
+### Cliente registrado — perfil e endereços (P1 / CUS)
 
-As a **registered customer**, I want to view and update my profile, shipping/billing addresses, and marketing opt-in via existing APIs.
+Como **cliente registrado**, quero visualizar e atualizar meu perfil, endereços de entrega/cobrança e opt-in de marketing pelas APIs existentes.
 
 **IDs:** CUS-01…CUS-07
 
-### Returning customer — cart merge on login (P1 / CUS)
+### Cliente recorrente — merge de carrinho no login (P1 / CUS)
 
-As a **returning customer**, I want my session cart merged with my saved cart after login, without a distributed transaction between cart and customer services.
+Como **cliente recorrente**, quero que meu carrinho de sessão seja mesclado com o carrinho salvo após o login, sem transação distribuída entre cart e customer services.
 
 **IDs:** CUS-08, CUS-09, STR-08
 
-### Platform — Strangler BFF (P1 / STR)
+### Plataforma — Strangler BFF (P1 / STR)
 
-As a **platform engineer**, I want HTTP delegation for catalog read and customer profile facades, with admin product writes remaining in-process.
+Como **engenheiro de plataforma**, quero delegação HTTP para facades de leitura de catálogo e perfil de cliente, com writes admin de produto permanecendo in-process.
 
 **IDs:** STR-01, STR-04, STR-06, AD-020
 
-### Admin — product images (P2 / CAT)
+### Admin — imagens de produto (P2 / CAT)
 
-As a **store admin**, I want product/variant images stored via content-service (Onda 2 deferral completed).
+Como **admin de loja**, quero imagens de produto/variante armazenadas via content-service (adiamento da Onda 2 concluído).
 
 **IDs:** CAT-10
 
-### Developer — contract confidence (P2 / STR)
+### Desenvolvedor — confiança de contrato (P2 / STR)
 
-As a **developer**, I want Pact tests for catalog read and customer profile endpoints.
+Como **desenvolvedor**, quero testes Pact para endpoints de leitura de catálogo e perfil de cliente.
 
 **IDs:** STR-02, CAT-11, CUS-10
 
-### Operator — observability (P3 / STR)
+### Operador — observabilidade (P3 / STR)
 
-As an **operator**, I want health checks and correlation IDs on catalog-service and customer-service.
+Como **operador**, quero health checks e correlation IDs em catalog-service e customer-service.
 
 **IDs:** STR-05
 
 ---
 
-## Core features
+## Funcionalidades principais
 
-### F1 — Catalog service (MVP, read-only boundary)
+### F1 — Catalog service (MVP, fronteira read-only)
 
-Own storefront **read** APIs for products, categories, manufacturers, inventory, and prices; internal `ProductSnapshot` API. **Does not** own admin product mutations.
+Possui APIs de **leitura** de vitrine para produtos, categorias, fabricantes, inventário e preços; API interna `ProductSnapshot`. **Não** possui mutações admin de produto.
 
 ### F2 — Customer service (MVP)
 
-Own profile, address, opt-in (and review read); internal `CustomerSnapshot` API. **Does not** own login/JWT issuance.
+Possui perfil, endereço, opt-in (e leitura de reviews); API interna `CustomerSnapshot`. **Não** possui login/emissão de JWT.
 
-### F3 — Cart merge decoupling (MVP)
+### F3 — Desacoplamento de merge de carrinho (MVP)
 
-Monolith orchestrates merge using `CustomerSnapshot` from customer-service; `ShoppingCartService` refactored to avoid in-process customer entity dependency.
+Monólito orquestra merge usando `CustomerSnapshot` do customer-service; `ShoppingCartService` refatorado para evitar dependência de entidade customer in-process.
 
-### F4 — Search snapshot migration (MVP)
+### F4 — Migração de snapshot de busca (MVP)
 
-`ProductSnapshotBuilder` replaces `ProductIndexPayloadBuilder`; search-service accepts v2.
+`ProductSnapshotBuilder` substitui `ProductIndexPayloadBuilder`; search-service aceita v2.
 
 ### F5 — Strangler BFF (MVP)
 
-HTTP adapters with `wave4.strangler.enabled`; admin writes stay local.
+Adaptadores HTTP com `wave4.strangler.enabled`; writes admin permanecem locais.
 
-### F6 — Product images via content (Phase 2)
+### F6 — Imagens de produto via content (Fase 2)
 
-Product file managers call content-service HTTP.
+Product file managers chamam content-service HTTP.
 
-### F7 — Contracts and observability (Phases 2–3)
+### F7 — Contratos e observabilidade (Fases 2–3)
 
-Pact; health; correlation propagation.
+Pact; health; propagação de correlação.
 
 ---
 
-## User experience
+## Experiência do usuário
 
-| Persona | Goal |
+| Persona | Objetivo |
 | ------- | ---- |
-| Visitor | Browse/search catalog unchanged |
-| Customer | Manage profile/addresses |
-| Admin | Edit products in monolith (unchanged write UX) |
-| Platform engineer | Toggle strangler; observe health; trust pact gates |
+| Visitante | Navegar/buscar catálogo inalterado |
+| Cliente | Gerenciar perfil/endereços |
+| Admin | Editar produtos no monólito (UX de write inalterada) |
+| Engenheiro de plataforma | Alternar strangler; observar health; confiar nos gates pact |
 
-**UX constraint:** No new screens — behavioral parity only. Public read p95 ≤ 2× monolith baseline.
-
----
-
-## High-level technical constraints
-
-- Integrate Wave 1 **reference** and Wave 2 **merchant** / **content** / **search** services.
-- Preserve **frozen REST paths** (STR-04).
-- No JPA entities in migrated JSON responses.
-- **Shared operational DB** (AD-003/AD-022).
-- **Onda 3 complete** before Execute.
-- JWT on private customer routes equivalent to today.
-- Catalog **read-only** at service boundary (AD-020).
+**Restrição de UX:** Sem novas telas — apenas paridade comportamental. p95 de leitura pública ≤ 2× baseline do monólito.
 
 ---
 
-## Non-goals
+## Restrições técnicas de alto nível
 
-| Excluded | Why |
+- Integrar serviços da Onda 1 **reference** e Onda 2 **merchant** / **content** / **search**.
+- Preservar **caminhos REST congelados** (STR-04).
+- Sem entidades JPA nas respostas JSON migradas.
+- **DB operacional compartilhado** (AD-003/AD-022).
+- **Onda 3 completa** antes do Execute.
+- JWT em rotas privadas de customer equivalente ao de hoje.
+- Catálogo **read-only** na fronteira do serviço (AD-020).
+
+---
+
+## Não-objetivos
+
+| Excluído | Motivo |
 | -------- | --- |
-| Execute before Onda 3 | ProductSnapshot/CustomerSnapshot prerequisite |
-| Admin catalog writes in catalog-service | Master plan phased extraction; coupling 10/10 |
+| Execute antes da Onda 3 | Pré-requisito ProductSnapshot/CustomerSnapshot |
+| Writes admin de catálogo no catalog-service | Extração faseada do plano mestre; acoplamento 10/10 |
 | shoppingcart-service | Onda 6 |
-| order/checkout extraction | Onda 6 |
-| Customer login/register in customer-service | Auth authority stays sm-shop (OQ-06) |
-| DB-per-service split | AD-022 |
-| Full product facade merge (4 facades) | Fase 1 parallel work |
-| Payment/shipping integration redesign | Onda 5 |
+| Extração de order/checkout | Onda 6 |
+| Login/registro de customer no customer-service | Autoridade de auth permanece sm-shop (OQ-06) |
+| Split DB-per-service | AD-022 |
+| Merge completo de facades de produto (4 facades) | Trabalho paralelo Fase 1 |
+| Redesign de integração payment/shipping | Onda 5 |
 
 ---
 
-## Phased rollout
+## Rollout faseado
 
-### MVP (Phase 1) — P1 stories
+### MVP (Fase 1) — histórias P1
 
-- catalog-service public read + internal snapshot
-- customer-service profile/address/optin + internal snapshot
-- Cart merge decoupling
-- ProductSnapshot indexing
-- Strangler adapters (read/profile only)
+- catalog-service leitura pública + snapshot interno
+- customer-service profile/address/optin + snapshot interno
+- Desacoplamento de merge de carrinho
+- Indexação ProductSnapshot
+- Adaptadores Strangler (somente read/profile)
 
-**Exit:** P1 endpoints healthy; no JPA in JSON; pact green for P1; merge test passes.
+**Saída:** endpoints P1 saudáveis; sem JPA no JSON; pact verde para P1; teste de merge passa.
 
-### Phase 2
+### Fase 2
 
-- Product images via content-service
-- Full Pact suite; docker-compose-wave4.yml
+- Imagens de produto via content-service
+- Suite Pact completa; docker-compose-wave4.yml
 
-### Phase 3
+### Fase 3
 
-- Health indicators; STATE/traceability; GAP docs
+- Indicadores de health; STATE/rastreabilidade; docs GAP
 
 ---
 
-## Success metrics
+## Métricas de sucesso
 
-| Metric | Target |
+| Métrica | Meta |
 | ------ | ------ |
-| P1 endpoint availability | Both services + BFF paths respond |
-| Contract parity | Pact green catalog + customer |
-| Entity leakage | Zero JPA types in migrated JSON |
-| Search v2 | Index accepts ProductSnapshot |
-| Cart merge | Integration test with remote snapshot |
-| Latency | Public read p95 ≤ 2× baseline |
-| Prerequisite discipline | No Execute before Onda 3 gate |
+| Disponibilidade endpoints P1 | Ambos os serviços + caminhos BFF respondem |
+| Paridade de contrato | Pact verde catalog + customer |
+| Vazamento de entidades | Zero tipos JPA no JSON migrado |
+| Search v2 | Índice aceita ProductSnapshot |
+| Merge de carrinho | Teste de integração com snapshot remoto |
+| Latência | p95 leitura pública ≤ 2× baseline |
+| Disciplina de pré-requisito | Sem Execute antes do gate da Onda 3 |
 
 ---
 
-## Risks and mitigations
+## Riscos e mitigações
 
-| Risk | Mitigation |
+| Risco | Mitigação |
 | ---- | ---------- |
-| Onda 3 delay | Docs ready; Execute blocked |
-| Catalog read/write split confusion | AD-020; explicit adapter matrix |
-| Cart merge regression | Dedicated integration tests; fail-closed on snapshot miss |
-| ProductSnapshot drift vs index | schemaVersion + pact |
-| Scope creep (admin writes) | Frozen non-goals |
+| Atraso da Onda 3 | Docs prontos; Execute bloqueado |
+| Confusão split read/write de catálogo | AD-020; matriz de adaptadores explícita |
+| Regressão de merge de carrinho | Testes de integração dedicados; fail-closed em snapshot ausente |
+| Drift ProductSnapshot vs índice | schemaVersion + pact |
+| Scope creep (writes admin) | Não-objetivos congelados |
 
 ---
 
-## Architecture decision records
+## Registros de decisão arquitetural
 
-- [ADR-001: One Compozy workflow for Catalog + Customer](adrs/adr-001.md)
-- [ADR-002: Catalog read-only extraction first](adrs/adr-002.md)
-- [ADR-003: ProductSnapshot as canonical product contract](adrs/adr-003.md)
-- [ADR-004: Thin sm-catalog-core / sm-customer-core modules](adrs/adr-004.md)
-- [ADR-005: Cart merge via CustomerSnapshot orchestrated in monolith](adrs/adr-005.md)
-- [ADR-006: Admin catalog writes remain in monolith](adrs/adr-006.md)
-- [ADR-007: Product images via content-service](adrs/adr-007.md)
+- [ADR-001: Um workflow Compozy para Catalog + Customer](adrs/adr-001.md)
+- [ADR-002: Extração read-only de catálogo primeiro](adrs/adr-002.md)
+- [ADR-003: ProductSnapshot como contrato canônico de produto](adrs/adr-003.md)
+- [ADR-004: Módulos thin sm-catalog-core / sm-customer-core](adrs/adr-004.md)
+- [ADR-005: Merge de carrinho via CustomerSnapshot orquestrado no monólito](adrs/adr-005.md)
+- [ADR-006: Writes admin de catálogo permanecem no monólito](adrs/adr-006.md)
+- [ADR-007: Imagens de produto via content-service](adrs/adr-007.md)
 
 ---
 
-## Open questions
+## Questões em aberto
 
-All OQ-01…OQ-06 resolved in `.specs/features/onda-4-catalog-customer/context.md`. No blocking product ambiguities remain.
+Todas OQ-01…OQ-06 resolvidas em `.specs/features/onda-4-catalog-customer/context.md`. Nenhuma ambiguidade de produto bloqueante permanece.
 
-Residual (non-blocking):
+Residual (não bloqueante):
 
-- Exact cache TTL for catalog read adapter — tuning during Execute.
-- Whether review POST moves to customer-service in Wave 4 or Wave 5 — default read-only in Wave 4.
+- TTL exato de cache para adaptador de leitura de catálogo — tuning durante Execute.
+- Se POST de review migra para customer-service na Onda 4 ou Onda 5 — padrão read-only na Onda 4.

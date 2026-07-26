@@ -1,21 +1,21 @@
-# Wave 3 — Contracts DTO + Checkout Application Service Tasks
+# Onda 3 — Contracts DTO + Checkout Application Service Tasks
 
 **Design:** `.specs/features/onda-3-contracts-dto/design.md`  
 **Spec:** `.specs/features/onda-3-contracts-dto/spec.md`  
-**Status:** Approved — ready for Execute (after Wave 2 gate)  
-**Prerequisite:** Wave 2 Execute complete (`onda-2-content-search-merchant` T1–T54)
+**Status:** Aprovado — pronto para Execute (após gate Onda 2)  
+**Pré-requisito:** Execute Onda 2 completo (`onda-2-content-search-merchant` T1–T54)
 
 ---
 
-## Execution Plan
+## Plano de execução
 
-### Phase 1: Contracts foundation (Sequential)
+### Fase 1: Base de contracts (sequencial)
 
 ```
 Wave2-T54 ──→ T1 ──→ T2 ──→ T3 ──→ T4 ──→ T5 ──→ T6
 ```
 
-### Phase 2: Parallel tracks
+### Fase 2: Tracks paralelas
 
 ```
 T6 ──┬──→ T7 ──→ T8 ──→ T9 ──→ T10 ──→ T11 ──→ T12 ──┬──→ T17 ──→ T18 ──→ T19 ──→ T20
@@ -28,40 +28,40 @@ T6 ──┬──→ T7 ──→ T8 ──→ T9 ──→ T10 ──→ T11 �
 ```
 
 **Track A (Product + Search):** T7–T12, T17–T20  
-**Track B (Order/Customer snapshots):** T13–T16  
-**Track C (Integration):** T21–T29  
+**Track B (snapshots Order/Customer):** T13–T16  
+**Track C (Integração):** T21–T29  
 **Track D (Facades + REF):** T30–T38
 
-### Phase 3: Checkout convergence
+### Fase 3: Convergência checkout
 
 ```
 T12,T16,T29,T38 ──→ T39 ──→ T40 ──→ T41 ──→ T42 ──→ T43
 ```
 
-### Phase 4: Outbox + gate
+### Fase 4: Outbox + gate
 
 ```
 T43 ──→ T44 ──→ T45 ──→ T46 ──→ T47 ──→ T48
 ```
 
-**Milestones:** `SNP-ready` = T16; `INT-ready` = T29; `CHK-ready` = T43; `Wave3-complete` = T48
+**Marcos:** `SNP-ready` = T16; `INT-ready` = T29; `CHK-ready` = T43; `Wave3-complete` = T48
 
 ---
 
-## Task Breakdown
+## Decomposição de tarefas
 
 ### T1: MerchantStoreId value type
 
-**What:** Add immutable `MerchantStoreId` in `com.salesmanager.contracts.tenant`.  
-**Where:** `shopizer-api-contracts/.../tenant/MerchantStoreId.java`  
-**Depends on:** Wave 2 T54  
-**Requirement:** TNT-01, CTR-04
+**O quê:** Adicionar imutável `MerchantStoreId` em `com.salesmanager.contracts.tenant`.  
+**Onde:** `shopizer-api-contracts/.../tenant/MerchantStoreId.java`  
+**Depende de:** Wave 2 T54  
+**Requisito:** TNT-01, CTR-04
 
-**Done when:**
-- [ ] Rejects null/blank code
-- [ ] Jackson round-trip test passes
+**Concluído quando:**
+- [ ] Rejeita código null/vazio
+- [ ] Teste Jackson round-trip passa
 
-**Tests:** `MerchantStoreIdTest`  
+**Testes:** `MerchantStoreIdTest`  
 **Gate:** `./mvnw test -pl shopizer-api-contracts -Dtest=MerchantStoreIdTest`  
 **Commit:** `feat(contracts): add MerchantStoreId`
 
@@ -69,29 +69,29 @@ T43 ──→ T44 ──→ T45 ──→ T46 ──→ T47 ──→ T48
 
 ### T2: LanguageCode value type
 
-**What:** Add immutable `LanguageCode` in contracts tenant package.  
-**Where:** `shopizer-api-contracts/.../tenant/LanguageCode.java`  
-**Depends on:** T1  
-**Requirement:** TNT-02
+**O quê:** Adicionar imutável `LanguageCode` no package tenant de contracts.  
+**Onde:** `shopizer-api-contracts/.../tenant/LanguageCode.java`  
+**Depende de:** T1  
+**Requisito:** TNT-02
 
-**Done when:**
-- [ ] Factory `of(String)` validates non-blank
-- [ ] equals/hashCode on code
+**Concluído quando:**
+- [ ] Factory `of(String)` valida não vazio
+- [ ] equals/hashCode no código
 
-**Tests:** `LanguageCodeTest`  
+**Testes:** `LanguageCodeTest`  
 **Gate:** `./mvnw test -pl shopizer-api-contracts -Dtest=LanguageCodeTest`
 
 ---
 
 ### T3: Snapshot package scaffolding
 
-**What:** Create empty packages `catalog`, `order`, `customer` with package-info / base types if needed.  
-**Where:** `shopizer-api-contracts/`  
-**Depends on:** T2  
-**Requirement:** CTR-04
+**O quê:** Criar packages vazios `catalog`, `order`, `customer` com package-info / tipos base se necessário.  
+**Onde:** `shopizer-api-contracts/`  
+**Depende de:** T2  
+**Requisito:** CTR-04
 
-**Done when:**
-- [ ] Module compiles with new packages
+**Concluído quando:**
+- [ ] Módulo compila com novos packages
 
 **Gate:** `./mvnw compile -pl shopizer-api-contracts`
 
@@ -99,13 +99,13 @@ T43 ──→ T44 ──→ T45 ──→ T46 ──→ T47 ──→ T48
 
 ### T4: TenantEntityBridge interface
 
-**What:** Define bridge to resolve `MerchantStore` and `Language` from codes.  
-**Where:** `sm-shop/.../tenant/TenantEntityBridge.java`  
-**Depends on:** T2  
-**Requirement:** TNT-03
+**O quê:** Definir bridge para resolver `MerchantStore` e `Language` a partir de códigos.  
+**Onde:** `sm-shop/.../tenant/TenantEntityBridge.java`  
+**Depende de:** T2  
+**Requisito:** TNT-03
 
-**Done when:**
-- [ ] Interface documented; impl stub compiles
+**Concluído quando:**
+- [ ] Interface documentada; stub impl compila
 
 **Gate:** `./mvnw compile -pl sm-shop -am`
 
@@ -113,29 +113,29 @@ T43 ──→ T44 ──→ T45 ──→ T46 ──→ T47 ──→ T48
 
 ### T5: TenantEntityBridgeImpl
 
-**What:** Implement bridge using `MerchantStoreService` / `LanguageService` (in-process).  
-**Where:** `sm-shop/.../tenant/TenantEntityBridgeImpl.java`  
-**Depends on:** T4  
-**Requirement:** TNT-03
+**O quê:** Implementar bridge usando `MerchantStoreService` / `LanguageService` (in-process).  
+**Onde:** `sm-shop/.../tenant/TenantEntityBridgeImpl.java`  
+**Depende de:** T4  
+**Requisito:** TNT-03
 
-**Done when:**
-- [ ] Resolves DEFAULT store and en language in test
+**Concluído quando:**
+- [ ] Resolve store DEFAULT e language en em teste
 
-**Tests:** `TenantEntityBridgeImplTest`  
+**Testes:** `TenantEntityBridgeImplTest`  
 **Gate:** `./mvnw test -pl sm-shop -Dtest=TenantEntityBridgeImplTest`
 
 ---
 
 ### T6: AbstractDataPopulator tenant overload
 
-**What:** Add `populate(source, MerchantStoreId, LanguageCode)` defaulting to bridge.  
-**Where:** `sm-core/.../AbstractDataPopulator.java`  
-**Depends on:** T5  
-**Requirement:** TNT-04
+**O quê:** Adicionar `populate(source, MerchantStoreId, LanguageCode)` defaultando para bridge.  
+**Onde:** `sm-core/.../AbstractDataPopulator.java`  
+**Depende de:** T5  
+**Requisito:** TNT-04
 
-**Done when:**
-- [ ] Existing populators compile unchanged
-- [ ] One populator uses new overload in test
+**Concluído quando:**
+- [ ] Populators existentes compilam inalterados
+- [ ] Um populator usa novo overload em teste
 
 **Gate:** `./mvnw compile -pl sm-core,sm-shop -am`
 
@@ -143,28 +143,28 @@ T43 ──→ T44 ──→ T45 ──→ T46 ──→ T47 ──→ T48
 
 ### T7: ProductSnapshot DTO
 
-**What:** Define `ProductSnapshot` and nested variant/inventory summary DTOs.  
-**Where:** `shopizer-api-contracts/.../catalog/ProductSnapshot.java`  
-**Depends on:** T6  
-**Requirement:** SNP-01, CTR-02
+**O quê:** Definir `ProductSnapshot` e DTOs aninhados de variant/resumo de inventário.  
+**Onde:** `shopizer-api-contracts/.../catalog/ProductSnapshot.java`  
+**Depende de:** T6  
+**Requisito:** SNP-01, CTR-02
 
-**Done when:**
-- [ ] No JPA imports; Jackson test passes
+**Concluído quando:**
+- [ ] Sem imports JPA; teste Jackson passa
 
-**Tests:** `ProductSnapshotJacksonTest`  
+**Testes:** `ProductSnapshotJacksonTest`  
 **Gate:** `./mvnw test -pl shopizer-api-contracts -Dtest=ProductSnapshotJacksonTest`
 
 ---
 
 ### T8: ProductSnapshotBuilder skeleton
 
-**What:** Create builder class with `build(Product, MerchantStoreId, LanguageCode)` signature.  
-**Where:** `sm-core/.../catalog/ProductSnapshotBuilder.java`  
-**Depends on:** T7  
-**Requirement:** SNP-03
+**O quê:** Criar classe builder com assinatura `build(Product, MerchantStoreId, LanguageCode)`.  
+**Onde:** `sm-core/.../catalog/ProductSnapshotBuilder.java`  
+**Depende de:** T7  
+**Requisito:** SNP-03
 
-**Done when:**
-- [ ] Compiles; returns snapshot with id and sku
+**Concluído quando:**
+- [ ] Compila; retorna snapshot com id e sku
 
 **Gate:** `./mvnw compile -pl sm-core -am`
 
@@ -172,42 +172,42 @@ T43 ──→ T44 ──→ T45 ──→ T46 ──→ T47 ──→ T48
 
 ### T9: ProductSnapshotBuilder full mapping
 
-**What:** Map name, description, pricing, categories, images from product graph.  
-**Where:** `ProductSnapshotBuilder.java`  
-**Depends on:** T8  
-**Requirement:** SNP-03, SNP-07
+**O quê:** Mapear nome, descrição, pricing, categorias, imagens do grafo de produto.  
+**Onde:** `ProductSnapshotBuilder.java`  
+**Depende de:** T8  
+**Requisito:** SNP-03, SNP-07
 
-**Done when:**
-- [ ] Unit test with fixture product covers main fields
+**Concluído quando:**
+- [ ] Teste unitário com produto fixture cobre campos principais
 
-**Tests:** `ProductSnapshotBuilderTest`  
+**Testes:** `ProductSnapshotBuilderTest`  
 **Gate:** `./mvnw test -pl sm-core -Dtest=ProductSnapshotBuilderTest`
 
 ---
 
 ### T10: ProductIndexPayloadMapper
 
-**What:** Map `ProductSnapshot` → `ProductIndexPayload` with schemaVersion 2.  
-**Where:** `sm-shop/.../search/ProductIndexPayloadMapper.java`  
-**Depends on:** T9  
-**Requirement:** SNP-02
+**O quê:** Mapear `ProductSnapshot` → `ProductIndexPayload` com schemaVersion 2.  
+**Onde:** `sm-shop/.../search/ProductIndexPayloadMapper.java`  
+**Depende de:** T9  
+**Requisito:** SNP-02
 
-**Done when:**
-- [ ] schemaVersion 2 set on output
+**Concluído quando:**
+- [ ] schemaVersion 2 definido na saída
 
-**Tests:** `ProductIndexPayloadMapperTest`
+**Testes:** `ProductIndexPayloadMapperTest`
 
 ---
 
 ### T11: Refactor index producer to use snapshot pipeline
 
-**What:** Update `SearchIndexProducerHttp` / listener to build snapshot first.  
-**Where:** `sm-shop/.../strangler/search/`, `sm-core/.../IndexProductEventListener`  
-**Depends on:** T10  
-**Requirement:** SNP-02, AD-009
+**O quê:** Atualizar `SearchIndexProducerHttp` / listener para construir snapshot primeiro.  
+**Onde:** `sm-shop/.../strangler/search/`, `sm-core/.../IndexProductEventListener`  
+**Depende de:** T10  
+**Requisito:** SNP-02, AD-009
 
-**Done when:**
-- [ ] Index events still reach search-service in integration test
+**Concluído quando:**
+- [ ] Eventos de índice ainda chegam ao search-service em teste de integração
 
 **Gate:** `./mvnw test -pl sm-shop -Dtest=*SearchIndex* -DfailIfNoTests=false`
 
@@ -215,90 +215,90 @@ T43 ──→ T44 ──→ T45 ──→ T46 ──→ T47 ──→ T48
 
 ### T12: search-service schema v2 acceptance
 
-**What:** Internal index API accepts payload schemaVersion 1 and 2.  
-**Where:** `search-service/.../index/`  
-**Depends on:** T11  
-**Requirement:** SNP-06
+**O quê:** API interna de índice aceita payload schemaVersion 1 e 2.  
+**Onde:** `search-service/.../index/`  
+**Depende de:** T11  
+**Requisito:** SNP-06
 
-**Done when:**
-- [ ] v1 and v2 fixtures index successfully
+**Concluído quando:**
+- [ ] Fixtures v1 e v2 indexam com sucesso
 
-**Tests:** `IndexPayloadSchemaVersionTest`  
+**Testes:** `IndexPayloadSchemaVersionTest`  
 **Gate:** `./mvnw test -pl search-service -Dtest=IndexPayloadSchemaVersionTest`
 
 ---
 
 ### T13: OrderSnapshot DTOs
 
-**What:** `OrderSnapshot`, `OrderLineSnapshot`, `OrderTotalSnapshot`.  
-**Where:** `shopizer-api-contracts/.../order/`  
-**Depends on:** T6  
-**Requirement:** SNP-04
+**O quê:** `OrderSnapshot`, `OrderLineSnapshot`, `OrderTotalSnapshot`.  
+**Onde:** `shopizer-api-contracts/.../order/`  
+**Depende de:** T6  
+**Requisito:** SNP-04
 
-**Done when:**
-- [ ] Jackson tests pass
+**Concluído quando:**
+- [ ] Testes Jackson passam
 
-**Tests:** `OrderSnapshotJacksonTest`
+**Testes:** `OrderSnapshotJacksonTest`
 
 ---
 
 ### T14: CustomerSnapshot DTOs
 
-**What:** `CustomerSnapshot`, `AddressSnapshot`.  
-**Where:** `shopizer-api-contracts/.../customer/`  
-**Depends on:** T6  
-**Requirement:** SNP-05
+**O quê:** `CustomerSnapshot`, `AddressSnapshot`.  
+**Onde:** `shopizer-api-contracts/.../customer/`  
+**Depende de:** T6  
+**Requisito:** SNP-05
 
-**Done when:**
-- [ ] No lazy collection types
+**Concluído quando:**
+- [ ] Sem tipos de coleção lazy
 
-**Tests:** `CustomerSnapshotJacksonTest`
+**Testes:** `CustomerSnapshotJacksonTest`
 
 ---
 
 ### T15: OrderSnapshotBuilder
 
-**What:** Build order snapshot from `Order` entity.  
-**Where:** `sm-core/.../checkout/OrderSnapshotBuilder.java`  
-**Depends on:** T13  
-**Requirement:** SNP-07
+**O quê:** Construir snapshot de order a partir da entidade `Order`.  
+**Onde:** `sm-core/.../checkout/OrderSnapshotBuilder.java`  
+**Depende de:** T13  
+**Requisito:** SNP-07
 
-**Tests:** `OrderSnapshotBuilderTest`
+**Testes:** `OrderSnapshotBuilderTest`
 
 ---
 
 ### T16: CustomerSnapshotBuilder
 
-**What:** Build customer snapshot from `Customer` entity.  
-**Where:** `sm-core/.../checkout/CustomerSnapshotBuilder.java`  
-**Depends on:** T14  
-**Requirement:** SNP-07
+**O quê:** Construir snapshot de customer a partir da entidade `Customer`.  
+**Onde:** `sm-core/.../checkout/CustomerSnapshotBuilder.java`  
+**Depende de:** T14  
+**Requisito:** SNP-07
 
-**Tests:** `CustomerSnapshotBuilderTest`  
+**Testes:** `CustomerSnapshotBuilderTest`  
 **Milestone:** SNP-ready
 
 ---
 
 ### T17: SearchItem in api-contracts
 
-**What:** Move/copy `SearchItem` to contracts search package.  
-**Where:** `shopizer-api-contracts/.../search/SearchItem.java`  
-**Depends on:** T12  
-**Requirement:** SRCH-01
+**O quê:** Mover/copiar `SearchItem` para package search de contracts.  
+**Onde:** `shopizer-api-contracts/.../search/SearchItem.java`  
+**Depende de:** T12  
+**Requisito:** SRCH-01
 
-**Done when:**
-- [ ] DTO compiles; JSON fixture matches legacy
+**Concluído quando:**
+- [ ] DTO compila; fixture JSON bate com legacy
 
-**Tests:** `SearchItemJacksonTest`
+**Testes:** `SearchItemJacksonTest`
 
 ---
 
 ### T18: Rewire sm-shop search imports
 
-**What:** Update SearchApi, SearchFacade, adapters to contracts SearchItem.  
-**Where:** `sm-shop/.../search/`  
-**Depends on:** T17  
-**Requirement:** SRCH-02
+**O quê:** Atualizar SearchApi, SearchFacade, adapters para SearchItem de contracts.  
+**Onde:** `sm-shop/.../search/`  
+**Depende de:** T17  
+**Requisito:** SRCH-02
 
 **Gate:** `./mvnw compile -pl sm-shop -am`
 
@@ -306,21 +306,21 @@ T43 ──→ T44 ──→ T45 ──→ T46 ──→ T47 ──→ T48
 
 ### T19: Rewire search-service imports
 
-**What:** Update search-service controllers/services to contracts SearchItem.  
-**Where:** `search-service/`  
-**Depends on:** T17  
-**Requirement:** SRCH-02
+**O quê:** Atualizar controllers/serviços search-service para SearchItem de contracts.  
+**Onde:** `search-service/`  
+**Depende de:** T17  
+**Requisito:** SRCH-02
 
 **Gate:** `./mvnw compile -pl search-service -am`
 
 ---
 
-### T20: Update Search Pact tests
+### T20: Atualizar testes Pact Search
 
-**What:** Point Pact to contracts SearchItem; verify SRCH-04 compatibility.  
-**Where:** `sm-shop/src/test/.../pact/`, `search-service/src/test/.../pact/`  
-**Depends on:** T18, T19  
-**Requirement:** SRCH-03, SRCH-04, GAT-02
+**O quê:** Apontar Pact para SearchItem de contracts; verificar compatibilidade SRCH-04.  
+**Onde:** `sm-shop/src/test/.../pact/`, `search-service/src/test/.../pact/`  
+**Depende de:** T18, T19  
+**Requisito:** SRCH-03, SRCH-04, GAT-02
 
 **Gate:** `./mvnw test -pl sm-shop,search-service -Dtest=*Pact* -DfailIfNoTests=false`
 
@@ -328,10 +328,10 @@ T43 ──→ T44 ──→ T45 ──→ T46 ──→ T47 ──→ T48
 
 ### T21: IntegrationStoreContext DTO
 
-**What:** Common store context for integration modules.  
-**Where:** `sm-core-modules/.../integration/common/dto/`  
-**Depends on:** T6  
-**Requirement:** INT-01
+**O quê:** Contexto comum de store para módulos de integração.  
+**Onde:** `sm-core-modules/.../integration/common/dto/`  
+**Depende de:** T6  
+**Requisito:** INT-01
 
 **Gate:** `./mvnw compile -pl sm-core-modules -am`
 
@@ -339,43 +339,43 @@ T43 ──→ T44 ──→ T45 ──→ T46 ──→ T47 ──→ T48
 
 ### T22: Payment integration DTOs
 
-**What:** `PaymentRequestContext`, `PaymentCaptureContext`, `PaymentLineItemDto`, `TransactionResult`.  
-**Where:** `sm-core-modules/.../integration/payment/dto/`  
-**Depends on:** T21  
-**Requirement:** INT-01, INT-02
+**O quê:** `PaymentRequestContext`, `PaymentCaptureContext`, `PaymentLineItemDto`, `TransactionResult`.  
+**Onde:** `sm-core-modules/.../integration/payment/dto/`  
+**Depende de:** T21  
+**Requisito:** INT-01, INT-02
 
-**Tests:** `PaymentDtoJacksonTest`
+**Testes:** `PaymentDtoJacksonTest`
 
 ---
 
 ### T23: Shipping integration DTOs
 
-**What:** `ShippingQuoteRequestContext`, address and package DTOs.  
-**Where:** `sm-core-modules/.../integration/shipping/dto/`  
-**Depends on:** T21  
-**Requirement:** INT-01, INT-03
+**O quê:** `ShippingQuoteRequestContext`, DTOs de address e package.  
+**Onde:** `sm-core-modules/.../integration/shipping/dto/`  
+**Depende de:** T21  
+**Requisito:** INT-01, INT-03
 
-**Tests:** `ShippingDtoJacksonTest`
+**Testes:** `ShippingDtoJacksonTest`
 
 ---
 
-### T24: sm-core-modules depends on api-contracts
+### T24: sm-core-modules depende de api-contracts
 
-**What:** Add Maven dependency for `MerchantStoreId` in integration DTOs.  
-**Where:** `sm-core-modules/pom.xml`  
-**Depends on:** T22, T23  
-**Requirement:** CTR-01
+**O quê:** Adicionar dependência Maven para `MerchantStoreId` nos DTOs de integração.  
+**Onde:** `sm-core-modules/pom.xml`  
+**Depende de:** T22, T23  
+**Requisito:** CTR-01
 
 **Gate:** `./mvnw compile -pl sm-core-modules`
 
 ---
 
-### T25: PaymentModuleV2 and ShippingQuoteModuleV2 interfaces
+### T25: Interfaces PaymentModuleV2 e ShippingQuoteModuleV2
 
-**What:** Define V2 interfaces using DTOs only.  
-**Where:** `sm-core-modules/.../payment/model/`, `.../shipping/model/`  
-**Depends on:** T24  
-**Requirement:** INT-02, INT-03
+**O quê:** Definir interfaces V2 usando apenas DTOs.  
+**Onde:** `sm-core-modules/.../payment/model/`, `.../shipping/model/`  
+**Depende de:** T24  
+**Requisito:** INT-02, INT-03
 
 **Gate:** `./mvnw compile -pl sm-core-modules`
 
@@ -383,30 +383,30 @@ T43 ──→ T44 ──→ T45 ──→ T46 ──→ T47 ──→ T48
 
 ### T26: LegacyPaymentModuleBridge
 
-**What:** Adapter implementing V2 by delegating to V1 with entity mapping.  
-**Where:** `sm-core/.../payments/LegacyPaymentModuleBridge.java`  
-**Depends on:** T25  
-**Requirement:** INT-04
+**O quê:** Adapter implementando V2 delegando a V1 com mapeamento de entidade.  
+**Onde:** `sm-core/.../payments/LegacyPaymentModuleBridge.java`  
+**Depende de:** T25  
+**Requisito:** INT-04
 
-**Tests:** `LegacyPaymentModuleBridgeTest`
+**Testes:** `LegacyPaymentModuleBridgeTest`
 
 ---
 
 ### T27: LegacyShippingQuoteModuleBridge
 
-**What:** Shipping equivalent of T26.  
-**Where:** `sm-core/.../shipping/LegacyShippingQuoteModuleBridge.java`  
-**Depends on:** T25  
-**Requirement:** INT-04
+**O quê:** Equivalente shipping de T26.  
+**Onde:** `sm-core/.../shipping/LegacyShippingQuoteModuleBridge.java`  
+**Depende de:** T25  
+**Requisito:** INT-04
 
 ---
 
 ### T28: PaymentServiceImpl V2 routing
 
-**What:** Route to V2/bridge in authorize/capture/refund paths.  
-**Where:** `sm-core/.../payments/PaymentServiceImpl.java`  
-**Depends on:** T26  
-**Requirement:** INT-05
+**O quê:** Rotear a V2/bridge nos caminhos authorize/capture/refund.  
+**Onde:** `sm-core/.../payments/PaymentServiceImpl.java`  
+**Depende de:** T26  
+**Requisito:** INT-05
 
 **Gate:** `./mvnw test -pl sm-core -Dtest=*Payment* -DfailIfNoTests=false`
 
@@ -414,21 +414,21 @@ T43 ──→ T44 ──→ T45 ──→ T46 ──→ T47 ──→ T48
 
 ### T29: ShippingServiceImpl V2 routing + plugin test
 
-**What:** V2 routing; integration test MoneyOrder or StorePickup via bridge.  
-**Where:** `sm-core/.../shipping/ShippingServiceImpl.java`  
-**Depends on:** T27, T28  
-**Requirement:** INT-05, INT-06
+**O quê:** Roteamento V2; teste integração MoneyOrder ou StorePickup via bridge.  
+**Onde:** `sm-core/.../shipping/ShippingServiceImpl.java`  
+**Depende de:** T27, T28  
+**Requisito:** INT-05, INT-06
 
 **Milestone:** INT-ready
 
 ---
 
-### T30: P1 facade interface signatures
+### T30: Assinaturas interface facade P1
 
-**What:** Update 6 facade interfaces to tenant types.  
-**Where:** `sm-shop-model/.../facade/`  
-**Depends on:** T6  
-**Requirement:** FAC-01, FAC-02, FAC-03
+**O quê:** Atualizar 6 interfaces facade para tipos tenant.  
+**Onde:** `sm-shop-model/.../facade/`  
+**Depende de:** T6  
+**Requisito:** FAC-01, FAC-02, FAC-03
 
 **Gate:** `./mvnw compile -pl sm-shop-model`
 
@@ -436,37 +436,37 @@ T43 ──→ T44 ──→ T45 ──→ T46 ──→ T47 ──→ T48
 
 ### T31: OrderFacadeImpl + ShoppingCartFacadeImpl
 
-**What:** Implement bridge hydration in order/cart facades.  
-**Where:** `sm-shop/.../order/`, `.../shoppingCart/`  
-**Depends on:** T30, T5  
-**Requirement:** FAC-01
+**O quê:** Implementar hidratação bridge nas facades order/cart.  
+**Onde:** `sm-shop/.../order/`, `.../shoppingCart/`  
+**Depende de:** T30, T5  
+**Requisito:** FAC-01
 
 ---
 
 ### T32: SearchFacadeImpl + ShippingFacadeImpl
 
-**What:** Tenant types in search/shipping facades including Wave2 HTTP adapters.  
-**Where:** `sm-shop/.../search/`, `.../shipping/`  
-**Depends on:** T30  
-**Requirement:** FAC-02, FAC-04
+**O quê:** Tipos tenant nas facades search/shipping incluindo adapters HTTP Wave2.  
+**Onde:** `sm-shop/.../search/`, `.../shipping/`  
+**Depende de:** T30  
+**Requisito:** FAC-02, FAC-04
 
 ---
 
 ### T33: CategoryFacadeImpl + ProductCommonFacadeImpl
 
-**What:** Read-path migration to tenant types.  
-**Where:** `sm-shop/.../category/`, `.../product/`  
-**Depends on:** T30  
-**Requirement:** FAC-03
+**O quê:** Migração de caminhos de leitura para tipos tenant.  
+**Onde:** `sm-shop/.../category/`, `.../product/`  
+**Depende de:** T30  
+**Requisito:** FAC-03
 
 ---
 
-### T34: Controller call-site fixes
+### T34: Correções call-site controller
 
-**What:** Convert entity → tenant at facade invocation in affected controllers.  
-**Where:** `sm-shop/.../api/v1/`  
-**Depends on:** T31, T32, T33  
-**Requirement:** TNT-06
+**O quê:** Converter entidade → tenant na invocação facade nos controllers afetados.  
+**Onde:** `sm-shop/.../api/v1/`  
+**Depende de:** T31, T32, T33  
+**Requisito:** TNT-06
 
 **Gate:** `./mvnw compile -pl sm-shop -am`
 
@@ -474,146 +474,146 @@ T43 ──→ T44 ──→ T45 ──→ T46 ──→ T47 ──→ T48
 
 ### T35: ArchUnit facades_no_new_entity_params
 
-**What:** Fail build if new facade methods use MerchantStore/Language.  
-**Where:** `sm-shop-model/src/test/` or `sm-shop/src/test/`  
-**Depends on:** T34  
-**Requirement:** TNT-05
+**O quê:** Falhar build se novos métodos facade usam MerchantStore/Language.  
+**Onde:** `sm-shop-model/src/test/` ou `sm-shop/src/test/`  
+**Depende de:** T34  
+**Requisito:** TNT-05
 
 ---
 
 ### T36: ReferencesApi ReadableLanguage
 
-**What:** Wire language endpoints to ReadableLanguage DTOs.  
-**Where:** `sm-shop/.../references/ReferencesApi.java`  
-**Depends on:** T6  
-**Requirement:** REF-01, B-002
+**O quê:** Conectar endpoints language a DTOs ReadableLanguage.  
+**Onde:** `sm-shop/.../references/ReferencesApi.java`  
+**Depende de:** T6  
+**Requisito:** REF-01, B-002
 
 ---
 
-### T37: ReferencesApi ReadableCurrency + tests
+### T37: ReferencesApi ReadableCurrency + testes
 
-**What:** Wire currency endpoints; integration test.  
-**Where:** `ReferencesApi.java`, tests  
-**Depends on:** T36  
-**Requirement:** REF-02
+**O quê:** Conectar endpoints currency; teste de integração.  
+**Onde:** `ReferencesApi.java`, tests  
+**Depende de:** T36  
+**Requisito:** REF-02
 
-**Tests:** `ReferencesApiDtoTest`
+**Testes:** `ReferencesApiDtoTest`
 
 ---
 
 ### T38: FACADE-MIGRATION-PLAN.md
 
-**What:** Document all 76 facades with Wave 4–6 phase assignment.  
-**Where:** `docs/decomposition/FACADE-MIGRATION-PLAN.md`  
-**Depends on:** T35  
-**Requirement:** FAC-05, FAC-06
+**O quê:** Documentar todas as 76 facades com atribuição de fase Onda 4–6.  
+**Onde:** `docs/decomposition/FACADE-MIGRATION-PLAN.md`  
+**Depende de:** T35  
+**Requisito:** FAC-05, FAC-06
 
 ---
 
-### T39: CheckoutApplicationService interface
+### T39: Interface CheckoutApplicationService
 
-**What:** Define service + `CheckoutCommand`.  
-**Where:** `sm-core/.../checkout/`  
-**Depends on:** T16, T12  
-**Requirement:** CHK-01
-
----
-
-### T40: Extract orchestration from OrderFacadeImpl
-
-**What:** Move place-order logic to `CheckoutApplicationServiceImpl`.  
-**Where:** `sm-core/.../checkout/`, `sm-shop/.../OrderFacadeImpl.java`  
-**Depends on:** T39  
-**Requirement:** CHK-03, CHK-04
+**O quê:** Definir serviço + `CheckoutCommand`.  
+**Onde:** `sm-core/.../checkout/`  
+**Depende de:** T16, T12  
+**Requisito:** CHK-01
 
 ---
 
-### T41: Checkout parity integration tests
+### T40: Extrair orquestração de OrderFacadeImpl
 
-**What:** Assert happy path matches legacy behavior.  
-**Where:** `sm-core/src/test/.../checkout/`  
-**Depends on:** T40  
-**Requirement:** CHK-04, CHK-05
-
-**Tests:** `CheckoutApplicationServicePlaceOrderTest`
+**O quê:** Mover lógica place-order para `CheckoutApplicationServiceImpl`.  
+**Onde:** `sm-core/.../checkout/`, `sm-shop/.../OrderFacadeImpl.java`  
+**Depende de:** T39  
+**Requisito:** CHK-03, CHK-04
 
 ---
 
-### T42: OrderFacadeImpl thin delegation
+### T41: Testes integração paridade checkout
 
-**What:** Remove duplicated orchestration; facade maps DTOs only.  
-**Where:** `OrderFacadeImpl.java`  
-**Depends on:** T41  
-**Requirement:** CHK-02, CHK-03
+**O quê:** Assertar que happy path bate com comportamento legacy.  
+**Onde:** `sm-core/src/test/.../checkout/`  
+**Depende de:** T40  
+**Requisito:** CHK-04, CHK-05
+
+**Testes:** `CheckoutApplicationServicePlaceOrderTest`
 
 ---
 
-### T43: OrderApi regression sweep
+### T42: Delegação fina OrderFacadeImpl
 
-**What:** Run order-related tests; fix regressions.  
-**Depends on:** T42  
-**Requirement:** CHK-05, CHK-06
+**O quê:** Remover orquestração duplicada; facade mapea apenas DTOs.  
+**Onde:** `OrderFacadeImpl.java`  
+**Depende de:** T41  
+**Requisito:** CHK-02, CHK-03
+
+---
+
+### T43: Varredura regressão OrderApi
+
+**O quê:** Executar testes relacionados a order; corrigir regressões.  
+**Depende de:** T42  
+**Requisito:** CHK-05, CHK-06
 
 **Milestone:** CHK-ready  
 **Gate:** `./mvnw test -pl sm-shop,sm-core -Dtest=*Order* -DfailIfNoTests=false`
 
 ---
 
-### T44: CHECKOUT_OUTBOX schema + repository
+### T44: Schema CHECKOUT_OUTBOX + repository
 
-**What:** Migration script + JPA/JDBC repository.  
-**Where:** `sm-core/.../checkout/outbox/`  
-**Depends on:** T43  
-**Requirement:** SAG-01
-
----
-
-### T45: Staged checkout with outbox writes
-
-**What:** Emit outbox events per stage in CAS when flag enabled.  
-**Where:** `CheckoutApplicationServiceImpl.java`  
-**Depends on:** T44, T15  
-**Requirement:** SAG-02, SAG-03
+**O quê:** Script de migração + repository JPA/JDBC.  
+**Onde:** `sm-core/.../checkout/outbox/`  
+**Depende de:** T43  
+**Requisito:** SAG-01
 
 ---
 
-### T46: Outbox payload uses OrderSnapshot JSON
+### T45: Checkout em estágios com escritas outbox
 
-**What:** Serialize snapshot fragments in outbox payload column.  
-**Where:** outbox event builder  
-**Depends on:** T45  
-**Requirement:** SAG-02
-
----
-
-### T47: checkout.outbox.enabled flag + dispatcher
-
-**What:** Property default false; scheduled dispatcher marks processed.  
-**Where:** `application.properties`, dispatcher bean  
-**Depends on:** T46  
-**Requirement:** SAG-04, SAG-05
-
-**Tests:** `CheckoutOutboxIntegrationTest` (flag on/off)
+**O quê:** Emitir eventos outbox por estágio no CAS quando flag habilitada.  
+**Onde:** `CheckoutApplicationServiceImpl.java`  
+**Depende de:** T44, T15  
+**Requisito:** SAG-02, SAG-03
 
 ---
 
-### T48: Reactor gate + STATE.md + ArchUnit contracts
+### T46: Payload outbox usa JSON OrderSnapshot
 
-**What:** Full build; update STATE; add `ContractsMustNotDependOnCoreModel`.  
-**Depends on:** T20, T29, T38, T47  
-**Requirement:** GAT-01, GAT-02, GAT-03, CTR-01
+**O quê:** Serializar fragmentos snapshot na coluna payload outbox.  
+**Onde:** outbox event builder  
+**Depende de:** T45  
+**Requisito:** SAG-02
 
-**Done when:**
-- [ ] `./mvnw clean install` green
-- [ ] STATE.md lists Wave 3 complete
-- [ ] B-001 partial, B-002 resolved
+---
+
+### T47: Flag checkout.outbox.enabled + dispatcher
+
+**O quê:** Property default false; dispatcher agendado marca processado.  
+**Onde:** `application.properties`, dispatcher bean  
+**Depende de:** T46  
+**Requisito:** SAG-04, SAG-05
+
+**Testes:** `CheckoutOutboxIntegrationTest` (flag on/off)
+
+---
+
+### T48: Gate reactor + STATE.md + ArchUnit contracts
+
+**O quê:** Build completo; atualizar STATE; adicionar `ContractsMustNotDependOnCoreModel`.  
+**Depende de:** T20, T29, T38, T47  
+**Requisito:** GAT-01, GAT-02, GAT-03, CTR-01
+
+**Concluído quando:**
+- [ ] `./mvnw clean install` verde
+- [ ] STATE.md lista Onda 3 completa
+- [ ] B-001 parcial, B-002 resolvido
 
 **Gate:** `./mvnw clean install`  
-**Milestone:** Wave 3 complete
+**Marco:** Onda 3 completa
 
 ---
 
-## Compozy mapping
+## Mapeamento Compozy
 
 | Compozy | TLC |
 | ------- | --- |
@@ -630,21 +630,22 @@ T43 ──→ T44 ──→ T45 ──→ T46 ──→ T47 ──→ T48
 
 ---
 
-## Parallel Execution Map
+## Mapa de execução paralela
 
 ```
-Phase 1: Wave2-T54 → T1 → T2 → T3 → T4 → T5 → T6
+Fase 1: Wave2-T54 → T1 → T2 → T3 → T4 → T5 → T6
 
-Phase 2 (4 tracks after T6):
+Fase 2 (4 tracks após T6):
   Snapshots:  T7 → T8 → T9 → T10 → T11 → T12
   Order/Cust: T13 → T14 → T15 → T16
-  Integration: T21 → T22 → T23 → T24 → T25 → T26 → T27 → T28 → T29
+  Integração: T21 → T22 → T23 → T24 → T25 → T26 → T27 → T28 → T29
   Facades:    T30 → T31 → T32 → T33 → T34 → T35 → T36 → T37 → T38
-  Search:     T17 → T18 → T19 → T20 (after T12)
+  Search:     T17 → T18 → T19 → T20 (após T12)
 
-Phase 3: T39 → T40 → T41 → T42 → T43
+Fase 3: T39 → T40 → T41 → T42 → T43
 
-Phase 4: T44 → T45 → T46 → T47 → T48
+Fase 4: T44 → T45 → T46 → T47 → T48
 ```
 
-**Subagent rule:** Tracks in Phase 2 may run in parallel after T6. Convergence tasks T39+ require SNP-ready + INT-ready + facade compile.
+**Regra subagent:** Tracks na Fase 2 podem rodar em paralelo após T6. Tasks de convergência T39+ exigem SNP-ready + INT-ready + facade compilando.
+

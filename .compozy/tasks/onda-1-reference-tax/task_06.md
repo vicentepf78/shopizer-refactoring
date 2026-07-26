@@ -7,7 +7,7 @@ complexity: high
 
 # reference-service Boot, facades e REST
 
-## Overview
+## Visão geral
 Consolida TLC T13–T15. Entrega o executável `reference-service` (porta 8081) com facades/populators retornando DTOs de contracts e os 5 endpoints públicos espelhados (`/country`, `/zones`, `/languages`, `/currency`, `/measures`) — TechSpec **Ordem de build** passo 6 e **Endpoints da API** reference-service. Sem JWT nas rotas P1.
 
 <critical>
@@ -28,17 +28,17 @@ Consolida TLC T13–T15. Entrega o executável `reference-service` (porta 8081) 
 7. SHOULD incluir Ehcache local alinhado ao comportamento atual (TechSpec **Decisões-chave**).
 </requirements>
 
-## Subtasks
+## Subtarefas
 - [x] 6.1 Scaffold Boot app + packaging + health mínimo
 - [x] 6.2 Portar facades e populators (Country/Zone/Language/Currency)
 - [x] 6.3 Implementar `ReferencesController` com 5 endpoints
 - [x] 6.4 Garantir respostas só-DTO (incl. `ReadableCurrency`)
 - [x] 6.5 IT de API: 5 endpoints + zones desconhecido → 200 `[]`
 
-## Implementation Details
+## Detalhes de implementação
 Ver TechSpec: **Endpoints da API** (reference-service), **Configuração** (`server.port=8081`), **Abordagem de testes** (IT reference-service), **Ordem de build** passo 6. Reutilizar comportamento de `ReferencesApi` do monolito como espelho de paths.
 
-### Relevant Files
+### Arquivos relevantes
 - `sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/references/ReferencesApi.java` — paths a espelhar
 - `sm-shop/src/main/java/com/salesmanager/shop/store/controller/country/facade/CountryFacadeImpl.java` — fonte facade
 - `sm-shop/src/main/java/com/salesmanager/shop/store/controller/zone/facade/ZoneFacadeImpl.java` — fonte facade
@@ -48,23 +48,23 @@ Ver TechSpec: **Endpoints da API** (reference-service), **Configuração** (`ser
 - `sm-reference-core/` — services/repos (task_04)
 - `shopizer-api-contracts/` — DTOs wire
 
-### Dependent Files
+### Arquivos dependentes
 - `reference-service/` — novo módulo (a criar)
 - Root `pom.xml` — registrar módulo
 - Consumers futuros: tax-service client e adapters Strangler (task_07/task_08)
 
-### Related ADRs
+### ADRs relacionados
 - [ADR-001: TLC-sourced Compozy PRD for Wave 1 Reference+Tax](adrs/adr-001.md) — piloto reference
 - [ADR-005: Contract DTOs / no JPA in REST responses; Pact](adrs/adr-005.md) — respostas DTO-only
 - [ADR-006: GeoZone excluded from Wave 1](adrs/adr-006.md) — não expor GeoZone
 
-## Deliverables
+## Entregáveis
 - JAR executable `reference-service` na 8081
 - 5 endpoints públicos com JSON DTO
 - Unit tests de facades + IT de API com 80%+ coverage **(REQUIRED)**
 - `GET /actuator/health` UP no contexto mínimo **(REQUIRED)**
 
-## Tests
+## Testes
 - Unit tests:
   - [x] LanguageFacade retorna `ReadableLanguage` só com id/code/sortOrder
   - [x] CurrencyFacade retorna `ReadableCurrency` (não entidade Currency)
@@ -78,7 +78,7 @@ Ver TechSpec: **Endpoints da API** (reference-service), **Configuração** (`ser
 - Test coverage target: >=80%
 - All tests must pass
 
-## Success Criteria
+## Critérios de sucesso
 - All tests passing
 - Test coverage >=80%
 - `./mvnw package -pl reference-service` produz jar

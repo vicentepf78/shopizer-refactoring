@@ -7,7 +7,7 @@ complexity: high
 
 # content-service Boot, JWT, REST e APIs internas (C-ready)
 
-## Overview
+## Visão geral
 Consolida TLC T8–T16. Entrega o app Spring Boot `content-service` (:8083) com JWT em `/private/**`, cliente Reference da Onda 1, controllers pages/boxes/files/admin, facade/mappers e APIs internas static+logo — marco **C-ready**. Desbloqueia clients merchant/logo e o proxy estático do BFF.
 
 <critical>
@@ -29,7 +29,7 @@ Consolida TLC T8–T16. Entrega o app Spring Boot `content-service` (:8083) com 
 8. MUST passar testes de integração do módulo content-service.
 </requirements>
 
-## Subtasks
+## Subtarefas
 - [x] 3.1 Scaffold Boot + health actuator (T8)
 - [x] 3.2 Security JWT private/public (T9)
 - [x] 3.3 ReferenceServiceClient HTTP (T10)
@@ -38,17 +38,17 @@ Consolida TLC T8–T16. Entrega o app Spring Boot `content-service` (:8083) com 
 - [x] 3.6 Port ContentFacade + mappers (T16)
 - [x] 3.7 Suite de integração do módulo
 
-## Implementation Details
+## Detalhes de implementação
 Ver TechSpec: **Endpoints content-service**, **Pontos de integração** (content→reference), **Ordem de construção** passos 9–13. Paths espelham `ContentApi` / `ContentAdministrationApi` no sm-shop.
 
-### Relevant Files
+### Arquivos relevantes
 - `sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/content/ContentApi.java` — contrato de paths
 - `sm-shop/src/main/java/com/salesmanager/shop/store/facade/content/ContentFacadeImpl.java` — facade a portar
 - `sm-shop-model/src/main/java/com/salesmanager/shop/store/controller/content/facade/ContentFacade.java` — interface
 - `sm-content-core/` — deps de domínio (task_02)
 - `shopizer-api-contracts/.../content/` — DTOs (task_01)
 
-### Dependent Files
+### Arquivos dependentes
 - `content-service/pom.xml` — novo módulo Boot
 - `content-service/.../ContentServiceApplication.java` — entrypoint
 - `content-service/.../security/` — JWT
@@ -57,18 +57,18 @@ Ver TechSpec: **Endpoints content-service**, **Pontos de integração** (content
 - `content-service/.../facade/content/` — facade portada
 - `content-service/.../client/` — ReferenceServiceClient
 
-### Related ADRs
+### ADRs relacionados
 - [ADR-005: APIs internas e X-Internal-Token](adrs/adr-005.md) — `/internal/v1/**`
 - [ADR-008: Colocalização content](adrs/adr-008.md) — DB + blobs
 - [ADR-011: Preservar stubs deprecated](adrs/adr-011.md) — paridade stubs
 
-## Deliverables
+## Entregáveis
 - `content-service` implantável na porta 8083
 - Superfície REST P1 + internas C-ready
 - Unit tests com 80%+ coverage de facade/clients **(REQUIRED)**
 - Integration tests pages/boxes/files/admin/internal/security **(REQUIRED)**
 
-## Tests
+## Testes
 - Unit tests:
   - [x] Facade retorna DTOs contracts (não entidades JPA)
   - [x] ReferenceServiceClient resolve language por code (mock HTTP)
@@ -82,7 +82,7 @@ Ver TechSpec: **Endpoints content-service**, **Pontos de integração** (content
 - Test coverage target: >=80%
 - All tests must pass
 
-## Success Criteria
+## Critérios de sucesso
 - All tests passing
 - Test coverage >=80%
 - Marco **C-ready** atingido (static + logo internos)

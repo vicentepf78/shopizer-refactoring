@@ -1,46 +1,46 @@
 ---
 status: pending
-title: Shipping plugins + orchestrator + catalog client
+title: Plugins frete + orquestrador + client catálogo
 type: backend
 complexity: high
 ---
 
-# Shipping plugins + orchestrator + catalog client
+# Plugins frete + orquestrador + client catálogo
 
-## Overview
-Consolidates TLC T12–T16. Moves shipping plugins and packaging to `sm-integration-core`, adds V2 adapter, implements `CatalogServiceClient` for `ShippingProductSnapshot`, and extracts `ShippingOrchestratorImpl` from `ShippingServiceImpl`.
+## Visão geral
+Consolida TLC T12–T16. Move plugins de frete e empacotamento para `sm-integration-core`, adiciona adaptador V2, implementa `CatalogServiceClient` para `ShippingProductSnapshot` e extrai `ShippingOrchestratorImpl` de `ShippingServiceImpl`.
 
 <critical>
-- ALWAYS READ the PRD and TechSpec before starting
-- Onda 4 partial catalog read API MUST exist before catalog client implementation
-- TESTS REQUIRED — every task MUST include tests in deliverables
+- SEMPRE LER o PRD e a TechSpec antes de iniciar
+- API de leitura parcial de catálogo da Onda 4 MUST existir antes da implementação do client catálogo
+- TESTES OBRIGATÓRIOS — toda task DEVE incluir testes nos entregáveis
 </critical>
 
 <requirements>
-1. MUST relocate shipping `impl/*`, `DefaultPackagingImpl`, preprocessors — T12.
-2. MUST implement `ShippingQuoteModuleV2Adapter` — T13.
-3. MUST implement HTTP client for catalog shipping snapshots — T14.
-4. MUST extract quote assembly, `requiresShipping`, metadata to orchestrator — T15.
-5. MUST use `ReferenceServiceClient` for country list — SHP-03.
-6. MUST implement GAP-INT-01 fallback with WARN when catalog unavailable.
-7. MUST achieve S-ready JaCoCo ≥70% on shipping orchestrator — T16.
+1. MUST relocar shipping `impl/*`, `DefaultPackagingImpl`, preprocessors — T12.
+2. MUST implementar `ShippingQuoteModuleV2Adapter` — T13.
+3. MUST implementar client HTTP para snapshots de frete do catálogo — T14.
+4. MUST extrair montagem de cotação, `requiresShipping`, metadata para orquestrador — T15.
+5. MUST usar `ReferenceServiceClient` para lista de países — SHP-03.
+6. MUST implementar fallback GAP-INT-01 com WARN quando catálogo indisponível.
+7. MUST atingir JaCoCo S-ready ≥70% no orquestrador de frete — T16.
 </requirements>
 
-## Subtasks
-- [ ] 4.1 Move shipping plugins + packaging (T12)
-- [ ] 4.2 V2 adapter (T13)
-- [ ] 4.3 `CatalogServiceClient` + WireMock test (T14)
+## Subtarefas
+- [ ] 4.1 Mover plugins de frete + empacotamento (T12)
+- [ ] 4.2 Adaptador V2 (T13)
+- [ ] 4.3 `CatalogServiceClient` + teste WireMock (T14)
 - [ ] 4.4 `ShippingOrchestratorImpl` (T15)
-- [ ] 4.5 S-ready coverage (T16)
+- [ ] 4.5 Cobertura S-ready (T16)
 
-## Related ADRs
-- [ADR-007](adrs/adr-007.md) — catalog HTTP
+## ADRs relacionados
+- [ADR-007](adrs/adr-007.md) — HTTP catálogo
 
-## Deliverables
-- Shipping orchestrator + plugins in sm-integration-core
-- Catalog client with fallback
-- Tests: quote with 2 modules, empty digital cart **(REQUIRED)**
+## Entregáveis
+- Orquestrador de frete + plugins em sm-integration-core
+- Client catálogo com fallback
+- Testes: cotação com 2 módulos, carrinho digital vazio **(REQUIRED)**
 
-## Success Criteria
-- S-ready milestone met
-- Quote test uses HTTP catalog fixture, not in-process PricingService
+## Critérios de sucesso
+- Marco S-ready atingido
+- Teste de cotação usa fixture HTTP de catálogo, não PricingService in-process

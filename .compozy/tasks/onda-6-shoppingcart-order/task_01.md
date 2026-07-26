@@ -1,63 +1,63 @@
 ---
 status: pending
-title: Gate Ondas 3–5 + Wave6 contracts and Strangler config
+title: Gate Ondas 3–5 + contratos Wave6 e config Strangler
 type: backend
 complexity: medium
 ---
 
-# Gate Ondas 3–5 + Wave6 contracts and Strangler config
+# Gate Ondas 3–5 + contratos Wave6 e config Strangler
 
-## Overview
-Consolidates TLC T1–T5, T46–T51. Verifies Ondas 3–5 gate; delivers cart/order/checkout DTOs and HTTP clients in `shopizer-api-contracts`; Wave6 Strangler profile and RestTemplate client stubs in sm-shop.
+## Visão geral
+Consolida TLC T1–T5, T46–T51. Verifica gate Ondas 3–5; entrega DTOs cart/order/checkout e clients HTTP em `shopizer-api-contracts`; profile Strangler Wave6 e stubs RestTemplate no sm-shop.
 
 <critical>
-- ALWAYS READ the PRD and TechSpec before starting
-- REFERENCE TECHSPEC for implementation details — do not duplicate here
-- FOCUS ON "WHAT" — describe what needs to be accomplished, not how
-- MINIMIZE CODE — show code only to illustrate current structure or problem areas
-- TESTS REQUIRED — every task MUST include tests in deliverables
+- SEMPRE LER o PRD e a TechSpec antes de iniciar
+- CONSULTAR a TechSpec para detalhes de implementação — não duplicar aqui
+- FOCAR NO "O QUÊ" — descrever o que precisa ser feito, não como
+- MINIMIZAR CÓDIGO — mostrar código só para ilustrar estrutura atual ou áreas problemáticas
+- TESTES OBRIGATÓRIOS — toda task DEVE incluir testes nos entregáveis
 </critical>
 
 <requirements>
-1. MUST add `scripts/wave6-gate.sh` verifying Ondas 3–5 artifacts and green tests — TLC T1.
-2. MUST add cart/order/checkout DTOs (`CartLineSnapshot`, `OrderSnapshot`, `CartTotalsRequest/Response`, `CheckoutCommitRequest/Response`) — TLC T2, T46, T47.
-3. MUST add client interfaces `ShoppingCartServiceClient`, `OrderServiceClient`, `CartTotalsClient`, `CheckoutCommitClient` — TLC T3.
-4. MUST add profile `strangler-wave6`, properties `wave6.*`, three strangler flags + `wave6.totals.http.enabled` — TLC T5.
-5. MUST implement RestTemplate stubs for all Wave6 clients — TLC T48–T51.
-6. MUST NOT import `com.salesmanager.core.model` in contracts.
-7. MUST NOT start without Ondas 3–5 gate passing.
+1. MUST adicionar `scripts/wave6-gate.sh` verificando artefatos Ondas 3–5 e testes verdes — TLC T1.
+2. MUST adicionar DTOs cart/order/checkout (`CartLineSnapshot`, `OrderSnapshot`, `CartTotalsRequest/Response`, `CheckoutCommitRequest/Response`) — TLC T2, T46, T47.
+3. MUST adicionar interfaces client `ShoppingCartServiceClient`, `OrderServiceClient`, `CartTotalsClient`, `CheckoutCommitClient` — TLC T3.
+4. MUST adicionar profile `strangler-wave6`, properties `wave6.*`, três flags strangler + `wave6.totals.http.enabled` — TLC T5.
+5. MUST implementar stubs RestTemplate para todos os clients Wave6 — TLC T48–T51.
+6. MUST NOT importar `com.salesmanager.core.model` nos contracts.
+7. MUST NOT iniciar sem gate Ondas 3–5 passando.
 </requirements>
 
-## Subtasks
-- [ ] 1.1 Gate script + STATE.md prerequisite note (T1)
-- [ ] 1.2 DTO packages in shopizer-api-contracts (T2, T46, T47)
-- [ ] 1.3 Client interfaces (T3)
-- [ ] 1.4 Checkout saga DTOs (T4)
+## Subtarefas
+- [ ] 1.1 Script de gate + nota de pré-requisito em STATE.md (T1)
+- [ ] 1.2 Pacotes DTO em shopizer-api-contracts (T2, T46, T47)
+- [ ] 1.3 Interfaces client (T3)
+- [ ] 1.4 DTOs saga checkout (T4)
 - [ ] 1.5 Wave6ClientConfig + properties (T5)
-- [ ] 1.6 RestTemplate client stubs (T48–T51)
+- [ ] 1.6 Stubs client RestTemplate (T48–T51)
 
-## Implementation Details
-See TechSpec: **Key interfaces**, **Configuration**. Reuse Wave1/Wave2 `WaveNClientConfig` pattern. Extend Onda 3 snapshot types where they already exist.
+## Detalhes de implementação
+Ver TechSpec: **Interfaces principais**, **Configuração**. Reutilizar padrão `WaveNClientConfig`. Estender tipos snapshot da Onda 3 onde já existirem.
 
-### Relevant Files
-- `shopizer-api-contracts/` — new cart/order/checkout packages
-- `sm-shop/.../strangler/config/Wave6ClientConfig.java` — to create
-- `sm-shop/src/main/resources/application-strangler-wave6.properties` — to create
-- `scripts/wave6-gate.sh` — to create
+### Arquivos relevantes
+- `shopizer-api-contracts/` — novos pacotes cart/order/checkout
+- `sm-shop/.../strangler/config/Wave6ClientConfig.java` — a criar
+- `sm-shop/src/main/resources/application-strangler-wave6.properties` — a criar
+- `scripts/wave6-gate.sh` — a criar
 
-### Related ADRs
-- [ADR-001: One workflow](adrs/adr-001.md)
+### ADRs relacionados
+- [ADR-001: Um workflow](adrs/adr-001.md)
 - [ADR-008: Feature flags](adrs/adr-008.md)
 
-## Deliverables
-- Gate script + contracts + Wave6 config
-- Unit tests: DTO serialization, Wave6ClientConfig **(REQUIRED)**
+## Entregáveis
+- Script de gate + contracts + config Wave6
+- Testes unitários: serialização DTO, Wave6ClientConfig **(REQUIRED)**
 
-## Tests
+## Testes
 - Unit: `Wave6ContractsSerializationTest`, `Wave6ClientConfigTest`
 - Gate: `./scripts/wave6-gate.sh && ./mvnw test -pl shopizer-api-contracts,sm-shop -Dtest=Wave6*Test`
 
-## Success Criteria
-- Gate script exits 0
-- Contracts compile isolated
-- All Wave6 tests passing
+## Critérios de sucesso
+- Script de gate sai com 0
+- Contracts compilam isolados
+- Todos os testes Wave6 passando

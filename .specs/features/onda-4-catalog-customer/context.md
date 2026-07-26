@@ -1,27 +1,27 @@
-# OQ Resolutions — Onda 4 Design (2026-07-26)
+# Resoluções OQ — Design Onda 4 (2026-07-26)
 
-Decisions confirmed for Specify/Design assuming Wave 3 (contracts) is complete. Details in `design.md`.
+Decisões confirmadas para Specify/Design assumindo Onda 3 (contratos) completa. Detalhes em `design.md`.
 
-| ID | Decision | Choice |
+| ID | Decisão | Escolha |
 |----|----------|--------|
-| **OQ-01** | Catalog extraction phasing | **Read APIs first; admin writes stay in monolith** (Option A) |
-| **OQ-02** | Cross-service product contract | **`ProductSnapshot` canonical**; migrate `ProductIndexPayload` → snapshot v2 (Option A) |
-| **OQ-03** | Customer vs cart boundary | **`CustomerSnapshot` + monolith-orchestrated merge**; no shopping-cart service in Wave 4 (Option B) |
-| **OQ-04** | Product images / digital files | **Extend content-service** with `productFileManager` paths; catalog calls content HTTP (Option A) |
-| **OQ-05** | Catalog facade consolidation | **Strangler on existing V1 paths**; V2 mapper paths delegate same HTTP adapter (Option A) |
-| **OQ-06** | Customer auth endpoints | **Login/register/password reset remain in monolith**; customer-service owns profile CRUD only (Option A) |
+| **OQ-01** | Faseamento da extração de catálogo | **APIs de leitura primeiro; writes admin permanecem no monólito** (Opção A) |
+| **OQ-02** | Contrato cross-service de produto | **`ProductSnapshot` canônico**; migrar `ProductIndexPayload` → snapshot v2 (Opção A) |
+| **OQ-03** | Fronteira customer vs cart | **`CustomerSnapshot` + merge orquestrado no monólito**; sem shopping-cart service na Onda 4 (Opção B) |
+| **OQ-04** | Imagens de produto / arquivos digitais | **Estender content-service** com paths `productFileManager`; catalog chama content HTTP (Opção A) |
+| **OQ-05** | Consolidação de facades de catálogo | **Strangler nos paths V1 existentes**; paths mapper V2 delegam o mesmo adaptador HTTP (Opção A) |
+| **OQ-06** | Endpoints de auth de customer | **Login/registro/reset de senha permanecem no monólito**; customer-service possui apenas CRUD de perfil (Opção A) |
 
-**Additional Design decisions:**
+**Decisões adicionais de Design:**
 
-| ID | Decision |
+| ID | Decisão |
 |----|----------|
-| AD-015 | One TLC/Compozy workflow for Catalog + Customer (same window, shared Strangler profile) |
-| AD-016 | `sm-catalog-core` thin JAR — read services + mappers; writes stay in monolith `sm-core` |
-| AD-017 | `sm-customer-core` thin JAR — customer domain without order/cart transaction coupling |
-| AD-018 | `catalog-service` exposes `GET /internal/v1/products/{id}/snapshot` for search/BFF producers |
-| AD-019 | Cart merge: `CustomerServiceClient.resolveForMerge(customerId, storeCode)` returns `CustomerSnapshot`; `ShoppingCartService.mergeShoppingCarts` stays monolith |
-| AD-020 | Admin product mutations (POST/PUT/DELETE private product APIs) **not** routed to catalog-service in Wave 4 |
-| AD-021 | `LanguageCode` / `MerchantStoreId` value types from Wave 3 required on all new HTTP boundaries |
-| AD-022 | Shared DB schema (AD-003) continues; no per-service DB split in Wave 4 |
+| AD-015 | Um workflow TLC/Compozy para Catalog + Customer (mesma janela, profile Strangler compartilhado) |
+| AD-016 | JAR thin `sm-catalog-core` — serviços de leitura + mappers; writes permanecem em `sm-core` do monólito |
+| AD-017 | JAR thin `sm-customer-core` — domínio customer sem acoplamento transacional order/cart |
+| AD-018 | `catalog-service` expõe `GET /internal/v1/products/{id}/snapshot` para producers search/BFF |
+| AD-019 | Merge de carrinho: `CustomerServiceClient.resolveForMerge(customerId, storeCode)` retorna `CustomerSnapshot`; `ShoppingCartService.mergeShoppingCarts` permanece no monólito |
+| AD-020 | Mutações admin de produto (POST/PUT/DELETE APIs privadas de produto) **não** roteadas para catalog-service na Onda 4 |
+| AD-021 | Value types `LanguageCode` / `MerchantStoreId` da Onda 3 exigidos em todas as novas fronteiras HTTP |
+| AD-022 | Schema DB compartilhado (AD-003) continua; sem split DB-per-service na Onda 4 |
 
-**Status:** Ready for Tasks
+**Status:** Pronto para Tasks

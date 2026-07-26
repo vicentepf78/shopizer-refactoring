@@ -1,26 +1,26 @@
 # TechSpec: Onda 4 — Catalog + Customer
 
 **PRD:** [_prd.md](_prd.md)
-**Authoritative TLC design:** `.specs/features/onda-4-catalog-customer/design.md`
-**Feature slug:** `onda-4-catalog-customer`
-**Date:** 2026-07-26
-**Status:** Ready for `cy-create-tasks` / Execute (blocked on Onda 3)
+**Design TLC autoritativo:** `.specs/features/onda-4-catalog-customer/design.md`
+**Slug da feature:** `onda-4-catalog-customer`
+**Data:** 2026-07-26
+**Status:** Pronto para `cy-create-tasks` / Execute (bloqueado na Onda 3)
 
 ---
 
-## Executive summary
+## Resumo executivo
 
-Wave 4 extracts **two Spring Boot services** — `catalog-service` (:8086) and `customer-service` (:8087) — while `sm-shop` remains the **Strangler BFF**. Shared MySQL schema continues (AD-003/AD-022). DTOs extend `shopizer-api-contracts` with `ProductSnapshot` v2 and `CustomerSnapshot` v1. Thin cores `sm-catalog-core` and `sm-customer-core` hold read/catalog and customer domain logic respectively.
+A Onda 4 extrai **dois serviços Spring Boot** — `catalog-service` (:8086) e `customer-service` (:8087) — enquanto `sm-shop` permanece o **Strangler BFF**. O schema MySQL compartilhado continua (AD-003/AD-022). DTOs estendem `shopizer-api-contracts` com `ProductSnapshot` v2 e `CustomerSnapshot` v1. Thin cores `sm-catalog-core` e `sm-customer-core` concentram lógica de domínio de leitura de catálogo e customer respectivamente.
 
-**Primary trade-off:** Catalog **read-only** at the service boundary (ADR-002, AD-006) to respect afferent coupling 10/10, accepting dual write/read paths until a later wave. **Cart merge** stays monolith-orchestrated with `CustomerSnapshot` HTTP (ADR-005) rather than extracting shopping cart.
+**Trade-off principal:** Catálogo **read-only** na fronteira do serviço (ADR-002, AD-006) para respeitar acoplamento aferente 10/10, aceitando caminhos dual write/read até onda posterior. **Merge de carrinho** permanece orquestrado no monólito com HTTP `CustomerSnapshot` (ADR-005) em vez de extrair shopping cart.
 
-**Hard prerequisite:** Onda 3 complete — `ProductSnapshot`, `CustomerSnapshot`, `LanguageCode`, `MerchantStoreId` in contracts.
+**Pré-requisito rígido:** Onda 3 completa — `ProductSnapshot`, `CustomerSnapshot`, `LanguageCode`, `MerchantStoreId` nos contratos.
 
 ---
 
-## System architecture
+## Arquitetura do sistema
 
-### Component diagram
+### Diagrama de componentes
 
 ```mermaid
 flowchart TB
@@ -66,33 +66,33 @@ flowchart TB
     CUS --> REF & DB
 ```
 
-| Component | Responsibility | Boundary |
+| Componente | Responsabilidade | Fronteira |
 | --------- | -------------- | -------- |
-| `shopizer-api-contracts` | Snapshots, catalog/customer DTOs, clients | No JPA |
-| `sm-catalog-core` | Read catalog services + repos + mappers | No admin writes |
-| `catalog-service` | Public GET REST + internal ProductSnapshot | Port 8086 |
-| `sm-customer-core` | Customer, optin, attribute services | No order-create txn |
-| `customer-service` | Profile REST + internal CustomerSnapshot | Port 8087; JWT private |
-| Strangler adapters | HTTP delegation read/profile only | `wave4.strangler.enabled` |
-| Monolith writes | Admin product CRUD + search producer | AD-006 |
+| `shopizer-api-contracts` | Snapshots, DTOs catalog/customer, clients | Sem JPA |
+| `sm-catalog-core` | Serviços de leitura de catálogo + repos + mappers | Sem writes admin |
+| `catalog-service` | REST GET público + ProductSnapshot interno | Porta 8086 |
+| `sm-customer-core` | Serviços customer, optin, attribute | Sem txn order-create |
+| `customer-service` | REST profile + CustomerSnapshot interno | Porta 8087; JWT private |
+| Adaptadores Strangler | Delegação HTTP somente read/profile | `wave4.strangler.enabled` |
+| Writes monólito | Admin product CRUD + producer de busca | AD-006 |
 
-### Principles
+### Princípios
 
-1. Frozen REST paths (STR-04)
-2. No JPA in JSON; DTOs in contracts
-3. Mappers in services/cores (L-002)
+1. Caminhos REST congelados (STR-04)
+2. Sem JPA no JSON; DTOs nos contratos
+3. Mappers nos serviços/cores (L-002)
 4. RestTemplate + `wave4.*.base-url` (AD-005)
-5. JWT on private customer routes
-6. Catalog read-only service boundary (ADR-002)
-7. ProductSnapshot v2 canonical (ADR-003)
-8. CustomerSnapshot for merge (ADR-005)
-9. LanguageCode / MerchantStoreId on HTTP (Wave 3)
+5. JWT em rotas private de customer
+6. Fronteira read-only de catálogo no serviço (ADR-002)
+7. ProductSnapshot v2 canônico (ADR-003)
+8. CustomerSnapshot para merge (ADR-005)
+9. LanguageCode / MerchantStoreId no HTTP (Onda 3)
 
 ---
 
-## Implementation design
+## Design de implementação
 
-### Key interfaces
+### Interfaces principais
 
 ```java
 // shopizer-api-contracts
@@ -113,14 +113,14 @@ public interface CustomerServiceClient {
 ```
 
 ```java
-// sm-core — merge refactor
+// sm-core — refatoração de merge
 public interface ShoppingCartService {
   ShoppingCart mergeShoppingCarts(ShoppingCart sessionCart, ShoppingCart userCart,
       CustomerSnapshot customer, MerchantStoreId store);
 }
 ```
 
-### Data models
+### Modelos de dados
 
 #### ProductSnapshot v2 (contracts)
 
@@ -147,32 +147,32 @@ public interface ShoppingCartService {
 | `email`, `firstName`, `lastName` | String | |
 | `billingAddressId`, `deliveryAddressId` | Long | optional |
 
-### API endpoints
+### Endpoints de API
 
 #### catalog-service (:8086)
 
-| Area | Paths | Auth |
+| Área | Paths | Auth |
 | ---- | ----- | ---- |
-| Products | Mirror `ProductApi` **GET** | public |
-| Categories | Mirror `CategoryApi` GET | public |
-| Manufacturers | GET routes | public |
-| Inventory/Price | GET routes | public/JWT |
+| Products | Espelha `ProductApi` **GET** | public |
+| Categories | Espelha `CategoryApi` GET | public |
+| Manufacturers | Rotas GET | public |
+| Inventory/Price | Rotas GET | public/JWT |
 | Internal | `GET /internal/v1/products/{id}/snapshot` | network |
 
-**Not routed:** private product POST/PUT/DELETE.
+**Não roteado:** POST/PUT/DELETE privado de produto.
 
 #### customer-service (:8087)
 
-| Area | Paths | Auth |
+| Área | Paths | Auth |
 | ---- | ----- | ---- |
-| Profile | customer profile GET/PUT | JWT |
-| Addresses | address CRUD | JWT |
-| Opt-in | newsletter endpoints | per monolith |
+| Profile | profile GET/PUT de customer | JWT |
+| Addresses | CRUD de endereços | JWT |
+| Opt-in | endpoints newsletter | per monolith |
 | Internal | `GET /internal/v1/customers/{id}/snapshot` | network |
 
-**Not routed:** `AuthenticateCustomerApi`.
+**Não roteado:** `AuthenticateCustomerApi`.
 
-### Strangler configuration
+### Configuração Strangler
 
 ```properties
 wave4.strangler.enabled=true
@@ -183,76 +183,76 @@ wave4.catalog-service.cache.ttl-seconds=30
 wave4.customer-service.cache.ttl-seconds=60
 ```
 
-Adapters: `@ConditionalOnProperty(name="wave4.strangler.enabled", havingValue="true")` on `CatalogFacadeHttpAdapter`, `CustomerFacadeHttpAdapter`. Write methods on facades **must** call `InProcessCatalogFacade` delegate (composite pattern) or separate beans.
+Adaptadores: `@ConditionalOnProperty(name="wave4.strangler.enabled", havingValue="true")` em `CatalogFacadeHttpAdapter`, `CustomerFacadeHttpAdapter`. Métodos de write em facades **devem** chamar delegate `InProcessCatalogFacade` (padrão composite) ou beans separados.
 
 ---
 
-## Integration matrix
+## Matriz de integração
 
-| From | To | Purpose | Failure |
+| De | Para | Propósito | Falha |
 | ---- | -- | ------- | ------- |
 | catalog | reference | LanguageCode | 503 |
-| catalog | merchant | store validation | 503 |
+| catalog | merchant | validação de loja | 503 |
 | customer | reference | geo/lang | 503 |
-| monolith | catalog | read strangler | 503 |
+| monolith | catalog | strangler read | 503 |
 | monolith | customer | profile + snapshot | 503 |
-| monolith | search | ProductSnapshot index | log |
-| monolith | content | product images P2 | 503 |
+| monolith | search | índice ProductSnapshot | log |
+| monolith | content | imagens de produto P2 | 503 |
 
 ---
 
-## Impact analysis
+## Análise de impacto
 
-| Component | Impact |
+| Componente | Impacto |
 | --------- | ------ |
-| `shopizer-api-contracts` | +catalog/customer packages |
-| `sm-catalog-core`, `catalog-service` | new |
-| `sm-customer-core`, `customer-service` | new |
-| `sm-core` | delegate reads; merge signature |
-| `sm-shop` | Wave4 config + adapters |
-| `search-service` | ProductSnapshot v2 intake |
-| `content-service` | product file endpoints P2 |
+| `shopizer-api-contracts` | +pacotes catalog/customer |
+| `sm-catalog-core`, `catalog-service` | novos |
+| `sm-customer-core`, `customer-service` | novos |
+| `sm-core` | delega reads; assinatura merge |
+| `sm-shop` | config Wave4 + adaptadores |
+| `search-service` | intake ProductSnapshot v2 |
+| `content-service` | endpoints product file P2 |
 
 ---
 
-## Testing
+## Testes
 
-- Unit: snapshot builders, mappers, merge with snapshot
-- Integration: each service Testcontainers MySQL; adapter tests
+- Unit: snapshot builders, mappers, merge com snapshot
+- Integração: cada serviço Testcontainers MySQL; testes de adaptador
 - Pact: `CatalogProviderPactTest`, `CustomerProviderPactTest`, `Wave4ConsumerPactTest`
 - Gate: `./mvnw clean install`
 
-### Documented gaps
+### Gaps documentados
 
-GAP-CAT-01: V1/V2 facade drift
-GAP-CAT-02: price-only stale index
-GAP-CUS-01: order-created customer in monolith txn
-GAP-CUS-02: review write path phased
+GAP-CAT-01: drift facade V1/V2
+GAP-CAT-02: índice stale só de preço
+GAP-CUS-01: customer criado em order no txn monólito
+GAP-CUS-02: caminho de write de review faseado
 
 ---
 
-## Build order (summary)
+## Ordem de construção (resumo)
 
-1. Onda 3 gate
-2. Contracts T1–T4 (Compozy task_01)
-3. Parallel: sm-catalog-core + catalog-service (task_02–03) | sm-customer-core + customer-service (task_04–05)
+1. Gate Onda 3
+2. Contratos T1–T4 (Compozy task_01)
+3. Paralelo: sm-catalog-core + catalog-service (task_02–03) | sm-customer-core + customer-service (task_04–05)
 4. Checkpoint task_10
-5. ProductSnapshot migration + cart merge (task_06–07)
+5. Migração ProductSnapshot + merge de carrinho (task_06–07)
 6. Strangler (task_09, task_14)
-7. Observability + pact + compose (task_11–15)
+7. Observabilidade + pact + compose (task_11–15)
 
-Milestones: **CAT-ready** after catalog public read + snapshot; **CUS-ready** after customer profile + snapshot.
+Marcos: **CAT-ready** após leitura pública de catálogo + snapshot; **CUS-ready** após profile de customer + snapshot.
 
 ---
 
-## ADR index
+## Índice de ADRs
 
-- [ADR-001](adrs/adr-001.md) — One workflow
-- [ADR-002](adrs/adr-002.md) — Catalog read-first
-- [ADR-003](adrs/adr-003.md) — ProductSnapshot canonical
+- [ADR-001](adrs/adr-001.md) — Um workflow
+- [ADR-002](adrs/adr-002.md) — Catálogo read-first
+- [ADR-003](adrs/adr-003.md) — ProductSnapshot canônico
 - [ADR-004](adrs/adr-004.md) — Thin cores
-- [ADR-005](adrs/adr-005.md) — Cart merge snapshot
-- [ADR-006](adrs/adr-006.md) — Admin writes monolith
-- [ADR-007](adrs/adr-007.md) — Product images → content
+- [ADR-005](adrs/adr-005.md) — Merge via snapshot
+- [ADR-006](adrs/adr-006.md) — Writes admin no monólito
+- [ADR-007](adrs/adr-007.md) — Imagens de produto → content
 
-**Next step:** Execute Compozy tasks `task_01`…`task_15` after Onda 3 gate. TLC `tasks.md` T1–T38 is granular reference.
+**Próximo passo:** Executar tasks Compozy `task_01`…`task_15` após gate da Onda 3. TLC `tasks.md` T1–T38 é referência granular.

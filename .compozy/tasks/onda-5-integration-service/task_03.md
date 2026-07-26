@@ -1,43 +1,43 @@
 ---
 status: pending
-title: Stateless payment ops + P-ready tests
+title: Ops pagamento stateless + testes P-ready
 type: backend
 complexity: high
 ---
 
-# Stateless payment ops + P-ready tests
+# Ops pagamento stateless + testes P-ready
 
-## Overview
-Consolidates TLC T9–T11. Implements `process`, `capture`, `refund`, `init` on `PaymentOrchestrator` returning `TransactionResult`; ensures no `OrderService` dependency; achieves P-ready test coverage.
+## Visão geral
+Consolida TLC T9–T11. Implementa `process`, `capture`, `refund`, `init` em `PaymentOrchestrator` retornando `TransactionResult`; garante ausência de dependência `OrderService`; atinge cobertura de testes P-ready.
 
 <critical>
-- ALWAYS READ the PRD and TechSpec before starting
-- REFERENCE TECHSPEC for implementation details — do not duplicate here
-- TESTS REQUIRED — every task MUST include tests in deliverables
+- SEMPRE LER o PRD e a TechSpec antes de iniciar
+- CONSULTAR a TechSpec para detalhes de implementação — não duplicar aqui
+- TESTES OBRIGATÓRIOS — toda task DEVE incluir testes nos entregáveis
 </critical>
 
 <requirements>
-1. MUST implement payment operations using `PaymentModuleV2` — T10.
-2. MUST persist `Transaction` only — never update Order — T9, T10.
-3. MUST return `TransactionResult` DTO for all outcomes including gateway failure — PAY-11.
-4. MUST achieve JaCoCo ≥70% on payment orchestrator package — T11.
-5. MUST document GAP-INT-05 if credit card regex moved as-is.
+1. MUST implementar operações de pagamento usando `PaymentModuleV2` — T10.
+2. MUST persistir apenas `Transaction` — nunca atualizar Order — T9, T10.
+3. MUST retornar DTO `TransactionResult` para todos os desfechos incluindo falha de gateway — PAY-11.
+4. MUST atingir JaCoCo ≥70% no pacote do orquestrador de pagamento — T11.
+5. MUST documentar GAP-INT-05 se regex de cartão de crédito movida as-is.
 </requirements>
 
-## Subtasks
-- [ ] 3.1 Remove any OrderService wiring from payment core (T9)
-- [ ] 3.2 Implement process/capture/refund/init (T10)
-- [ ] 3.3 Integration test with mock gateway (T10)
-- [ ] 3.4 P-ready coverage gate (T11)
+## Subtarefas
+- [ ] 3.1 Remover qualquer wiring OrderService do core de pagamento (T9)
+- [ ] 3.2 Implementar process/capture/refund/init (T10)
+- [ ] 3.3 Teste de integração com gateway mock (T10)
+- [ ] 3.4 Gate de cobertura P-ready (T11)
 
-## Related ADRs
-- [ADR-002](adrs/adr-002.md) — stateless payment
+## ADRs relacionados
+- [ADR-002](adrs/adr-002.md) — pagamento stateless
 
-## Deliverables
-- Complete payment orchestrator operations
+## Entregáveis
+- Operações completas do orquestrador de pagamento
 - `PaymentOrchestratorIntegrationTest` **(REQUIRED)**
-- ArchUnit or static test banning OrderService **(REQUIRED)**
+- ArchUnit ou teste estático banindo OrderService **(REQUIRED)**
 
-## Success Criteria
-- P-ready milestone met
-- Transaction saved; Order table untouched in tests
+## Critérios de sucesso
+- Marco P-ready atingido
+- Transaction salva; tabela Order intocada nos testes

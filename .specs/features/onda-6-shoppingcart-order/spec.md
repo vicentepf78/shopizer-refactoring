@@ -1,77 +1,77 @@
-# Onda 6 — ShoppingCart + Order Specification
+# Onda 6 — Especificação ShoppingCart + Order
 
-**Feature ID:** `onda-6-shoppingcart-order`
-**Phase:** Specify + Design (Execute blocked until Ondas 3–5 gate green)
-**Complexity:** XLarge (2 services + checkout boundary + saga; coupling 9/10)
-**Source:** [MIGRATION-MASTER-PLAN.md](../../../docs/decomposition/MIGRATION-MASTER-PLAN.md) § Onda 6
-**Exploration:** Coupling analysis — order hub, cart↔order cycle, `processOrder` transactional (2026-07-04)
+**ID da feature:** `onda-6-shoppingcart-order`
+**Fase:** Specify + Design (Execute bloqueado até gate Ondas 3–5 verde)
+**Complexidade:** XLarge (2 serviços + fronteira checkout + saga; acoplamento 9/10)
+**Fonte:** [MIGRATION-MASTER-PLAN.md](../../../docs/decomposition/MIGRATION-MASTER-PLAN.md) § Onda 6
+**Exploração:** Análise de acoplamento — hub order, ciclo cart↔order, `processOrder` transacional (2026-07-04)
 
 ---
 
-## Problem Statement
+## Declaração do problema
 
-Onda 6 is the **last and highest-risk extraction wave**. Order is the central orchestrator (difficulty **9/10**): six outbound domain dependencies, a transactional `processOrder` spanning payments, shipping, tax, catalog, customer, and cart, and a checkout hub in `sm-shop` that injects **12 sm-core services** plus `CustomerFacade` and `ShoppingCartFacade`. Two critical cycles block naive splits:
+A Onda 6 é a **última e mais arriscada onda de extração**. Order é o orquestrador central (dificuldade **9/10**): seis dependências outbound de domínio, um `processOrder` transacional abrangendo payments, shipping, tax, catalog, customer e cart, e um hub de checkout em `sm-shop` que injeta **12 serviços sm-core** mais `CustomerFacade` e `ShoppingCartFacade`. Dois ciclos críticos bloqueiam splits ingênuos:
 
 - **order ↔ payments** — `OrderServiceImpl.processOrder` → `paymentService.processPayment`; `PaymentServiceImpl` → `orderService.saveOrUpdate`
 - **order ↔ shoppingcart** — `ShoppingCartCalculationServiceImpl` → `orderService.calculateShoppingCartTotal`; `OrderServiceImpl` → `shoppingCartService`
 
-Without formal specification, teams either extract cart and order together in one big-bang (unacceptable rollback surface) or defer indefinitely while the monolith remains the checkout authority.
+Sem especificação formal, os times ou extraem cart e order juntos em big-bang (superfície de rollback inaceitável) ou adiam indefinidamente enquanto o monólito permanece autoridade de checkout.
 
-Ondas 3–5 deliver the prerequisites: DTO snapshots, Checkout Application Service, saga/outbox on `processOrder`, catalog/customer/integration services. This spec defines **what** to extract (`shoppingcart-service`, `order-service`), **what** stays in the BFF (`CheckoutApplicationService`), and **how** to phase cutover with explicit feature flags and rollback.
-
----
-
-## Goals
-
-- [ ] `shoppingcart-service` and `order-service` deployable as independent Spring Boot applications
-- [ ] Monolith BFF consumes both via HTTP Strangler; frozen REST paths for cart and order APIs
-- [ ] **Cart↔order cycle broken** — cart totals via HTTP contract, not in-process `OrderService`
-- [ ] **Checkout Application Service** is the sole checkout orchestration boundary in `sm-shop`
-- [ ] `processOrder` runs as **saga choreography** with **transactional outbox** (Onda 3 pattern), not global AOP transaction
-- [ ] Hub decomposition: `OrderFacadeImpl` reduced to delegation; bypass APIs (`OrderPaymentApi`, `OrderTotalApi`, `OrderShippingApi`) routed through checkout boundary
-- [ ] Feature flags per domain with documented rollback (`wave6.*`)
-- [ ] Pact coverage for P1 cart, totals, order read, checkout commit
-- [ ] Zero JPA entities in migrated REST JSON responses
+As Ondas 3–5 entregam os pré-requisitos: snapshots DTO, Checkout Application Service, saga/outbox em `processOrder`, serviços catalog/customer/integration. Esta spec define **o que** extrair (`shoppingcart-service`, `order-service`), **o que** permanece no BFF (`CheckoutApplicationService`) e **como** fasear cutover com feature flags e rollback explícitos.
 
 ---
 
-## Out of Scope
+## Objetivos
 
-| Feature | Reason |
+- [ ] `shoppingcart-service` e `order-service` implantáveis como aplicações Spring Boot independentes
+- [ ] BFF monólito consome ambos via HTTP Strangler; caminhos REST congelados para APIs cart e order
+- [ ] **Ciclo cart↔order quebrado** — totais de cart via contrato HTTP, não `OrderService` in-process
+- [ ] **Checkout Application Service** é a única fronteira de orquestração de checkout em `sm-shop`
+- [ ] `processOrder` roda como **saga choreography** com **transactional outbox** (padrão Onda 3), não transação global AOP
+- [ ] Decomposição do hub: `OrderFacadeImpl` reduzido a delegação; bypass APIs (`OrderPaymentApi`, `OrderTotalApi`, `OrderShippingApi`) roteadas pela fronteira checkout
+- [ ] Feature flags por domínio com rollback documentado (`wave6.*`)
+- [ ] Cobertura Pact para cart P1, totals, order read, checkout commit
+- [ ] Zero entidades JPA em respostas JSON REST migradas
+
+---
+
+## Fora de escopo
+
+| Funcionalidade | Motivo |
 |---------|--------|
-| Physical database split per service | AD-003 inherited — shared `SALESMANAGER` schema during transition |
-| Moving `CheckoutApplicationService` to its own deployable | AD-024 — stays in BFF for Wave 6; optional post-wave extraction |
-| Remote tax calculation inside `order-service` | OQ-03 / ADR-006 — tax lines supplied by BFF from `tax-service` |
-| Full catalog write extraction | Onda 4 scope |
-| Rewriting payment/shipping plugins | Onda 5 `integration-service` |
-| Eliminating `MerchantStoreArgumentResolver` (~450 refs) | BFF retains resolver; passes `MerchantStoreId` / snapshots |
-| Order analytics, reporting, BI exports | Not in checkout critical path |
-| Greenfield `InitializationDatabaseImpl` split | Services assume populated DB |
-| API V1 deprecation | Fase 4 roadmap |
+| Split físico de database por serviço | AD-003 herdado — schema `SALESMANAGER` compartilhado na transição |
+| Mover `CheckoutApplicationService` para deployable próprio | AD-024 — permanece no BFF na Onda 6; extração opcional pós-onda |
+| Cálculo remoto de tax dentro de `order-service` | OQ-03 / ADR-006 — linhas de tax fornecidas pelo BFF via `tax-service` |
+| Extração completa de catalog write | Escopo Onda 4 |
+| Reescrever plugins payment/shipping | Onda 5 `integration-service` |
+| Eliminar `MerchantStoreArgumentResolver` (~450 refs) | BFF mantém resolver; passa `MerchantStoreId` / snapshots |
+| Analytics, reporting, exports BI de order | Fora do caminho crítico de checkout |
+| Split greenfield `InitializationDatabaseImpl` | Serviços assumem DB populado |
+| Depreciação API V1 | Roadmap Fase 4 |
 
 ---
 
-## User Stories
+## Histórias de usuário
 
-### P1: Shopping Cart — CRUD and session cart ⭐ MVP
+### P1: Shopping Cart — CRUD e session cart ⭐ MVP
 
-**User Story**: As a storefront visitor, I want to add, update, and remove items in my shopping cart via existing `/api/v1/cart` endpoints, so checkout preparation works when the cart runtime is outside the monolith.
+**História de usuário**: Como visitante da vitrine, quero adicionar, atualizar e remover itens no meu carrinho via endpoints `/api/v1/cart` existentes, para que a preparação de checkout funcione quando o runtime de cart estiver fora do monólito.
 
-**Why P1**: Cart has difficulty 7/10 and must be extracted **before** order cutover to break the calculation cycle via HTTP totals.
+**Por que P1**: Cart tem dificuldade 7/10 e deve ser extraído **antes** do cutover de order para quebrar o ciclo de cálculo via HTTP totals.
 
-**Acceptance Criteria**:
+**Critérios de aceite**:
 
-1. WHEN `GET/POST/PUT/DELETE` cart endpoints with `store` header THEN `shoppingcart-service` SHALL persist `ShoppingCart` + line items scoped by store and customer/session
-2. WHEN cart line references a product THEN `shoppingcart-service` SHALL validate availability via `catalog-service` HTTP (`ProductLineSnapshot`) — SHALL NOT load full `Product` JPA graph
-3. WHEN cart display needs totals THEN BFF or `shoppingcart-service` SHALL call `POST /internal/v1/orders/totals` on order-service (or checkout boundary) with `CartTotalsRequest` — SHALL NOT call in-process `OrderService.calculateShoppingCartTotal`
-4. WHEN `wave6.shoppingcart.strangler.enabled=false` THEN monolith in-process cart behavior SHALL remain unchanged
-5. WHEN remote cart unavailable THEN BFF SHALL return HTTP 503 with `X-Correlation-Id` — no silent fallback
+1. WHEN endpoints `GET/POST/PUT/DELETE` cart com header `store` THEN `shoppingcart-service` SHALL persistir `ShoppingCart` + itens de linha com escopo de loja e cliente/sessão
+2. WHEN linha de cart referencia produto THEN `shoppingcart-service` SHALL validar disponibilidade via HTTP `catalog-service` (`ProductLineSnapshot`) — SHALL NOT carregar grafo JPA completo de `Product`
+3. WHEN exibição do cart precisa de totais THEN BFF ou `shoppingcart-service` SHALL chamar `POST /internal/v1/orders/totals` em order-service (ou fronteira checkout) com `CartTotalsRequest` — SHALL NOT chamar in-process `OrderService.calculateShoppingCartTotal`
+4. WHEN `wave6.shoppingcart.strangler.enabled=false` THEN comportamento in-process de cart do monólito SHALL permanecer inalterado
+5. WHEN cart remoto indisponível THEN BFF SHALL retornar HTTP 503 com `X-Correlation-Id` — sem fallback silencioso
 
-**Independent Test**: Deploy `shoppingcart-service` + dependencies; add item; read cart; verify totals via totals API; strangler flag toggles in-process vs remote.
+**Teste independente**: Implantar `shoppingcart-service` + dependências; adicionar item; ler cart; verificar totais via API totals; flag strangler alterna in-process vs remoto.
 
-**Source components:**
+**Componentes fonte:**
 
-| Role | Path |
+| Papel | Caminho |
 |------|------|
 | Entities | `sm-core-model/.../shoppingcart/` |
 | Services | `sm-core/.../services/shoppingcart/` |
@@ -79,205 +79,205 @@ Ondas 3–5 deliver the prerequisites: DTO snapshots, Checkout Application Servi
 | API | `sm-shop/.../api/v1/shoppingCart/ShoppingCartApi.java` |
 | Facade | `sm-shop/.../shoppingCart/ShoppingCartFacadeImpl.java` |
 
-**Requirement IDs:** CART-01…CART-07
+**IDs de requisito:** CART-01…CART-07
 
 ---
 
-### P1: Order — read, list, status history ⭐ MVP
+### P1: Order — leitura, listagem, histórico de status ⭐ MVP
 
-**User Story**: As a store admin or customer, I want to view orders and status history via existing order APIs, so order reads work when order persistence is remote.
+**História de usuário**: Como admin de loja ou cliente, quero visualizar pedidos e histórico de status via APIs de order existentes, para que leituras funcionem quando a persistência de order é remota.
 
-**Why P1**: Read paths are lower risk than `processOrder`; validates Strangler before saga cutover.
+**Por que P1**: Caminhos de leitura são menor risco que `processOrder`; valida Strangler antes do cutover saga.
 
-**Acceptance Criteria**:
+**Critérios de aceite**:
 
-1. WHEN `GET` order by id/code THEN `order-service` SHALL return `ReadableOrder` DTO — no `Order` entity in JSON
-2. WHEN admin lists orders with criteria THEN `order-service` SHALL support pagination/filter equivalent to monolith
-3. WHEN status history requested THEN `order-service` SHALL return `ReadableOrderStatusHistory` list
-4. WHEN customer snapshot needed THEN `order-service` MAY call `customer-service` HTTP — SHALL use `CustomerSnapshot`, not merge in global transaction
-5. WHEN `wave6.order.strangler.enabled=false` THEN read paths remain in-process
+1. WHEN `GET` order por id/code THEN `order-service` SHALL retornar DTO `ReadableOrder` — sem entidade `Order` em JSON
+2. WHEN admin lista pedidos com critérios THEN `order-service` SHALL suportar paginação/filtro equivalente ao monólito
+3. WHEN histórico de status solicitado THEN `order-service` SHALL retornar lista `ReadableOrderStatusHistory`
+4. WHEN snapshot de cliente necessário THEN `order-service` MAY chamar HTTP `customer-service` — SHALL usar `CustomerSnapshot`, não merge em transação global
+5. WHEN `wave6.order.strangler.enabled=false` THEN caminhos de leitura permanecem in-process
 
-**Requirement IDs:** ORD-01…ORD-06
-
----
-
-### P1: Checkout — place order via saga ⭐ MVP (highest risk)
-
-**User Story**: As a customer completing checkout, I want to place an order with payment and shipping, so the purchase completes correctly when `processOrder` runs across remote services.
-
-**Why P1**: Core revenue path; requires saga/outbox from Onda 3 and integration-service from Onda 5.
-
-**Acceptance Criteria**:
-
-1. WHEN `POST` checkout/place-order (existing paths) THEN `CheckoutApplicationService` in BFF SHALL orchestrate: validate cart → compute totals → reserve/validate inventory → initiate payment via `integration-service` → persist order via `order-service` saga endpoint → clear cart
-2. WHEN `processOrder` saga step fails THEN system SHALL run compensating actions (payment void/refund per module capability, order status `CANCELLED`, cart not cleared)
-3. WHEN order persisted THEN `order-service` SHALL write domain events to **transactional outbox** (`ORDER_OUTBOX`) in same DB transaction as order row
-4. WHEN outbox relay runs THEN events (`OrderPlaced`, `OrderPaid`, etc.) SHALL be published for downstream consumers (email, inventory)
-5. WHEN `wave6.checkout.saga.enabled=false` THEN legacy in-process `orderService.processOrder` SHALL execute (rollback path)
-6. WHEN tax required THEN BFF SHALL call `tax-service` and pass tax lines in `OrderSnapshot` — order-service SHALL NOT call tax in-process (OQ-03)
-
-**Requirement IDs:** CHK-01…CHK-10
+**IDs de requisito:** ORD-01…ORD-06
 
 ---
 
-### P1: Hub decomposition — thin facades ⭐ MVP
+### P1: Checkout — place order via saga ⭐ MVP (maior risco)
 
-**User Story**: As a platform engineer, I want checkout APIs to stop injecting 12 sm-core services directly, so the BFF boundary is maintainable after extraction.
+**História de usuário**: Como cliente concluindo checkout, quero fazer um pedido com pagamento e frete, para que a compra complete corretamente quando `processOrder` roda entre serviços remotos.
 
-**Acceptance Criteria**:
+**Por que P1**: Caminho central de receita; exige saga/outbox da Onda 3 e integration-service da Onda 5.
 
-1. WHEN `OrderApi`, `OrderPaymentApi`, `OrderTotalApi`, `OrderShippingApi` handle checkout-related operations THEN they SHALL delegate to `CheckoutApplicationService` only
-2. WHEN non-checkout order operations (read, history) THEN `OrderFacade` MAY delegate to `order-service` HTTP adapter
-3. WHEN hub decomposition complete THEN `OrderFacadeImpl` SHALL NOT inject `PaymentService`, `ShippingService`, `ProductService` directly for checkout paths
+**Critérios de aceite**:
 
-**Requirement IDs:** HUB-01…HUB-04
+1. WHEN `POST` checkout/place-order (caminhos existentes) THEN `CheckoutApplicationService` no BFF SHALL orquestrar: validar cart → computar totais → reservar/validar inventário → iniciar pagamento via `integration-service` → persistir pedido via endpoint saga `order-service` → limpar cart
+2. WHEN passo saga `processOrder` falha THEN sistema SHALL executar ações compensatórias (void/refund de pagamento conforme capability do módulo, status order `CANCELLED`, cart não limpo)
+3. WHEN pedido persistido THEN `order-service` SHALL escrever eventos de domínio em **transactional outbox** (`ORDER_OUTBOX`) na mesma transação DB da linha de pedido
+4. WHEN relay outbox roda THEN eventos (`OrderPlaced`, `OrderPaid`, etc.) SHALL ser publicados para consumidores downstream (email, inventário)
+5. WHEN `wave6.checkout.saga.enabled=false` THEN `orderService.processOrder` legado in-process SHALL executar (caminho rollback)
+6. WHEN tax necessário THEN BFF SHALL chamar `tax-service` e passar linhas de tax em `OrderSnapshot` — order-service SHALL NOT chamar tax in-process (OQ-03)
 
----
-
-### P2: Cart merge on login
-
-**User Story**: As a returning customer, I want my anonymous cart merged when I log in.
-
-**Requirement IDs:** CART-08
+**IDs de requisito:** CHK-01…CHK-10
 
 ---
 
-### P2: Contract tests (Pact)
+### P1: Decomposição do hub — facades finas ⭐ MVP
 
-**User Story**: As a developer, I want Pact tests for cart, totals, order read, and checkout commit.
+**História de usuário**: Como engenheiro de plataforma, quero que APIs de checkout parem de injetar 12 serviços sm-core diretamente, para que a fronteira BFF seja mantível após a extração.
 
-**Requirement IDs:** STR-01…STR-04
+**Critérios de aceite**:
 
----
+1. WHEN `OrderApi`, `OrderPaymentApi`, `OrderTotalApi`, `OrderShippingApi` tratam operações relacionadas a checkout THEN SHALL delegar somente a `CheckoutApplicationService`
+2. WHEN operações de order não-checkout (leitura, histórico) THEN `OrderFacade` MAY delegar a adaptador HTTP `order-service`
+3. WHEN decomposição do hub completa THEN `OrderFacadeImpl` SHALL NOT injetar `PaymentService`, `ShippingService`, `ProductService` diretamente para caminhos de checkout
 
-### P3: Observability and rollback runbooks
-
-**User Story**: As an operator, I want health checks, correlation IDs, and documented rollback for each Wave 6 flag.
-
-**Requirement IDs:** STR-05…STR-07
+**IDs de requisito:** HUB-01…HUB-04
 
 ---
 
-## Functional Requirements Summary
+### P2: Merge de cart no login
 
-| ID | Area | Priority | Summary |
+**História de usuário**: Como cliente recorrente, quero meu carrinho anônimo mesclado quando faço login.
+
+**IDs de requisito:** CART-08
+
+---
+
+### P2: Testes de contrato (Pact)
+
+**História de usuário**: Como desenvolvedor, quero testes Pact para cart, totals, order read e checkout commit.
+
+**IDs de requisito:** STR-01…STR-04
+
+---
+
+### P3: Observabilidade e runbooks de rollback
+
+**História de usuário**: Como operador, quero health checks, correlation IDs e rollback documentado para cada flag Wave 6.
+
+**IDs de requisito:** STR-05…STR-07
+
+---
+
+## Resumo de requisitos funcionais
+
+| ID | Área | Prioridade | Resumo |
 |----|------|----------|---------|
-| CART-01 | Cart | P1 | CRUD line items, session/customer scope |
-| CART-02 | Cart | P1 | Product validation via catalog HTTP |
-| CART-03 | Cart | P1 | Totals via order-service HTTP (cycle break) |
-| CART-04 | Cart | P1 | Strangler flag `wave6.shoppingcart.strangler.enabled` |
-| CART-05 | Cart | P1 | Promo codes / cart attributes preserved |
-| CART-06 | Cart | P1 | Mini-cart and cart count endpoints |
-| CART-07 | Cart | P1 | No JPA in JSON |
-| CART-08 | Cart | P2 | Anonymous cart merge on login |
-| ORD-01 | Order | P1 | Get order by id |
-| ORD-02 | Order | P1 | List/search orders (admin) |
-| ORD-03 | Order | P1 | Status history |
-| ORD-04 | Order | P1 | Order totals breakdown (read) |
-| ORD-05 | Order | P1 | Strangler flag `wave6.order.strangler.enabled` |
-| ORD-06 | Order | P1 | Internal saga API for checkout commit |
-| CHK-01 | Checkout | P1 | CheckoutApplicationService orchestration |
-| CHK-02 | Checkout | P1 | Saga choreography for processOrder |
-| CHK-03 | Checkout | P1 | Transactional outbox on order persist |
-| CHK-04 | Checkout | P1 | Payment via integration-service |
-| CHK-05 | Checkout | P1 | Shipping quote via integration-service |
-| CHK-06 | Checkout | P1 | Cart clear after successful commit |
-| CHK-07 | Checkout | P1 | Saga rollback flag `wave6.checkout.saga.enabled` |
-| CHK-08 | Checkout | P1 | Tax lines from BFF (not order-service) |
-| CHK-09 | Checkout | P1 | Idempotent checkout with client token |
-| CHK-10 | Checkout | P1 | Email notification via async outbox consumer |
-| HUB-01 | Hub | P1 | Decompose OrderFacadeImpl checkout paths |
-| HUB-02 | Hub | P1 | Route bypass APIs through checkout |
-| HUB-03 | Hub | P1 | Reduce direct sm-core injections |
-| HUB-04 | Hub | P1 | Preserve frozen REST paths |
+| CART-01 | Cart | P1 | CRUD itens de linha, escopo sessão/cliente |
+| CART-02 | Cart | P1 | Validação de produto via HTTP catalog |
+| CART-03 | Cart | P1 | Totais via HTTP order-service (quebra de ciclo) |
+| CART-04 | Cart | P1 | Flag Strangler `wave6.shoppingcart.strangler.enabled` |
+| CART-05 | Cart | P1 | Códigos promo / atributos de cart preservados |
+| CART-06 | Cart | P1 | Endpoints mini-cart e contagem de cart |
+| CART-07 | Cart | P1 | Sem JPA em JSON |
+| CART-08 | Cart | P2 | Merge cart anônimo no login |
+| ORD-01 | Order | P1 | Get order por id |
+| ORD-02 | Order | P1 | Listar/buscar pedidos (admin) |
+| ORD-03 | Order | P1 | Histórico de status |
+| ORD-04 | Order | P1 | Breakdown de totais de pedido (leitura) |
+| ORD-05 | Order | P1 | Flag Strangler `wave6.order.strangler.enabled` |
+| ORD-06 | Order | P1 | API interna saga para checkout commit |
+| CHK-01 | Checkout | P1 | Orquestração CheckoutApplicationService |
+| CHK-02 | Checkout | P1 | Saga choreography para processOrder |
+| CHK-03 | Checkout | P1 | Transactional outbox na persistência de order |
+| CHK-04 | Checkout | P1 | Pagamento via integration-service |
+| CHK-05 | Checkout | P1 | Cotação de frete via integration-service |
+| CHK-06 | Checkout | P1 | Clear cart após commit bem-sucedido |
+| CHK-07 | Checkout | P1 | Flag rollback saga `wave6.checkout.saga.enabled` |
+| CHK-08 | Checkout | P1 | Linhas de tax do BFF (não order-service) |
+| CHK-09 | Checkout | P1 | Checkout idempotente com client token |
+| CHK-10 | Checkout | P1 | Notificação email via consumer outbox async |
+| HUB-01 | Hub | P1 | Decompor caminhos checkout OrderFacadeImpl |
+| HUB-02 | Hub | P1 | Rotear bypass APIs pelo checkout |
+| HUB-03 | Hub | P1 | Reduzir injeções diretas sm-core |
+| HUB-04 | Hub | P1 | Preservar caminhos REST congelados |
 | STR-01 | Strangler | P2 | Pact consumer (sm-shop) |
 | STR-02 | Strangler | P2 | Pact provider cart |
 | STR-03 | Strangler | P2 | Pact provider order |
 | STR-04 | Strangler | P2 | Pact checkout commit |
-| STR-05 | Ops | P3 | Actuator health per service |
-| STR-06 | Ops | P3 | Correlation ID propagation |
-| STR-07 | Ops | P3 | Rollback runbook per flag |
+| STR-05 | Ops | P3 | Actuator health por serviço |
+| STR-06 | Ops | P3 | Propagação Correlation ID |
+| STR-07 | Ops | P3 | Runbook rollback por flag |
 
 ---
 
-## Phased Rollout
+## Rollout faseado
 
-### Phase 0 — Gate (no Wave 6 code)
+### Fase 0 — Gate (sem código Wave 6)
 
-- Ondas 3, 4, 5 Execute complete
-- Saga/outbox PoC green on `processOrder` in monolith
-- `CheckoutApplicationService` skeleton merged
+- Execute Ondas 3, 4, 5 completo
+- PoC saga/outbox verde em `processOrder` no monólito
+- Esqueleto `CheckoutApplicationService` merged
 
-### Phase 1 — Contracts + cycle break (MVP foundation)
+### Fase 1 — Contratos + quebra de ciclo (fundação MVP)
 
-- `CartTotalsRequest`/`CartTotalsResponse`, `OrderSnapshot`, cart/order clients
-- Wave 6 Strangler properties
-- Totals API on order boundary (in monolith first, then order-service)
+- `CartTotalsRequest`/`CartTotalsResponse`, `OrderSnapshot`, clients cart/order
+- Properties Strangler Wave 6
+- API Totals na fronteira order (no monólito primeiro, depois order-service)
 
-### Phase 2 — ShoppingCart extraction (shadow → cutover)
+### Fase 2 — Extração ShoppingCart (shadow → cutover)
 
 - `sm-shoppingcart-core`, `shoppingcart-service`
-- Strangler shadow: dual-write or read-remote/write-local per ADR-007
-- **Milestone `SC-ready`**: cart CRUD remote, totals HTTP
+- Strangler shadow: dual-write ou read-remote/write-local conforme ADR-007
+- **Marco `SC-ready`**: cart CRUD remoto, totals HTTP
 
-### Phase 3 — Order read extraction
+### Fase 3 — Extração order read
 
-- `sm-order-core`, `order-service` read APIs
-- **Milestone `OR-read-ready`**: order GET/list remote
+- `sm-order-core`, APIs read `order-service`
+- **Marco `OR-read-ready`**: order GET/list remoto
 
-### Phase 4 — Saga checkout cutover (highest risk)
+### Fase 4 — Cutover saga checkout (maior risco)
 
-- Saga endpoint on `order-service`
-- `CheckoutApplicationService` full orchestration
-- **Milestone `CHK-ready`**: place-order via saga with rollback flag
+- Endpoint saga em `order-service`
+- Orquestração completa `CheckoutApplicationService`
+- **Marco `CHK-ready`**: place-order via saga com flag rollback
 
-### Phase 5 — Hub decomposition + hardening
+### Fase 5 — Decomposição hub + hardening
 
-- Thin facades, Pact, Docker Compose wave6, STATE update
+- Facades finas, Pact, Docker Compose wave6, atualização STATE
 
-### Rollback plan
+### Plano de rollback
 
-| Flag | Rollback action |
+| Flag | Ação de rollback |
 |------|-----------------|
-| `wave6.checkout.saga.enabled=false` | Revert to in-process `processOrder` (immediate) |
-| `wave6.order.strangler.enabled=false` | Order reads/writes in monolith |
-| `wave6.shoppingcart.strangler.enabled=false` | Cart in monolith |
-| All false | Full monolith checkout path — Wave 6 services idle |
+| `wave6.checkout.saga.enabled=false` | Reverter para `processOrder` in-process (imediato) |
+| `wave6.order.strangler.enabled=false` | Leituras/escritas order no monólito |
+| `wave6.shoppingcart.strangler.enabled=false` | Cart no monólito |
+| Todas false | Caminho checkout monólito completo — serviços Wave 6 ociosos |
 
 ---
 
-## Success Metrics
+## Métricas de sucesso
 
-| Metric | Target |
+| Métrica | Meta |
 |--------|--------|
-| P1 endpoints available | Cart + order read + checkout in integration topology |
-| Contract parity | Pact green for STR-01…STR-04 |
-| Cycle elimination | Zero `OrderService` import in `shoppingcart-service` |
-| Hub reduction | `OrderFacadeImpl` ≤ 4 sm-core injections for checkout (delegates to CheckoutApplicationService) |
-| Saga reliability | 0 lost orders in chaos test (payment fail → compensated) |
-| Latency | p95 checkout ≤ 2.5× monolith baseline (acceptable for final wave) |
-| Rollback time | < 5 min to disable all `wave6.*` flags |
+| Endpoints P1 disponíveis | Cart + order read + checkout na topologia de integração |
+| Paridade de contrato | Pact verde para STR-01…STR-04 |
+| Eliminação de ciclos | Zero import `OrderService` em `shoppingcart-service` |
+| Redução do hub | `OrderFacadeImpl` ≤ 4 injeções sm-core para checkout (delega a CheckoutApplicationService) |
+| Confiabilidade saga | 0 pedidos perdidos em teste chaos (falha payment → compensado) |
+| Latência | p95 checkout ≤ 2,5× baseline monólito (aceitável para onda final) |
+| Tempo de rollback | < 5 min para desabilitar todas as flags `wave6.*` |
 
 ---
 
-## Risks
+## Riscos
 
-| Risk | Mitigation |
+| Risco | Mitigação |
 |------|------------|
-| Big-bang checkout failure | Phased flags; saga rollback; CHK-ready gate before production cutover |
-| Dual-write cart inconsistency | Shadow mode + reconciliation job; ADR-007 phasing |
-| Outbox relay lag | Monitor outbox depth; alert > 100 pending |
-| Tax mismatch remote vs local | BFF owns tax call; single source in checkout request (ADR-006) |
-| integration-service unavailable | Checkout fails fast 503; no partial order without payment state |
-| Shared DB migration conflicts | Flyway/Liquibase coordination — order-service owns ORDER_* migrations only |
+| Falha big-bang de checkout | Flags faseadas; rollback saga; gate CHK-ready antes cutover produção |
+| Inconsistência dual-write cart | Shadow mode + job reconciliação; faseamento ADR-007 |
+| Lag relay outbox | Monitorar profundidade outbox; alerta > 100 pendentes |
+| Divergência tax remoto vs local | BFF dono da chamada tax; fonte única na requisição checkout (ADR-006) |
+| integration-service indisponível | Checkout falha rápido 503; sem pedido parcial sem estado de pagamento |
+| Conflitos migration DB compartilhado | Coordenação Flyway/Liquibase — order-service dono somente migrações ORDER_* |
 
 ---
 
-## Open Questions
+## Questões em aberto
 
-All OQ-01…OQ-08 resolved in `context.md`. No blocking product ambiguities.
+Todas OQ-01…OQ-08 resolvidas em `context.md`. Sem ambiguidades de produto bloqueantes.
 
-Residual (non-blocking):
+Residual (não bloqueante):
 
-- Exact idempotency key format for checkout (`Idempotency-Key` header vs body) — decide in Design T39
-- Outbox relay: in-process vs standalone worker — default in-process (ADR-023)
+- Formato exato da chave de idempotência para checkout (`Idempotency-Key` header vs body) — decidir em Design T39
+- Relay outbox: in-process vs worker standalone — padrão in-process (ADR-023)

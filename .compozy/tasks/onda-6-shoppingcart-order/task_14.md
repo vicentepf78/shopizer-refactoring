@@ -1,29 +1,29 @@
 ---
 status: pending
-title: CHK-ready runbook + checkout cutover docs
+title: Runbook CHK-ready + docs cutover checkout
 type: docs
 complexity: medium
 ---
 
-# CHK-ready runbook + checkout cutover docs
+# Runbook CHK-ready + docs cutover checkout
 
-## Overview
-TLC T32, T62. Checkout cutover runbook; staging canary checklist; rollback drill script. Milestone **CHK-ready**.
+## Visão geral
+TLC T32, T62. Runbook cutover checkout; checklist canary staging; script drill rollback. Marco **CHK-ready**.
 
 <requirements>
-1. MUST document `docs/runbooks/wave6-checkout-cutover.md` with valid flag combinations — T32, STR-07, ADR-008.
-2. MUST configure docker-compose-wave6 staging profile for saga — T32.
-3. MUST add `scripts/wave6-rollback-drill.sh` — T62.
-4. MUST record CHK-ready in STATE.md.
+1. MUST documentar `docs/runbooks/wave6-checkout-cutover.md` com combinações válidas de flags — T32, STR-07, ADR-008.
+2. MUST configurar profile staging docker-compose-wave6 para saga — T32.
+3. MUST adicionar `scripts/wave6-rollback-drill.sh` — T62.
+4. MUST registrar CHK-ready em STATE.md.
 </requirements>
 
-## Related ADRs
-- [ADR-008: Feature flags and rollback](adrs/adr-008.md)
+## ADRs relacionados
+- [ADR-008: Feature flags e rollback](adrs/adr-008.md)
 
-## Deliverables
-- Runbooks + rollback drill script
-- Staging E2E checklist completed **(REQUIRED manual gate)**
+## Entregáveis
+- Runbooks + script drill rollback
+- Checklist E2E staging completado **(REQUIRED manual gate)**
 
-## Success Criteria
-- CHK-ready milestone in STATE.md
-- Rollback drill completes < 5 min
+## Critérios de sucesso
+- Marco CHK-ready em STATE.md
+- Drill rollback completa < 5 min

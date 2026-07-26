@@ -1,31 +1,31 @@
 ---
 status: pending
-title: Pact providers + Wave4ConsumerPactTest
+title: Providers Pact + Wave4ConsumerPactTest
 type: test
 complexity: medium
 ---
 
-# Pact providers + Wave4ConsumerPactTest
+# Providers Pact + Wave4ConsumerPactTest
 
-## Overview
-Consolidates TLC T33–T34. Provider pact tests on catalog-service and customer-service; consumer `Wave4ConsumerPactTest` in sm-shop for P1 endpoints and snapshots.
+## Visão geral
+Consolida TLC T33–T34. Testes provider pact em catalog-service e customer-service; consumer `Wave4ConsumerPactTest` no sm-shop para endpoints P1 e snapshots.
 
 <requirements>
-1. MUST add CatalogProviderPactTest for product/category GET — T33.
-2. MUST add CustomerProviderPactTest for profile GET — T33.
-3. MUST add Wave4ConsumerPactTest in sm-shop — T34.
-4. MUST pin ProductSnapshot schemaVersion 2 and CustomerSnapshot v1 in fixtures.
-5. MUST run in `./mvnw clean install` gate.
+1. MUST adicionar CatalogProviderPactTest para product/category GET — T33.
+2. MUST adicionar CustomerProviderPactTest para profile GET — T33.
+3. MUST adicionar Wave4ConsumerPactTest no sm-shop — T34.
+4. MUST fixar ProductSnapshot schemaVersion 2 e CustomerSnapshot v1 em fixtures.
+5. MUST executar no gate `./mvnw clean install`.
 </requirements>
 
-## Deliverables
-- 3 pact test classes
-- Pact artifacts generated in CI-compatible paths **(REQUIRED)**
+## Entregáveis
+- 3 classes de teste pact
+- Artefatos pact gerados em paths compatíveis com CI **(OBRIGATÓRIO)**
 
-## Tests
+## Testes
 - `./mvnw test -pl catalog-service,customer-service -Dtest=*ProviderPact*Test`
 - `./mvnw test -pl sm-shop -Dtest=Wave4ConsumerPactTest`
 
-## Success Criteria
-- Consumer + provider pacts green
-- Breaking DTO change fails CI
+## Critérios de sucesso
+- Pacts consumer + provider verdes
+- Mudança breaking em DTO falha CI

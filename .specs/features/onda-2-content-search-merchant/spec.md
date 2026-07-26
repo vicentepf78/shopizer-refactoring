@@ -1,14 +1,14 @@
 # Onda 2 — Content, Search, Merchant Specification
 
-**Feature ID:** `onda-2-content-search-merchant`
-**Phase:** Execute complete (gate verde 2026-07-26)
-**Complexity:** Large (3 serviços deployáveis + Strangler)
-**Source:** [MIGRATION-MASTER-PLAN.md](../../../docs/decomposition/MIGRATION-MASTER-PLAN.md) § Onda 2
+**ID da feature:** `onda-2-content-search-merchant`
+**Fase:** Execute complete (gate verde 2026-07-26)
+**Complexidade:** Large (3 serviços deployáveis + Strangler)
+**Fonte:** [MIGRATION-MASTER-PLAN.md](../../../docs/decomposition/MIGRATION-MASTER-PLAN.md) § Onda 2
 **Exploração:** Subagentes Content, Search e Merchant (2026-07-04)
 
 ---
 
-## Problem Statement
+## Declaração do problema
 
 Após validar o padrão Strangler na Onda 1 (Reference + Tax), a Onda 2 extrai três domínios de **risco médio-baixo** que compartilham características favoráveis: sem ciclos de serviço críticos (diferente de order↔payments), volatilidade baixa a média, e superfícies REST já definidas. Porém cada domínio traz bloqueadores distintos:
 
@@ -20,7 +20,7 @@ Sem especificação formal, a Onda 2 repete erros da Fase 3 original (extração
 
 ---
 
-## Goals
+## Objetivos
 
 - [x] `content-service`, `search-service` e `merchant-service` deployáveis como aplicações Spring Boot independentes
 - [x] Monólito consome os três serviços via HTTP Strangler nas fronteiras REST já existentes
@@ -52,13 +52,13 @@ Sem especificação formal, a Onda 2 repete erros da Fase 3 original (extração
 
 ---
 
-## User Stories
+## Histórias de usuário
 
 ### P1: Content Service — páginas, boxes e gestão de arquivos ⭐ MVP
 
-**User Story**: Como administrador de loja, quero gerenciar páginas CMS, boxes e arquivos estáticos (imagens, CSS) via APIs existentes, para personalizar a loja sem depender do runtime monolítico para metadados e blobs.
+**História de usuário**: Como administrador de loja, quero gerenciar páginas CMS, boxes e arquivos estáticos (imagens, CSS) via APIs existentes, para personalizar a loja sem depender do runtime monolítico para metadados e blobs.
 
-**Why P1**: Content tem score 2/10 de isolamento de serviço (zero deps cross-domain em `ContentServiceImpl` para JPA); é candidato natural pós-Onda 1. Split-brain exige que **ambos** JPA e CMS backends migrem juntos.
+**Por quê P1**: Content tem score 2/10 de isolamento de serviço (zero deps cross-domain em `ContentServiceImpl` para JPA); é candidato natural pós-Onda 1. Split-brain exige que **ambos** JPA e CMS backends migrem juntos.
 
 **Acceptance Criteria**:
 
@@ -92,9 +92,9 @@ Sem especificação formal, a Onda 2 repete erros da Fase 3 original (extração
 
 ### P1: Search Service — query, autocomplete e propriedade do índice ⭐ MVP
 
-**User Story**: Como visitante da loja, quero buscar produtos e obter sugestões de autocomplete via `/api/v1/search`, para encontrar produtos sem depender do runtime monolítico para consultas OpenSearch.
+**História de usuário**: Como visitante da loja, quero buscar produtos e obter sugestões de autocomplete via `/api/v1/search`, para encontrar produtos sem depender do runtime monolítico para consultas OpenSearch.
 
-**Why P1**: Search é domínio pequeno (~14 arquivos) com integração OpenSearch já externalizada (`shopizer-search-opensearch-spring-boot-starter`). Extração do **read path** valida padrão Onda 1 com menor superfície que catalog.
+**Por quê P1**: Search é domínio pequeno (~14 arquivos) com integração OpenSearch já externalizada (`shopizer-search-opensearch-spring-boot-starter`). Extração do **read path** valida padrão Onda 1 com menor superfície que catalog.
 
 **Acceptance Criteria**:
 
@@ -126,9 +126,9 @@ Sem especificação formal, a Onda 2 repete erros da Fase 3 original (extração
 
 ### P1: Merchant Service — lojas, configuração e hierarquia retailer ⭐ MVP
 
-**User Story**: Como superadmin ou admin de retailer, quero criar e gerenciar lojas, idiomas suportados e configuração pública da loja, para operar multi-tenant sem runtime monolítico no domínio merchant.
+**História de usuário**: Como superadmin ou admin de retailer, quero criar e gerenciar lojas, idiomas suportados e configuração pública da loja, para operar multi-tenant sem runtime monolítico no domínio merchant.
 
-**Why P1**: `MerchantStoreServiceImpl` não usa `ProductTypeService` (injeção morta). APIs REST em `MerchantStoreApi` + `PublicConfigsApi` são coesas. Score 5/10 — mitigação "sem product types" é viável.
+**Por quê P1**: `MerchantStoreServiceImpl` não usa `ProductTypeService` (injeção morta). APIs REST em `MerchantStoreApi` + `PublicConfigsApi` são coesas. Score 5/10 — mitigação "sem product types" é viável.
 
 **Acceptance Criteria**:
 
@@ -160,9 +160,9 @@ Sem especificação formal, a Onda 2 repete erros da Fase 3 original (extração
 
 ### P1: Strangler Fig — monólito como BFF para Onda 2 ⭐ MVP
 
-**User Story**: Como equipe de plataforma, quero adapters HTTP configuráveis para Content, Search e Merchant, para validar extração sem reescrever de uma vez resolvers e ~450 referências a `MerchantStore`.
+**História de usuário**: Como equipe de plataforma, quero adapters HTTP configuráveis para Content, Search e Merchant, para validar extração sem reescrever de uma vez resolvers e ~450 referências a `MerchantStore`.
 
-**Why P1**: Mesmo padrão comprovado Onda 1; escopo fechado nas fronteiras REST-shaped.
+**Por quê P1**: Mesmo padrão comprovado Onda 1; escopo fechado nas fronteiras REST-shaped.
 
 **Acceptance Criteria**:
 
@@ -187,9 +187,9 @@ Sem especificação formal, a Onda 2 repete erros da Fase 3 original (extração
 
 ### P2: Servir arquivos estáticos e integração cross-service
 
-**User Story**: Como visitante, quero acessar logos e imagens estáticas via URLs existentes, para não quebrar storefronts após extração de content.
+**História de usuário**: Como visitante, quero acessar logos e imagens estáticas via URLs existentes, para não quebrar storefronts após extração de content.
 
-**Why P2**: `ImagesController` e `FilesController` são MVC legado fora de `/api/v1`; decisão de roteamento é gray area (OQ-03).
+**Por quê P2**: `ImagesController` e `FilesController` são MVC legado fora de `/api/v1`; decisão de roteamento é gray area (OQ-03).
 
 **Acceptance Criteria**:
 
@@ -204,7 +204,7 @@ Sem especificação formal, a Onda 2 repete erros da Fase 3 original (extração
 
 ### P2: Testes de contrato (Pact) — Onda 2
 
-**User Story**: Como desenvolvedor, quero pact tests para content, search e merchant, para detectar breaking changes antes de deploy.
+**História de usuário**: Como desenvolvedor, quero pact tests para content, search e merchant, para detectar breaking changes antes de deploy.
 
 **Acceptance Criteria**:
 
@@ -216,9 +216,9 @@ Sem especificação formal, a Onda 2 repete erros da Fase 3 original (extração
 
 ### P2: `ProductIndexPayload` — contrato mínimo de indexação
 
-**User Story**: Como arquiteto, quero um DTO de indexação desacoplado de JPA, para permitir `search-service` sem dependência de `sm-core-model` e preparar `ProductSnapshot` da Onda 3.
+**História de usuário**: Como arquiteto, quero um DTO de indexação desacoplado de JPA, para permitir `search-service` sem dependência de `sm-core-model` e preparar `ProductSnapshot` da Onda 3.
 
-**Why P2**: Ponte entre Onda 2 (search extraction) e Onda 3 (contratos sistêmicos).
+**Por quê P2**: Ponte entre Onda 2 (search extraction) e Onda 3 (contratos sistêmicos).
 
 **Acceptance Criteria**:
 
@@ -233,7 +233,7 @@ Sem especificação formal, a Onda 2 repete erros da Fase 3 original (extração
 
 ### P3: Observabilidade — Onda 2
 
-**User Story**: Como operador, quero health checks nos três serviços com dependências externas visíveis.
+**História de usuário**: Como operador, quero health checks nos três serviços com dependências externas visíveis.
 
 **Acceptance Criteria**:
 
@@ -315,7 +315,7 @@ Sem especificação formal, a Onda 2 repete erros da Fase 3 original (extração
 
 ---
 
-## Open Questions — Resolvidas ✅
+## Questões em aberto — Resolvidas ✅
 
 Decisões em [context.md](./context.md) e [design.md](./design.md).
 
@@ -330,7 +330,7 @@ Decisões em [context.md](./context.md) e [design.md](./design.md).
 
 ---
 
-## Success Criteria
+## Critérios de sucesso
 
 - [ ] Três serviços passam health check e respondem a todos os endpoints P1 em integração
 - [ ] Monólito Strangler produz respostas equivalentes ao in-process (pact verdes)

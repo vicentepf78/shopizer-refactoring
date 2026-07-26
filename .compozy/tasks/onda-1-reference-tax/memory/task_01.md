@@ -27,6 +27,6 @@ Scaffold `shopizer-api-contracts` and migrate common DTO wrappers to `com.salesm
 
 ## Errors / Corrections
 
-## Ready for Next Run
+## Pronto para próxima execução
 
 Done. Hand off to task_02 for reference/tax DTOs + client interfaces on this module.

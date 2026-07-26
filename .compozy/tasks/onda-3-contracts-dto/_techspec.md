@@ -1,26 +1,26 @@
-# TechSpec: Wave 3 — Contracts DTO + Checkout Application Service
+# TechSpec: Onda 3 — Contracts DTO + Checkout Application Service
 
 **PRD:** [_prd.md](_prd.md)  
-**Authoritative TLC (HOW):** `.specs/features/onda-3-contracts-dto/design.md`  
-**Feature slug:** `onda-3-contracts-dto`  
-**Date:** 2026-07-26  
-**Status:** Ready for `cy-create-tasks`
+**TLC autoritativo (COMO):** `.specs/features/onda-3-contracts-dto/design.md`  
+**Slug da feature:** `onda-3-contracts-dto`  
+**Data:** 2026-07-26  
+**Status:** Pronto para `cy-create-tasks`
 
 ---
 
-## Executive summary
+## Resumo executivo
 
-Wave 3 is a **monolith-only refactoring wave** (ADR-001): no new Spring Boot apps, no Docker services, no Strangler HTTP URLs. It delivers cross-cutting **DTO contracts** in `shopizer-api-contracts`, **integration module V2** in `sm-core-modules`, a **CheckoutApplicationService** extracted from `OrderFacadeImpl`, and a **local transactional outbox** for `processOrder` (ADR-005).
+A Onda 3 é uma **onda de refatoração apenas no monólito** (ADR-001): sem novas apps Spring Boot, sem serviços Docker, sem URLs HTTP Strangler. Entrega **contratos DTO** cross-cutting em `shopizer-api-contracts`, **módulo de integração V2** em `sm-core-modules`, um **CheckoutApplicationService** extraído de `OrderFacadeImpl` e um **outbox transacional local** para `processOrder` (ADR-005).
 
-**Primary trade-off:** Accept temporary bridge layers (entity hydration, dual PaymentModule interfaces, ProductIndexPayload + ProductSnapshot) to avoid big-bang rewrites while closing blockers B-001 (partial), B-002, and AD-009 evolution.
+**Trade-off principal:** Aceitar camadas bridge temporárias (hidratação de entidade, interfaces PaymentModule duplas, ProductIndexPayload + ProductSnapshot) para evitar rewrites big-bang enquanto fecha blockers B-001 (parcial), B-002 e evolução AD-009.
 
-**Hard prerequisite:** Wave 2 Execute complete (`onda-2-content-search-merchant` gate green).
+**Pré-requisito rígido:** Execute da Onda 2 completo (gate verde `onda-2-content-search-merchant`).
 
 ---
 
-## System architecture
+## Arquitetura do sistema
 
-### Component view (unchanged deployment topology)
+### Visão dos componentes (topologia de implantação inalterada)
 
 ```mermaid
 flowchart TB
@@ -29,20 +29,20 @@ flowchart TB
         STOREFRONT[Storefront]
     end
 
-    subgraph monolith [sm-shop + sm-core — Wave 3 changes here]
-        API[REST Controllers — frozen paths]
-        FAC[Facades — P1 signatures use tenant IDs]
-        CAS[CheckoutApplicationService NEW]
-        OUT[CheckoutOutboxDispatcher NEW]
-        BRIDGE[TenantEntityBridge NEW]
-        BUILD[ProductSnapshotBuilder NEW]
-        OFI[OrderFacadeImpl — thinned]
+    subgraph monolith [sm-shop + sm-core — mudanças Onda 3 aqui]
+        API[REST Controllers — caminhos congelados]
+        FAC[Facades — assinaturas P1 usam tenant IDs]
+        CAS[CheckoutApplicationService NOVO]
+        OUT[CheckoutOutboxDispatcher NOVO]
+        BRIDGE[TenantEntityBridge NOVO]
+        BUILD[ProductSnapshotBuilder NOVO]
+        OFI[OrderFacadeImpl — reduzido]
     end
 
     subgraph contracts [shopizer-api-contracts]
         SNAP[ProductSnapshot / OrderSnapshot / CustomerSnapshot]
         TNT[MerchantStoreId / LanguageCode]
-        SRCH[SearchItem migrated]
+        SRCH[SearchItem migrado]
     end
 
     subgraph modules [sm-core-modules]
@@ -50,7 +50,7 @@ flowchart TB
         DTO[Integration DTO contexts]
     end
 
-    subgraph wave12 [Wave 1+2 services — unchanged]
+    subgraph wave12 [Serviços Onda 1+2 — inalterados]
         REF[reference-service]
         CNT[content-service]
         SRCHSVC[search-service]
@@ -68,32 +68,32 @@ flowchart TB
     API --> wave12
 ```
 
-| Component | Module | Responsibility |
-| --------- | ------ | -------------- |
-| Snapshot DTOs | `shopizer-api-contracts` | Serializable cross-boundary projections |
-| Snapshot builders | `sm-core`, `sm-shop` | JPA → DTO mapping (MapStruct/manual) |
-| Tenant value types | `shopizer-api-contracts` | Store/lang identifiers |
-| `TenantEntityBridge` | `sm-shop` | Code → `MerchantStore`/`Language` for in-process services |
-| Integration DTOs + V2 | `sm-core-modules` | Plugin contracts without JPA |
-| Legacy bridges | `sm-core` | V1 plugins via entity adapters |
-| `CheckoutApplicationService` | `sm-core/.../checkout` | Place-order orchestration |
-| `CheckoutOutbox` | `sm-core` + Flyway/Liquibase script | Staged checkout events |
-| Facade interfaces | `sm-shop-model` | P1 migrated signatures |
+| Componente | Módulo | Responsabilidade |
+| ---------- | ------ | ---------------- |
+| DTOs snapshot | `shopizer-api-contracts` | Projeções serializáveis cross-boundary |
+| Builders snapshot | `sm-core`, `sm-shop` | Mapeamento JPA → DTO (MapStruct/manual) |
+| Value types tenant | `shopizer-api-contracts` | Identificadores store/lang |
+| `TenantEntityBridge` | `sm-shop` | Código → `MerchantStore`/`Language` para serviços in-process |
+| DTOs + V2 integração | `sm-core-modules` | Contratos de plugin sem JPA |
+| Bridges legacy | `sm-core` | Plugins V1 via adapters de entidade |
+| `CheckoutApplicationService` | `sm-core/.../checkout` | Orquestração place-order |
+| `CheckoutOutbox` | `sm-core` + script Flyway/Liquibase | Eventos checkout em estágios |
+| Interfaces facade | `sm-shop-model` | Assinaturas P1 migradas |
 
-### Principles (inherited + Wave 3)
+### Princípios (herdados + Onda 3)
 
-1. **Contracts = DTOs only** — L-002; no JPA in `shopizer-api-contracts`.
-2. **Frozen REST paths** — no checkout URL changes.
-3. **Feature flags** for behavioral switches (`checkout.outbox.enabled`).
-4. **Behavioral parity** — integration tests are the gate.
-5. **No new HTTP client patterns** — Waves 1–2 Strangler untouched.
-6. **Shared DB** — AD-003; outbox table in `SALESMANAGER`.
+1. **Contracts = apenas DTOs** — L-002; sem JPA em `shopizer-api-contracts`.
+2. **Caminhos REST congelados** — sem mudanças de URL de checkout.
+3. **Feature flags** para switches comportamentais (`checkout.outbox.enabled`).
+4. **Paridade comportamental** — testes de integração são o gate.
+5. **Sem novos padrões de HTTP client** — Strangler Ondas 1–2 inalterado.
+6. **DB compartilhado** — AD-003; tabela outbox em `SALESMANAGER`.
 
 ---
 
-## Implementation design
+## Design de implementação
 
-### Key interfaces
+### Interfaces principais
 
 ```java
 // shopizer-api-contracts
@@ -172,19 +172,19 @@ public interface CheckoutOutboxRepository {
 }
 ```
 
-### Data models
+### Modelos de dados
 
-| DTO | Package | Notes |
+| DTO | Package | Notas |
 | --- | ------- | ----- |
-| `ProductSnapshot` | `contracts.catalog` | Supersedes payload semantics (ADR-002) |
-| `OrderSnapshot` | `contracts.order` | Status, totals, line items as nested DTOs |
-| `CustomerSnapshot` | `contracts.customer` | No lazy collections |
-| `SearchItem` | `contracts.search` | Migrated from `modules.commons.search` |
-| `PaymentRequestContext` | `modules.integration.payment.dto` | Amount, line items as `PaymentLineItemDto` |
-| `ShippingQuoteRequestContext` | `modules.integration.shipping.dto` | Delivery/origin as address DTOs |
+| `ProductSnapshot` | `contracts.catalog` | Substitui semântica de payload (ADR-002) |
+| `OrderSnapshot` | `contracts.order` | Status, totais, line items como DTOs aninhados |
+| `CustomerSnapshot` | `contracts.customer` | Sem coleções lazy |
+| `SearchItem` | `contracts.search` | Migrado de `modules.commons.search` |
+| `PaymentRequestContext` | `modules.integration.payment.dto` | Amount, line items como `PaymentLineItemDto` |
+| `ShippingQuoteRequestContext` | `modules.integration.shipping.dto` | Delivery/origin como DTOs de address |
 | `IntegrationStoreContext` | `modules.integration.common` | Store code, currency, locale |
 
-### ProductIndexPayload evolution
+### Evolução ProductIndexPayload
 
 ```
 Product (JPA)
@@ -194,45 +194,45 @@ Product (JPA)
     → SearchIndexClient.index()
 ```
 
-`search-service` index handler: accept v1 and v2; normalize to internal document model.
+Handler de índice `search-service`: aceita v1 e v2; normaliza para modelo interno de documento.
 
-### Checkout flow (after extraction)
+### Fluxo checkout (após extração)
 
 ```
 OrderApi / OrderPaymentApi
-    → OrderFacadeImpl (validation, DTO mapping)
+    → OrderFacadeImpl (validação, mapeamento DTO)
     → CheckoutApplicationService.placeOrder(CheckoutCommand)
-        → stage PAYMENT_REQUESTED (outbox if enabled)
-        → PaymentService (V2 path when available)
-        → stage PAYMENT_CONFIRMED
+        → estágio PAYMENT_REQUESTED (outbox se habilitado)
+        → PaymentService (caminho V2 quando disponível)
+        → estágio PAYMENT_CONFIRMED
         → CustomerService / OrderService.create
-        → stage ORDER_PERSISTED
-        → Inventory decrement
-        → stage INVENTORY_DECREMENTED
-    → ReadableOrder mapping (unchanged)
+        → estágio ORDER_PERSISTED
+        → Decremento de inventário
+        → estágio INVENTORY_DECREMENTED
+    → Mapeamento ReadableOrder (inalterado)
 ```
 
-### Facade migration (Phase 1)
+### Migração facade (Fase 1)
 
-| Facade | Change |
-| ------ | ------ |
+| Facade | Mudança |
+| ------ | ------- |
 | `OrderFacade` | `MerchantStore` → `MerchantStoreId`, `Language` → `LanguageCode` |
-| `ShoppingCartFacade` | Same |
-| `SearchFacade` | Same |
-| `ShippingFacade` | Same |
-| `CategoryFacade` | Read methods only |
-| `ProductCommonFacade` | Read + `getProduct` paths |
+| `ShoppingCartFacade` | Idem |
+| `SearchFacade` | Idem |
+| `ShippingFacade` | Idem |
+| `CategoryFacade` | Apenas métodos de leitura |
+| `ProductCommonFacade` | Leitura + caminhos `getProduct` |
 
-Implementations (`*FacadeImpl`) call `TenantEntityBridge` at method entry.
+Implementações (`*FacadeImpl`) chamam `TenantEntityBridge` na entrada do método.
 
-### ReferencesApi fix (B-002)
+### Correção ReferencesApi (B-002)
 
-| Endpoint | Before | After |
-| -------- | ------ | ----- |
-| `GET .../languages` | `List<Language>` entity | `List<ReadableLanguage>` |
-| `GET .../currencies` | `List<Currency>` entity | `List<ReadableCurrency>` |
+| Endpoint | Antes | Depois |
+| -------- | ----- | ------ |
+| `GET .../languages` | entidade `List<Language>` | `List<ReadableLanguage>` |
+| `GET .../currencies` | entidade `List<Currency>` | `List<ReadableCurrency>` |
 
-Use existing populators/mappers from Wave 1 reference strangler path.
+Usar populators/mappers existentes do caminho strangler reference da Onda 1.
 
 ### Database
 
@@ -249,9 +249,9 @@ CREATE TABLE CHECKOUT_OUTBOX (
 );
 ```
 
-Ship as `sm-core/src/main/resources/db/migration/` or existing Shopizer schema script pattern.
+Entregar como `sm-core/src/main/resources/db/migration/` ou padrão de script de schema Shopizer existente.
 
-### Configuration
+### Configuração
 
 ```properties
 # application.properties (sm-shop / sm-core)
@@ -259,62 +259,62 @@ checkout.outbox.enabled=false
 checkout.outbox.dispatcher.interval-ms=5000
 ```
 
-No `wave3.*` URLs.
+Sem URLs `wave3.*`.
 
 ---
 
-## Build order
+## Ordem de construção
 
-1. **Contracts foundation** — tenant types, snapshot DTO shells, Jackson tests (T1–T6).
-2. **ProductSnapshot builder** + payload mapper (T7–T12).
-3. **Order/Customer snapshots** (T13–T16).
-4. **SearchItem migration** (T17–T20) — depends on search DTO stability.
-5. **Integration DTOs + V2 interfaces** (T21–T26).
-6. **Legacy plugin bridges** in Payment/Shipping services (T27–T29).
-7. **Facade P1 migration** (T30–T36).
-8. **ReferencesApi DTO fix** (T37–T38).
-9. **CheckoutApplicationService extraction** (T39–T43).
-10. **Outbox + staged processOrder** (T44–T47).
+1. **Base contracts** — tipos tenant, shells DTO snapshot, testes Jackson (T1–T6).
+2. **Builder ProductSnapshot** + mapper payload (T7–T12).
+3. **Snapshots Order/Customer** (T13–T16).
+4. **Migração SearchItem** (T17–T20) — depende de estabilidade DTO search.
+5. **DTOs integração + interfaces V2** (T21–T26).
+6. **Bridges plugin legacy** em serviços Payment/Shipping (T27–T29).
+7. **Migração facade P1** (T30–T36).
+8. **Correção DTO ReferencesApi** (T37–T38).
+9. **Extração CheckoutApplicationService** (T39–T43).
+10. **Outbox + processOrder em estágios** (T44–T47).
 11. **Gate** — Pact, ArchUnit, `./mvnw clean install`, STATE.md (T48).
 
-Parallel tracks after T6:
+Tracks paralelas após T6:
 - **Track A:** ProductSnapshot + SearchItem (T7–T20)
-- **Track B:** Integration modules (T21–T29)
+- **Track B:** Módulos integração (T21–T29)
 - **Track C:** Facades + References (T30–T38)
-- **Convergence:** Checkout + outbox (T39–T47) → gate (T48)
+- **Convergência:** Checkout + outbox (T39–T47) → gate (T48)
 
 ---
 
-## Testing strategy
+## Estratégia de testes
 
-| Layer | Scope |
-| ----- | ----- |
-| Unit | Snapshot serializers, tenant type validation, DTO→entity adapters |
-| Integration | `CheckoutApplicationServicePlaceOrderTest` — flag on/off |
-| Integration | Outbox rows written per stage when enabled |
-| Pact | Update search consumer/provider for `SearchItem` in contracts |
+| Camada | Escopo |
+| ------ | ------ |
+| Unit | Serializers snapshot, validação tipos tenant, adapters DTO→entidade |
+| Integração | `CheckoutApplicationServicePlaceOrderTest` — flag on/off |
+| Integração | Linhas outbox escritas por estágio quando habilitado |
+| Pact | Atualizar consumer/provider search para `SearchItem` em contracts |
 | ArchUnit | `no_core_model_in_contracts`, `facades_no_new_entity_params` |
-| Regression | Existing `OrderTest`, `PaymentService` tests green |
+| Regressão | `OrderTest`, testes `PaymentService` existentes verdes |
 
 Gate: `./mvnw clean install`
 
 ---
 
-## Risks and mitigations
+## Riscos e mitigações
 
-| Risk | Mitigation |
-| ---- | ---------- |
-| Large monolith diff | Feature flags; phased facades |
-| Checkout regression | Copy existing flow to CAS verbatim first; then refactor stages |
-| Plugin adapter bugs | Golden-path test with MoneyOrderPayment (simplest plugin) |
-| Pact drift on SearchItem move | Coordinate search-service + sm-shop consumer in one PR slice |
-| Outbox table in shared DB | Migration idempotent; flag off in production profile until Wave 6 |
+| Risco | Mitigação |
+| ----- | --------- |
+| Diff grande no monólito | Feature flags; facades faseadas |
+| Regressão checkout | Copiar fluxo existente em CAS verbatim primeiro; depois refatorar estágios |
+| Bugs adapter plugin | Teste golden-path com MoneyOrderPayment (plugin mais simples) |
+| Drift Pact em move SearchItem | Coordenar search-service + consumer sm-shop em um slice de PR |
+| Tabela outbox em DB compartilhado | Migração idempotente; flag off em profile de produção até Onda 6 |
 
 ---
 
-## TLC mapping
+## Mapeamento TLC
 
-| Compozy task | TLC tasks | Requirements |
+| Task Compozy | TLC tasks | Requirements |
 | ------------ | --------- | ------------ |
 | task_01 | T1–T6 | CTR, TNT |
 | task_02 | T7–T12 | SNP |
@@ -329,12 +329,12 @@ Gate: `./mvnw clean install`
 
 ---
 
-## References
+## Referências
 
 - ADRs: `adrs/adr-001.md` … `adr-005.md`
 - TLC: `.specs/features/onda-3-contracts-dto/`
-- Master plan: `docs/decomposition/MIGRATION-MASTER-PLAN.md` § Onda 3
-- Key sources:
+- Plano mestre: `docs/decomposition/MIGRATION-MASTER-PLAN.md` § Onda 3
+- Fontes principais:
   - `sm-shop/.../order/facade/OrderFacadeImpl.java`
   - `sm-core/.../order/OrderServiceImpl.java`
   - `sm-core-modules/.../PaymentModule.java`

@@ -1,30 +1,30 @@
 ---
 status: pending
-title: Legacy processOrder saga delegation + compensation tests
+title: Delegação saga processOrder legado + testes compensação
 type: backend
 complexity: high
 ---
 
-# Legacy processOrder saga delegation + compensation tests
+# Delegação saga processOrder legado + testes compensação
 
-## Overview
-TLC T26–T27, T59. Refactor `OrderServiceImpl.processOrder` to delegate when `wave6.checkout.saga.enabled`; narrow global AOP pointcut; compensation tests + chaos test.
+## Visão geral
+TLC T26–T27, T59. Refatorar `OrderServiceImpl.processOrder` para delegar quando `wave6.checkout.saga.enabled`; estreitar pointcut AOP global; testes de compensação + teste de chaos.
 
 <requirements>
-1. MUST preserve legacy processOrder when saga flag false — T26, CHK-07.
-2. MUST narrow TransactionalAspectAwareService pointcut for checkout — GAP-CHK-02.
-3. MUST pass SagaCompensationTest (payment fail → order CANCELLED, cart retained) — T27.
-4. MUST add chaos test killing integration mid-saga — T59.
+1. MUST preservar processOrder legado quando flag saga false — T26, CHK-07.
+2. MUST estreitar pointcut TransactionalAspectAwareService para checkout — GAP-CHK-02.
+3. MUST passar SagaCompensationTest (falha payment → order CANCELLED, cart retido) — T27.
+4. MUST adicionar teste de chaos matando integration mid-saga — T59.
 </requirements>
 
-## Related ADRs
+## ADRs relacionados
 - [ADR-003: Saga](adrs/adr-003.md)
-- [ADR-008: Rollback flag](adrs/adr-008.md)
+- [ADR-008: Flag rollback](adrs/adr-008.md)
 
-## Deliverables
-- OrderService saga delegation
-- `SagaCompensationTest`, chaos test **(REQUIRED)**
+## Entregáveis
+- Delegação saga OrderService
+- `SagaCompensationTest`, teste chaos **(REQUIRED)**
 
-## Success Criteria
-- Both flag paths tested green
-- Compensation leaves no orphan paid orders
+## Critérios de sucesso
+- Ambos caminhos de flag testados verdes
+- Compensação não deixa pedidos pagos órfãos

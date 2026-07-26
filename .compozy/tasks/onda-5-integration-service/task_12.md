@@ -1,48 +1,48 @@
 ---
 status: pending
-title: Docker Compose, integration gate, STATE
+title: Docker Compose, gate integração, STATE
 type: infra
 complexity: medium
 ---
 
-# Docker Compose, integration gate, STATE
+# Docker Compose, gate integração, STATE
 
-## Overview
-Consolidates TLC T33–T38. Removes duplicate plugin beans when strangler enabled; adds `docker-compose-wave5.yml` and `Dockerfile.wave5`; runs cross-service integration gate; adds JaCoCo verify limits; updates STATE.md and ROADMAP.
+## Visão geral
+Consolida TLC T33–T38. Remove beans duplicados de plugins quando strangler habilitado; adiciona `docker-compose-wave5.yml` e `Dockerfile.wave5`; executa gate de integração cross-service; adiciona limites JaCoCo verify; atualiza STATE.md e ROADMAP.
 
 <critical>
-- ALWAYS READ the PRD and TechSpec before starting
-- TESTS REQUIRED — every task MUST include tests in deliverables
+- SEMPRE LER o PRD e a TechSpec antes de iniciar
+- TESTES OBRIGATÓRIOS — toda task DEVE incluir testes nos entregáveis
 </critical>
 
 <requirements>
-1. MUST fix duplicate `paymentModules` beans in strangler profile — T33.
-2. MUST add `docker-compose-wave5.yml` with integration-service :8086 — T34, STR-10.
-3. MUST add `Dockerfile.wave5` expecting prebuilt JAR — T35.
-4. MUST run cross-service health gate script/test — T36.
-5. MUST add JaCoCo limits on integration-service + sm-integration-core — T37.
-6. MUST update `.specs/project/STATE.md` and ROADMAP with Wave 5 evidence — T38.
-7. MUST run `./mvnw clean install` before marking complete.
+1. MUST corrigir beans duplicados `paymentModules` no profile strangler — T33.
+2. MUST adicionar `docker-compose-wave5.yml` com integration-service :8086 — T34, STR-10.
+3. MUST adicionar `Dockerfile.wave5` esperando JAR pré-compilado — T35.
+4. MUST executar script/teste de gate health cross-service — T36.
+5. MUST adicionar limites JaCoCo em integration-service + sm-integration-core — T37.
+6. MUST atualizar `.specs/project/STATE.md` e ROADMAP com evidência Onda 5 — T38.
+7. MUST executar `./mvnw clean install` antes de marcar completo.
 </requirements>
 
-## Subtasks
-- [ ] 12.1 Bean deduplication strangler profile (T33)
+## Subtarefas
+- [ ] 12.1 Deduplicação de beans profile strangler (T33)
 - [ ] 12.2 docker-compose-wave5.yml + Dockerfile (T34–T35)
-- [ ] 12.3 Integration gate test/script (T36)
-- [ ] 12.4 JaCoCo pom configuration (T37)
-- [ ] 12.5 STATE.md + ROADMAP update (T38)
+- [ ] 12.3 Teste/script gate integração (T36)
+- [ ] 12.4 Configuração JaCoCo pom (T37)
+- [ ] 12.5 Atualização STATE.md + ROADMAP (T38)
 
-## Deliverables
-- Docker topology for local Wave 5
-- JaCoCo verify gates
-- Updated STATE.md
-- `docker compose -f docker-compose-wave5.yml config` passes **(REQUIRED)**
+## Entregáveis
+- Topologia Docker para Onda 5 local
+- Gates JaCoCo verify
+- STATE.md atualizado
+- `docker compose -f docker-compose-wave5.yml config` passa **(REQUIRED)**
 
-## Tests
-- [ ] Cross-service: reference + catalog (partial) + integration + shop health
-- [ ] `./mvnw clean install` green
+## Testes
+- [ ] Cross-service: reference + catalog (parcial) + integration + shop health
+- [ ] `./mvnw clean install` verde
 
-## Success Criteria
-- Wave 5 gate documented with evidence
-- GAP-INT-01..05 listed in STATE
-- All tests passing; coverage gates met
+## Critérios de sucesso
+- Gate Onda 5 documentado com evidência
+- GAP-INT-01..05 listados em STATE
+- Todos os testes passando; gates de cobertura atendidos

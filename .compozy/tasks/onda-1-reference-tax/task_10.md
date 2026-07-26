@@ -7,7 +7,7 @@ complexity: medium
 
 # Docker Compose, health, correlation e gate do reactor
 
-## Overview
+## Visão geral
 Consolida TLC T28–T30. Fecha a Wave 1 com topologia Docker Compose (MySQL → reference → tax → shop), health indicators customizados, propagação de `X-Correlation-Id` e gate `./mvnw clean install` do reactor completo (TechSpec **Ordem de build** passo 10; **Monitoramento e observabilidade**; STR-05).
 
 <critical>
@@ -28,40 +28,40 @@ Consolida TLC T28–T30. Fecha a Wave 1 com topologia Docker Compose (MySQL → 
 7. MUST NOT exigir Eureka/K8s discovery na Wave 1 (apenas URLs de config).
 </requirements>
 
-## Subtasks
+## Subtarefas
 - [x] 10.1 Criar `docker-compose-wave1.yml` e validar config
 - [x] 10.2 Health indicators custom (reference DB; tax DB+reference)
 - [x] 10.3 Filtros/propagação `X-Correlation-Id` nos 3 apps
 - [x] 10.4 Gate `./mvnw clean install` + regressões Pact/TaxRate
 - [x] 10.5 Checklist smoke de integração documentado
 
-## Implementation Details
+## Detalhes de implementação
 Ver TechSpec: **Monitoramento e observabilidade**, **Dependências técnicas**, **Configuração**, **Ordem de build** passo 10, **Abordagem de testes** (gate reactor). Seed permanece no monolito (ADR-007).
 
-### Relevant Files
+### Arquivos relevantes
 - `reference-service/` — health + correlation (task_06)
 - `tax-service/` — health + correlation (task_07)
 - `sm-shop/` — strangler + correlation (task_08)
 - Root `pom.xml` — reactor completo Wave 1
 
-### Dependent Files
+### Arquivos dependentes
 - `docker-compose-wave1.yml` — a criar
 - `reference-service/.../ReferenceHealthIndicator.java` (ou equivalente) — a criar
 - `tax-service/.../TaxHealthIndicator.java` (ou equivalente) — a criar
 - Filters de correlation id nos três módulos — a criar/adaptar
 
-### Related ADRs
+### ADRs relacionados
 - [ADR-002: Shared DB schema for Wave 1](adrs/adr-002.md) — um MySQL na topologia
 - [ADR-007: InitializationDatabaseImpl stays in the monolith](adrs/adr-007.md) — ordem de seed greenfield
 
-## Deliverables
+## Entregáveis
 - Compose Wave 1 válido
 - Health custom + correlation id
 - Gate reactor verde
 - Unit tests dos health indicators **(REQUIRED)**
 - Evidence de `./mvnw clean install` **(REQUIRED)**
 
-## Tests
+## Testes
 - Unit tests:
   - [x] `ReferenceHealthIndicator` reporta UP quando DB ok / DOWN quando DB falha
   - [x] `TaxHealthIndicator` DOWN quando reference HTTP falha mesmo com DB UP
@@ -74,7 +74,7 @@ Ver TechSpec: **Monitoramento e observabilidade**, **Dependências técnicas**, 
 - Test coverage target: >=80% (indicators/filters novos)
 - All tests must pass
 
-## Success Criteria
+## Critérios de sucesso
 - All tests passing
 - Test coverage >=80%
 - Compose config válida e ordem MySQL→ref→tax→shop documentada

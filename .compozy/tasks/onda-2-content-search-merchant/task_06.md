@@ -7,7 +7,7 @@ complexity: high
 
 # ProductIndexPayload, producers e listener de indexação
 
-## Overview
+## Visão geral
 Consolida TLC T23–T26. Extrai `ProductIndexPayloadBuilder` no sm-core, introduz `SearchIndexProducer` in-process e HTTP, refatora `IndexProductEventListener` e adiciona `SearchBulkIndexOrchestrator` no BFF. Depende de S-ready (`task_05`) e dos contracts/config Wave2 (`task_01`).
 
 <critical>
@@ -28,23 +28,23 @@ Consolida TLC T23–T26. Extrai `ProductIndexPayloadBuilder` no sm-core, introdu
 7. MUST logar falhas HTTP de índice sem outbox (GAP documentado em task_07).
 </requirements>
 
-## Subtasks
+## Subtarefas
 - [ ] 6.1 ProductIndexPayloadBuilder + testes com fixture Product (T23)
 - [ ] 6.2 SearchIndexProducer InProcess + Http (T24)
 - [ ] 6.3 Refatorar IndexProductEventListener (T25)
 - [ ] 6.4 SearchBulkIndexOrchestrator + delay config (T26)
 - [ ] 6.5 Wiring condicional por profile
 
-## Implementation Details
+## Detalhes de implementação
 Ver TechSpec: **Pipeline de índice**, **Interfaces** SearchIndexProducer/SearchIndexClient, **Ordem de construção** passos 19–20. Sequência: Catalog → PublishProductAspect → listener → builder → producer → search-service.
 
-### Relevant Files
+### Arquivos relevantes
 - `sm-core/src/main/java/com/salesmanager/core/business/services/search/SearchServiceImpl.java` — fonte do builder
 - `sm-core/src/main/java/com/salesmanager/core/business/configuration/events/products/listeners/IndexProductEventListener.java` — listener
 - `shopizer-api-contracts/.../client/SearchIndexClient.java` — client HTTP
 - `sm-shop/.../strangler/config/Wave2ClientConfig.java` — RestTemplate/token (task_01)
 
-### Dependent Files
+### Arquivos dependentes
 - `sm-core/.../search/index/ProductIndexPayloadBuilder.java` — a criar
 - `sm-core/.../search/index/SearchIndexProducer.java` — interface
 - `sm-core/.../search/index/SearchIndexProducerInProcess.java` — impl
@@ -52,16 +52,16 @@ Ver TechSpec: **Pipeline de índice**, **Interfaces** SearchIndexProducer/Search
 - `sm-shop/.../strangler/search/SearchBulkIndexOrchestrator.java` — orchestrator
 - `IndexProductEventListener.java` — refatorado
 
-### Related ADRs
+### ADRs relacionados
 - [ADR-002: ProductIndexPayload](adrs/adr-002.md) — builder no monólito
 - [ADR-005: token interno](adrs/adr-005.md) — producer HTTP
 
-## Deliverables
+## Entregáveis
 - Builder + producers + listener + orchestrator
 - Unit tests builder 80%+ **(REQUIRED)**
 - Integration tests producer HTTP e listener **(REQUIRED)**
 
-## Tests
+## Testes
 - Unit tests:
   - [ ] Builder com fixture Product gera payloads por idioma com schemaVersion=1
   - [ ] Producer InProcess chama SearchService legado
@@ -74,7 +74,7 @@ Ver TechSpec: **Pipeline de índice**, **Interfaces** SearchIndexProducer/Search
 - Test coverage target: >=80%
 - All tests must pass
 
-## Success Criteria
+## Critérios de sucesso
 - All tests passing
 - Test coverage >=80%
 - Um producer ativo por profile

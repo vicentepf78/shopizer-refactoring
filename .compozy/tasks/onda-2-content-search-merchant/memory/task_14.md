@@ -26,7 +26,7 @@ Wave 2 close-out: docker-compose-wave2.yml, integration suite docs, `./mvnw clea
 
 - Initial `./mvnw clean install` failed sm-shop JaCoCo (52% strangler); fixed with targeted Wave2 adapter tests.
 
-## Ready for Next Run
+## Pronto para próxima execução
 
 - Onda 2 declared complete in STATE; next wave is Onda 3 Specify/Execute.
 - Local smoke: `docker compose -f docker-compose-wave2.yml config` then package + up.

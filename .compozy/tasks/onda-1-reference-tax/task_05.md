@@ -7,7 +7,7 @@ complexity: high
 
 # Extrair sm-tax-core, guard 409 e rewire sm-core
 
-## Overview
+## Visão geral
 Consolida TLC T10–T12 e T16. Extrai repositories e services CRUD de TaxClass/TaxRate para `sm-tax-core`, implementa o guard DELETE→409 (`TAX_CLASS_IN_USE`) e a semântica `existsTaxRate` → `{exists:false}` sem throw (TAX-09), e rewire `sm-core` mantendo `TaxService*` (cálculo) in-process (TechSpec **Ordem de build** passo 5; ADR-003). Paralelizável com task_04 após task_03.
 
 <critical>
@@ -27,17 +27,17 @@ Consolida TLC T10–T12 e T16. Extrai repositories e services CRUD de TaxClass/T
 6. SHOULD adicionar `ProductRepository.countByTaxClassId` (ou query equivalente) para o guard.
 </requirements>
 
-## Subtasks
+## Subtarefas
 - [x] 5.1 Scaffold `sm-tax-core` + mover tax repositories
 - [x] 5.2 Mover TaxClass/TaxRate services (excluir TaxService*)
 - [x] 5.3 Implementar guard 409 + semântica existsTaxRate
 - [x] 5.4 Rewire `sm-core` e validar TaxService permanece
 - [x] 5.5 Testes unitários do guard/exists + regressão sm-shop TaxRate IT
 
-## Implementation Details
+## Detalhes de implementação
 Ver TechSpec: **Interfaces principais** (delete guard), **Convenções de erro**, **Modelos de dados** (tabelas TAX_*), **Ordem de build** passo 5, ADR-003.
 
-### Relevant Files
+### Arquivos relevantes
 - `sm-core/src/main/java/com/salesmanager/core/business/repositories/tax/TaxClassRepository.java` — a mover
 - `sm-core/src/main/java/com/salesmanager/core/business/repositories/tax/TaxRateRepository.java` — a mover
 - `sm-core/src/main/java/com/salesmanager/core/business/services/tax/TaxClassServiceImpl.java` — a mover + guard
@@ -45,23 +45,23 @@ Ver TechSpec: **Interfaces principais** (delete guard), **Convenções de erro**
 - `sm-core/src/main/java/com/salesmanager/core/business/services/tax/TaxServiceImpl.java` — permanece
 - `sm-core/pom.xml` — rewire
 
-### Dependent Files
+### Arquivos dependentes
 - `sm-tax-core/` — novo módulo (a criar)
 - `sm-shop` testes de tax rate / checkout — regressão TAX-07
 - Product repository (count by tax class) — suporte ao guard 409
 
-### Related ADRs
+### ADRs relacionados
 - [ADR-002: Shared DB schema for Wave 1](adrs/adr-002.md) — FKs TAX_RATE/PRODUCT retidas
 - [ADR-003: Tax admin only; calculation stays in monolith](adrs/adr-003.md) — TaxService fica no sm-core
 
-## Deliverables
+## Entregáveis
 - Módulo `sm-tax-core` com CRUD tax (sem calculate)
 - Guard 409 + existsTaxRate corrigido
 - `sm-core` rewired com TaxService in-process
 - Unit tests 80%+ no guard/exists **(REQUIRED)**
 - Integration/regressão TaxRate **(REQUIRED)**
 
-## Tests
+## Testes
 - Unit tests:
   - [x] Delete TaxClass com products associados → `TaxClassInUseException`
   - [x] Delete TaxClass sem products → remove com sucesso
@@ -74,7 +74,7 @@ Ver TechSpec: **Interfaces principais** (delete guard), **Convenções de erro**
 - Test coverage target: >=80%
 - All tests must pass
 
-## Success Criteria
+## Critérios de sucesso
 - All tests passing
 - Test coverage >=80%
 - `TaxService*` permanece em `sm-core`

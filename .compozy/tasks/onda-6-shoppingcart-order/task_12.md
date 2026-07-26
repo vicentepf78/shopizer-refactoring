@@ -1,29 +1,29 @@
 ---
 status: pending
-title: Hub decomposition — thin OrderFacade + bypass APIs
+title: Decomposição hub — OrderFacade fino + bypass APIs
 type: refactor
 complexity: high
 ---
 
-# Hub decomposition — thin OrderFacade + bypass APIs
+# Decomposição hub — OrderFacade fino + bypass APIs
 
-## Overview
-TLC T33–T36. Route OrderPaymentApi, OrderTotalApi, OrderShippingApi through CheckoutApplicationService; thin OrderFacadeImpl; consolidate duplicate OrderFacadeImpl packages.
+## Visão geral
+TLC T33–T36. Rotear OrderPaymentApi, OrderTotalApi, OrderShippingApi pelo CheckoutApplicationService; `OrderFacadeImpl` fino; consolidar pacotes duplicados OrderFacadeImpl.
 
 <requirements>
-1. MUST remove direct PaymentService from OrderPaymentApi — T33, HUB-02.
-2. MUST route OrderTotalApi and OrderShippingApi through checkout — T34.
-3. MUST reduce OrderFacadeImpl checkout sm-core injections to ≤4 — T35, HUB-01, HUB-03.
-4. MUST consolidate v1 OrderFacadeImpl duplicate — T36, GAP-ORD-01.
+1. MUST remover PaymentService direto de OrderPaymentApi — T33, HUB-02.
+2. MUST rotear OrderTotalApi e OrderShippingApi pelo checkout — T34.
+3. MUST reduzir injeções sm-core checkout de OrderFacadeImpl para ≤4 — T35, HUB-01, HUB-03.
+4. MUST consolidar duplicata v1 OrderFacadeImpl — T36, GAP-ORD-01.
 </requirements>
 
-## Related ADRs
-- [ADR-005: Hub decomposition](adrs/adr-005.md)
+## ADRs relacionados
+- [ADR-005: Decomposição hub](adrs/adr-005.md)
 
-## Deliverables
-- Refactored hub facades and bypass APIs
-- `OrderFacadeThinTest`, routing tests **(REQUIRED)**
+## Entregáveis
+- Hub facades e bypass APIs refatorados
+- `OrderFacadeThinTest`, testes de roteamento **(REQUIRED)**
 
-## Success Criteria
-- ArchUnit or static check: no PaymentService in OrderPaymentApi
-- Characterization tests pass
+## Critérios de sucesso
+- ArchUnit ou checagem estática: sem PaymentService em OrderPaymentApi
+- Testes de caracterização passam

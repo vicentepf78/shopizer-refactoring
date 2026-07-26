@@ -6,7 +6,7 @@
 
 **Solves:** Monólito Maven com ~1.167 arquivos Java, ~94% MODEL coupling nas facades, ciclos order↔payments e hub de checkout com 12 services — impossibilitando evolução independente por domínio sem decomposição planejada.
 
-## Goals
+## Objetivos
 
 - Extrair **reference-service** e **tax-service** (Onda 1) como serviços REST deployáveis com DTOs, sem expor entidades JPA na API pública
 - Extrair **content-service**, **search-service** e **merchant-service** (Onda 2) replicando padrão Strangler + Pact

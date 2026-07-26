@@ -2,18 +2,18 @@
 
 **Spec:** `.specs/features/onda-4-catalog-customer/spec.md`
 **Context:** `.specs/features/onda-4-catalog-customer/context.md` (OQ-01..06)
-**Status:** Approved — Execute blocked until Onda 3 gate green
-**Prerequisite:** Wave 3 contracts (`ProductSnapshot`, `CustomerSnapshot`, `LanguageCode`, `MerchantStoreId`)
+**Status:** Aprovado — Execute bloqueado até gate Onda 3 verde
+**Pré-requisito:** Contratos Onda 3 (`ProductSnapshot`, `CustomerSnapshot`, `LanguageCode`, `MerchantStoreId`)
 
 ---
 
-## Architecture Overview
+## Visão geral da arquitetura
 
-Wave 4 extracts **two Spring Boot services** while keeping **shared MySQL schema** (AD-003/AD-022) and the monolith as **Strangler BFF**. Catalog is **read-heavy only** at the service boundary; admin writes stay in-process. Customer service owns profile persistence; **cart merge stays monolith** using `CustomerSnapshot`.
+A Onda 4 extrai **dois serviços Spring Boot** mantendo **schema MySQL compartilhado** (AD-003/AD-022) e o monólito como **BFF Strangler**. Catalog é **somente leitura** na fronteira do serviço; escritas admin permanecem in-process. O customer-service dona a persistência de perfil; **merge de carrinho permanece no monólito** usando `CustomerSnapshot`.
 
 ```mermaid
 flowchart TB
-    subgraph clients [Clients]
+    subgraph clients [Clientes]
         STOREFRONT[Storefront]
         ADMIN[Admin UI]
     end
@@ -30,12 +30,12 @@ flowchart TB
         WRITES[Private Product Admin APIs — in-process]
     end
 
-    subgraph wave4 [Wave 4 services]
+    subgraph wave4 [Serviços Onda 4]
         CAT[catalog-service :8086]
         CUS[customer-service :8087]
     end
 
-    subgraph prior [Waves 1–2]
+    subgraph prior [Ondas 1–2]
         REF[reference-service :8081]
         MCH[merchant-service :8085]
         CNT[content-service :8083]
@@ -43,7 +43,7 @@ flowchart TB
     end
 
     subgraph infra [Infra]
-        DB[(MySQL shared)]
+        DB[(MySQL compartilhado)]
     end
 
     STOREFRONT --> PROD_API & CUST_API
@@ -68,56 +68,56 @@ flowchart TB
     CAT -.->|product images URLs| CNT
 ```
 
-### Principles (Waves 1–3 + Wave 4)
+### Princípios (Ondas 1–3 + Onda 4)
 
-1. **Frozen REST paths** — STR-04; BFF keeps original controllers
-2. **DTOs without JPA** — `shopizer-api-contracts` extended with snapshots + catalog/customer DTOs
-3. **Mappers in services** — not in contracts JAR (L-002)
+1. **Paths REST congelados** — STR-04; BFF mantém controllers originais
+2. **DTOs sem JPA** — `shopizer-api-contracts` estendido com snapshots + DTOs catalog/customer
+3. **Mappers nos serviços** — não no JAR de contratos (L-002)
 4. **RestTemplate** — AD-005; properties `wave4.*.base-url`
-5. **JWT replicated** on `/private/**` customer routes
-6. **Catalog read-only at service boundary** — AD-020; CQRS phased extraction
-7. **ProductSnapshot canonical** — supersedes `ProductIndexPayload` for indexing (OQ-02)
-8. **CustomerSnapshot for integration** — cart merge without remote cart service (OQ-03)
-9. **LanguageCode / MerchantStoreId** — no `Language` or `MerchantStore` entities on HTTP boundaries (Wave 3)
+5. **JWT replicado** nas rotas `/private/**` do customer
+6. **Catalog somente leitura na fronteira do serviço** — AD-020; extração CQRS faseada
+7. **ProductSnapshot canônico** — substitui `ProductIndexPayload` para indexação (OQ-02)
+8. **CustomerSnapshot para integração** — merge de carrinho sem serviço remoto de carrinho (OQ-03)
+9. **LanguageCode / MerchantStoreId** — sem entidades `Language` ou `MerchantStore` nas fronteiras HTTP (Onda 3)
 
 ---
 
-## Design Decisions (OQ-01 – OQ-06)
+## Decisões de Design (OQ-01 – OQ-06)
 
-| ID | Decision | Choice | Rationale |
-|----|----------|--------|-----------|
-| **OQ-01** | Catalog phasing | **Read APIs first** | Afferent coupling 10/10; moving writes pulls inventory/pricing/order side effects |
-| **OQ-02** | Product contract | **`ProductSnapshot` v2** | Wave 3 deliverable; unifies search + cross-service reads |
-| **OQ-03** | Cart merge | **Monolith orchestrates** | Avoids distributed transaction cart+customer; snapshot carries ids |
-| **OQ-04** | Product images | **content-service** | Completes Onda 2 OQ-02 deferral; catalog-service does not own blobs |
-| **OQ-05** | Facade paths | **V1 strangler first** | `ProductApi` + `CategoryApi` are storefront contract; V2 delegates same adapter |
-| **OQ-06** | Customer auth | **Stays monolith** | Login authority unchanged; customer-service is profile domain |
+| ID | Decisão | Escolha | Justificativa |
+|----|---------|---------|-----------|
+| **OQ-01** | Faseamento catalog | **APIs de leitura primeiro** | Acoplamento aferente 10/10; mover escritas puxa side effects de inventário/precificação/pedido |
+| **OQ-02** | Contrato de produto | **`ProductSnapshot` v2** | Entregável Onda 3; unifica search + leituras cross-service |
+| **OQ-03** | Merge de carrinho | **Monólito orquestra** | Evita transação distribuída carrinho+customer; snapshot carrega ids |
+| **OQ-04** | Imagens de produto | **content-service** | Completa deferimento OQ-02 da Onda 2; catalog-service não dona blobs |
+| **OQ-05** | Paths de facade | **Strangler V1 primeiro** | `ProductApi` + `CategoryApi` são contrato storefront; V2 delega ao mesmo adapter |
+| **OQ-06** | Auth de customer | **Permanece monólito** | Autoridade de login inalterada; customer-service é domínio de perfil |
 
-**AD-015:** Single workflow `onda-4-catalog-customer` (catalog + customer same calendar window).
+**AD-015:** Workflow único `onda-4-catalog-customer` (catalog + customer na mesma janela de calendário).
 
-**AD-016:** `sm-catalog-core` — read services, repositories, snapshot mappers; **excludes** write orchestration used only by admin APIs staying in monolith.
+**AD-016:** `sm-catalog-core` — serviços de leitura, repositórios, mappers de snapshot; **exclui** orquestração de escrita usada apenas por APIs admin que permanecem no monólito.
 
-**AD-017:** `sm-customer-core` — customer, optin, attribute services; **excludes** order-created customer flows.
+**AD-017:** `sm-customer-core` — serviços customer, optin, attribute; **exclui** fluxos customer em order-created.
 
-**AD-018:** Internal snapshot API on catalog-service for optional centralized snapshot building.
+**AD-018:** API interna de snapshot no catalog-service para construção centralizada opcional de snapshot.
 
-**AD-019:** `CustomerSnapshot` + `CustomerServiceClient.getSnapshot(customerId, storeCode)` for merge path.
+**AD-019:** `CustomerSnapshot` + `CustomerServiceClient.getSnapshot(customerId, storeCode)` para path de merge.
 
-**AD-020:** Private product POST/PUT/DELETE **never** routed to catalog-service in Wave 4.
+**AD-020:** POST/PUT/DELETE privados de produto **nunca** roteados ao catalog-service na Onda 4.
 
-**AD-021:** All new clients use `LanguageCode` / `MerchantStoreId` value types from contracts.
+**AD-021:** Todos os novos clients usam value types `LanguageCode` / `MerchantStoreId` dos contratos.
 
-**AD-022:** Shared DB continues; catalog-service and customer-service use JPA on existing tables.
+**AD-022:** DB compartilhado continua; catalog-service e customer-service usam JPA nas tabelas existentes.
 
 ---
 
 ## Maven Module Structure
 
-### Root `pom.xml` (after Waves 1–3)
+### Root `pom.xml` (após Ondas 1–3)
 
 ```xml
 <modules>
-    <!-- Waves 1–3 -->
+    <!-- Ondas 1–3 -->
     <module>shopizer-api-contracts</module>
     <module>reference-service</module>
     <module>tax-service</module>
@@ -126,7 +126,7 @@ flowchart TB
     <module>search-service</module>
     <module>sm-merchant-core</module>
     <module>merchant-service</module>
-    <!-- Wave 4 NEW -->
+    <!-- Onda 4 NEW -->
     <module>sm-catalog-core</module>
     <module>catalog-service</module>
     <module>sm-customer-core</module>
@@ -134,39 +134,39 @@ flowchart TB
 </modules>
 ```
 
-### Ports and services
+### Portas e serviços
 
-| Module | Port | JPA | Read | Write at boundary |
-|--------|------|-----|------|-------------------|
-| `catalog-service` | 8086 | ✅ | Product, category, manufacturer, inventory, price | **No admin writes** |
-| `customer-service` | 8087 | ✅ | Profile, addresses, optin, reviews (read) | Profile/address/optin writes |
+| Módulo | Port | JPA | Leitura | Escrita na fronteira |
+|--------|------|-----|---------|----------------------|
+| `catalog-service` | 8086 | ✅ | Product, category, manufacturer, inventory, price | **Sem escritas admin** |
+| `customer-service` | 8087 | ✅ | Profile, addresses, optin, reviews (leitura) | Escritas profile/address/optin |
 
-### `shopizer-api-contracts` — Wave 4 extensions
+### `shopizer-api-contracts` — extensões Onda 4
 
 ```
 com.salesmanager.contracts.catalog     → ReadableProduct*, ReadableCategory*, ProductSnapshot, ...
 com.salesmanager.contracts.customer    → ReadableCustomer*, CustomerSnapshot, Address, ...
-com.salesmanager.contracts.common      → LanguageCode, MerchantStoreId (Wave 3)
+com.salesmanager.contracts.common      → LanguageCode, MerchantStoreId (Onda 3)
 com.salesmanager.contracts.client      → CatalogServiceClient, CustomerServiceClient
 ```
 
-**Deprecation:** `ProductIndexPayload` remains deserializable in search-service until migration task completes; producer switches to `ProductSnapshot` with `schemaVersion=2`.
+**Depreciação:** `ProductIndexPayload` permanece deserializável no search-service até tarefa de migração completar; producer migra para `ProductSnapshot` com `schemaVersion=2`.
 
 ### `sm-catalog-core`
 
-Extract from `sm-core` (read subset):
+Extrai de `sm-core` (subset leitura):
 
-- `services/catalog/product/` (read methods), `category/`, `manufacturer/`, `inventory/`, `pricing/` (read)
-- Matching repositories
-- **Exclude** from thin core: write-only admin flows, `PublishProductAspect` (stays monolith), digital product file managers (content)
+- `services/catalog/product/` (métodos leitura), `category/`, `manufacturer/`, `inventory/`, `pricing/` (leitura)
+- Repositórios correspondentes
+- **Exclui** do thin core: fluxos admin somente escrita, `PublishProductAspect` (permanece monólito), file managers de produto digital (content)
 
 ### `sm-customer-core`
 
-Extract from `sm-core`:
+Extrai de `sm-core`:
 
-- `services/customer/`, `optin/`, `attribute/` (not used by order-only paths initially)
-- Repositories under `repositories/customer/`
-- **Exclude:** logic only invoked from `OrderServiceImpl` customer creation — stays monolith until Onda 6
+- `services/customer/`, `optin/`, `attribute/` (não usados por paths somente order inicialmente)
+- Repositórios em `repositories/customer/`
+- **Exclui:** lógica invocada apenas de criação customer em `OrderServiceImpl` — permanece monólito até Onda 6
 
 ---
 
@@ -174,30 +174,30 @@ Extract from `sm-core`:
 
 ### catalog-service (:8086)
 
-| Area | Paths | Auth | Notes |
+| Área | Paths | Auth | Notas |
 | ---- | ----- | ---- | ----- |
-| Products | Mirror `ProductApi` **GET** routes | public / JWT where today | No private POST/PUT/DELETE |
-| Categories | Mirror `CategoryApi` GET | public | Tree + by id |
-| Manufacturers | `ProductManufacturerApi` GET | public | |
-| Inventory | `ProductInventoryApi` GET | public/JWT | Read quantities |
-| Prices | `ProductPriceApi` GET | public | |
-| Groups | `ProductGroupApi` GET | public | |
+| Products | Espelha rotas **GET** de `ProductApi` | public / JWT onde hoje | Sem POST/PUT/DELETE privados |
+| Categories | Espelha GET de `CategoryApi` | public | Tree + by id |
+| Manufacturers | GET de `ProductManufacturerApi` | public | |
+| Inventory | GET de `ProductInventoryApi` | public/JWT | Quantidades leitura |
+| Prices | GET de `ProductPriceApi` | public | |
+| Groups | GET de `ProductGroupApi` | public | |
 | Internal | `GET /internal/v1/products/{id}/snapshot` | network | `ProductSnapshot` |
-| Internal | `GET /internal/v1/products/sku/{sku}/snapshot` | network | optional |
+| Internal | `GET /internal/v1/products/sku/{sku}/snapshot` | network | opcional |
 
-**Not exposed:** `ProductApiV2` controllers live in catalog-service only if parity test demands; BFF may keep V2 controller delegating HTTP to same service.
+**Não exposto:** controllers `ProductApiV2` no catalog-service apenas se teste de paridade exige; BFF pode manter controller V2 delegando HTTP ao mesmo serviço.
 
 ### customer-service (:8087)
 
-| Area | Paths | Auth |
+| Área | Paths | Auth |
 | ---- | ----- | ---- |
-| Profile | `GET/PUT /api/v1/customer/**` profile sections | JWT customer |
-| Addresses | shipping/billing address endpoints | JWT |
-| Opt-in | newsletter/optin endpoints | public/JWT per monolith |
-| Reviews | `GET` review lists; `POST` review MAY phase 2 | JWT |
+| Profile | `GET/PUT /api/v1/customer/**` seções de perfil | JWT customer |
+| Addresses | endpoints shipping/billing address | JWT |
+| Opt-in | endpoints newsletter/optin | public/JWT conforme monólito |
+| Reviews | `GET` listas de review; `POST` review PODE fase 2 | JWT |
 | Internal | `GET /internal/v1/customers/{id}/snapshot?store=` | network |
 
-**Not exposed:** `AuthenticateCustomerApi`, password reset — monolith.
+**Não exposto:** `AuthenticateCustomerApi`, reset de senha — monólito.
 
 ### Strangler configuration (`sm-shop`)
 
@@ -214,31 +214,31 @@ wave2.strangler.enabled=true
 wave3.strangler.enabled=false
 ```
 
-Adapter matrix:
+Matriz de adapters:
 
-| Facade | HTTP when wave4 on | Stays in-process |
-|--------|-------------------|------------------|
-| `ProductFacade` / `ProductCommonFacade` (read) | ✅ catalog-service | write methods |
+| Facade | HTTP com wave4 on | Permanece in-process |
+|--------|-------------------|----------------------|
+| `ProductFacade` / `ProductCommonFacade` (leitura) | ✅ catalog-service | métodos escrita |
 | `CategoryFacade` | ✅ | — |
-| `CustomerFacade` (profile/address/optin) | ✅ customer-service | auth, merge orchestration |
-| `ProductFacadeV2` (read) | ✅ same catalog client | write |
-| Private product admin controllers | — | ✅ sm-core writes |
+| `CustomerFacade` (profile/address/optin) | ✅ customer-service | auth, orquestração merge |
+| `ProductFacadeV2` (leitura) | ✅ mesmo client catalog | escrita |
+| Private product admin controllers | — | ✅ escritas sm-core |
 
 ---
 
 ## Integration Points
 
-| Integration | Purpose | Auth | Failure |
-| ----------- | ------- | ---- | ------- |
-| catalog → reference | `LanguageCode` resolution | Wave 1 client | 503 |
-| catalog → merchant | store validation / `MerchantStoreId` | Wave 2 client | 503 |
-| customer → reference | country/zone/language | Wave 1 client | 503 |
-| monolith → catalog | strangler read facades | JWT forward + correlation | 503 |
-| monolith → customer | profile + snapshot for merge | JWT | 503 |
-| monolith → search | `ProductSnapshot` index producer | `X-Internal-Token` | log; GAP-SRCH |
-| monolith → content | product image upload (P2) | internal | 503 |
+| Integração | Propósito | Auth | Falha |
+| ----------- | --------- | ---- | ----- |
+| catalog → reference | resolução `LanguageCode` | client Onda 1 | 503 |
+| catalog → merchant | validação store / `MerchantStoreId` | client Onda 2 | 503 |
+| customer → reference | country/zone/language | client Onda 1 | 503 |
+| monolith → catalog | facades leitura strangler | JWT forward + correlation | 503 |
+| monolith → customer | profile + snapshot para merge | JWT | 503 |
+| monolith → search | producer index `ProductSnapshot` | `X-Internal-Token` | log; GAP-SRCH |
+| monolith → content | upload imagem produto (P2) | internal | 503 |
 
-### ProductSnapshot indexing (post Wave 3)
+### Indexação ProductSnapshot (após Onda 3)
 
 ```mermaid
 sequenceDiagram
@@ -255,7 +255,7 @@ sequenceDiagram
     SS->>SS: map to OpenSearch doc
 ```
 
-### Cart merge decoupling
+### Desacoplamento merge de carrinho
 
 ```mermaid
 sequenceDiagram
@@ -270,57 +270,57 @@ sequenceDiagram
     Auth->>SC: mergeShoppingCarts(session, userCart, snapshot)
 ```
 
-`mergeShoppingCarts` signature evolves to accept `CustomerSnapshot` or primitive ids — **no remote call inside** `ShoppingCartService`.
+Assinatura de `mergeShoppingCarts` evolui para aceitar `CustomerSnapshot` ou ids primitivos — **sem chamada remota dentro** de `ShoppingCartService`.
 
 ---
 
 ## ProductSnapshot schema (v2)
 
-| Field | Type | Notes |
+| Campo | Tipo | Notas |
 | ----- | ---- | ----- |
-| `schemaVersion` | int | `2` (supersedes ProductIndexPayload `1`) |
+| `schemaVersion` | int | `2` (substitui ProductIndexPayload `1`) |
 | `id` | Long | product id |
-| `storeCode` | String | lowercase store code |
-| `language` | String | ISO code |
+| `storeCode` | String | store code lowercase |
+| `language` | String | código ISO |
 | `sku`, `name`, `description`, `link`, `image` | String | |
 | `reviews`, `brand`, `category` | String | |
 | `attributes` | Map | |
 | `variants` | List | |
-| `inventory` | List | SKU, QTY, PRICE, DISCOUNT keys |
+| `inventory` | List | chaves SKU, QTY, PRICE, DISCOUNT |
 | `addToCart` | Boolean | |
-| `manufacturerCode` | String | optional Wave 4 |
+| `manufacturerCode` | String | opcional Onda 4 |
 | `visible` | Boolean | |
 
-search-service: accept v1 and v2 during transition; v1 deprecated after Wave 4 gate.
+search-service: aceita v1 e v2 na transição; v1 depreciado após gate Onda 4.
 
 ### CustomerSnapshot schema (v1)
 
-| Field | Type | Notes |
+| Campo | Tipo | Notas |
 | ----- | ---- | ----- |
 | `schemaVersion` | int | `1` |
 | `id` | Long | customer id |
 | `storeCode` | String | |
 | `email` | String | |
 | `firstName`, `lastName` | String | |
-| `billingAddressId`, `deliveryAddressId` | Long | optional |
-| `customerGroup` | String | optional |
+| `billingAddressId`, `deliveryAddressId` | Long | opcional |
+| `customerGroup` | String | opcional |
 
 ---
 
 ## Impact Analysis
 
-| Component | Impact | Action |
-| --------- | ------ | ------ |
-| `shopizer-api-contracts` | modified | Snapshots, catalog/customer DTOs, clients |
-| `sm-catalog-core` | new | Read catalog subset |
-| `catalog-service` | new | Boot 8086, JWT on private reads if any |
-| `sm-customer-core` | new | Customer subset |
-| `customer-service` | new | Boot 8087, JWT |
-| `sm-core` | modified | Delegate read paths to cores; merge signature |
-| `sm-shop` | modified | Wave4 adapters, builder migration |
-| `search-service` | modified | Accept ProductSnapshot v2 |
-| `content-service` | modified (P2) | Product file manager endpoints |
-| DB schema | none | Shared tables |
+| Componente | Impacto | Ação |
+| --------- | ------- | ---- |
+| `shopizer-api-contracts` | modificado | Snapshots, DTOs catalog/customer, clients |
+| `sm-catalog-core` | novo | Subset leitura catalog |
+| `catalog-service` | novo | Boot 8086, JWT em leituras privadas se houver |
+| `sm-customer-core` | novo | Subset customer |
+| `customer-service` | novo | Boot 8087, JWT |
+| `sm-core` | modificado | Delega paths leitura aos cores; assinatura merge |
+| `sm-shop` | modificado | Adapters Wave4, migração builder |
+| `search-service` | modificado | Aceita ProductSnapshot v2 |
+| `content-service` | modificado (P2) | Endpoints product file manager |
+| DB schema | nenhum | Tabelas compartilhadas |
 
 ---
 
@@ -328,26 +328,26 @@ search-service: accept v1 and v2 during transition; v1 deprecated after Wave 4 g
 
 ### Unit
 
-- `ProductSnapshotBuilder` / mappers with product fixtures
-- `CatalogFacadeHttpAdapter` with mocked RestTemplate
+- `ProductSnapshotBuilder` / mappers com fixtures de produto
+- `CatalogFacadeHttpAdapter` com RestTemplate mockado
 - `CustomerSnapshotMapper`
-- `ShoppingCartServiceImpl.mergeShoppingCarts` with snapshot-only customer ref
+- `ShoppingCartServiceImpl.mergeShoppingCarts` com ref customer somente snapshot
 - Correlation + health indicators
 
 ### Integration
 
-- catalog-service: product list, category tree, snapshot internal API
-- customer-service: profile CRUD, snapshot internal API
-- sm-shop: Wave4ClientConfig; adapters; merge flow with Testcontainers MySQL
+- catalog-service: lista produto, tree categoria, API interna snapshot
+- customer-service: CRUD perfil, API interna snapshot
+- sm-shop: Wave4ClientConfig; adapters; fluxo merge com Testcontainers MySQL
 - Pact: `CatalogProviderPactTest`, `CustomerProviderPactTest`, `Wave4ConsumerPactTest`
 - Gate: `./mvnw clean install`
 
-### Known gaps (document only)
+### Gaps conhecidos (documentar apenas)
 
-- GAP-CAT-01: V1/V2 facade semantic drift until consolidation
-- GAP-CAT-02: Price-only changes may not reindex search
-- GAP-CUS-01: Order-created customer still in monolith transaction
-- GAP-CUS-02: Review write path may lag read extraction
+- GAP-CAT-01: deriva semântica facade V1/V2 até consolidação
+- GAP-CAT-02: mudanças somente preço podem não reindexar search
+- GAP-CUS-01: customer criado em order ainda em transação monólito
+- GAP-CUS-02: path escrita review pode ficar atrás da extração leitura
 
 ---
 
@@ -355,8 +355,8 @@ search-service: accept v1 and v2 during transition; v1 deprecated after Wave 4 g
 
 `docker-compose-wave4.yml`:
 
-- Extends Wave 2 topology (mysql, opensearch, reference, content, merchant, search)
-- Adds `catalog-service:8086`, `customer-service:8087`
+- Estende topologia Onda 2 (mysql, opensearch, reference, content, merchant, search)
+- Adiciona `catalog-service:8086`, `customer-service:8087`
 - Startup: mysql → reference → merchant → content → catalog → customer → search → sm-shop
 - Env: `WAVE4_CATALOG_BASE_URL`, `WAVE4_CUSTOMER_BASE_URL`
 
@@ -370,12 +370,12 @@ Pre-build:
 
 ## Monitoring
 
-| Signal | Where |
-| ------ | ----- |
+| Sinal | Onde |
+| ----- | ---- |
 | `GET /actuator/health` | catalog, customer |
 | catalog indicators | `db`, `referenceService`, `merchantService` |
 | customer indicators | `db`, `referenceService` |
-| `X-Correlation-Id` | All Wave 4 apps + RestTemplate interceptor |
+| `X-Correlation-Id` | Todos apps Onda 4 + interceptor RestTemplate |
 
 ---
 
@@ -383,5 +383,5 @@ Pre-build:
 
 - `.specs/features/onda-4-catalog-customer/spec.md`
 - `docs/decomposition/MIGRATION-MASTER-PLAN.md` § Onda 4
-- `.specs/project/STATE.md` (post Execute)
-- Wave 3 contracts feature (prerequisite)
+- `.specs/project/STATE.md` (após Execute)
+- Feature contratos Onda 3 (pré-requisito)

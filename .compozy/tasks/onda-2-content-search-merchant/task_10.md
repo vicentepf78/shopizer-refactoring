@@ -7,7 +7,7 @@ complexity: high
 
 # Merchant REST, snapshot interno e logo AD-014
 
-## Overview
+## Visão geral
 Consolida TLC T35–T40. Porta Store/Config facades, REST de loja (~18 endpoints sem ProductType), `GET /config`, snapshot interno, orquestração de logo blob-first (AD-014) e gate do módulo merchant-service. Completa a trilha merchant antes do Strangler BFF.
 
 <critical>
@@ -28,7 +28,7 @@ Consolida TLC T35–T40. Porta Store/Config facades, REST de loja (~18 endpoints
 7. MUST passar gate completo `./mvnw test -pl merchant-service` — TLC T40.
 </requirements>
 
-## Subtasks
+## Subtarefas
 - [x] 10.1 Port StoreFacade + populators (T35)
 - [x] 10.2 Config facade + PublicConfigsController (T36)
 - [x] 10.3 MerchantStoreController REST sem ProductType (T37)
@@ -36,17 +36,17 @@ Consolida TLC T35–T40. Porta Store/Config facades, REST de loja (~18 endpoints
 - [x] 10.5 Logo orchestration AD-014 (T39)
 - [x] 10.6 Gate módulo merchant-service (T40)
 
-## Implementation Details
+## Detalhes de implementação
 Ver TechSpec: **Endpoints merchant-service**, **Ordem de construção** passos 25–26. Fontes: `StoreFacadeImpl`, `MerchantStoreApi`, `PublicConfigsApi`.
 
-### Relevant Files
+### Arquivos relevantes
 - `sm-shop/src/main/java/com/salesmanager/shop/store/controller/store/facade/StoreFacadeImpl.java` — facade
 - `sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/store/MerchantStoreApi.java` — paths
 - `sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/system/PublicConfigsApi.java` — config pública
 - `sm-shop/src/test/java/com/salesmanager/test/shop/integration/store/MerchantStoreApiIntegrationTest.java` — paridade
 - `shopizer-api-contracts/.../merchant/MerchantStoreSnapshot.java` — snapshot
 
-### Dependent Files
+### Arquivos dependentes
 - `merchant-service/.../facade/` — facades portadas
 - `merchant-service/.../populator/` — populators
 - `merchant-service/.../api/v1/store/` — REST store
@@ -54,18 +54,18 @@ Ver TechSpec: **Endpoints merchant-service**, **Ordem de construção** passos 2
 - `merchant-service/.../api/internal/InternalStoreController.java` — snapshot
 - `merchant-service/.../facade/StoreFacadeImpl.java` — logo AD-014
 
-### Related ADRs
+### ADRs relacionados
 - [ADR-006: Logo blob-first com compensação](adrs/adr-006.md) — orquestração
 - [ADR-007: Sem ProductType](adrs/adr-007.md) — exclusão rotas
 - [ADR-005: APIs internas](adrs/adr-005.md) — snapshot
 
-## Deliverables
+## Entregáveis
 - REST merchant P1 + config + snapshot + logo
 - Gate módulo merchant-service verde
 - Unit tests facades 80%+ **(REQUIRED)**
 - Integration tests store/config/logo/snapshot **(REQUIRED)**
 
-## Tests
+## Testes
 - Unit tests:
   - [x] StoreFacade create/update usa ReferenceServiceClient (mock)
   - [x] Populators não serializam entidades JPA
@@ -80,7 +80,7 @@ Ver TechSpec: **Endpoints merchant-service**, **Ordem de construção** passos 2
 - Test coverage target: >=80%
 - All tests must pass
 
-## Success Criteria
+## Critérios de sucesso
 - All tests passing
 - Test coverage >=80%
 - Trilha merchant C-ready-consumidora completa

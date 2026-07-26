@@ -1,235 +1,235 @@
 # PRD: Onda 5 — Integration Service
 
-**Feature slug:** `onda-5-integration-service`
-**Source of truth:** TLC at `.specs/features/onda-5-integration-service/` (Option A — authoritative; frozen scope)
-**Status:** Ready for TechSpec
-**Date:** 2026-07-26
+**Slug da feature:** `onda-5-integration-service`
+**Fonte da verdade:** TLC em `.specs/features/onda-5-integration-service/` (Opção A — autoritativa; escopo congelado)
+**Status:** Pronto para TechSpec
+**Data:** 2026-07-26
 
 ---
 
-## Overview
+## Visão geral
 
-After Waves 1–2 validated the Strangler pattern and Wave 3 delivers DTO contracts plus checkout saga foundation, Wave 5 extracts **payment and shipping quote orchestration** into `integration-service` so store operators and customers can configure gateways, obtain shipping quotes, and process payments without those capabilities remaining trapped in the monolith's `sm-core` runtime.
+Após as Ondas 1–2 validarem o padrão Strangler e a Onda 3 entregar contratos DTO mais fundação de saga de checkout, a Onda 5 extrai a **orquestração de pagamento e cotação de frete** para `integration-service`, para que operadores de loja e clientes possam configurar gateways, obter cotações de frete e processar pagamentos sem que essas capacidades permaneçam presas no runtime `sm-core` do monólito.
 
-Today's problem is architectural: `PaymentModule` and `ShippingQuoteModule` contracts accept JPA entities (`Order`, `Customer`, `ShoppingCartItem`), and `PaymentServiceImpl` writes order status after gateway calls — creating the **order ↔ payments cycle** that makes Order the hardest domain to extract (9/10). Shipping orchestration is less coupled but still pulls catalog pricing and reference data in-process. Wave 5 must be **stateless regarding Order** — integration returns transaction and quote DTOs; the checkout application service (Wave 3) owns order mutations.
+O problema hoje é arquitetural: os contratos `PaymentModule` e `ShippingQuoteModule` aceitam entidades JPA (`Order`, `Customer`, `ShoppingCartItem`), e `PaymentServiceImpl` grava status do pedido após chamadas ao gateway — criando o **ciclo order ↔ payments** que torna Order o domínio mais difícil de extrair (9/10). A orquestração de frete é menos acoplada, mas ainda puxa preço de catálogo e dados de referência in-process. A Onda 5 deve ser **stateless em relação a Order** — integration retorna DTOs de transação e cotação; o application service de checkout (Onda 3) é dono das mutações de pedido.
 
-This PRD defines **business what and why** for one deployable service behind the existing BFF, with frozen REST paths and no user-facing API breaks. Technical how belongs in the TechSpec and ADRs.
+Este PRD define **o quê e o porquê de negócio** de um serviço implantável atrás do BFF shop existente, com caminhos REST congelados e sem quebras de API voltadas ao usuário. O como técnico fica para a TechSpec e os ADRs.
 
-**Primary users:** store administrators (payment/shipping config), storefront customers (quotes and checkout payment), platform engineers (Strangler rollout), and architects unblocking Wave 6 order/payments split.
+**Usuários primários:** administradores de loja (config de pagamento/frete), clientes da vitrine (cotações e pagamento no checkout), engenheiros de plataforma (rollout Strangler) e arquitetos desbloqueando o split order/payments da Onda 6.
 
-**Hard prerequisites:** Onda 3 Execute complete (DTO module contracts, checkout app service, saga/outbox foundation); Onda 4 partial (catalog read paths for shipping product snapshots).
+**Pré-requisitos rígidos:** Execute da Onda 3 completo (módulo de contratos DTO, application service de checkout, fundação saga/outbox); Onda 4 parcial (caminhos de leitura de catálogo para snapshots de produto de frete).
 
 ---
 
-## Objectives
+## Objetivos
 
-- Deliver **integration-service** as an independently deployable capability for payment module orchestration and shipping quote orchestration while the monolith remains the customer-facing BFF.
-- Preserve existing admin and storefront journeys (payment module setup, shipping configuration, cart shipping quotes, checkout payment) with responses equivalent to today's monolith.
-- **Break the order ↔ payments cycle** by ensuring integration-service never persists or mutates `Order` entities.
-- Host the existing plugin registry (`Stripe`, `PayPal`, `UPS`, `USPS`, weight rules, etc.) in-process inside integration-service — plugins remain libraries, not separate microservices.
-- Prove contract stability (Pact consumer/provider) for P1 migrated surfaces before declaring Wave 5 complete.
-- Extend `shopizer-api-contracts` with integration DTOs and HTTP clients following Waves 1–2 patterns.
-- Remain **blocked on Onda 3 + Onda 4 partial** — Wave 5 Execute does not start until those gates pass.
+- Entregar **integration-service** como capability implantável independentemente para orquestração de módulos de pagamento e cotação de frete, enquanto o monólito permanece o BFF voltado ao cliente.
+- Preservar jornadas admin e vitrine existentes (setup de módulo de pagamento, configuração de frete, cotações de frete do carrinho, pagamento no checkout) com respostas equivalentes ao monólito de hoje.
+- **Quebrar o ciclo order ↔ payments** garantindo que integration-service nunca persista nem mute entidades `Order`.
+- Hospedar o registry de plugins existente (`Stripe`, `PayPal`, `UPS`, `USPS`, regras de peso, etc.) in-process dentro de integration-service — plugins permanecem bibliotecas, não microsserviços separados.
+- Provar estabilidade de contrato (Pact consumer/provider) para superfícies P1 migradas antes de declarar a Onda 5 concluída.
+- Estender `shopizer-api-contracts` com DTOs de integration e clients HTTP seguindo padrões das Ondas 1–2.
+- Permanecer **bloqueada em Onda 3 + Onda 4 parcial** — o Execute da Onda 5 não inicia até esses gates passarem.
 
-### Business outcomes
+### Resultados de negócio
 
-| Outcome | Indicator |
+| Resultado | Indicador |
 | ------- | ----------- |
-| Wave 6 unblocked | Payment processing path no longer requires in-process `OrderService` from integration |
-| Merchant continuity | No breaking change on payment/shipping REST paths used by admin UI and checkout |
-| Gateway isolation | New payment/shipping deploys do not require monolith release |
-| Honest coupling rank | Wave scheduled 9th per data — not rushed as 4th priority |
+| Onda 6 desbloqueada | Caminho de processamento de pagamento não exige mais `OrderService` in-process a partir de integration |
+| Continuidade para merchants | Sem breaking change nos caminhos REST de pagamento/frete usados pela UI admin e checkout |
+| Isolamento de gateway | Novos deploys de pagamento/frete não exigem release do monólito |
+| Ranking de acoplamento honesto | Onda agendada em 9º lugar nos dados — não apressada como 4ª prioridade |
 
 ---
 
-## User stories
+## Histórias de usuário
 
-### Store administrator — payment module configuration (P1 / PAY)
+### Administrador de loja — configuração de módulo de pagamento (P1 / PAY)
 
-As a **store administrator**, I want to configure payment modules via the same admin APIs I use today, so gateway credentials and module enablement are not owned by the monolith runtime.
+Como **administrador de loja**, quero configurar módulos de pagamento pelas mesmas APIs admin que uso hoje, para que credenciais de gateway e habilitação de módulos não sejam de propriedade do runtime do monólito.
 
-**Acceptance (business):**
+**Aceite (negócio):**
 
-1. List, create, update, and delete payment module configurations per store.
-2. Secrets are stored encrypted — same security posture as today.
-3. Public store payment method listing reflects configured modules.
-4. Tenant identified by store code as today.
+1. Listar, criar, atualizar e excluir configurações de módulos de pagamento por loja.
+2. Segredos armazenados criptografados — mesma postura de segurança de hoje.
+3. Listagem pública de métodos de pagamento da loja reflete módulos configurados.
+4. Tenant identificado por store code como hoje.
 
-**Requirement IDs:** PAY-01…PAY-06
+**IDs de requisito:** PAY-01…PAY-06
 
-### Storefront customer — shipping quotes (P1 / SHP)
+### Cliente da vitrine — cotações de frete (P1 / SHP)
 
-As a **customer**, I want shipping options for my cart via existing APIs, so I can choose delivery without the monolith running carrier plugins in-process.
+Como **cliente**, quero opções de frete para meu carrinho pelas APIs existentes, para escolher entrega sem o monólito executar plugins de transportadora in-process.
 
-**Acceptance:**
+**Aceite:**
 
-1. Quote responses match current schema (`ReadableShippingQuote`, options list).
-2. Ship-to country list localized via reference capability (Wave 1).
-3. Digital-only carts return no shipping required.
-4. Product weights come from catalog read API (Wave 4 partial) — not monolith JPA graph.
+1. Respostas de cotação batem com o schema atual (`ReadableShippingQuote`, lista de opções).
+2. Lista de países de entrega localizada via capability de reference (Onda 1).
+3. Carrinhos apenas digitais retornam frete não necessário.
+4. Pesos de produto vêm da API de leitura de catálogo (Onda 4 parcial) — não do grafo JPA do monólito.
 
-**Requirement IDs:** SHP-01…SHP-07
+**IDs de requisito:** SHP-01…SHP-07
 
-### Checkout — stateless payment processing (P1 / PAY)
+### Checkout — processamento de pagamento stateless (P1 / PAY)
 
-As the **checkout flow**, I want payment authorization/capture/refund executed via integration-service returning a transaction result, so order status updates stay in the checkout saga and the payments cycle is broken.
+Como **fluxo de checkout**, quero autorização/captura/reembolso executados via integration-service retornando resultado de transação, para que atualizações de status do pedido permaneçam na saga de checkout e o ciclo payments seja quebrado.
 
-**Acceptance:**
+**Aceite:**
 
-1. Process, capture, refund, and init (express checkout) return `TransactionResult` DTOs.
-2. Integration-service may persist `Transaction` records but **must not** update `Order`.
-3. Gateway failures surface clearly; checkout saga handles compensation.
-4. Order referenced by snapshot id only — no `Order` entity crossing the boundary.
+1. Process, capture, refund e init (express checkout) retornam DTOs `TransactionResult`.
+2. Integration-service pode persistir registros `Transaction`, mas **não deve** atualizar `Order`.
+3. Falhas de gateway aparecem claramente; saga de checkout trata compensação.
+4. Pedido referenciado apenas por id de snapshot — sem entidade `Order` cruzando a fronteira.
 
-**Requirement IDs:** PAY-07…PAY-12
+**IDs de requisito:** PAY-07…PAY-12
 
-### Platform team — Strangler BFF (P1 / STR)
+### Time de plataforma — Strangler BFF (P1 / STR)
 
-As a **platform engineer**, I want HTTP delegation for payment/shipping facades behind `wave5.strangler.enabled`, so we validate extraction without rewriting checkout controllers.
+Como **engenheiro de plataforma**, quero delegação HTTP para facades de pagamento/frete atrás de `wave5.strangler.enabled`, para validar extração sem reescrever controllers de checkout.
 
-**Acceptance:**
+**Aceite:**
 
-1. Strangler on → facades delegate to integration-service; off → legacy in-process.
-2. Remote failure → 503 with correlation id — no silent fallback.
-3. `OrderPaymentApi` routes through checkout application service + integration client.
-4. `OrderShippingApi` assembles DTO requests from cart + catalog snapshots.
+1. Strangler ligado → facades delegam a integration-service; desligado → legado in-process.
+2. Falha remota → 503 com correlation id — sem fallback silencioso.
+3. `OrderPaymentApi` roteia via application service de checkout + client de integration.
+4. `OrderShippingApi` monta requests DTO a partir de snapshots de carrinho + catálogo.
 
-**Requirement IDs:** STR-01…STR-06
+**IDs de requisito:** STR-01…STR-06
 
-### Developer — contract confidence (P2 / STR)
+### Desenvolvedor — confiança de contrato (P2 / STR)
 
-As a **developer**, I want Pact tests for P1 payment config and shipping quote surfaces, so breaking DTO changes fail CI before deploy.
+Como **desenvolvedor**, quero testes Pact para superfícies P1 de config de pagamento e cotação de frete, para que mudanças quebradoras de DTO falhem no CI antes do deploy.
 
-**Requirement IDs:** STR-07, STR-08
+**IDs de requisito:** STR-07, STR-08
 
-### Operator — observability (P2 / STR)
+### Operador — observabilidade (P2 / STR)
 
-As an **operator**, I want health checks and correlation IDs on integration-service, including DB, module registry, reference-service, and catalog-service dependencies.
+Como **operador**, quero health checks e correlation IDs em integration-service, incluindo dependências de DB, registry de módulos, reference-service e catalog-service.
 
-**Requirement IDs:** STR-08, STR-09
+**IDs de requisito:** STR-08, STR-09
 
 ---
 
-## Core capabilities
+## Capacidades centrais
 
 ### F1 — integration-service (MVP)
 
-Own payment/shipping orchestration, plugin registry, merchant integration configuration persistence (shared DB), and internal payment/quote APIs. Port 8086. Stateless w.r.t. Order.
+Dono de orquestração de pagamento/frete, registry de plugins, persistência de configuração de integração do merchant (DB compartilhado) e APIs internas de pagamento/cotação. Porta 8086. Stateless em relação a Order.
 
 ### F2 — sm-integration-core (MVP)
 
-Thin domain module: `PaymentOrchestrator`, `ShippingOrchestrator`, moved plugin implementations, packaging rules, encryption for credentials.
+Módulo de domínio thin: `PaymentOrchestrator`, `ShippingOrchestrator`, implementações de plugins movidas, regras de empacotamento, criptografia de credenciais.
 
 ### F3 — Strangler BFF (MVP)
 
-HTTP adapters for payment/shipping configuration facades; checkout wiring for `OrderPaymentApi` / `OrderShippingApi`; `wave5.*` properties coexisting with wave1–4.
+Adaptadores HTTP para facades de configuração de pagamento/frete; wiring de checkout para `OrderPaymentApi` / `OrderShippingApi`; properties `wave5.*` coexistindo com wave1–4.
 
-### F4 — Contract tests and Compose (Phase 2)
+### F4 — Testes de contrato e Compose (Fase 2)
 
-Pact provider/consumer; `docker-compose-wave5.yml`; JaCoCo gates.
+Pact provider/consumer; `docker-compose-wave5.yml`; gates JaCoCo.
 
 ---
 
-## User experience
+## Experiência do usuário
 
-| Persona | Goal |
+| Persona | Objetivo |
 | ------- | ---- |
-| Admin | Configure Stripe/PayPal/shipping modules without noticing runtime change |
-| Customer | See shipping options and complete payment as today |
-| Platform engineer | Toggle strangler; observe health; trust pact gates |
+| Admin | Configurar módulos Stripe/PayPal/frete sem notar mudança de runtime |
+| Cliente | Ver opções de frete e concluir pagamento como hoje |
+| Engenheiro de plataforma | Alternar strangler; observar health; confiar nos gates Pact |
 
-**UX constraints:** No new screens; behavioral parity is the bar. p95 public endpoints ≤ 2× monolith baseline.
-
----
-
-## High-level technical constraints
-
-- Integrate with **reference-service** (Wave 1) for country/language resolution in shipping.
-- Integrate with **catalog-service read API** (Wave 4 partial) for product weight/dimension snapshots.
-- Preserve **frozen REST paths** (STR-06).
-- No JPA entities in migrated JSON responses.
-- **Shared operational database** during extraction (AD-003 inherited).
-- JWT on `/private/**` equivalent to prior waves.
-- Execute blocked until **Onda 3 + Onda 4 partial** complete.
+**Restrições de UX:** Sem telas novas; paridade comportamental é a barra. p95 endpoints públicos ≤ 2× baseline do monólito.
 
 ---
 
-## Non-goals
+## Restrições técnicas de alto nível
 
-| Excluded | Why |
+- Integrar com **reference-service** (Onda 1) para resolução de país/idioma em frete.
+- Integrar com **API de leitura do catalog-service** (Onda 4 parcial) para snapshots de peso/dimensão de produto.
+- Preservar **caminhos REST congelados** (STR-06).
+- Sem entidades JPA em respostas JSON migradas.
+- **Banco operacional compartilhado** durante extração (AD-003 herdado).
+- JWT em `/private/**` equivalente às ondas anteriores.
+- Execute bloqueado até **Onda 3 + Onda 4 parcial** completas.
+
+---
+
+## Não-objetivos
+
+| Excluído | Por quê |
 | -------- | --- |
-| Execute before Onda 3 + Onda 4 partial | Hard gates — contracts and catalog reads |
-| Order / shopping cart service extraction | Wave 6 |
-| New payment gateway providers | Out of scope |
-| Database-per-service split | AD-003 |
-| Feign/WebClient/service mesh | AD-005 RestTemplate pattern |
-| Fixing `ConfigurationsApi` payment/shipping null stubs | Incomplete legacy |
-| Full catalog CRUD extraction | Wave 4 |
-| Replacing all global checkout transactions | Saga foundation Wave 3; full order saga Wave 6 |
+| Execute antes de Onda 3 + Onda 4 parcial | Gates rígidos — contratos e leituras de catálogo |
+| Extração de order / shopping cart service | Onda 6 |
+| Novos provedores de gateway de pagamento | Fora de escopo |
+| Split database-per-service | AD-003 |
+| Feign/WebClient/service mesh | Padrão AD-005 RestTemplate |
+| Corrigir stubs null de payment/shipping em `ConfigurationsApi` | Legado incompleto |
+| Extração CRUD completa de catálogo | Onda 4 |
+| Substituir todas as transações globais de checkout | Fundação saga Onda 3; saga completa de pedido Onda 6 |
 
 ---
 
-## Phased rollout
+## Rollout faseado
 
-### MVP (Phase 1) — P1 stories
+### MVP (Fase 1) — histórias P1
 
-- integration-service: config CRUD, quotes, stateless payment internal APIs.
-- sm-integration-core with moved plugins.
-- Strangler adapters + checkout wiring.
-- Monolith profile preserved for rollback.
+- integration-service: CRUD de config, cotações, APIs internas de pagamento stateless.
+- sm-integration-core com plugins movidos.
+- Adaptadores Strangler + wiring de checkout.
+- Profile do monólito preservado para rollback.
 
-**Exit criteria:** P1 endpoints healthy; no Order writes from integration-service; pact green for P1.
+**Critérios de saída:** endpoints P1 saudáveis; sem writes em Order a partir de integration-service; pact verde para P1.
 
-### Phase 2
+### Fase 2
 
-- Full Pact suite; Docker Compose wave5; JaCoCo verify gates.
+- Suite Pact completa; Docker Compose wave5; gates JaCoCo verify.
 
-### Phase 3
+### Fase 3
 
-- STATE/ROADMAP updated; GAP-INT documented; pattern reusable for Wave 6.
+- STATE/ROADMAP atualizados; GAP-INT documentado; padrão reutilizável para Onda 6.
 
 ---
 
-## Success metrics
+## Métricas de sucesso
 
-| Metric | Target |
+| Métrica | Meta |
 | ------ | ------ |
-| P1 endpoint availability | integration-service + BFF paths respond |
-| Contract parity | Pact green payment config + shipping quote |
-| Entity leakage | Zero JPA types in migrated JSON |
-| Cycle break | No `OrderService` call from integration payment path |
-| Quote accuracy | Options returned for configured UPS/custom modules |
-| Latency | p95 ≤ 2× monolith |
-| Gate discipline | No Wave 5 Execute before Onda 3 + Onda 4 partial |
+| Disponibilidade endpoints P1 | integration-service + caminhos BFF respondem |
+| Paridade de contrato | Pact verde config pagamento + cotação frete |
+| Vazamento de entidade | Zero tipos JPA em JSON migrado |
+| Quebra de ciclo | Sem chamada `OrderService` no caminho de pagamento de integration |
+| Precisão de cotação | Opções retornadas para módulos UPS/custom configurados |
+| Latência | p95 ≤ 2× monólito |
+| Disciplina de gate | Sem Execute Onda 5 antes de Onda 3 + Onda 4 parcial |
 
 ---
 
-## Risks and mitigations
+## Riscos e mitigações
 
-| Risk | Mitigation |
+| Risco | Mitigação |
 | ---- | ---------- |
-| Onda 3 delay blocks calendar | Keep Compozy docs ready; freeze Execute |
-| Catalog snapshot incomplete for packaging | GAP-INT-01 documented fallback |
-| Legacy plugins resist V2 contracts | AD-017 adapter bridge |
-| Merchants notice payment regressions | Strangler rollback profile; pact |
-| Scope creep into order extraction | Explicit non-goals; stateless ADR |
+| Atraso da Onda 3 bloqueia calendário | Manter docs Compozy prontos; congelar Execute |
+| Snapshot de catálogo incompleto para empacotamento | Fallback GAP-INT-01 documentado |
+| Plugins legados resistem contratos V2 | Ponte adaptadora AD-017 |
+| Merchants notam regressões de pagamento | Profile Strangler rollback; pact |
+| Scope creep em extração de order | Não-objetivos explícitos; ADR stateless |
 
 ---
 
-## Architecture decision records
+## Registros de decisão arquitetural
 
-- [ADR-001: Single Compozy workflow for integration-service](adrs/adr-001.md)
-- [ADR-002: Stateless payment orchestration — no Order ownership](adrs/adr-002.md)
-- [ADR-003: Shared MySQL for integration configuration](adrs/adr-003.md)
-- [ADR-004: PaymentModuleV2 / ShippingQuoteModuleV2 from Onda 3](adrs/adr-004.md)
-- [ADR-005: In-process plugin registry in integration-service](adrs/adr-005.md)
-- [ADR-006: Checkout APIs remain on BFF with checkout application service](adrs/adr-006.md)
-- [ADR-007: Catalog read HTTP for shipping product snapshots](adrs/adr-007.md)
+- [ADR-001: Workflow Compozy único para integration-service](adrs/adr-001.md)
+- [ADR-002: Orquestração de pagamento stateless — sem ownership de Order](adrs/adr-002.md)
+- [ADR-003: MySQL compartilhado para configuração de integration](adrs/adr-003.md)
+- [ADR-004: PaymentModuleV2 / ShippingQuoteModuleV2 da Onda 3](adrs/adr-004.md)
+- [ADR-005: Registry de plugins in-process em integration-service](adrs/adr-005.md)
+- [ADR-006: APIs de checkout permanecem no BFF com application service de checkout](adrs/adr-006.md)
+- [ADR-007: Leitura HTTP de catálogo para snapshots de produto de frete](adrs/adr-007.md)
 
 ---
 
-## Open questions
+## Questões em aberto
 
-All TLC OQ-01…OQ-06 **resolved** in `.specs/features/onda-5-integration-service/context.md`. No blocking product ambiguities remain.
+Todas as OQ-01…OQ-06 do TLC **resolvidas** em `.specs/features/onda-5-integration-service/context.md`. Não restam ambiguidades de produto bloqueadoras.
 
-Residual: exact catalog snapshot field set for packaging — confirm at Onda 4 partial gate review.
+Residual: conjunto exato de campos de snapshot de catálogo para empacotamento — confirmar na revisão do gate Onda 4 parcial.

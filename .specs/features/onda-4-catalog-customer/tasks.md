@@ -1,16 +1,16 @@
-# Onda 4 — Catalog + Customer Tasks
+# Onda 4 — Tarefas de Catálogo + Cliente
 
 **Design:** `.specs/features/onda-4-catalog-customer/design.md`
 **Spec:** `.specs/features/onda-4-catalog-customer/spec.md`
-**Status:** Approved — Execute blocked until Onda 3 complete
-**Testing:** `.specs/codebase/TESTING.md`
-**Prerequisite:** Onda 3 Execute complete (`ProductSnapshot`, `CustomerSnapshot`, `LanguageCode`, `MerchantStoreId`)
+**Status:** Aprovado — Execução bloqueada até conclusão da Onda 3
+**Testes:** `.specs/codebase/TESTING.md`
+**Pré-requisito:** Onda 3 Execute concluída (`ProductSnapshot`, `CustomerSnapshot`, `LanguageCode`, `MerchantStoreId`)
 
 ---
 
-## Execution Plan
+## Plano de execução
 
-### Phase 1: Contracts + Wave4 Config (Sequential → Parallel)
+### Fase 1: Contratos + Configuração Wave4 (Sequencial → Paralelo)
 
 ```
 Onda3-gate ──→ T1 ──┬──→ T2 [P]
@@ -18,7 +18,7 @@ Onda3-gate ──→ T1 ──┬──→ T2 [P]
 T1,T2,T3 ──→ T4
 ```
 
-### Phase 2: Core Extraction (2 parallel tracks)
+### Fase 2: Extração do Core (2 trilhas paralelas)
 
 ```
 T4 ──┬──→ T5 ──→ T6 ──→ T7 ──→ T8 ──→ T9 ──→ T10 ──→ T11 ──→ T12 ──→ T13
@@ -26,22 +26,22 @@ T4 ──┬──→ T5 ──→ T6 ──→ T7 ──→ T8 ──→ T9 ─
      └──→ T14 ──→ T15 ──→ T16 ──→ T17 ──→ T18 ──→ T19 ──→ T20
 ```
 
-**Track A (Catalog):** T5–T13
-**Track B (Customer):** T14–T20
+**Trilha A (Catálogo):** T5–T13
+**Trilha B (Cliente):** T14–T20
 
-### Phase 3: Cross-cutting (Sequential)
+### Fase 3: Transversal (Sequencial)
 
 ```
 T10,T13,T20 ──→ T21 ──→ T22 ──→ T23 ──→ T24 ──→ T25 ──→ T26
 ```
 
-### Phase 4: Strangler + Search migration (Sequential)
+### Fase 4: Strangler + migração de busca (Sequencial)
 
 ```
 T26 ──→ T27 ──→ T28 ──→ T29 ──→ T30 ──→ T31
 ```
 
-### Phase 5: Integration & Gate (Sequential tail)
+### Fase 5: Integração e Gate (Cauda sequencial)
 
 ```
 T31 ──→ T32 ──┬──→ T33 [P providers]
@@ -51,767 +51,767 @@ T33,T34 ──→ T35 ──→ T36 ──→ T37 ──→ T38
 
 ---
 
-## Parallel Execution Map
+## Mapa de execução paralela
 
 ```
-Phase 1:
+Fase 1:
   Onda3-gate → T1 → (T2 ∥ T3) → T4
 
-Phase 2 (2 tracks após T4):
+Fase 2 (2 tracks após T4):
   Catalog:   T5 → T6 → T7 → T8 → T9 → T10 → T11 → T12 → T13
   Customer:  T14 → T15 → T16 → T17 → T18 → T19 → T20
 
-Phase 3:
+Fase 3:
   T21 → T22 → T23 → T24 → T25 → T26
 
-Phase 4:
+Fase 4:
   T27 → T28 → T29 → T30 → T31
 
-Phase 5:
+Fase 5:
   T32 → (T33 ∥ subagents) → T34 → T35 → T36 → T37 → T38
 ```
 
-**Milestone `CAT-ready`:** T11 complete (catalog public read + internal snapshot).
-**Milestone `CUS-ready`:** T19 complete (customer profile REST + internal snapshot).
-**Subagent rule:** `[P]` → parallel tasks in same phase. Catalog/Customer tracks in Phase 2 → **2 subagents** per ordinal when both ready.
+**Marco `CAT-ready`:** T11 concluída (leitura pública de catálogo + snapshot interno).
+**Marco `CUS-ready`:** T19 concluída (REST de perfil de cliente + snapshot interno).
+**Regra de subagente:** `[P]` → tarefas paralelas na mesma fase. Trilhas Catálogo/Cliente na Fase 2 → **2 subagentes** por ordinal quando ambas estiverem prontas.
 
 ---
 
-## Task Breakdown
+## Decomposição de tarefas
 
-### T1: Wave 4 contracts foundation — value types verification
+### T1: Fundação de contratos Wave 4 — verificação de tipos de valor
 
-**What:** Verify Wave 3 `LanguageCode`, `MerchantStoreId` in contracts; add `schemaVersion` constants for snapshots.
-**Where:** `shopizer-api-contracts/.../common/`
-**Depends on:** Onda 3 gate
-**Requirement:** STR-06, AD-021
+**O quê:** Verificar `LanguageCode`, `MerchantStoreId` da Onda 3 nos contratos; adicionar constantes `schemaVersion` para snapshots.
+**Onde:** `shopizer-api-contracts/.../common/`
+**Depende de:** gate da Onda 3
+**Requisito:** STR-06, AD-021
 
-**Done when:**
-- [ ] Value types compile without JPA
-- [ ] `./mvnw compile -pl shopizer-api-contracts` passes
+**Concluído quando:**
+- [ ] Tipos de valor compilam sem JPA
+- [ ] `./mvnw compile -pl shopizer-api-contracts` passa
 
-**Tests:** unit serialization
+**Testes:** serialização unitária
 **Gate:** `./mvnw compile -pl shopizer-api-contracts`
 
 ---
 
-### T2: Catalog DTOs + `CatalogServiceClient` [P]
+### T2: DTOs de catálogo + `CatalogServiceClient` [P]
 
-**What:** Migrate/add `ReadableProduct*`, `ReadableCategory*`, `ProductSnapshot`; interface `CatalogServiceClient` (read + snapshot).
-**Where:** `shopizer-api-contracts/.../catalog/`, `.../client/`
-**Depends on:** Onda 3 T-product-snapshot (Wave 3)
-**Reuses:** `sm-shop-model/.../model/catalog/`
-**Requirement:** CAT-02, CAT-03, CAT-08, STR-04
+**O quê:** Migrar/adicionar `ReadableProduct*`, `ReadableCategory*`, `ProductSnapshot`; interface `CatalogServiceClient` (leitura + snapshot).
+**Onde:** `shopizer-api-contracts/.../catalog/`, `.../client/`
+**Depende de:** Onda 3 T-product-snapshot (Wave 3)
+**Reutiliza:** `sm-shop-model/.../model/catalog/`
+**Requisito:** CAT-02, CAT-03, CAT-08, STR-04
 
-**Done when:**
-- [ ] DTOs compile without `com.salesmanager.core.model`
-- [ ] `ProductSnapshot.schemaVersion` default 2
+**Concluído quando:**
+- [ ] DTOs compilam sem `com.salesmanager.core.model`
+- [ ] `ProductSnapshot.schemaVersion` padrão 2
 
-**Tests:** none
+**Testes:** nenhum
 **Gate:** `./mvnw compile -pl shopizer-api-contracts`
 
 ---
 
-### T3: Customer DTOs + `CustomerServiceClient` [P]
+### T3: DTOs de cliente + `CustomerServiceClient` [P]
 
-**What:** Migrate customer DTOs; create `CustomerSnapshot`; `CustomerServiceClient` with `getSnapshot`.
-**Where:** `shopizer-api-contracts/.../customer/`, `.../client/`
-**Depends on:** Onda 3 T-customer-snapshot
-**Requirement:** CUS-02, CUS-08, STR-04
+**O quê:** Migrar DTOs de cliente; criar `CustomerSnapshot`; `CustomerServiceClient` com `getSnapshot`.
+**Onde:** `shopizer-api-contracts/.../customer/`, `.../client/`
+**Depende de:** Onda 3 T-customer-snapshot
+**Requisito:** CUS-02, CUS-08, STR-04
 
-**Done when:**
-- [ ] `CustomerSnapshot` serializable; default `schemaVersion` 1
+**Concluído quando:**
+- [ ] `CustomerSnapshot` serializável; `schemaVersion` padrão 1
 
-**Tests:** none
+**Testes:** nenhum
 **Gate:** `./mvnw compile -pl shopizer-api-contracts`
 
 ---
 
-### T4: Wave4 Strangler properties + RestTemplate
+### T4: Propriedades Strangler Wave4 + RestTemplate
 
-**What:** Profile `strangler-wave4`; `wave4.*.base-url`, `wave4.strangler.enabled`; RestTemplate beans; stub clients.
-**Where:** `sm-shop/.../strangler/config/Wave4ClientConfig.java`
-**Depends on:** T1, T2, T3
-**Requirement:** STR-01
+**O quê:** Perfil `strangler-wave4`; `wave4.*.base-url`, `wave4.strangler.enabled`; beans RestTemplate; clientes stub.
+**Onde:** `sm-shop/.../strangler/config/Wave4ClientConfig.java`
+**Depende de:** T1, T2, T3
+**Requisito:** STR-01
 
-**Done when:**
-- [ ] Properties coexist with `wave1.*`, `wave2.*`
+**Concluído quando:**
+- [ ] Propriedades coexistem com `wave1.*`, `wave2.*`
 - [ ] `./mvnw test -pl sm-shop -Dtest=Wave4ClientConfigTest`
 
-**Tests:** unit
+**Testes:** unitário
 **Gate:** `./mvnw test -pl sm-shop -Dtest=Wave4ClientConfigTest`
 
 ---
 
-### T5: Scaffold `sm-catalog-core` module
+### T5: Scaffold do módulo `sm-catalog-core`
 
-**What:** Create Maven module; move read repositories for product, category, manufacturer.
-**Where:** `sm-catalog-core/pom.xml`, `.../repositories/`
-**Depends on:** T2
-**Requirement:** CAT-12
+**O quê:** Criar módulo Maven; mover repositórios de leitura de produto, categoria, fabricante.
+**Onde:** `sm-catalog-core/pom.xml`, `.../repositories/`
+**Depende de:** T2
+**Requisito:** CAT-12
 
-**Done when:**
-- [ ] Module in root `pom.xml`
+**Concluído quando:**
+- [ ] Módulo no `pom.xml` raiz
 - [ ] `./mvnw compile -pl sm-catalog-core`
 
-**Tests:** none
+**Testes:** nenhum
 **Gate:** `./mvnw compile -pl sm-catalog-core`
 
 ---
 
-### T6: Move catalog read services to `sm-catalog-core`
+### T6: Mover serviços de leitura de catálogo para `sm-catalog-core`
 
-**What:** Extract read methods from `ProductService`, `CategoryService`, `ManufacturerService`, `ProductInventoryService`, `PricingService` (read-only subset).
-**Where:** `sm-catalog-core/.../services/catalog/`
-**Depends on:** T5
-**Requirement:** CAT-12
+**O quê:** Extrair métodos de leitura de `ProductService`, `CategoryService`, `ManufacturerService`, `ProductInventoryService`, `PricingService` (subconjunto somente leitura).
+**Onde:** `sm-catalog-core/.../services/catalog/`
+**Depende de:** T5
+**Requisito:** CAT-12
 
-**Done when:**
-- [ ] Write methods remain in `sm-core` or deprecated stubs delegate monolith
-- [ ] Unit tests for read services pass
+**Concluído quando:**
+- [ ] Métodos de escrita permanecem em `sm-core` ou stubs deprecados delegam ao monólito
+- [ ] Testes unitários dos serviços de leitura passam
 
-**Tests:** unit
+**Testes:** unitário
 **Gate:** `./mvnw test -pl sm-catalog-core`
 
 ---
 
-### T7: Catalog mappers/populators in `sm-catalog-core`
+### T7: Mappers/populadores de catálogo em `sm-catalog-core`
 
-**What:** `ReadableProductMapper` or populator equivalents for read path; category tree mappers.
-**Where:** `sm-catalog-core/.../mappers/`
-**Depends on:** T6
-**Requirement:** CAT-06
+**O quê:** `ReadableProductMapper` ou equivalentes populadores para o caminho de leitura; mappers de árvore de categorias.
+**Onde:** `sm-catalog-core/.../mappers/`
+**Depende de:** T6
+**Requisito:** CAT-06
 
-**Done when:**
-- [ ] Mappers do not leak entities to API layer
+**Concluído quando:**
+- [ ] Mappers não vazam entidades para a camada de API
 
-**Tests:** unit
+**Testes:** unitário
 **Gate:** `./mvnw test -pl sm-catalog-core`
 
 ---
 
-### T8: Wire `sm-core` → `sm-catalog-core` (read delegation)
+### T8: Conectar `sm-core` → `sm-catalog-core` (delegação de leitura)
 
-**What:** `sm-core` catalog services delegate read calls to thin core; admin writes unchanged in sm-core.
-**Where:** `sm-core/pom.xml`, service impls
-**Depends on:** T6, T7
-**Requirement:** AD-020
+**O quê:** Serviços de catálogo do `sm-core` delegam chamadas de leitura ao thin core; escritas admin inalteradas no sm-core.
+**Onde:** `sm-core/pom.xml`, implementações de serviço
+**Depende de:** T6, T7
+**Requisito:** AD-020
 
-**Done when:**
-- [ ] Existing monolith integration tests for product read still pass in-process
+**Concluído quando:**
+- [ ] Testes de integração existentes do monólito para leitura de produto ainda passam in-process
 
-**Tests:** integration (sm-core)
+**Testes:** integração (sm-core)
 **Gate:** `./mvnw test -pl sm-core -Dtest=*Product*Test -DfailIfNoTests=false`
 
 ---
 
-### T9: Scaffold `catalog-service` Boot (:8086)
+### T9: Scaffold Boot `catalog-service` (:8086)
 
-**What:** Spring Boot app, JPA config shared DB, package scan `sm-catalog-core`.
-**Where:** `catalog-service/`
-**Depends on:** T8
-**Requirement:** CAT-01
+**O quê:** Aplicação Spring Boot, config JPA com banco compartilhado, package scan `sm-catalog-core`.
+**Onde:** `catalog-service/`
+**Depende de:** T8
+**Requisito:** CAT-01
 
-**Done when:**
-- [ ] App context starts with Testcontainers MySQL
+**Concluído quando:**
+- [ ] Contexto da aplicação inicia com Testcontainers MySQL
 
-**Tests:** integration
+**Testes:** integração
 **Gate:** `./mvnw test -pl catalog-service -Dtest=*Application*Test`
 
 ---
 
-### T10: `catalog-service` — reference + merchant HTTP clients
+### T10: `catalog-service` — clientes HTTP reference + merchant
 
-**What:** `ReferenceServiceClient`, `MerchantServiceClient` for lang/store resolution.
-**Where:** `catalog-service/.../client/`
-**Depends on:** T9, T4
-**Requirement:** CAT-07, STR-06
+**O quê:** `ReferenceServiceClient`, `MerchantServiceClient` para resolução de idioma/loja.
+**Onde:** `catalog-service/.../client/`
+**Depende de:** T9, T4
+**Requisito:** CAT-07, STR-06
 
-**Done when:**
-- [ ] Language resolution uses HTTP only
+**Concluído quando:**
+- [ ] Resolução de idioma usa apenas HTTP
 
-**Tests:** unit + wiremock
+**Testes:** unitário + wiremock
 **Gate:** `./mvnw test -pl catalog-service -Dtest=*Client*Test`
 
 ---
 
-### T11: `catalog-service` — public read REST controllers (`CAT-ready`)
+### T11: `catalog-service` — controllers REST de leitura pública (`CAT-ready`)
 
-**What:** Port GET handlers from `ProductApi`, `CategoryApi`, manufacturer, inventory, price, group APIs.
-**Where:** `catalog-service/.../api/v1/`
-**Depends on:** T10
-**Requirement:** CAT-02…CAT-05, STR-04
+**O quê:** Portarar handlers GET de `ProductApi`, `CategoryApi`, fabricante, inventário, preço, APIs de grupo.
+**Onde:** `catalog-service/.../api/v1/`
+**Depende de:** T10
+**Requisito:** CAT-02…CAT-05, STR-04
 
-**Done when:**
-- [ ] Parity test vs monolith baseline for GET product list
-- [ ] **CAT-ready** milestone
+**Concluído quando:**
+- [ ] Teste de paridade vs baseline do monólito para lista GET de produtos
+- [ ] Marco **CAT-ready**
 
-**Tests:** integration
+**Testes:** integração
 **Gate:** `./mvnw test -pl catalog-service -Dtest=*ProductApi*Test,*CategoryApi*Test`
 
 ---
 
-### T12: `catalog-service` — internal ProductSnapshot API
+### T12: `catalog-service` — API interna ProductSnapshot
 
-**What:** `InternalProductSnapshotController`; network-restricted; 422 on bad schemaVersion.
-**Where:** `catalog-service/.../api/internal/`
-**Depends on:** T11
-**Requirement:** CAT-08
+**O quê:** `InternalProductSnapshotController`; restrito à rede; 422 em schemaVersion inválido.
+**Onde:** `catalog-service/.../api/internal/`
+**Depende de:** T11
+**Requisito:** CAT-08
 
-**Done when:**
-- [ ] GET snapshot returns `ProductSnapshot` v2
+**Concluído quando:**
+- [ ] GET snapshot retorna `ProductSnapshot` v2
 
-**Tests:** integration
+**Testes:** integração
 **Gate:** `./mvnw test -pl catalog-service -Dtest=*Snapshot*Test`
 
 ---
 
-### T13: `catalog-service` — JWT + security for any private read routes
+### T13: `catalog-service` — JWT + segurança para rotas de leitura privadas
 
-**What:** Replicate JWT filter chain pattern from merchant-service for routes that require auth today.
-**Where:** `catalog-service/.../security/`
-**Depends on:** T11
-**Requirement:** CAT-06
+**O quê:** Replicar padrão de cadeia de filtros JWT do merchant-service para rotas que exigem autenticação hoje.
+**Onde:** `catalog-service/.../security/`
+**Depende de:** T11
+**Requisito:** CAT-06
 
-**Done when:**
-- [ ] Private read routes (if any) reject anonymous
+**Concluído quando:**
+- [ ] Rotas de leitura privadas (se houver) rejeitam anônimo
 
-**Tests:** integration
+**Testes:** integração
 **Gate:** `./mvnw test -pl catalog-service -Dtest=*Security*Test`
 
 ---
 
-### T14: Scaffold `sm-customer-core` module [P track]
+### T14: Scaffold do módulo `sm-customer-core` [trilha P]
 
-**What:** Maven module; customer repositories.
-**Where:** `sm-customer-core/`
-**Depends on:** T3
-**Requirement:** CUS-01
+**O quê:** Módulo Maven; repositórios de cliente.
+**Onde:** `sm-customer-core/`
+**Depende de:** T3
+**Requisito:** CUS-01
 
-**Done when:**
+**Concluído quando:**
 - [ ] `./mvnw compile -pl sm-customer-core`
 
-**Tests:** none
+**Testes:** nenhum
 **Gate:** `./mvnw compile -pl sm-customer-core`
 
 ---
 
-### T15: Move customer services to `sm-customer-core`
+### T15: Mover serviços de cliente para `sm-customer-core`
 
-**What:** `CustomerService`, `CustomerOptinService`, attribute services (exclude order-only creation helpers).
-**Where:** `sm-customer-core/.../services/customer/`
-**Depends on:** T14
-**Requirement:** CUS-01
+**O quê:** `CustomerService`, `CustomerOptinService`, serviços de atributos (excluir helpers de criação exclusivos de pedido).
+**Onde:** `sm-customer-core/.../services/customer/`
+**Depende de:** T14
+**Requisito:** CUS-01
 
-**Done when:**
-- [ ] OrderService still uses monolith copy or bridge for checkout customer create (document bridge)
+**Concluído quando:**
+- [ ] OrderService ainda usa cópia do monólito ou bridge para criação de cliente no checkout (documentar bridge)
 
-**Tests:** unit
+**Testes:** unitário
 **Gate:** `./mvnw test -pl sm-customer-core`
 
 ---
 
-### T16: Customer mappers in `sm-customer-core`
+### T16: Mappers de cliente em `sm-customer-core`
 
-**What:** ReadableCustomer, address populators/mappers.
-**Where:** `sm-customer-core/.../mappers/`
-**Depends on:** T15
-**Requirement:** CUS-05
+**O quê:** ReadableCustomer, populadores/mappers de endereço.
+**Onde:** `sm-customer-core/.../mappers/`
+**Depende de:** T15
+**Requisito:** CUS-05
 
-**Done when:**
-- [ ] Snapshot mapper produces `CustomerSnapshot`
+**Concluído quando:**
+- [ ] Mapper de snapshot produz `CustomerSnapshot`
 
-**Tests:** unit
+**Testes:** unitário
 **Gate:** `./mvnw test -pl sm-customer-core -Dtest=*Mapper*Test`
 
 ---
 
-### T17: Wire `sm-core` → `sm-customer-core`
+### T17: Conectar `sm-core` → `sm-customer-core`
 
-**What:** Delegate customer profile reads/writes to thin core where safe; keep order paths in sm-core.
-**Where:** `sm-core`
-**Depends on:** T15, T16
-**Requirement:** GAP-CUS-01
+**O quê:** Delegar leituras/escritas de perfil de cliente ao thin core onde for seguro; manter caminhos de pedido no sm-core.
+**Onde:** `sm-core`
+**Depende de:** T15, T16
+**Requisito:** GAP-CUS-01
 
-**Done when:**
-- [ ] Profile unit tests pass in-process
+**Concluído quando:**
+- [ ] Testes unitários de perfil passam in-process
 
-**Tests:** unit
+**Testes:** unitário
 **Gate:** `./mvnw test -pl sm-core -Dtest=*Customer*Test -DfailIfNoTests=false`
 
 ---
 
-### T18: Scaffold `customer-service` Boot (:8087)
+### T18: Scaffold Boot `customer-service` (:8087)
 
-**What:** Spring Boot + JPA + sm-customer-core.
-**Where:** `customer-service/`
-**Depends on:** T17
-**Requirement:** CUS-01
+**O quê:** Spring Boot + JPA + sm-customer-core.
+**Onde:** `customer-service/`
+**Depende de:** T17
+**Requisito:** CUS-01
 
-**Done when:**
-- [ ] App starts with Testcontainers MySQL
+**Concluído quando:**
+- [ ] Aplicação inicia com Testcontainers MySQL
 
-**Tests:** integration
+**Testes:** integração
 **Gate:** `./mvnw test -pl customer-service -Dtest=*Application*Test`
 
 ---
 
-### T19: `customer-service` — profile, address, optin REST (`CUS-ready`)
+### T19: `customer-service` — REST de perfil, endereço, optin (`CUS-ready`)
 
-**What:** Port CustomerApi sections (not auth); reference HTTP client.
-**Where:** `customer-service/.../api/v1/`
-**Depends on:** T18, T4
-**Requirement:** CUS-02…CUS-04, CUS-06
+**O quê:** Portarar seções do CustomerApi (não auth); cliente HTTP reference.
+**Onde:** `customer-service/.../api/v1/`
+**Depende de:** T18, T4
+**Requisito:** CUS-02…CUS-04, CUS-06
 
-**Done when:**
-- [ ] Profile update integration test passes
-- [ ] **CUS-ready** milestone
+**Concluído quando:**
+- [ ] Teste de integração de atualização de perfil passa
+- [ ] Marco **CUS-ready**
 
-**Tests:** integration
+**Testes:** integração
 **Gate:** `./mvnw test -pl customer-service -Dtest=*CustomerApi*Test`
 
 ---
 
-### T20: `customer-service` — internal CustomerSnapshot + JWT
+### T20: `customer-service` — CustomerSnapshot interno + JWT
 
-**What:** Internal snapshot controller; JWT security for private routes.
-**Where:** `customer-service/.../api/internal/`, `.../security/`
-**Depends on:** T19
-**Requirement:** CUS-08
+**O quê:** Controller de snapshot interno; segurança JWT para rotas privadas.
+**Onde:** `customer-service/.../api/internal/`, `.../security/`
+**Depende de:** T19
+**Requisito:** CUS-08
 
-**Done when:**
-- [ ] Snapshot endpoint returns v1 JSON
+**Concluído quando:**
+- [ ] Endpoint de snapshot retorna JSON v1
 
-**Tests:** integration
+**Testes:** integração
 **Gate:** `./mvnw test -pl customer-service -Dtest=*Snapshot*Test,*Security*Test`
 
 ---
 
-### T21: `ProductSnapshotBuilder` in monolith (replaces ProductIndexPayloadBuilder)
+### T21: `ProductSnapshotBuilder` no monólito (substitui ProductIndexPayloadBuilder)
 
-**What:** Build v2 snapshots from catalog read model; deprecate v1 builder.
-**Where:** `sm-core/.../search/` or `sm-shop/.../search/`
-**Depends on:** T12, T2
-**Requirement:** CAT-09, STR-07
+**O quê:** Construir snapshots v2 a partir do modelo de leitura de catálogo; deprecar builder v1.
+**Onde:** `sm-core/.../search/` ou `sm-shop/.../search/`
+**Depende de:** T12, T2
+**Requisito:** CAT-09, STR-07
 
-**Done when:**
-- [ ] Builder output matches internal snapshot API for fixture products
+**Concluído quando:**
+- [ ] Saída do builder corresponde à API de snapshot interno para produtos de fixture
 
-**Tests:** unit
+**Testes:** unitário
 **Gate:** `./mvnw test -pl sm-core -Dtest=*ProductSnapshotBuilder*Test`
 
 ---
 
-### T22: `search-service` — accept ProductSnapshot v2
+### T22: `search-service` — aceitar ProductSnapshot v2
 
-**What:** Extend index service to deserialize v2; map to OpenSearch doc; v1 still accepted.
-**Where:** `search-service/.../services/`
-**Depends on:** T21
-**Requirement:** CAT-09
+**O quê:** Estender serviço de índice para desserializar v2; mapear para doc OpenSearch; v1 ainda aceito.
+**Onde:** `search-service/.../services/`
+**Depende de:** T21
+**Requisito:** CAT-09
 
-**Done when:**
-- [ ] POST v2 snapshot indexes successfully
+**Concluído quando:**
+- [ ] POST snapshot v2 indexa com sucesso
 
-**Tests:** integration
+**Testes:** integração
 **Gate:** `./mvnw test -pl search-service -Dtest=*Index*Test`
 
 ---
 
-### T23: Update `SearchIndexProducerHttp` to send ProductSnapshot
+### T23: Atualizar `SearchIndexProducerHttp` para enviar ProductSnapshot
 
-**What:** Monolith producer uses v2; bulk endpoint unchanged semantics.
-**Where:** `sm-shop/.../strangler/`
-**Depends on:** T22
-**Requirement:** STR-07
+**O quê:** Produtor do monólito usa v2; semântica do endpoint bulk inalterada.
+**Onde:** `sm-shop/.../strangler/`
+**Depende de:** T22
+**Requisito:** STR-07
 
-**Done when:**
-- [ ] Index event produces v2 payload in integration test
+**Concluído quando:**
+- [ ] Evento de índice produz payload v2 no teste de integração
 
-**Tests:** integration
+**Testes:** integração
 **Gate:** `./mvnw test -pl sm-shop -Dtest=*SearchIndexProducer*Test`
 
 ---
 
-### T24: Cart merge — `CustomerSnapshot` in `ShoppingCartService`
+### T24: Merge de carrinho — `CustomerSnapshot` em `ShoppingCartService`
 
-**What:** Refactor `mergeShoppingCarts` to accept snapshot/id; remove hard dependency on loaded `Customer` entity where possible.
-**Where:** `sm-core/.../shoppingcart/ShoppingCartServiceImpl.java`
-**Depends on:** T20
-**Requirement:** CUS-09, STR-08
+**O quê:** Refatorar `mergeShoppingCarts` para aceitar snapshot/id; remover dependência rígida da entidade `Customer` carregada onde possível.
+**Onde:** `sm-core/.../shoppingcart/ShoppingCartServiceImpl.java`
+**Depende de:** T20
+**Requisito:** CUS-09, STR-08
 
-**Done when:**
-- [ ] Merge integration test uses snapshot input
+**Concluído quando:**
+- [ ] Teste de integração de merge usa entrada de snapshot
 
-**Tests:** integration
+**Testes:** integração
 **Gate:** `./mvnw test -pl sm-core -Dtest=*ShoppingCart*Merge*Test`
 
 ---
 
-### T25: `CustomerFacade` merge orchestration via HTTP snapshot
+### T25: Orquestração de merge do `CustomerFacade` via snapshot HTTP
 
-**What:** On login, fetch snapshot from customer-service before merge.
-**Where:** `sm-shop/.../facade/customer/`
-**Depends on:** T24, T20
-**Requirement:** CUS-08
+**O quê:** No login, buscar snapshot do customer-service antes do merge.
+**Onde:** `sm-shop/.../facade/customer/`
+**Depende de:** T24, T20
+**Requisito:** CUS-08
 
-**Done when:**
-- [ ] Login+merge E2E test with wave4 strangler mock
+**Concluído quando:**
+- [ ] Teste E2E de login+merge com mock strangler wave4
 
-**Tests:** integration
+**Testes:** integração
 **Gate:** `./mvnw test -pl sm-shop -Dtest=*CustomerFacade*Merge*Test`
 
 ---
 
-### T26: Product images — content-service product file endpoints (P2)
+### T26: Imagens de produto — endpoints de arquivo de produto no content-service (P2)
 
-**What:** Extend content-service for `productFileManager` uploads; wire catalog/monolith facades to `ContentServiceClient`.
-**Where:** `content-service`, `sm-shop/.../product/`
-**Depends on:** T11 (CAT-ready), Wave 2 content
-**Requirement:** CAT-10
+**O quê:** Estender content-service para uploads de `productFileManager`; conectar facades de catálogo/monólito ao `ContentServiceClient`.
+**Onde:** `content-service`, `sm-shop/.../product/`
+**Depende de:** T11 (CAT-ready), conteúdo da Onda 2
+**Requisito:** CAT-10
 
-**Done when:**
-- [ ] Option image upload hits content-service HTTP
+**Concluído quando:**
+- [ ] Upload de imagem de opção atinge HTTP do content-service
 
-**Tests:** integration
+**Testes:** integração
 **Gate:** `./mvnw test -pl content-service,sm-shop -Dtest=*ProductImage*Test -DfailIfNoTests=false`
 
 ---
 
-### T27: `CatalogFacadeHttpAdapter` — product/category read strangler
+### T27: `CatalogFacadeHttpAdapter` — strangler de leitura de produto/categoria
 
-**What:** HTTP adapter for `ProductFacade`, `ProductCommonFacade`, `CategoryFacade` read methods.
-**Where:** `sm-shop/.../strangler/catalog/`
-**Depends on:** T13 (CAT-ready), T4
-**Requirement:** STR-01, STR-04
+**O quê:** Adaptador HTTP para métodos de leitura de `ProductFacade`, `ProductCommonFacade`, `CategoryFacade`.
+**Onde:** `sm-shop/.../strangler/catalog/`
+**Depende de:** T13 (CAT-ready), T4
+**Requisito:** STR-01, STR-04
 
-**Done when:**
-- [ ] Strangler on: GET product delegates HTTP; POST product stays local
+**Concluído quando:**
+- [ ] Strangler ativo: GET produto delega HTTP; POST produto permanece local
 
-**Tests:** integration
+**Testes:** integração
 **Gate:** `./mvnw test -pl sm-shop -Dtest=*CatalogFacadeHttp*Test`
 
 ---
 
-### T28: `CustomerFacadeHttpAdapter` — profile strangler
+### T28: `CustomerFacadeHttpAdapter` — strangler de perfil
 
-**What:** HTTP adapter for profile/address/optin; auth methods stay local.
-**Where:** `sm-shop/.../strangler/customer/`
-**Depends on:** T20 (CUS-ready), T4
-**Requirement:** STR-01
+**O quê:** Adaptador HTTP para perfil/endereço/optin; métodos de auth permanecem locais.
+**Onde:** `sm-shop/.../strangler/customer/`
+**Depende de:** T20 (CUS-ready), T4
+**Requisito:** STR-01
 
-**Done when:**
-- [ ] Profile GET delegates; Authenticate stays local
+**Concluído quando:**
+- [ ] GET perfil delega; Authenticate permanece local
 
-**Tests:** integration
+**Testes:** integração
 **Gate:** `./mvnw test -pl sm-shop -Dtest=*CustomerFacadeHttp*Test`
 
 ---
 
-### T29: `ProductFacadeV2` read delegation
+### T29: Delegação de leitura do `ProductFacadeV2`
 
-**What:** V2 read paths use same `CatalogServiceClient`.
-**Where:** `sm-shop/.../facade/product/ProductFacadeV2Impl.java`
-**Depends on:** T27
-**Requirement:** OQ-05
+**O quê:** Caminhos de leitura V2 usam o mesmo `CatalogServiceClient`.
+**Onde:** `sm-shop/.../facade/product/ProductFacadeV2Impl.java`
+**Depende de:** T27
+**Requisito:** OQ-05
 
-**Done when:**
-- [ ] V2 GET product uses HTTP when strangler on
+**Concluído quando:**
+- [ ] GET produto V2 usa HTTP quando strangler ativo
 
-**Tests:** integration
+**Testes:** integração
 **Gate:** `./mvnw test -pl sm-shop -Dtest=*ProductFacadeV2*Test`
 
 ---
 
-### T30: Conditional wiring — admin writes never strangler
+### T30: Wiring condicional — escritas admin nunca strangler
 
-**What:** Assert `@ConditionalOnProperty` on adapters excludes write facades; document in code.
-**Where:** `sm-shop/.../strangler/`
-**Depends on:** T27, T28
-**Requirement:** AD-020
+**O quê:** Garantir `@ConditionalOnProperty` nos adaptadores exclui facades de escrita; documentar no código.
+**Onde:** `sm-shop/.../strangler/`
+**Depende de:** T27, T28
+**Requisito:** AD-020
 
-**Done when:**
-- [ ] ArchUnit or integration test proves private POST product not routed
+**Concluído quando:**
+- [ ] ArchUnit ou teste de integração prova que POST privado de produto não é roteado
 
-**Tests:** unit/arch
+**Testes:** unitário/arch
 **Gate:** `./mvnw test -pl sm-shop -Dtest=*Wave4Wiring*Test`
 
 ---
 
 ### T31: Correlation ID + health indicators Wave4
 
-**What:** Filters on catalog/customer; health for db, reference, merchant (catalog).
-**Where:** both services + sm-shop interceptor
-**Depends on:** T9, T18
-**Requirement:** STR-05
+**O quê:** Filtros em catalog/customer; health para db, reference, merchant (catalog).
+**Onde:** ambos os serviços + interceptor sm-shop
+**Depende de:** T9, T18
+**Requisito:** STR-05
 
-**Done when:**
-- [ ] `/actuator/health` shows dependency components
+**Concluído quando:**
+- [ ] `/actuator/health` exibe componentes de dependência
 
-**Tests:** integration
+**Testes:** integração
 **Gate:** `./mvnw test -pl catalog-service,customer-service -Dtest=*Health*Test`
 
 ---
 
-### T32: JaCoCo coverage gates Wave4 modules
+### T32: Gates de cobertura JaCoCo dos módulos Wave4
 
-**What:** Add verify-phase JaCoCo thresholds matching Waves 1–2 pattern.
-**Where:** `catalog-service/pom.xml`, `customer-service/pom.xml`, thin cores
-**Depends on:** T31
-**Requirement:** quality gate
+**O quê:** Adicionar thresholds JaCoCo na fase verify seguindo padrão das Ondas 1–2.
+**Onde:** `catalog-service/pom.xml`, `customer-service/pom.xml`, thin cores
+**Depende de:** T31
+**Requisito:** quality gate
 
-**Done when:**
+**Concluído quando:**
 - [ ] `./mvnw verify -pl catalog-service,customer-service,sm-catalog-core,sm-customer-core`
 
-**Tests:** verify
+**Testes:** verify
 **Gate:** `./mvnw verify -pl catalog-service,customer-service`
 
 ---
 
 ### T33: Pact providers — catalog + customer [P]
 
-**What:** Provider pact tests on both services for P1 endpoints.
-**Where:** `*/src/test/java/**/pact/`
-**Depends on:** T11, T19
-**Requirement:** CAT-11, CUS-10, STR-02
+**O quê:** Testes pact de provider em ambos os serviços para endpoints P1.
+**Onde:** `*/src/test/java/**/pact/`
+**Depende de:** T11, T19
+**Requisito:** CAT-11, CUS-10, STR-02
 
-**Done when:**
-- [ ] Provider tests publish pacts
+**Concluído quando:**
+- [ ] Testes de provider publicam pacts
 
-**Tests:** pact
+**Testes:** pact
 **Gate:** `./mvnw test -pl catalog-service,customer-service -Dtest=*ProviderPact*Test`
 
 ---
 
-### T34: Pact consumer — `Wave4ConsumerPactTest` in sm-shop
+### T34: Pact consumer — `Wave4ConsumerPactTest` no sm-shop
 
-**What:** Consumer tests for catalog read + customer profile + snapshots.
-**Where:** `sm-shop/src/test/java/.../pact/`
-**Depends on:** T27, T28, T33
-**Requirement:** STR-02
+**O quê:** Testes consumer para leitura de catálogo + perfil de cliente + snapshots.
+**Onde:** `sm-shop/src/test/java/.../pact/`
+**Depende de:** T27, T28, T33
+**Requisito:** STR-02
 
-**Done when:**
-- [ ] Consumer pact passes against provider stubs
+**Concluído quando:**
+- [ ] Consumer pact passa contra stubs de provider
 
-**Tests:** pact
+**Testes:** pact
 **Gate:** `./mvnw test -pl sm-shop -Dtest=Wave4ConsumerPactTest`
 
 ---
 
 ### T35: `docker-compose-wave4.yml`
 
-**What:** Full topology with catalog + customer; env vars documented.
-**Where:** repo root
-**Depends on:** T31
-**Requirement:** deploy
+**O quê:** Topologia completa com catalog + customer; variáveis de ambiente documentadas.
+**Onde:** raiz do repositório
+**Depende de:** T31
+**Requisito:** deploy
 
-**Done when:**
+**Concluído quando:**
 - [ ] `docker compose -f docker-compose-wave4.yml config` exit 0
 
-**Tests:** config
+**Testes:** config
 **Gate:** `docker compose -f docker-compose-wave4.yml config`
 
 ---
 
-### T36: Wave4 integration suite
+### T36: Suite de integração Wave4
 
-**What:** Consolidate `*Wave4*Test` smoke: catalog read, customer profile, merge, search v2 index.
-**Where:** `sm-shop/src/test/java/`
-**Depends on:** T35, T34
-**Requirement:** integration
+**O quê:** Consolidar smoke `*Wave4*Test`: leitura de catálogo, perfil de cliente, merge, índice search v2.
+**Onde:** `sm-shop/src/test/java/`
+**Depende de:** T35, T34
+**Requisito:** integration
 
-**Done when:**
-- [ ] Suite green with Testcontainers / compose profile
+**Concluído quando:**
+- [ ] Suite verde com Testcontainers / perfil compose
 
-**Tests:** integration
+**Testes:** integração
 **Gate:** `./mvnw test -pl sm-shop -Dtest=*Wave4*Integration*Test`
 
 ---
 
-### T37: Reactor gate `./mvnw clean install`
+### T37: Gate do reator `./mvnw clean install`
 
-**What:** Full reactor including Waves 1–4 modules.
-**Depends on:** T36
-**Requirement:** gate
+**O quê:** Reator completo incluindo módulos das Ondas 1–4.
+**Depende de:** T36
+**Requisito:** gate
 
-**Done when:**
-- [ ] Install completes without failure
+**Concluído quando:**
+- [ ] Install conclui sem falha
 
-**Tests:** full
+**Testes:** completo
 **Gate:** `./mvnw clean install`
 
 ---
 
-### T38: Traceability + STATE.md update
+### T38: Rastreabilidade + atualização do STATE.md
 
-**What:** Mark 30 requirements Verified; update ROADMAP/STATE; design status Execute complete.
-**Where:** `.specs/project/STATE.md`, spec traceability table
-**Depends on:** T37
-**Requirement:** documentation
+**O quê:** Marcar 30 requisitos como Verified; atualizar ROADMAP/STATE; status Execute completo no design.
+**Onde:** `.specs/project/STATE.md`, tabela de rastreabilidade da spec
+**Depende de:** T37
+**Requisito:** documentation
 
-**Done when:**
-- [ ] 30/30 requirements Verified
-- [ ] STATE.md records Wave 4 gate date
+**Concluído quando:**
+- [ ] 30/30 requisitos Verified
+- [ ] STATE.md registra data do gate da Onda 4
 
-**Tests:** none
-**Gate:** checklist review
+**Testes:** nenhum
+**Gate:** revisão de checklist
 
 ---
 
-### T39: catalog-service Dockerfile + container smoke
+### T39: Dockerfile do catalog-service + smoke de container
 
-**What:** Add Dockerfile for catalog-service mirroring merchant-service pattern; JAR copy from `target/`.
-**Where:** `catalog-service/Dockerfile`
-**Depends on:** T11
-**Requirement:** deploy
+**O quê:** Adicionar Dockerfile para catalog-service espelhando padrão do merchant-service; cópia de JAR de `target/`.
+**Onde:** `catalog-service/Dockerfile`
+**Depende de:** T11
+**Requisito:** deploy
 
-**Done when:**
-- [ ] Image builds from pre-built JAR
-- [ ] Container starts with env DB_URL
+**Concluído quando:**
+- [ ] Imagem constrói a partir de JAR pré-compilado
+- [ ] Container inicia com env DB_URL
 
-**Tests:** manual smoke
+**Testes:** smoke manual
 **Gate:** `docker build -f catalog-service/Dockerfile catalog-service`
 
 ---
 
-### T40: customer-service Dockerfile + container smoke
+### T40: Dockerfile do customer-service + smoke de container
 
-**What:** Dockerfile for customer-service.
-**Where:** `customer-service/Dockerfile`
-**Depends on:** T19
-**Requirement:** deploy
+**O quê:** Dockerfile para customer-service.
+**Onde:** `customer-service/Dockerfile`
+**Depende de:** T19
+**Requisito:** deploy
 
-**Done when:**
-- [ ] Image builds and health responds in compose
+**Concluído quando:**
+- [ ] Imagem constrói e health responde no compose
 
-**Tests:** manual smoke
+**Testes:** smoke manual
 **Gate:** `docker build -f customer-service/Dockerfile customer-service`
 
 ---
 
-### T41: ReadableProduct parity fixture tests
+### T41: Testes de paridade de fixture ReadableProduct
 
-**What:** Golden-file or snapshot tests comparing monolith vs catalog-service GET product for fixture SKUs.
-**Where:** `catalog-service/src/test/java/`
-**Depends on:** T11
-**Requirement:** CAT-02
+**O quê:** Testes golden-file ou snapshot comparando GET produto monólito vs catalog-service para SKUs de fixture.
+**Onde:** `catalog-service/src/test/java/`
+**Depende de:** T11
+**Requisito:** CAT-02
 
-**Done when:**
-- [ ] ≥3 fixture products match field-for-field (excluding volatile timestamps)
+**Concluído quando:**
+- [ ] ≥3 produtos de fixture correspondem campo a campo (excluindo timestamps voláteis)
 
-**Tests:** integration
+**Testes:** integração
 **Gate:** `./mvnw test -pl catalog-service -Dtest=*Parity*Test`
 
 ---
 
-### T42: Category tree parity tests
+### T42: Testes de paridade de árvore de categorias
 
-**What:** Deep category tree comparison vs monolith baseline.
-**Where:** `catalog-service/src/test/java/`
-**Depends on:** T11
-**Requirement:** CAT-03
+**O quê:** Comparação profunda de árvore de categorias vs baseline do monólito.
+**Onde:** `catalog-service/src/test/java/`
+**Depende de:** T11
+**Requisito:** CAT-03
 
-**Done when:**
-- [ ] Tree structure + counts match for DEFAULT store
+**Concluído quando:**
+- [ ] Estrutura da árvore + contagens correspondem para loja DEFAULT
 
-**Tests:** integration
+**Testes:** integração
 **Gate:** `./mvnw test -pl catalog-service -Dtest=*CategoryTree*Test`
 
 ---
 
-### T43: Customer address validation parity
+### T43: Paridade de validação de endereço de cliente
 
-**What:** Bean validation errors on address endpoints match monolith status codes.
-**Where:** `customer-service/src/test/java/`
-**Depends on:** T19
-**Requirement:** CUS-03
+**O quê:** Erros de bean validation nos endpoints de endereço correspondem aos status codes do monólito.
+**Onde:** `customer-service/src/test/java/`
+**Depende de:** T19
+**Requisito:** CUS-03
 
-**Done when:**
-- [ ] Invalid postal code returns same 400 shape as monolith
+**Concluído quando:**
+- [ ] Código postal inválido retorna o mesmo formato 400 do monólito
 
-**Tests:** integration
+**Testes:** integração
 **Gate:** `./mvnw test -pl customer-service -Dtest=*AddressValidation*Test`
 
 ---
 
-### T44: Catalog read adapter optional TTL cache
+### T44: Cache TTL opcional no adaptador de leitura de catálogo
 
-**What:** Caffeine or simple cache on CatalogFacadeHttpAdapter GET product by id (configurable TTL).
-**Where:** `sm-shop/.../strangler/catalog/`
-**Depends on:** T27
-**Requirement:** performance
+**O quê:** Caffeine ou cache simples no CatalogFacadeHttpAdapter GET produto por id (TTL configurável).
+**Onde:** `sm-shop/.../strangler/catalog/`
+**Depende de:** T27
+**Requisito:** performance
 
-**Done when:**
-- [ ] `wave4.catalog-service.cache.ttl-seconds` honored
-- [ ] Strangler off disables cache
+**Concluído quando:**
+- [ ] `wave4.catalog-service.cache.ttl-seconds` respeitado
+- [ ] Strangler desativado desabilita cache
 
-**Tests:** unit
+**Testes:** unitário
 **Gate:** `./mvnw test -pl sm-shop -Dtest=*CatalogCache*Test`
 
 ---
 
-### T45: Customer snapshot cache on merge path
+### T45: Cache de snapshot de cliente no caminho de merge
 
-**What:** Short TTL cache for CustomerSnapshot in login merge to avoid duplicate HTTP.
-**Where:** `sm-shop/.../strangler/customer/`
-**Depends on:** T25
-**Requirement:** CUS-08
+**O quê:** Cache de TTL curto para CustomerSnapshot no merge de login para evitar HTTP duplicado.
+**Onde:** `sm-shop/.../strangler/customer/`
+**Depende de:** T25
+**Requisito:** CUS-08
 
-**Done when:**
-- [ ] Second merge call within TTL does not hit HTTP (mock verify)
+**Concluído quando:**
+- [ ] Segunda chamada de merge dentro do TTL não atinge HTTP (verificação por mock)
 
-**Tests:** unit
+**Testes:** unitário
 **Gate:** `./mvnw test -pl sm-shop -Dtest=*SnapshotCache*Test`
 
 ---
 
-### T46: Customer review read endpoints
+### T46: Endpoints de leitura de avaliações de cliente
 
-**What:** Port GET review list endpoints to customer-service (write may stay monolith).
-**Where:** `customer-service/.../api/v1/customer/review/`
-**Depends on:** T19
-**Requirement:** CUS-07
+**O quê:** Portarar endpoints GET de lista de avaliações para customer-service (escrita pode permanecer no monólito).
+**Onde:** `customer-service/.../api/v1/customer/review/`
+**Depende de:** T19
+**Requisito:** CUS-07
 
-**Done when:**
-- [ ] GET reviews returns ReadableCustomerReview list
+**Concluído quando:**
+- [ ] GET reviews retorna lista ReadableCustomerReview
 
-**Tests:** integration
+**Testes:** integração
 **Gate:** `./mvnw test -pl customer-service -Dtest=*Review*Test`
 
 ---
 
-### T47: Document GAP-CAT / GAP-CUS in design appendix
+### T47: Documentar GAP-CAT / GAP-CUS no apêndice do design
 
-**What:** Add explicit gap table to design.md or `docs/decomposition/GAP-WAVE4.md`.
-**Where:** `.specs/features/onda-4-catalog-customer/design.md`
-**Depends on:** T21, T24
-**Requirement:** documentation
+**O quê:** Adicionar tabela explícita de gaps ao design.md ou `docs/decomposition/GAP-WAVE4.md`.
+**Onde:** `.specs/features/onda-4-catalog-customer/design.md`
+**Depende de:** T21, T24
+**Requisito:** documentation
 
-**Done when:**
-- [ ] GAP-CAT-01..02 and GAP-CUS-01..02 documented with owner wave
+**Concluído quando:**
+- [ ] GAP-CAT-01..02 e GAP-CUS-01..02 documentados com onda responsável
 
-**Tests:** none
-**Gate:** doc review
+**Testes:** nenhum
+**Gate:** revisão de documentação
 
 ---
 
-### T48: ROADMAP.md Wave 4 status update (pre-Execute)
+### T48: Atualização de status da Onda 4 no ROADMAP.md (pré-Execute)
 
-**What:** Set Onda 4 TLC status to Tasks approved in ROADMAP.md.
-**Where:** `.specs/project/ROADMAP.md`
-**Depends on:** T38 (or parallel after tasks approved)
-**Requirement:** documentation
+**O quê:** Definir status TLC da Onda 4 como Tasks approved no ROADMAP.md.
+**Onde:** `.specs/project/ROADMAP.md`
+**Depende de:** T38 (ou paralelo após aprovação das tarefas)
+**Requisito:** documentation
 
-**Done when:**
-- [ ] ROADMAP shows Specify/Design/Tasks ✅ for Onda 4
+**Concluído quando:**
+- [ ] ROADMAP exibe Specify/Design/Tasks ✅ para Onda 4
 
-**Tests:** none
+**Testes:** nenhum
 **Gate:** checklist
 
 ---
 
-## Requirement → Task Mapping
+## Mapeamento Requisito → Tarefa
 
-| Req | Tasks |
+| Req | Tarefas |
 | --- | ----- |
 | CAT-01 | T9 |
 | CAT-02 | T11, T27 |
@@ -831,17 +831,17 @@ Phase 5:
 | CUS-04 | T19 |
 | CUS-05 | T16 |
 | CUS-06 | T19 |
-| CUS-07 | T19 (phase read) |
+| CUS-07 | T19 (fase de leitura) |
 | CUS-08 | T20, T25 |
 | CUS-09 | T24 |
 | CUS-10 | T33 |
 | STR-01 | T4, T27, T28 |
 | STR-02 | T33, T34 |
-| STR-03 | (inherited AD-022) |
+| STR-03 | (herdado AD-022) |
 | STR-04 | T2, T3, T11, T19 |
 | STR-05 | T31 |
 | STR-06 | T10, T19 |
 | STR-07 | T21, T23 |
 | STR-08 | T24, T25 |
 
-**Coverage:** 30 requirements → 48 tasks, 0 unmapped ✅
+**Cobertura:** 30 requisitos → 48 tarefas, 0 sem mapeamento ✅

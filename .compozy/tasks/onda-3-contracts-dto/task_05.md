@@ -1,66 +1,66 @@
 ---
 status: pending
-title: Integration payment and shipping DTOs
+title: DTOs de integração payment e shipping
 type: backend
 complexity: high
 ---
 
-# Integration payment and shipping DTOs
+# DTOs de integração payment e shipping
 
-## Overview
-Consolidates TLC T21–T24. Adds integration context DTOs to `sm-core-modules` without JPA types, preparing PaymentModuleV2 and ShippingQuoteModuleV2.
+## Visão geral
+Consolida TLC T21–T24. Adiciona DTOs de contexto de integração em `sm-core-modules` sem tipos JPA, preparando PaymentModuleV2 e ShippingQuoteModuleV2.
 
 <critical>
-- ALWAYS READ the PRD and TechSpec before starting
-- REFERENCE TECHSPEC for implementation details — do not duplicate here
-- FOCUS ON "WHAT" — describe what needs to be accomplished, not how
-- MINIMIZE CODE — show code only to illustrate current structure or problem areas
-- TESTS REQUIRED — every task MUST include tests in deliverables
+- SEMPRE LER o PRD e a TechSpec antes de começar
+- REFERENCIAR A TECHSPEC para detalhes de implementação — não duplicar aqui
+- FOCAR NO "O QUÊ" — descrever o que precisa ser feito, não como
+- MINIMIZAR CÓDIGO — mostrar código apenas para ilustrar estrutura atual ou áreas problemáticas
+- TESTES OBRIGATÓRIOS — toda task DEVE incluir testes nos entregáveis
 </critical>
 
 <requirements>
-1. MUST add `IntegrationStoreContext` with store code, currency, default language — TLC T21.
-2. MUST add `PaymentRequestContext`, `PaymentCaptureContext`, `PaymentLineItemDto`, `TransactionResult` — TLC T22.
-3. MUST add `ShippingQuoteRequestContext`, `ShippingAddressDto`, `PackageDetailsDto` — TLC T23.
-4. MUST use `MerchantStoreId` from api-contracts (sm-core-modules depends on contracts) — TLC T24.
-5. MUST NOT reference `Order`, `Customer`, `ShoppingCartItem` entities in new DTOs.
+1. MUST adicionar `IntegrationStoreContext` com store code, currency, language default — TLC T21.
+2. MUST adicionar `PaymentRequestContext`, `PaymentCaptureContext`, `PaymentLineItemDto`, `TransactionResult` — TLC T22.
+3. MUST adicionar `ShippingQuoteRequestContext`, `ShippingAddressDto`, `PackageDetailsDto` — TLC T23.
+4. MUST usar `MerchantStoreId` de api-contracts (sm-core-modules depende de contracts) — TLC T24.
+5. MUST NOT referenciar entidades `Order`, `Customer`, `ShoppingCartItem` nos novos DTOs.
 </requirements>
 
-## Subtasks
-- [ ] 5.1 Common integration context DTOs (T21)
-- [ ] 5.2 Payment context DTOs (T22)
-- [ ] 5.3 Shipping context DTOs (T23)
-- [ ] 5.4 Maven dependency contracts → sm-core-modules (T24)
+## Subtarefas
+- [ ] 5.1 DTOs de contexto integração comum (T21)
+- [ ] 5.2 DTOs de contexto payment (T22)
+- [ ] 5.3 DTOs de contexto shipping (T23)
+- [ ] 5.4 Dependência Maven contracts → sm-core-modules (T24)
 
-## Implementation Details
-See TechSpec: **Data models**, ADR-004. Map fields from current `PaymentModule` method signatures.
+## Detalhes de implementação
+Ver TechSpec: **Modelos de dados**, ADR-004. Mapear campos das assinaturas atuais de `PaymentModule`.
 
-### Relevant Files
+### Arquivos relevantes
 - `sm-core-modules/.../payment/model/PaymentModule.java`
 - `sm-core-modules/.../shipping/model/ShippingQuoteModule.java`
 - `sm-core/.../payments/PaymentServiceImpl.java`
 
-### Dependent Files
-- `sm-core-modules/.../integration/common/dto/` — create
-- `sm-core-modules/.../integration/payment/dto/` — create
-- `sm-core-modules/.../integration/shipping/dto/` — create
+### Arquivos dependentes
+- `sm-core-modules/.../integration/common/dto/` — criar
+- `sm-core-modules/.../integration/payment/dto/` — criar
+- `sm-core-modules/.../integration/shipping/dto/` — criar
 
-### Related ADRs
-- [ADR-004: V2 parallel interfaces](../adrs/adr-004.md)
+### ADRs relacionados
+- [ADR-004: Interfaces V2 paralelas](../adrs/adr-004.md)
 
-## Deliverables
-- Integration DTO packages in sm-core-modules
-- Serialization unit tests
-- `./mvnw compile -pl sm-core-modules` green **(REQUIRED)**
+## Entregáveis
+- Packages DTO integração em sm-core-modules
+- Testes unitários de serialização
+- `./mvnw compile -pl sm-core-modules` verde **(OBRIGATÓRIO)**
 
-## Tests
-- Unit tests:
+## Testes
+- Testes unitários:
   - [ ] PaymentRequestContext round-trip JSON
-  - [ ] ShippingQuoteRequestContext holds delivery/origin DTOs
-- Test coverage target: >=80%
-- All tests must pass
+  - [ ] ShippingQuoteRequestContext contém DTOs delivery/origin
+- Meta de cobertura: >=80%
+- Todos os testes devem passar
 
-## Success Criteria
-- All tests passing
-- DTOs cover all V2 method parameter needs
-- No JPA imports in new DTOs
+## Critérios de sucesso
+- Todos os testes passando
+- DTOs cobrem todas as necessidades de parâmetro de método V2
+- Sem imports JPA nos novos DTOs

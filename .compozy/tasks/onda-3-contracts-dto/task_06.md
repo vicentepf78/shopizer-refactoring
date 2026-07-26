@@ -1,69 +1,69 @@
 ---
 status: pending
-title: PaymentModuleV2, ShippingQuoteModuleV2 and bridges
+title: PaymentModuleV2, ShippingQuoteModuleV2 e bridges
 type: backend
 complexity: high
 ---
 
-# PaymentModuleV2, ShippingQuoteModuleV2 and bridges
+# PaymentModuleV2, ShippingQuoteModuleV2 e bridges
 
-## Overview
-Consolidates TLC T25–T29. Introduces V2 plugin interfaces, entity→DTO mappers in Payment/Shipping services, and legacy bridge for existing plugins.
+## Visão geral
+Consolida TLC T25–T29. Introduz interfaces V2 de plugin, mappers entidade→DTO em serviços Payment/Shipping e bridge legacy para plugins existentes.
 
 <critical>
-- ALWAYS READ the PRD and TechSpec before starting
-- REFERENCE TECHSPEC for implementation details — do not duplicate here
-- FOCUS ON "WHAT" — describe what needs to be accomplished, not how
-- MINIMIZE CODE — show code only to illustrate current structure or problem areas
-- TESTS REQUIRED — every task MUST include tests in deliverables
+- SEMPRE LER o PRD e a TechSpec antes de começar
+- REFERENCIAR A TECHSPEC para detalhes de implementação — não duplicar aqui
+- FOCAR NO "O QUÊ" — descrever o que precisa ser feito, não como
+- MINIMIZAR CÓDIGO — mostrar código apenas para ilustrar estrutura atual ou áreas problemáticas
+- TESTES OBRIGATÓRIOS — toda task DEVE incluir testes nos entregáveis
 </critical>
 
 <requirements>
-1. MUST define `PaymentModuleV2` and `ShippingQuoteModuleV2` interfaces — TLC T25.
-2. MUST implement `LegacyPaymentModuleBridge` wrapping V1 plugins as V2 — TLC T26.
-3. MUST update `PaymentServiceImpl` to prefer V2 when available — TLC T27.
-4. MUST update `ShippingServiceImpl` similarly — TLC T28.
-5. MUST add integration test with simplest plugin (e.g. MoneyOrder) via V2 path — TLC T29.
-6. MUST NOT break existing V1 plugin registration.
+1. MUST definir interfaces `PaymentModuleV2` e `ShippingQuoteModuleV2` — TLC T25.
+2. MUST implementar `LegacyPaymentModuleBridge` encapsulando plugins V1 como V2 — TLC T26.
+3. MUST atualizar `PaymentServiceImpl` para preferir V2 quando disponível — TLC T27.
+4. MUST atualizar `ShippingServiceImpl` similarmente — TLC T28.
+5. MUST adicionar teste de integração com plugin mais simples (ex. MoneyOrder) via caminho V2 — TLC T29.
+6. MUST NOT quebrar registro de plugin V1 existente.
 </requirements>
 
-## Subtasks
-- [ ] 6.1 V2 interface definitions (T25)
-- [ ] 6.2 Legacy bridges V1→V2 (T26)
-- [ ] 6.3 PaymentServiceImpl routing (T27)
-- [ ] 6.4 ShippingServiceImpl routing (T28)
-- [ ] 6.5 Plugin path integration test (T29)
+## Subtarefas
+- [ ] 6.1 Definições de interface V2 (T25)
+- [ ] 6.2 Bridges legacy V1→V2 (T26)
+- [ ] 6.3 Roteamento PaymentServiceImpl (T27)
+- [ ] 6.4 Roteamento ShippingServiceImpl (T28)
+- [ ] 6.5 Teste de integração caminho plugin (T29)
 
-## Implementation Details
-See TechSpec: **Key interfaces**, ADR-004. Registry pattern: `Map<String, PaymentModule>` unchanged; add optional V2 map or adapter wrapper.
+## Detalhes de implementação
+Ver TechSpec: **Interfaces principais**, ADR-004. Padrão registry: `Map<String, PaymentModule>` inalterado; adicionar map V2 opcional ou wrapper adapter.
 
-### Relevant Files
+### Arquivos relevantes
 - `sm-core/.../payments/PaymentServiceImpl.java`
 - `sm-core/.../shipping/ShippingServiceImpl.java`
 - `sm-core/.../modules/integration/payment/impl/MoneyOrderPayment.java`
 
-### Dependent Files
-- `sm-core-modules/.../PaymentModuleV2.java` — create
-- `sm-core/.../payments/LegacyPaymentModuleBridge.java` — create
-- `sm-core/.../shipping/LegacyShippingQuoteModuleBridge.java` — create
+### Arquivos dependentes
+- `sm-core-modules/.../PaymentModuleV2.java` — criar
+- `sm-core/.../payments/LegacyPaymentModuleBridge.java` — criar
+- `sm-core/.../shipping/LegacyShippingQuoteModuleBridge.java` — criar
 
-### Related ADRs
-- [ADR-004: Parallel V2 interfaces](../adrs/adr-004.md)
+### ADRs relacionados
+- [ADR-004: Interfaces V2 paralelas](../adrs/adr-004.md)
 
-## Deliverables
-- V2 interfaces + legacy bridges
-- Service layer routing
-- Integration test proving V2 authorize path **(REQUIRED)**
+## Entregáveis
+- Interfaces V2 + bridges legacy
+- Roteamento camada de serviço
+- Teste de integração provando caminho authorize V2 **(OBRIGATÓRIO)**
 
-## Tests
-- Unit tests:
-  - [ ] Bridge maps entity cart items to PaymentLineItemDto
-- Integration tests:
-  - [ ] MoneyOrder authorize via V2 bridge
-- Test coverage target: >=80%
-- All tests must pass
+## Testes
+- Testes unitários:
+  - [ ] Bridge mapeia cart items entidade para PaymentLineItemDto
+- Testes de integração:
+  - [ ] MoneyOrder authorize via bridge V2
+- Meta de cobertura: >=80%
+- Todos os testes devem passar
 
-## Success Criteria
-- All tests passing
-- INT-ready milestone
-- V1 plugins still pass existing tests
+## Critérios de sucesso
+- Todos os testes passando
+- Milestone INT-ready
+- Plugins V1 ainda passam testes existentes

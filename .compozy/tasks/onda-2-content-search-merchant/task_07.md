@@ -7,7 +7,7 @@ complexity: medium
 
 # Strangler Search no monolito e documentação GAP-SRCH
 
-## Overview
+## Visão geral
 Consolida TLC T27–T29. Adiciona `SearchFacadeHttpAdapter`, desabilita o cliente OpenSearch do monólito no profile strangler-wave2 e documenta GAP-SRCH-01…10 no README do search-service. Fecha a trilha search no BFF antes do Strangler cross-track.
 
 <critical>
@@ -27,39 +27,39 @@ Consolida TLC T27–T29. Adiciona `SearchFacadeHttpAdapter`, desabilita o client
 6. MUST manter profile monolith com regressão verde.
 </requirements>
 
-## Subtasks
+## Subtarefas
 - [x] 7.1 SearchFacadeHttpAdapter query/autocomplete (T27)
 - [x] 7.2 Wiring condicional + desabilitar OpenSearch monólito (T28)
 - [x] 7.3 Documentar GAP-SRCH-01…10 (T29)
 - [x] 7.4 Testes adapter + profile monolith/strangler
 - [x] 7.5 Verificar reindex admin usa orchestrator local
 
-## Implementation Details
+## Detalhes de implementação
 Ver TechSpec: **Matriz de adapters**, **Lacunas conhecidas**, **Ordem de construção** passos 20–21. Controllers `SearchApi` permanecem no BFF.
 
-### Relevant Files
+### Arquivos relevantes
 - `sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/search/SearchApi.java` — entrypoints
 - `sm-shop/.../strangler/search/SearchBulkIndexOrchestrator.java` — reindex local (task_06)
 - `sm-core/.../services/search/SearchServiceImpl.java` — facade in-process legado
 
-### Dependent Files
+### Arquivos dependentes
 - `sm-shop/.../strangler/search/SearchFacadeHttpAdapter.java` — adapter HTTP
 - `sm-shop/.../SearchFacadeImpl.java` — condicionar in-process
 - `sm-core/pom.xml` — OpenSearch condicional/remoção no strangler
 - `search-service/README.md` — seção Known gaps
 
-### Related ADRs
+### ADRs relacionados
 - [ADR-003: search sem JPA](adrs/adr-003.md) — OpenSearch só no search-service
 - [ADR-010: SearchItem commons](adrs/adr-010.md) — schema query
 - [ADR-011: stubs](adrs/adr-011.md) — reindex orquestrado no BFF
 
-## Deliverables
+## Entregáveis
 - SearchFacadeHttpAdapter + OpenSearch monólito desabilitado no strangler
 - README com 10 gaps documentados
 - Unit/integration tests adapter 80%+ **(REQUIRED)**
 - Regressão profile monolith **(REQUIRED)**
 
-## Tests
+## Testes
 - Unit tests:
   - [x] Adapter encaminha search/autocomplete com headers store/lang
   - [x] Falha remota → 503 sem chamar impl in-process
@@ -71,7 +71,7 @@ Ver TechSpec: **Matriz de adapters**, **Lacunas conhecidas**, **Ordem de constru
 - Test coverage target: >=80%
 - All tests must pass
 
-## Success Criteria
+## Critérios de sucesso
 - All tests passing
 - Test coverage >=80%
 - Strangler search operacional; gaps documentados sem expandir escopo

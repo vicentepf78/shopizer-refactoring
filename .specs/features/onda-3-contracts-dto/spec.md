@@ -1,224 +1,224 @@
-# Wave 3 — Contracts DTO + Checkout Application Service Specification
+# Onda 3 — Especificação Contracts DTO + Checkout Application Service
 
-**Feature ID:** `onda-3-contracts-dto`  
-**Phase:** Specify / Design (Execute blocked until tasks approved)  
-**Complexity:** Large (cross-cutting monolith refactor, no new services)  
-**Source:** [MIGRATION-MASTER-PLAN.md](../../../docs/decomposition/MIGRATION-MASTER-PLAN.md) § Onda 3  
-**Prerequisite:** Wave 2 Execute complete (2026-07-26 gate revalidated)
-
----
-
-## Problem Statement
-
-Waves 1 and 2 extracted reference, tax, content, search, and merchant into deployable services with DTO contracts and Strangler BFF adapters. However, the monolith core remains tightly coupled:
-
-- **Facade interfaces** pass JPA `MerchantStore` and `Language` (B-001) — 20+ interfaces, `AbstractDataPopulator` hard-wired.
-- **ReferencesApi** still returns JPA `Language` / `Currency` entities (B-002).
-- **Integration plugins** (`PaymentModule`, `ShippingQuoteModule`) accept full entity graphs — blocks integration-service (Wave 5).
-- **Checkout hub** — `OrderFacadeImpl` injects 12+ services; `processOrder` is one transactional method with order↔payments cycle.
-- **Search** uses interim `ProductIndexPayload` (AD-009); `SearchItem` still lives in `shopizer-commons` (OQ-06).
-
-Wave 3 is the **contracts and internal refactoring wave** with **no new microservices**. It unblocks Waves 4–6 by establishing snapshot DTOs, tenant identifiers, integration DTO redesign, checkout application service, and outbox foundation.
+**ID da feature:** `onda-3-contracts-dto`  
+**Fase:** Specify / Design (Execute bloqueado até tasks aprovadas)  
+**Complexidade:** Large (refatoração cross-cutting no monólito, sem novos serviços)  
+**Fonte:** [MIGRATION-MASTER-PLAN.md](../../../docs/decomposition/MIGRATION-MASTER-PLAN.md) § Onda 3  
+**Pré-requisito:** Execute Onda 2 completo (gate revalidado 2026-07-26)
 
 ---
 
-## Goals
+## Declaração do problema
 
-- [ ] `ProductSnapshot`, `OrderSnapshot`, `CustomerSnapshot` in `shopizer-api-contracts`
-- [ ] `MerchantStoreId` / `LanguageCode` on P1 facade interfaces (6 facades)
-- [ ] `PaymentModuleV2` / `ShippingQuoteModuleV2` with DTO contexts; legacy plugins via bridge
-- [ ] `CheckoutApplicationService` extracted from `OrderFacadeImpl`
-- [ ] `CHECKOUT_OUTBOX` + staged `processOrder` behind feature flag
-- [ ] `SearchItem` migrated to api-contracts; Pact updated
-- [ ] B-002 closed — ReferencesApi returns readable DTOs
-- [ ] Facade migration plan for Waves 4–6 published
-- [ ] `./mvnw clean install` green; zero new JPA in api-contracts
+As Ondas 1 e 2 extraíram reference, tax, content, search e merchant em serviços implantáveis com contratos DTO e adapters Strangler BFF. Porém o core do monólito permanece fortemente acoplado:
+
+- **Interfaces facade** passam JPA `MerchantStore` e `Language` (B-001) — 20+ interfaces, `AbstractDataPopulator` hard-wired.
+- **ReferencesApi** ainda retorna entidades JPA `Language` / `Currency` (B-002).
+- **Plugins de integração** (`PaymentModule`, `ShippingQuoteModule`) aceitam grafos completos de entidade — bloqueia integration-service (Onda 5).
+- **Hub checkout** — `OrderFacadeImpl` injeta 12+ serviços; `processOrder` é um método transacional com ciclo order↔payments.
+- **Search** usa `ProductIndexPayload` interim (AD-009); `SearchItem` ainda em `shopizer-commons` (OQ-06).
+
+A Onda 3 é a **onda de contratos e refatoração interna** com **sem novos microserviços**. Desbloqueia Ondas 4–6 estabelecendo DTOs snapshot, identificadores tenant, redesign DTO integração, checkout application service e base outbox.
 
 ---
 
-## Out of Scope
+## Objetivos
 
-| Feature | Reason |
+- [ ] `ProductSnapshot`, `OrderSnapshot`, `CustomerSnapshot` em `shopizer-api-contracts`
+- [ ] `MerchantStoreId` / `LanguageCode` em interfaces facade P1 (6 facades)
+- [ ] `PaymentModuleV2` / `ShippingQuoteModuleV2` com contextos DTO; plugins legacy via bridge
+- [ ] `CheckoutApplicationService` extraído de `OrderFacadeImpl`
+- [ ] `CHECKOUT_OUTBOX` + `processOrder` em estágios atrás de feature flag
+- [ ] `SearchItem` migrado para api-contracts; Pact atualizado
+- [ ] B-002 fechado — ReferencesApi retorna DTOs legíveis
+- [ ] Plano migração facade para Ondas 4–6 publicado
+- [ ] `./mvnw clean install` verde; zero JPA novo em api-contracts
+
+---
+
+## Fora de escopo
+
+| Feature | Motivo |
 | ------- | ------ |
-| New Spring Boot services | AD-W3-001 / master plan |
-| Docker Compose Wave 3 | No deployables |
-| Catalog-service / customer-service extraction | Wave 4 |
-| integration-service extraction | Wave 5 |
-| order-service / shoppingcart-service | Wave 6 |
-| Full distributed saga / Kafka | Wave 6+ |
-| Migrate all 76 facades | Phased — P1 only in Wave 3 |
-| Rewrite Stripe/PayPal/USPS plugins to V2 | Optional; bridge suffices |
-| Database split per domain | AD-003 |
-| Tax calculation extraction | AD-002 |
-| MerchantStoreArgumentResolver rewrite (~450 refs) | Remains in BFF |
-| Quick wins Mapper/Populator merge | Parallel |
+| Novos serviços Spring Boot | AD-W3-001 / plano mestre |
+| Docker Compose Onda 3 | Sem deployables |
+| Extração catalog-service / customer-service | Onda 4 |
+| Extração integration-service | Onda 5 |
+| order-service / shoppingcart-service | Onda 6 |
+| Saga distribuída completa / Kafka | Onda 6+ |
+| Migrar todas as 76 facades | Faseado — apenas P1 na Onda 3 |
+| Reescrever plugins Stripe/PayPal/USPS para V2 | Opcional; bridge suficiente |
+| Split database por domínio | AD-003 |
+| Extração cálculo tax | AD-002 |
+| Rewrite MerchantStoreArgumentResolver (~450 refs) | Permanece no BFF |
+| Quick wins merge Mapper/Populator | Paralelo |
 
 ---
 
-## Requirements
+## Requisitos
 
-### CTR — Contracts foundation
+### CTR — Base contracts
 
-| ID | Requirement | Priority |
-| ---- | ----------- | -------- |
-| CTR-01 | `shopizer-api-contracts` SHALL NOT import `com.salesmanager.core.model` | P1 |
-| CTR-02 | New snapshot DTOs SHALL be Jackson-serializable with stable field names for Pact | P1 |
-| CTR-03 | Mappers/builders SHALL live in `sm-core` or `sm-shop`, not in contracts JAR | P1 |
-| CTR-04 | Contracts module SHALL publish snapshot packages: `catalog`, `order`, `customer`, `tenant` | P1 |
+| ID | Requisito | Prioridade |
+| ---- | --------- | ---------- |
+| CTR-01 | `shopizer-api-contracts` SHALL NOT importar `com.salesmanager.core.model` | P1 |
+| CTR-02 | Novos DTOs snapshot SHALL ser Jackson-serializáveis com nomes de campo estáveis para Pact | P1 |
+| CTR-03 | Mappers/builders SHALL ficar em `sm-core` ou `sm-shop`, não no JAR contracts | P1 |
+| CTR-04 | Módulo contracts SHALL publicar packages snapshot: `catalog`, `order`, `customer`, `tenant` | P1 |
 
-### TNT — Tenant identifiers
+### TNT — Identificadores tenant
 
-| ID | Requirement | Priority |
-| ---- | ----------- | -------- |
-| TNT-01 | `MerchantStoreId` SHALL wrap non-blank store code with value equality | P1 |
-| TNT-02 | `LanguageCode` SHALL wrap non-blank ISO language code | P1 |
-| TNT-03 | `TenantEntityBridge` SHALL hydrate `MerchantStore`/`Language` in monolith only | P1 |
-| TNT-04 | `AbstractDataPopulator` SHALL accept tenant primitives via overload | P1 |
-| TNT-05 | ArchUnit SHALL fail if new facade methods add `MerchantStore`/`Language` params | P2 |
-| TNT-06 | Controllers MAY still resolve entities via argument resolver; conversion at facade boundary | P1 |
+| ID | Requisito | Prioridade |
+| ---- | --------- | ---------- |
+| TNT-01 | `MerchantStoreId` SHALL encapsular store code não vazio com igualdade por valor | P1 |
+| TNT-02 | `LanguageCode` SHALL encapsular código ISO de language não vazio | P1 |
+| TNT-03 | `TenantEntityBridge` SHALL hidratar `MerchantStore`/`Language` apenas no monólito | P1 |
+| TNT-04 | `AbstractDataPopulator` SHALL aceitar primitivos tenant via overload | P1 |
+| TNT-05 | ArchUnit SHALL falhar se novos métodos facade adicionam params `MerchantStore`/`Language` | P2 |
+| TNT-06 | Controllers MAY ainda resolver entidades via argument resolver; conversão na fronteira facade | P1 |
 
 ### SNP — Snapshots
 
-| ID | Requirement | Priority |
-| ---- | ----------- | -------- |
-| SNP-01 | `ProductSnapshot` SHALL be canonical catalog read projection | P1 |
-| SNP-02 | `ProductIndexPayload` SHALL map from `ProductSnapshot` with schemaVersion 2 | P1 |
-| SNP-03 | `ProductSnapshotBuilder` SHALL build from JPA `Product` without exposing entities in contracts | P1 |
-| SNP-04 | `OrderSnapshot` SHALL include status, totals, line items as nested DTOs | P1 |
-| SNP-05 | `CustomerSnapshot` SHALL include id, email, billing/delivery address DTOs | P1 |
-| SNP-06 | `search-service` SHALL accept index payload schema v1 and v2 | P1 |
-| SNP-07 | Snapshot builders SHALL have unit tests with fixture entities | P1 |
+| ID | Requisito | Prioridade |
+| ---- | --------- | ---------- |
+| SNP-01 | `ProductSnapshot` SHALL ser projeção canônica de leitura de catálogo | P1 |
+| SNP-02 | `ProductIndexPayload` SHALL mapear de `ProductSnapshot` com schemaVersion 2 | P1 |
+| SNP-03 | `ProductSnapshotBuilder` SHALL construir de JPA `Product` sem expor entidades em contracts | P1 |
+| SNP-04 | `OrderSnapshot` SHALL incluir status, totais, line items como DTOs aninhados | P1 |
+| SNP-05 | `CustomerSnapshot` SHALL incluir id, email, DTOs billing/delivery address | P1 |
+| SNP-06 | `search-service` SHALL aceitar payload índice schema v1 e v2 | P1 |
+| SNP-07 | Builders snapshot SHALL ter testes unitários com entidades fixture | P1 |
 
-### INT — Integration modules
+### INT — Módulos integração
 
-| ID | Requirement | Priority |
-| ---- | ----------- | -------- |
-| INT-01 | Integration DTOs in `sm-core-modules` SHALL NOT reference JPA entity types | P1 |
-| INT-02 | `PaymentModuleV2` SHALL use `PaymentRequestContext` and related DTOs | P1 |
-| INT-03 | `ShippingQuoteModuleV2` SHALL use `ShippingQuoteRequestContext` | P1 |
-| INT-04 | Legacy V1 plugins SHALL continue working without source changes | P1 |
-| INT-05 | `PaymentServiceImpl` SHALL route to V2 when plugin supports it or via bridge | P1 |
-| INT-06 | At least one plugin path SHALL be integration-tested via V2 bridge | P1 |
+| ID | Requisito | Prioridade |
+| ---- | --------- | ---------- |
+| INT-01 | DTOs integração em `sm-core-modules` SHALL NOT referenciar tipos entidade JPA | P1 |
+| INT-02 | `PaymentModuleV2` SHALL usar `PaymentRequestContext` e DTOs relacionados | P1 |
+| INT-03 | `ShippingQuoteModuleV2` SHALL usar `ShippingQuoteRequestContext` | P1 |
+| INT-04 | Plugins legacy V1 SHALL continuar funcionando sem mudanças de source | P1 |
+| INT-05 | `PaymentServiceImpl` SHALL rotear a V2 quando plugin suporta ou via bridge | P1 |
+| INT-06 | Pelo menos um caminho plugin SHALL ser testado integração via bridge V2 | P1 |
 
 ### CHK — Checkout application service
 
-| ID | Requirement | Priority |
-| ---- | ----------- | -------- |
-| CHK-01 | `CheckoutApplicationService.placeOrder` SHALL be single orchestration entry | P1 |
-| CHK-02 | Public order REST paths and schemas SHALL remain unchanged | P1 |
-| CHK-03 | `OrderFacadeImpl` SHALL delegate orchestration to application service | P1 |
-| CHK-04 | Happy-path order placement SHALL match pre-refactor behavior | P1 |
-| CHK-05 | Known validation/payment error paths SHALL match pre-refactor behavior | P1 |
-| CHK-06 | Checkout p95 latency SHALL NOT exceed 2× baseline in integration env | P2 |
+| ID | Requisito | Prioridade |
+| ---- | --------- | ---------- |
+| CHK-01 | `CheckoutApplicationService.placeOrder` SHALL ser entrada única de orquestração | P1 |
+| CHK-02 | Caminhos REST públicos order e schemas SHALL permanecer inalterados | P1 |
+| CHK-03 | `OrderFacadeImpl` SHALL delegar orquestração ao application service | P1 |
+| CHK-04 | Colocação de pedido happy-path SHALL bater com comportamento pré-refactor | P1 |
+| CHK-05 | Caminhos erro validação/payment conhecidos SHALL bater com pré-refactor | P1 |
+| CHK-06 | Latência p95 checkout SHALL NOT exceder 2× baseline em env integração | P2 |
 
-### SAG — Saga / outbox foundation
+### SAG — Base saga / outbox
 
-| ID | Requirement | Priority |
-| ---- | ----------- | -------- |
-| SAG-01 | `CHECKOUT_OUTBOX` table SHALL exist in shared schema | P1 |
-| SAG-02 | Outbox events SHALL include PAYMENT_REQUESTED, PAYMENT_CONFIRMED, ORDER_PERSISTED, INVENTORY_DECREMENTED | P1 |
-| SAG-03 | Outbox write SHALL occur in same transaction as business step when flag enabled | P1 |
+| ID | Requisito | Prioridade |
+| ---- | --------- | ---------- |
+| SAG-01 | Tabela `CHECKOUT_OUTBOX` SHALL existir em schema compartilhado | P1 |
+| SAG-02 | Eventos outbox SHALL incluir PAYMENT_REQUESTED, PAYMENT_CONFIRMED, ORDER_PERSISTED, INVENTORY_DECREMENTED | P1 |
+| SAG-03 | Escrita outbox SHALL ocorrer na mesma transação que passo de negócio quando flag habilitada | P1 |
 | SAG-04 | `checkout.outbox.enabled` SHALL default false | P1 |
-| SAG-05 | In-process dispatcher SHALL mark events processed (no external broker) | P1 |
+| SAG-05 | Dispatcher in-process SHALL marcar eventos processados (sem broker externo) | P1 |
 
-### FAC — Facade migration
+### FAC — Migração facade
 
-| ID | Requirement | Priority |
-| ---- | ----------- | -------- |
-| FAC-01 | `OrderFacade` SHALL use tenant identifier types | P1 |
-| FAC-02 | `ShoppingCartFacade`, `SearchFacade`, `ShippingFacade` SHALL use tenant types | P1 |
-| FAC-03 | `CategoryFacade`, `ProductCommonFacade` read paths SHALL use tenant types | P1 |
-| FAC-04 | Wave 2 HTTP adapters SHALL compile with updated facade signatures | P1 |
-| FAC-05 | Remaining facades SHALL be inventoried with Wave 4–6 phase assignment | P2 |
-| FAC-06 | `FACADE-MIGRATION-PLAN.md` SHALL document phased migration | P2 |
+| ID | Requisito | Prioridade |
+| ---- | --------- | ---------- |
+| FAC-01 | `OrderFacade` SHALL usar tipos identificador tenant | P1 |
+| FAC-02 | `ShoppingCartFacade`, `SearchFacade`, `ShippingFacade` SHALL usar tipos tenant | P1 |
+| FAC-03 | Caminhos leitura `CategoryFacade`, `ProductCommonFacade` SHALL usar tipos tenant | P1 |
+| FAC-04 | Adapters HTTP Onda 2 SHALL compilar com assinaturas facade atualizadas | P1 |
+| FAC-05 | Facades restantes SHALL ser inventariadas com atribuição de fase Onda 4–6 | P2 |
+| FAC-06 | `FACADE-MIGRATION-PLAN.md` SHALL documentar migração faseada | P2 |
 
-### SRCH — Search contracts
+### SRCH — Contratos search
 
-| ID | Requirement | Priority |
-| ---- | ----------- | -------- |
-| SRCH-01 | `SearchItem` SHALL live in `shopizer-api-contracts` | P2 |
-| SRCH-02 | `search-service` and `sm-shop` SHALL import SearchItem from contracts | P2 |
-| SRCH-03 | Pact tests SHALL use contracts SearchItem | P2 |
-| SRCH-04 | JSON field names SHALL remain compatible with Wave 2 Pact | P2 |
+| ID | Requisito | Prioridade |
+| ---- | --------- | ---------- |
+| SRCH-01 | `SearchItem` SHALL ficar em `shopizer-api-contracts` | P2 |
+| SRCH-02 | `search-service` e `sm-shop` SHALL importar SearchItem de contracts | P2 |
+| SRCH-03 | Testes Pact SHALL usar SearchItem de contracts | P2 |
+| SRCH-04 | Nomes de campo JSON SHALL permanecer compatíveis com Pact Onda 2 | P2 |
 
-### REF — References API
+### REF — API References
 
-| ID | Requirement | Priority |
-| ---- | ----------- | -------- |
-| REF-01 | Language list endpoints SHALL return `ReadableLanguage` DTOs | P1 |
-| REF-02 | Currency list endpoints SHALL return `ReadableCurrency` DTOs | P1 |
+| ID | Requisito | Prioridade |
+| ---- | --------- | ---------- |
+| REF-01 | Endpoints lista language SHALL retornar DTOs `ReadableLanguage` | P1 |
+| REF-02 | Endpoints lista currency SHALL retornar DTOs `ReadableCurrency` | P1 |
 
 ### GAT — Gates
 
-| ID | Requirement | Priority |
-| ---- | ----------- | -------- |
-| GAT-01 | `./mvnw clean install` SHALL pass on completion | P1 |
-| GAT-02 | Wave 1+2 Pact suites SHALL remain green | P1 |
-| GAT-03 | `.specs/project/STATE.md` SHALL be updated on Wave 3 completion | P2 |
+| ID | Requisito | Prioridade |
+| ---- | --------- | ---------- |
+| GAT-01 | `./mvnw clean install` SHALL passar na conclusão | P1 |
+| GAT-02 | Suites Pact Onda 1+2 SHALL permanecer verdes | P1 |
+| GAT-03 | `.specs/project/STATE.md` SHALL ser atualizado na conclusão Onda 3 | P2 |
 
-**Requirement count: 49 IDs** (CTR-04, TNT-06, SNP-07, INT-06, CHK-06, FAC-06, GAT-03 included)
-
----
-
-## User Stories (summary)
-
-### P1 — Platform: snapshot contracts (SNP, CTR)
-
-As a platform engineer, I need versioned snapshot DTOs so cross-service reads do not require `sm-core-model` on consumer classpath.
-
-### P1 — Platform: tenant types (TNT, FAC)
-
-As a platform engineer, I need facade interfaces to accept store/lang codes so future HTTP adapters do not leak JPA types (B-001 partial resolution).
-
-### P1 — Platform: integration DTOs (INT)
-
-As a platform engineer, I need payment/shipping plugins to accept DTOs so Wave 5 integration-service extraction is viable.
-
-### P1 — Visitor: checkout parity (CHK)
-
-As a storefront visitor, checkout must behave exactly as today while orchestration moves to an application service.
-
-### P1 — Platform: outbox foundation (SAG)
-
-As a platform engineer, I need staged processOrder with outbox rows so Wave 6 can split order and payments.
-
-### P1 — API consumer: reference DTOs (REF)
-
-As an API consumer, language/currency endpoints must return DTOs (B-002).
-
-### P2 — Search maintainer (SRCH)
-
-As search-service maintainer, SearchItem must be in api-contracts (OQ-06).
+**Contagem de requisitos: 49 IDs** (CTR-04, TNT-06, SNP-07, INT-06, CHK-06, FAC-06, GAT-03 incluídos)
 
 ---
 
-## Phasing
+## Histórias de usuário (resumo)
 
-### Phase 1 (MVP)
+### P1 — Plataforma: contratos snapshot (SNP, CTR)
 
-CTR, TNT, SNP, INT, CHK, SAG (flag off), REF, P1 FAC
+Como engenheiro de plataforma, preciso de DTOs snapshot versionados para que leituras cross-service não exijam `sm-core-model` no classpath do consumidor.
 
-### Phase 2
+### P1 — Plataforma: tipos tenant (TNT, FAC)
 
-SRCH migration, FAC-06 plan, outbox enabled in test profile
+Como engenheiro de plataforma, preciso que interfaces facade aceitem códigos store/lang para que adapters HTTP futuros não vazem tipos JPA (resolução parcial B-001).
 
-### Phase 3
+### P1 — Plataforma: DTOs integração (INT)
 
-ArchUnit enforcement, STATE update, Wave 4 Specify unblocked
+Como engenheiro de plataforma, preciso que plugins payment/shipping aceitem DTOs para que extração integration-service Onda 5 seja viável.
+
+### P1 — Visitante: paridade checkout (CHK)
+
+Como visitante da vitrine, checkout deve se comportar exatamente como hoje enquanto orquestração move para application service.
+
+### P1 — Plataforma: base outbox (SAG)
+
+Como engenheiro de plataforma, preciso de processOrder em estágios com linhas outbox para que Onda 6 separe order e payments.
+
+### P1 — Consumidor API: DTOs referência (REF)
+
+Como consumidor de API, endpoints language/currency devem retornar DTOs (B-002).
+
+### P2 — Mantenedor search (SRCH)
+
+Como mantenedor search-service, SearchItem deve estar em api-contracts (OQ-06).
 
 ---
 
-## Traceability
+## Faseamento
 
-| PRD section | Requirement IDs |
-| ----------- | --------------- |
-| Snapshot contracts | SNP-01..07, CTR-01..04 |
-| Tenant identifiers | TNT-01..06, FAC-01..04 |
-| Integration DTOs | INT-01..06 |
-| Checkout service | CHK-01..06 |
+### Fase 1 (MVP)
+
+CTR, TNT, SNP, INT, CHK, SAG (flag off), REF, FAC P1
+
+### Fase 2
+
+Migração SRCH, plano FAC-06, outbox habilitado em profile de teste
+
+### Fase 3
+
+Enforcement ArchUnit, atualização STATE, Specify Onda 4 desbloqueado
+
+---
+
+## Rastreabilidade
+
+| Seção PRD | IDs de requisito |
+| --------- | ---------------- |
+| Contratos snapshot | SNP-01..07, CTR-01..04 |
+| Identificadores tenant | TNT-01..06, FAC-01..04 |
+| DTOs integração | INT-01..06 |
+| Serviço checkout | CHK-01..06 |
 | Outbox | SAG-01..05 |
 | SearchItem | SRCH-01..04 |
-| References | REF-01..02 |
+| Referências | REF-01..02 |
 | Gates | GAT-01..03 |
 
-Compozy workflow: `.compozy/tasks/onda-3-contracts-dto/`
+Workflow Compozy: `.compozy/tasks/onda-3-contracts-dto/`

@@ -27,6 +27,6 @@ Correlation ID end-to-end Wave2 + custom health indicators (content/search/merch
 - Actuator jsonPath initially used `contentHealthIndicator`; fixed to `content`/`search`/`merchant`.
 - CMS inaccessible test fixed: use `file/nested` path so `createDirectories` fails.
 
-## Ready for Next Run
+## Pronto para próxima execução
 
 Task complete. Wave2 ops can use `/actuator/health` components and trace 503s via `correlationId`.

@@ -2,12 +2,12 @@
 
 **Design:** `.specs/features/onda-1-reference-tax/design.md`
 **Spec:** `.specs/features/onda-1-reference-tax/spec.md`
-**Status:** Approved — pronto para Execute
+**Status:** Aprovado — pronto para Execute
 **Testing:** `.specs/codebase/TESTING.md`
 
 ---
 
-## Execution Plan
+## Plano de execução
 
 ### Phase 1: Contracts Foundation (Sequential → Parallel)
 
@@ -45,7 +45,7 @@ T26 ──→ T27 ──→ T28 ──→ T29 ──→ T30 ──→ T31 ──
 
 ---
 
-## Parallel Execution Map
+## Mapa de execução paralela
 
 ```
 Phase 1:
@@ -69,11 +69,11 @@ Phase 5:
 
 ---
 
-## Task Breakdown
+## Decomposição de tarefas
 
 ### T1: Scaffold `shopizer-api-contracts` Maven module
 
-**What:** Criar módulo `shopizer-api-contracts` no root reactor com `pom.xml` (parent shopizer 3.2.5, deps: jackson-annotations, validation-api).
+**O quê:** Criar módulo `shopizer-api-contracts` no root reactor com `pom.xml` (parent shopizer 3.2.5, deps: jackson-annotations, validation-api).
 **Where:** `/shopizer-api-contracts/pom.xml`, `/pom.xml` (add module)
 **Depends on:** None
 **Reuses:** `sm-core-modules/pom.xml` como template de jar fino
@@ -93,7 +93,7 @@ Phase 5:
 
 ### T2: Common DTOs em contracts
 
-**What:** Migrar `Entity`, `ShopEntity`, `ReadableList`, `ReadableEntityList`, `EntityExists` para `com.salesmanager.contracts.common`.
+**O quê:** Migrar `Entity`, `ShopEntity`, `ReadableList`, `ReadableEntityList`, `EntityExists` para `com.salesmanager.contracts.common`.
 **Where:** `shopizer-api-contracts/src/main/java/com/salesmanager/contracts/common/`
 **Depends on:** T1
 **Reuses:** `sm-shop-model/.../model/entity/*.java`
@@ -112,7 +112,7 @@ Phase 5:
 
 ### T3: Reference DTOs + `ReadableCurrency` [P]
 
-**What:** Migrar DTOs reference + enums; **criar** `ReadableCurrency` (id, code, name, symbol, supported).
+**O quê:** Migrar DTOs reference + enums; **criar** `ReadableCurrency` (id, code, name, symbol, supported).
 **Where:** `shopizer-api-contracts/.../contracts/reference/`
 **Depends on:** T2
 **Reuses:** `sm-shop-model/.../model/references/*`; spec REF-04, REF-05
@@ -132,7 +132,7 @@ Phase 5:
 
 ### T4: Tax DTOs em contracts [P]
 
-**What:** Migrar 9 classes tax + `NamedEntity` slim para `com.salesmanager.contracts.tax` e `contracts/catalog`.
+**O quê:** Migrar 9 classes tax + `NamedEntity` slim para `com.salesmanager.contracts.tax` e `contracts/catalog`.
 **Where:** `shopizer-api-contracts/.../contracts/tax/`, `.../catalog/NamedEntity.java`
 **Depends on:** T2
 **Reuses:** `sm-shop-model/.../model/tax/*`
@@ -151,7 +151,7 @@ Phase 5:
 
 ### T5: Client interfaces em contracts
 
-**What:** Criar `ReferenceServiceClient` e `TaxServiceClient` interfaces (métodos espelhando facades) em `contracts/client`.
+**O quê:** Criar `ReferenceServiceClient` e `TaxServiceClient` interfaces (métodos espelhando facades) em `contracts/client`.
 **Where:** `shopizer-api-contracts/.../contracts/client/`
 **Depends on:** T3, T4
 **Reuses:** design.md § Components 2–3
@@ -170,7 +170,7 @@ Phase 5:
 
 ### T6: `sm-shop-model` depende de contracts
 
-**What:** Adicionar dep `shopizer-api-contracts` em `sm-shop-model`; deprecar DTOs duplicados via re-export ou `@Deprecated` aliases.
+**O quê:** Adicionar dep `shopizer-api-contracts` em `sm-shop-model`; deprecar DTOs duplicados via re-export ou `@Deprecated` aliases.
 **Where:** `sm-shop-model/pom.xml`, packages `com.salesmanager.shop.model.*`
 **Depends on:** T5
 **Reuses:** Padrão transitivo Maven
@@ -190,7 +190,7 @@ Phase 5:
 
 ### T7: Scaffold `sm-reference-core` + mover repositories
 
-**What:** Novo módulo; mover 4 `*Repository.java` de reference; configurar dep `sm-core-model`.
+**O quê:** Novo módulo; mover 4 `*Repository.java` de reference; configurar dep `sm-core-model`.
 **Where:** `sm-reference-core/`, paths em design inventory
 **Depends on:** T6
 **Reuses:** `sm-core/.../repositories/reference/**`
@@ -209,7 +209,7 @@ Phase 5:
 
 ### T8: Mover reference CRUD services para `sm-reference-core`
 
-**What:** Mover 8 arquivos (Country/Zone/Language/Currency Service+Impl); **não** mover init/loader.
+**O quê:** Mover 8 arquivos (Country/Zone/Language/Currency Service+Impl); **não** mover init/loader.
 **Where:** `sm-reference-core/.../services/reference/{country,zone,language,currency}/`
 **Depends on:** T7
 **Reuses:** Lista subagent inventory; excluir `init/`, `loader/`
@@ -229,7 +229,7 @@ Phase 5:
 
 ### T9: Atualizar `sm-core` para depender de `sm-reference-core`
 
-**What:** Remover classes movidas de `sm-core`; adicionar dep `sm-reference-core`; manter init/loader em `sm-core`.
+**O quê:** Remover classes movidas de `sm-core`; adicionar dep `sm-reference-core`; manter init/loader em `sm-core`.
 **Where:** `sm-core/pom.xml`, delete moved files
 **Depends on:** T8
 **Reuses:** —
@@ -249,7 +249,7 @@ Phase 5:
 
 ### T10: Scaffold `sm-tax-core` + mover tax repositories [P]
 
-**What:** Novo módulo; mover `TaxClassRepository`, `TaxRateRepository`.
+**O quê:** Novo módulo; mover `TaxClassRepository`, `TaxRateRepository`.
 **Where:** `sm-tax-core/`
 **Depends on:** T6
 **Reuses:** `sm-core/.../repositories/tax/**`
@@ -268,7 +268,7 @@ Phase 5:
 
 ### T11: Mover TaxClass/TaxRate services para `sm-tax-core`
 
-**What:** Mover 4 arquivos service (excluir `TaxService*`).
+**O quê:** Mover 4 arquivos service (excluir `TaxService*`).
 **Where:** `sm-tax-core/.../services/tax/`
 **Depends on:** T10
 **Reuses:** inventory list
@@ -287,7 +287,7 @@ Phase 5:
 
 ### T12: TaxClass DELETE 409 guard + `existsTaxRate` fix
 
-**What:** Adicionar `ProductRepository.countByTaxClassId`; lançar `TaxClassInUseException` → 409; corrigir `existsTaxRate` sem throw (TAX-09).
+**O quê:** Adicionar `ProductRepository.countByTaxClassId`; lançar `TaxClassInUseException` → 409; corrigir `existsTaxRate` sem throw (TAX-09).
 **Where:** `sm-tax-core/.../TaxClassServiceImpl.java`; facade será movida em T20 — aplicar fix na impl que vai para tax-service
 **Depends on:** T11
 **Reuses:** design OQ-03, TAX-09
@@ -307,7 +307,7 @@ Phase 5:
 
 ### T13: Scaffold `reference-service` Boot application
 
-**What:** Módulo executable jar, `ReferenceServiceApplication`, `application.properties` (port 8081), datasource H2/MySQL, actuator.
+**O quê:** Módulo executable jar, `ReferenceServiceApplication`, `application.properties` (port 8081), datasource H2/MySQL, actuator.
 **Where:** `reference-service/`
 **Depends on:** T9
 **Reuses:** `sm-shop` packaging pattern
@@ -326,7 +326,7 @@ Phase 5:
 
 ### T14: Portar facades + populators para `reference-service`
 
-**What:** Mover 8 facades + 2 populators; wire `LanguageFacade`/`CurrencyFacade` → DTOs; dep `sm-reference-core`.
+**O quê:** Mover 8 facades + 2 populators; wire `LanguageFacade`/`CurrencyFacade` → DTOs; dep `sm-reference-core`.
 **Where:** `reference-service/src/main/java/...`
 **Depends on:** T13
 **Reuses:** inventory reference-service files; `AbstractDataPopulator`
@@ -345,7 +345,7 @@ Phase 5:
 
 ### T15: REST controllers reference-service (5 endpoints)
 
-**What:** `ReferencesController` espelhando paths: `/country`, `/zones`, `/languages`, `/currency`, `/measures`.
+**O quê:** `ReferencesController` espelhando paths: `/country`, `/zones`, `/languages`, `/currency`, `/measures`.
 **Where:** `reference-service/.../api/v1/ReferencesController.java`
 **Depends on:** T14
 **Reuses:** `ReferencesApi` behavior; OQ-02 frozen (`/zones` → 200+[])
@@ -365,7 +365,7 @@ Phase 5:
 
 ### T16: Atualizar `sm-core` para depender de `sm-tax-core`
 
-**What:** Remover tax CRUD movido; manter `TaxService*`; dep `sm-tax-core`.
+**O quê:** Remover tax CRUD movido; manter `TaxService*`; dep `sm-tax-core`.
 **Where:** `sm-core/pom.xml`
 **Depends on:** T12
 **Reuses:** T9 pattern
@@ -385,7 +385,7 @@ Phase 5:
 
 ### T17: Scaffold `tax-service` Boot + JWT security chain
 
-**What:** Boot app port 8082; copiar/adaptar JWT filter, `TaxSecurityConfig`, argument resolvers; shared DB.
+**O quê:** Boot app port 8082; copiar/adaptar JWT filter, `TaxSecurityConfig`, argument resolvers; shared DB.
 **Where:** `tax-service/`
 **Depends on:** T16
 **Reuses:** security inventory list; AD-006
@@ -405,7 +405,7 @@ Phase 5:
 
 ### T18: `ReferenceServiceClient` RestTemplate em tax-service
 
-**What:** Implementar client HTTP para resolver country/zone/language codes; config `wave1.reference-service.base-url`.
+**O quê:** Implementar client HTTP para resolver country/zone/language codes; config `wave1.reference-service.base-url`.
 **Where:** `tax-service/.../client/ReferenceServiceClientImpl.java`
 **Depends on:** T15, T17
 **Reuses:** AD-005 RestTemplate
@@ -425,7 +425,7 @@ Phase 5:
 
 ### T19: Portar `TaxFacadeImpl` + 4 mappers para tax-service
 
-**What:** Mover facade + mappers; `PersistableTaxRateMapper` usa `ReferenceServiceClient` (não CountryService).
+**O quê:** Mover facade + mappers; `PersistableTaxRateMapper` usa `ReferenceServiceClient` (não CountryService).
 **Where:** `tax-service/.../facade/`, `.../mapper/tax/`
 **Depends on:** T18
 **Reuses:** OQ-05
@@ -444,7 +444,7 @@ Phase 5:
 
 ### T20: REST controllers tax-service (private tax APIs)
 
-**What:** Espelhar `TaxClassApi` + `TaxRatesApi` paths sob `/api/v1/private/tax/*`.
+**O quê:** Espelhar `TaxClassApi` + `TaxRatesApi` paths sob `/api/v1/private/tax/*`.
 **Where:** `tax-service/.../api/v1/tax/`
 **Depends on:** T19
 **Reuses:** `TaxClassApi`, `TaxRatesApi` signatures
@@ -463,7 +463,7 @@ Phase 5:
 
 ### T21: `RestTemplate` config + wave1 properties no monólito
 
-**What:** `@Bean RestTemplate` com timeout; properties `wave1.*`; profile `strangler` vs `monolith`.
+**O quê:** `@Bean RestTemplate` com timeout; properties `wave1.*`; profile `strangler` vs `monolith`.
 **Where:** `sm-shop/.../strangler/config/Wave1ClientConfig.java`, `application-strangler.properties`
 **Depends on:** T6
 **Reuses:** design.md configuration
@@ -482,7 +482,7 @@ Phase 5:
 
 ### T22: Reference facade HTTP adapters (4)
 
-**What:** `CountryFacadeHttpAdapter`, `ZoneFacadeHttpAdapter`, `LanguageFacadeHttpAdapter`, `CurrencyFacadeHttpAdapter` com `@ConditionalOnProperty`.
+**O quê:** `CountryFacadeHttpAdapter`, `ZoneFacadeHttpAdapter`, `LanguageFacadeHttpAdapter`, `CurrencyFacadeHttpAdapter` com `@ConditionalOnProperty`.
 **Where:** `sm-shop/.../strangler/reference/`
 **Depends on:** T15, T21
 **Reuses:** `ReferenceServiceClient`; propagar `X-Correlation-Id`
@@ -501,7 +501,7 @@ Phase 5:
 
 ### T23: `TaxFacadeHttpAdapter`
 
-**What:** Adapter HTTP para `TaxFacade`; repassa JWT + store/lang query params.
+**O quê:** Adapter HTTP para `TaxFacade`; repassa JWT + store/lang query params.
 **Where:** `sm-shop/.../strangler/tax/TaxFacadeHttpAdapter.java`
 **Depends on:** T20, T21
 **Reuses:** `TaxServiceClient`
@@ -520,7 +520,7 @@ Phase 5:
 
 ### T24: Conditional beans — in-process vs HTTP
 
-**What:** `@ConditionalOnProperty` em facades legadas vs adapters; profile `monolith` default, `strangler` prod.
+**O quê:** `@ConditionalOnProperty` em facades legadas vs adapters; profile `monolith` default, `strangler` prod.
 **Where:** Facades existentes + adapters T22/T23
 **Depends on:** T22, T23
 **Reuses:** design § Strangler
@@ -539,7 +539,7 @@ Phase 5:
 
 ### T25: Pact provider — reference-service
 
-**What:** Pact JVM provider tests para 5 endpoints reference.
+**O quê:** Pact JVM provider tests para 5 endpoints reference.
 **Where:** `reference-service/src/test/java/.../contract/`
 **Depends on:** T15
 **Reuses:** STR-02
@@ -558,7 +558,7 @@ Phase 5:
 
 ### T26: Pact provider — tax-service
 
-**What:** Pact provider tests para tax class + rate endpoints.
+**O quê:** Pact provider tests para tax class + rate endpoints.
 **Where:** `tax-service/src/test/java/.../contract/`
 **Depends on:** T20
 **Reuses:** TAX-08
@@ -577,7 +577,7 @@ Phase 5:
 
 ### T27: Pact consumer — monólito Strangler
 
-**What:** Consumer tests verificando contratos reference + tax contra pacts publicados.
+**O quê:** Consumer tests verificando contratos reference + tax contra pacts publicados.
 **Where:** `sm-shop/src/test/java/.../contract/`
 **Depends on:** T25, T26
 **Reuses:** STR-02
@@ -596,7 +596,7 @@ Phase 5:
 
 ### T28: Docker Compose Wave 1 + correlation ID
 
-**What:** `docker-compose-wave1.yml` (mysql, reference, tax, shop); actuator health; `X-Correlation-Id` filter nos 3 apps.
+**O quê:** `docker-compose-wave1.yml` (mysql, reference, tax, shop); actuator health; `X-Correlation-Id` filter nos 3 apps.
 **Where:** `/docker-compose-wave1.yml`, filters em cada service
 **Depends on:** T24
 **Reuses:** design deployment topology
@@ -616,7 +616,7 @@ Phase 5:
 
 ### T29: Actuator health custom indicators
 
-**What:** `ReferenceHealthIndicator` (DB); `TaxHealthIndicator` (DB + reference HTTP).
+**O quê:** `ReferenceHealthIndicator` (DB); `TaxHealthIndicator` (DB + reference HTTP).
 **Where:** `reference-service/`, `tax-service/`
 **Depends on:** T13, T17
 **Reuses:** STR-05
@@ -635,7 +635,7 @@ Phase 5:
 
 ### T30: Build gate — full reactor
 
-**What:** Verificar build completo monólito + novos módulos; atualizar traceability spec.
+**O quê:** Verificar build completo monólito + novos módulos; atualizar traceability spec.
 **Where:** root reactor
 **Depends on:** T24, T27, T28, T29
 **Reuses:** —

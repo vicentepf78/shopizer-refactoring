@@ -1,39 +1,39 @@
 ---
 status: pending
-title: Extract sm-shoppingcart-core + catalog validation
+title: Extrair sm-shoppingcart-core + validação catalog
 type: backend
 complexity: high
 ---
 
-# Extract sm-shoppingcart-core + catalog validation
+# Extrair sm-shoppingcart-core + validação catalog
 
-## Overview
-TLC T7–T9, T60. New `sm-shoppingcart-core` module with cart repositories and `ShoppingCartServiceImpl` using `CartTotalsClient` (no `OrderService`). Catalog line validation via HTTP.
+## Visão geral
+TLC T7–T9, T60. Novo módulo `sm-shoppingcart-core` com repositórios cart e `ShoppingCartServiceImpl` usando `CartTotalsClient` (sem `OrderService`). Validação de linha catalog via HTTP.
 
 <requirements>
-1. MUST scaffold `sm-shoppingcart-core` with cart repositories — T7.
-2. MUST move `ShoppingCartServiceImpl`; zero `OrderService` imports — T8, CART-03.
-3. MUST add `CatalogLineValidator` calling catalog-service — T9, CART-02.
-4. MUST add ArchUnit rule: no OrderService in sm-shoppingcart-core — T60.
+1. MUST fazer scaffold `sm-shoppingcart-core` com repositórios cart — T7.
+2. MUST mover `ShoppingCartServiceImpl`; zero imports `OrderService` — T8, CART-03.
+3. MUST adicionar `CatalogLineValidator` chamando catalog-service — T9, CART-02.
+4. MUST adicionar regra ArchUnit: sem OrderService em sm-shoppingcart-core — T60.
 </requirements>
 
-## Subtasks
-- [ ] 3.1 Maven module + repositories (T7)
-- [ ] 3.2 ShoppingCartService with CartTotalsClient (T8)
+## Subtarefas
+- [ ] 3.1 Módulo Maven + repositórios (T7)
+- [ ] 3.2 ShoppingCartService com CartTotalsClient (T8)
 - [ ] 3.3 CatalogLineValidator HTTP (T9)
-- [ ] 3.4 ArchUnit test (T60)
+- [ ] 3.4 Teste ArchUnit (T60)
 
-## Implementation Details
-Pattern: `sm-content-core` from Onda 2. Entities stay in `sm-core-model`.
+## Detalhes de implementação
+Padrão: `sm-content-core` da Onda 2. Entidades permanecem em `sm-core-model`.
 
-### Relevant Files
+### Arquivos relevantes
 - `sm-core/.../services/shoppingcart/ShoppingCartServiceImpl.java`
 - `sm-core/.../repositories/shoppingcart/`
 
-## Deliverables
-- `sm-shoppingcart-core` module
-- `./mvnw test -pl sm-shoppingcart-core` green **(REQUIRED)**
+## Entregáveis
+- Módulo `sm-shoppingcart-core`
+- `./mvnw test -pl sm-shoppingcart-core` verde **(REQUIRED)**
 
-## Success Criteria
-- ArchUnit passes
-- No OrderService in module
+## Critérios de sucesso
+- ArchUnit passa
+- Sem OrderService no módulo

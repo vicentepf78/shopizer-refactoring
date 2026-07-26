@@ -2,21 +2,21 @@
 
 **Design:** `.specs/features/onda-5-integration-service/design.md`
 **Spec:** `.specs/features/onda-5-integration-service/spec.md`
-**Status:** Approved — Execute blocked on Onda 3 + Onda 4 partial
-**Testing:** `.specs/codebase/TESTING.md`
-**Prerequisite:** Onda 3 Execute (`onda-3-contracts-checkout`); Onda 4 partial catalog read (`ProductSnapshot` shipping fields)
+**Status:** Aprovado — Execute bloqueado em Onda 3 + Onda 4 parcial
+**Testes:** `.specs/codebase/TESTING.md`
+**Pré-requisito:** Execute Onda 3 (`onda-3-contracts-checkout`); leitura parcial catálogo Onda 4 (campos de frete `ProductSnapshot`)
 
 ---
 
 ## Execution Plan
 
-### Phase 0: Gates (external)
+### Fase 0: Gates (externos)
 
 ```
 Onda3-T_complete ──→ Onda4-T_catalog_read_partial ──→ T1
 ```
 
-### Phase 1: Contracts + Wave5 Config
+### Fase 1: Contratos + Config Wave5
 
 ```
 T1 ──→ T2 ──┬──→ T3 [P]
@@ -24,7 +24,7 @@ T1 ──→ T2 ──┬──→ T3 [P]
 T2,T3,T4 ──→ T5
 ```
 
-### Phase 2: Core Extraction (2 parallel tracks)
+### Fase 2: Extração Core (2 trilhas paralelas)
 
 ```
 T5 ──┬──→ T6 ──→ T7 ──→ T8 ──→ T9 ──→ T10 ──→ T11
@@ -32,22 +32,22 @@ T5 ──┬──→ T6 ──→ T7 ──→ T8 ──→ T9 ──→ T10 �
      └──→ T12 ──→ T13 ──→ T14 ──→ T15 ──→ T16
 ```
 
-**Track A (Payment):** T6–T11
-**Track B (Shipping):** T12–T16
+**Trilha A (Pagamento):** T6–T11
+**Trilha B (Frete):** T12–T16
 
-### Phase 3: integration-service Boot + APIs
+### Fase 3: Boot integration-service + APIs
 
 ```
 T11,T16 ──→ T17 ──→ T18 ──→ T19 ──→ T20 ──→ T21 ──→ T22
 ```
 
-### Phase 4: Stateless boundary + Strangler
+### Fase 4: Fronteira stateless + Strangler
 
 ```
 T22 ──→ T23 ──→ T24 ──→ T25 ──→ T26 ──→ T27 ──→ T28
 ```
 
-### Phase 5: Integration & Gate
+### Fase 5: Integração & Gate
 
 ```
 T28 ──→ T29 ──┬──→ T30 [P]
@@ -55,268 +55,268 @@ T28 ──→ T29 ──┬──→ T30 [P]
 T30,T31 ──→ T32 ──→ T33 ──→ T34 ──→ T35 ──→ T36 ──→ T37 ──→ T38
 ```
 
-**Milestones:**
-- **P-ready:** T11 — payment orchestrator + plugins compile in `sm-integration-core`
-- **S-ready:** T16 — shipping orchestrator + catalog client
-- **I-ready:** T22 — integration-service responds to health + admin config
+**Marcos:**
+- **P-ready:** T11 — orquestrador de pagamento + plugins compilam em `sm-integration-core`
+- **S-ready:** T16 — orquestrador de frete + client catálogo
+- **I-ready:** T22 — integration-service responde health + config admin
 
 ---
 
 ## Task Breakdown
 
-### T1: Verify Onda 3 integration contract artifacts
+### T1: Verificar artefatos de contrato integration da Onda 3
 
-**What:** Assert `PaymentModuleV2`, `ShippingQuoteModuleV2`, `OrderSnapshot`, `CustomerSnapshot`, `CartLineSnapshot`, checkout application service skeleton exist and compile.
-**Where:** `sm-core-modules`, `shopizer-api-contracts`, `sm-shop/.../checkout/`
+**What:** Assertir que `PaymentModuleV2`, `ShippingQuoteModuleV2`, `OrderSnapshot`, `CustomerSnapshot`, `CartLineSnapshot`, esqueleto do application service de checkout existem e compilam.
+**Onde:** `sm-core-modules`, `shopizer-api-contracts`, `sm-shop/.../checkout/`
 **Gate:** `./mvnw compile -pl sm-core-modules,shopizer-api-contracts,sm-shop -am`
-**Depends:** Onda 3 complete
+**Depende de:** Onda 3 completa
 
-### T2: Integration DTOs in shopizer-api-contracts
+### T2: DTOs integration em shopizer-api-contracts
 
-**What:** Add `com.salesmanager.contracts.integration` package: `PaymentProcessRequest`, `PaymentCaptureRequest`, `PaymentRefundRequest`, `PaymentInitRequest`, `TransactionResult`, `ShippingQuoteRequest`, `ShippingQuoteResponse`, `ShippingProductSnapshot`, `ShippingSummaryRequest`, `IntegrationModuleDto`, `PaymentMethodDto`, `ShippingOptionDto`, `DeliveryDto`.
-**Gate:** Unit tests for JSON serialization; no `com.salesmanager.core.model` imports.
+**What:** Adicionar pacote `com.salesmanager.contracts.integration`: `PaymentProcessRequest`, `PaymentCaptureRequest`, `PaymentRefundRequest`, `PaymentInitRequest`, `TransactionResult`, `ShippingQuoteRequest`, `ShippingQuoteResponse`, `ShippingProductSnapshot`, `ShippingSummaryRequest`, `IntegrationModuleDto`, `PaymentMethodDto`, `ShippingOptionDto`, `DeliveryDto`.
+**Gate:** Testes unitários serialização JSON; sem imports `com.salesmanager.core.model`.
 
-### T3: IntegrationServiceClient interface
+### T3: Interface IntegrationServiceClient
 
-**What:** Define `IntegrationServiceClient` in `com.salesmanager.contracts.client` with process/capture/refund/init/quote/summary methods.
-**Depends:** T2
-**Gate:** Compiles in isolation.
+**What:** Definir `IntegrationServiceClient` em `com.salesmanager.contracts.client` com métodos process/capture/refund/init/quote/summary.
+**Depende de:** T2
+**Gate:** Compila isolado.
 
-### T4: Wave5 Strangler properties and RestTemplate
+### T4: Properties Strangler Wave5 e RestTemplate
 
-**What:** Profile `strangler-wave5`, `wave5.integration-service.base-url`, `wave5.integration-service.internal-token`, `wave5.catalog-service.base-url`, `Wave5ClientConfig`, correlation interceptor.
-**Depends:** T2
-**Gate:** `Wave5ClientConfigTest` in sm-shop.
+**What:** Profile `strangler-wave5`, `wave5.integration-service.base-url`, `wave5.integration-service.internal-token`, `wave5.catalog-service.base-url`, `Wave5ClientConfig`, interceptor de correlation.
+**Depende de:** T2
+**Gate:** `Wave5ClientConfigTest` em sm-shop.
 
-### T5: Register sm-integration-core Maven module
+### T5: Registrar módulo Maven sm-integration-core
 
-**What:** Create `sm-integration-core` pom; depend on `sm-core-modules`, `sm-core-model`, `shopizer-api-contracts`; register in reactor.
-**Depends:** T1, T3, T4
+**What:** Criar pom `sm-integration-core`; depender de `sm-core-modules`, `sm-core-model`, `shopizer-api-contracts`; registrar no reactor.
+**Depende de:** T1, T3, T4
 **Gate:** `./mvnw compile -pl sm-integration-core -am`
 
-### T6: Move payment plugin implementations to sm-integration-core
+### T6: Mover implementações plugins pagamento para sm-integration-core
 
-**What:** Relocate `sm-core/.../modules/integration/payment/impl/*` to `sm-integration-core`; update `ModulesConfiguration` bean wiring.
-**Depends:** T5
-**Gate:** Existing payment module unit tests pass in new module.
+**What:** Relocar `sm-core/.../modules/integration/payment/impl/*` para `sm-integration-core`; atualizar wiring bean `ModulesConfiguration`.
+**Depende de:** T5
+**Gate:** Testes unitários existentes de módulo pagamento passam no novo módulo.
 
-### T7: PaymentModuleV2 adapter bridge
+### T7: Ponte adaptadora PaymentModuleV2
 
-**What:** Create `PaymentModuleV2Adapter` wrapping legacy `PaymentModule` entities using Onda 3 mappers — ponytail: temporary until plugins natively implement V2.
-**Depends:** T6
-**Gate:** Adapter unit test with mock legacy module.
+**What:** Criar `PaymentModuleV2Adapter` envolvendo entidades `PaymentModule` legadas usando mappers Onda 3 — ponytail: temporário até plugins implementarem V2 nativamente.
+**Depende de:** T6
+**Gate:** Teste unitário adapter com módulo legado mock.
 
-### T8: Extract PaymentOrchestrator from PaymentServiceImpl
+### T8: Extrair PaymentOrchestrator de PaymentServiceImpl
 
-**What:** Move config CRUD, `getPaymentMethods`, `validateCreditCard`, module resolution to `PaymentOrchestratorImpl` — exclude order mutation methods initially.
-**Depends:** T7
-**Gate:** Unit tests for config save/load encryption.
+**What:** Mover CRUD config, `getPaymentMethods`, `validateCreditCard`, resolução de módulo para `PaymentOrchestratorImpl` — excluir métodos de mutação de pedido inicialmente.
+**Depende de:** T7
+**Gate:** Testes unitários save/load config com criptografia.
 
-### T9: Catalog-free payment paths in orchestrator
+### T9: Caminhos pagamento sem catálogo no orquestrador
 
-**What:** Ensure payment orchestrator has no `OrderService` dependency; inject `TransactionService` only.
-**Depends:** T8
-**Gate:** ArchUnit or grep gate — no `OrderService` in `sm-integration-core`.
+**What:** Garantir que orquestrador de pagamento não tem dependência `OrderService`; injetar apenas `TransactionService`.
+**Depende de:** T8
+**Gate:** ArchUnit ou gate grep — sem `OrderService` em `sm-integration-core`.
 
-### T10: Internal payment operation methods
+### T10: Métodos de operação interna de pagamento
 
-**What:** Implement `process`, `capture`, `refund`, `init` on orchestrator using `PaymentModuleV2` and returning `TransactionResult`.
-**Depends:** T9
-**Gate:** Integration test with `MoneyOrderPayment` or mock module.
+**What:** Implementar `process`, `capture`, `refund`, `init` no orquestrador usando `PaymentModuleV2` e retornando `TransactionResult`.
+**Depende de:** T9
+**Gate:** Teste integração com `MoneyOrderPayment` ou módulo mock.
 
-### T11: P-ready marker — payment core tests
+### T11: Marcador P-ready — testes core pagamento
 
-**What:** JaCoCo baseline for payment orchestrator package ≥ 70%.
-**Depends:** T10
+**What:** Baseline JaCoCo pacote orquestrador pagamento ≥ 70%.
+**Depende de:** T10
 **Gate:** `./mvnw test -pl sm-integration-core -Dtest=PaymentOrchestrator*`
 
-### T12: Move shipping plugin implementations to sm-integration-core
+### T12: Mover implementações plugins frete para sm-integration-core
 
-**What:** Relocate shipping `impl/*`, `DefaultPackagingImpl`, preprocessors.
-**Depends:** T5
-**Gate:** Shipping module tests pass.
+**What:** Relocar shipping `impl/*`, `DefaultPackagingImpl`, preprocessors.
+**Depende de:** T5
+**Gate:** Testes módulo frete passam.
 
-### T13: ShippingQuoteModuleV2 adapter bridge
+### T13: Ponte adaptadora ShippingQuoteModuleV2
 
-**What:** Adapter from legacy `ShippingQuoteModule` to V2 DTO contracts.
-**Depends:** T12
-**Gate:** Unit test with `StorePickupShippingQuote`.
+**What:** Adaptador de `ShippingQuoteModule` legado para contratos DTO V2.
+**Depende de:** T12
+**Gate:** Teste unitário com `StorePickupShippingQuote`.
 
-### T14: CatalogServiceClient for shipping snapshots
+### T14: CatalogServiceClient para snapshots de frete
 
-**What:** HTTP client fetching `ShippingProductSnapshot` list from catalog-service read API (Onda 4); fallback documented GAP-INT-01.
-**Depends:** T13, Onda 4 partial
-**Gate:** Client test with WireMock catalog fixture.
+**What:** Client HTTP buscando lista `ShippingProductSnapshot` da API de leitura catalog-service (Onda 4); fallback GAP-INT-01 documentado.
+**Depende de:** T13, Onda 4 parcial
+**Gate:** Teste client com fixture catalog WireMock.
 
-### T15: Extract ShippingOrchestrator from ShippingServiceImpl
+### T15: Extrair ShippingOrchestrator de ShippingServiceImpl
 
-**What:** Move quote assembly, packaging, module iteration, `requiresShipping`, metadata to `ShippingOrchestratorImpl`; use `ReferenceServiceClient` for countries.
-**Depends:** T14
-**Gate:** Unit test quote with two modules.
+**What:** Mover montagem cotação, empacotamento, iteração módulos, `requiresShipping`, metadata para `ShippingOrchestratorImpl`; usar `ReferenceServiceClient` para países.
+**Depende de:** T14
+**Gate:** Teste unitário cotação com dois módulos.
 
-### T16: S-ready marker — shipping core tests
+### T16: Marcador S-ready — testes core frete
 
-**What:** JaCoCo baseline shipping orchestrator ≥ 70%.
-**Depends:** T15
+**What:** Baseline JaCoCo orquestrador frete ≥ 70%.
+**Depende de:** T15
 **Gate:** `./mvnw test -pl sm-integration-core -Dtest=ShippingOrchestrator*`
 
-### T17: integration-service Spring Boot scaffold
+### T17: Scaffold Spring Boot integration-service
 
-**What:** New module `integration-service`, port 8086, scan `sm-integration-core`, JWT security, actuator.
-**Depends:** T11, T16
-**Gate:** Context loads `./mvnw -pl integration-service -am test -Dtest=IntegrationServiceApplicationTest`
+**What:** Novo módulo `integration-service`, porta 8086, scan `sm-integration-core`, segurança JWT, actuator.
+**Depende de:** T11, T16
+**Gate:** Context carrega `./mvnw -pl integration-service -am test -Dtest=IntegrationServiceApplicationTest`
 
-### T18: Payment admin REST controllers
+### T18: Controllers REST admin pagamento
 
-**What:** Mirror `PaymentApi` private module config endpoints on integration-service.
-**Depends:** T17
-**Gate:** MockMvc tests per PAY-01..PAY-06.
+**What:** Espelhar endpoints config módulo privado `PaymentApi` em integration-service.
+**Depende de:** T17
+**Gate:** Testes MockMvc PAY-01..PAY-06.
 
-### T19: Shipping admin REST controllers
+### T19: Controllers REST admin frete
 
-**What:** Mirror `ShippingConfigurationApi` endpoints.
-**Depends:** T17
-**Gate:** MockMvc tests SHP-04.
+**What:** Espelhar endpoints `ShippingConfigurationApi`.
+**Depende de:** T17
+**Gate:** Testes MockMvc SHP-04.
 
-### T20: Public payment methods endpoint
+### T20: Endpoint público métodos de pagamento
 
-**What:** `GET` accepted payment methods for store.
-**Depends:** T18
-**Gate:** Pact-ready response schema.
+**What:** `GET` métodos de pagamento aceitos para loja.
+**Depende de:** T18
+**Gate:** Schema resposta pronto para Pact.
 
-### T21: Internal payment REST controller
+### T21: Controller REST interno pagamento
 
-**What:** `/internal/v1/payments/*` with `X-Internal-Token` filter.
-**Depends:** T18, T10
-**Gate:** Integration test process payment; assert no Order repository bean.
+**What:** `/internal/v1/payments/*` com filtro `X-Internal-Token`.
+**Depende de:** T18, T10
+**Gate:** Teste integração process payment; assertar sem bean repositório Order.
 
-### T22: Internal shipping REST controller
+### T22: Controller REST interno frete
 
-**What:** `/internal/v1/shipping/quote` and `/summary` with token auth.
-**Depends:** T19, T15
-**Gate:** I-ready — quote integration test.
+**What:** `/internal/v1/shipping/quote` e `/summary` com auth token.
+**Depende de:** T19, T15
+**Gate:** I-ready — teste integração cotação.
 
-### T23: Trim sm-core payment/shipping services
+### T23: Trim serviços payment/shipping sm-core
 
-**What:** `PaymentServiceImpl`/`ShippingServiceImpl` delegate to orchestrator when extracted, or `@Deprecated` stubs pointing to migration guide.
-**Depends:** T22
-**Gate:** Monolith compiles; existing tests green in non-strangler profile.
+**What:** `PaymentServiceImpl`/`ShippingServiceImpl` delegam ao orquestrador quando extraído, ou stubs `@Deprecated` apontando guia de migração.
+**Depende de:** T22
+**Gate:** Monólito compila; testes existentes verdes em profile non-strangler.
 
-### T24: Stateless payment boundary in monolith
+### T24: Fronteira pagamento stateless no monólito
 
-**What:** Remove `orderService.saveOrUpdate` from payment path when `wave5.strangler.enabled`; checkout saga performs order update.
-**Depends:** T23, Onda 3 checkout saga
-**Gate:** Test: payment via checkout does not call in-process order save from PaymentServiceImpl.
+**What:** Remover `orderService.saveOrUpdate` do caminho pagamento quando `wave5.strangler.enabled`; saga checkout executa update de pedido.
+**Depende de:** T23, saga checkout Onda 3
+**Gate:** Teste: pagamento via checkout não chama save in-process de pedido a partir de PaymentServiceImpl.
 
 ### T25: PaymentFacadeHttpAdapter
 
-**What:** Strangler adapter for `PaymentConfigurationFacadeImpl`.
-**Depends:** T24
-**Gate:** Adapter test 503 on connection failure.
+**What:** Adaptador Strangler para `PaymentConfigurationFacadeImpl`.
+**Depende de:** T24
+**Gate:** Teste adapter 503 em falha de conexão.
 
 ### T26: ShippingFacadeHttpAdapter
 
-**What:** Strangler adapter for `ShippingFacadeImpl` and configuration facade.
-**Depends:** T24
-**Gate:** Adapter test propagates correlation id.
+**What:** Adaptador Strangler para `ShippingFacadeImpl` e facade de configuração.
+**Depende de:** T24
+**Gate:** Teste adapter propaga correlation id.
 
-### T27: CheckoutApplicationService integration client wiring
+### T27: Wiring client integration CheckoutApplicationService
 
-**What:** `OrderPaymentApi` routes through checkout service → `IntegrationServiceClient`; build `PaymentProcessRequest` from cart/order snapshots.
-**Depends:** T25, T26
-**Gate:** Integration test checkout payment E2E (mock gateway).
+**What:** `OrderPaymentApi` roteia via checkout service → `IntegrationServiceClient`; monta `PaymentProcessRequest` a partir de snapshots cart/order.
+**Depende de:** T25, T26
+**Gate:** Teste integração checkout payment E2E (gateway mock).
 
-### T28: OrderShippingApi DTO assembly
+### T28: Montagem DTO OrderShippingApi
 
-**What:** Build `ShippingQuoteRequest` from cart facade + catalog snapshots; call integration client.
-**Depends:** T27
-**Gate:** Shipping quote E2E test.
+**What:** Montar `ShippingQuoteRequest` a partir de facade carrinho + snapshots catálogo; chamar client integration.
+**Depende de:** T27
+**Gate:** Teste E2E cotação frete.
 
-### T29: Correlation ID and health indicators
+### T29: Correlation ID e health indicators
 
-**What:** `CorrelationIdFilter`; health for DB, reference-service, catalog-service, module registry.
-**Depends:** T28
-**Gate:** Actuator health test.
+**What:** `CorrelationIdFilter`; health para DB, reference-service, catalog-service, registry módulos.
+**Depende de:** T28
+**Gate:** Teste actuator health.
 
-### T30: Pact provider tests — integration-service
+### T30: Testes Pact provider — integration-service
 
-**What:** Provider pacts for payment config + shipping quote P1.
-**Depends:** T29
+**What:** Pacts provider para config pagamento + cotação frete P1.
+**Depende de:** T29
 **Gate:** `./mvnw test -pl integration-service -Dtest=IntegrationProviderPactTest`
 
-### T31: Wave5ConsumerPactTest in sm-shop
+### T31: Wave5ConsumerPactTest em sm-shop
 
-**What:** Consumer contracts for strangler client.
-**Depends:** T29
-**Gate:** Pact publish/verify green.
+**What:** Contratos consumer para client strangler.
+**Depende de:** T29
+**Gate:** Pact publish/verify verde.
 
 ### T32: IntegrationServiceClientRestTemplateImpl
 
-**What:** Full HTTP client implementation for BFF.
-**Depends:** T30, T31
-**Gate:** Client integration test against TestRestTemplate.
+**What:** Implementação HTTP completa para BFF.
+**Depende de:** T30, T31
+**Gate:** Teste integração client contra TestRestTemplate.
 
-### T33: Rewire ModulesConfiguration in monolith
+### T33: Rewire ModulesConfiguration no monólito
 
-**What:** Remove duplicate plugin beans from sm-core when strangler enabled; document rollback.
-**Depends:** T32
-**Gate:** Profile `strangler-wave5` starts without bean duplication.
+**What:** Remover beans plugin duplicados de sm-core quando strangler habilitado; documentar rollback.
+**Depende de:** T32
+**Gate:** Profile `strangler-wave5` inicia sem duplicação de beans.
 
 ### T34: docker-compose-wave5.yml
 
-**What:** Add integration-service; env `WAVE5_INTEGRATION_BASE_URL`, `INTEGRATION_INTERNAL_TOKEN`; depends on catalog partial.
-**Depends:** T33
+**What:** Adicionar integration-service; env `WAVE5_INTEGRATION_BASE_URL`, `INTEGRATION_INTERNAL_TOKEN`; depende de catalog parcial.
+**Depende de:** T33
 **Gate:** `docker compose -f docker-compose-wave5.yml config`
 
-### T35: Dockerfile.wave5 for integration-service
+### T35: Dockerfile.wave5 para integration-service
 
-**What:** Temurin 11 JRE; copy prebuilt JAR.
-**Depends:** T34
-**Gate:** Image builds with packaged JAR.
+**What:** Temurin 11 JRE; copiar JAR pré-compilado.
+**Depende de:** T34
+**Gate:** Imagem builda com JAR empacotado.
 
-### T36: Cross-service integration test suite
+### T36: Suite teste integração cross-service
 
-**What:** Script or CI job: reference + catalog (partial) + integration + shop strangler profile.
-**Depends:** T35
-**Gate:** Health 8086 UP; sample quote + config roundtrip.
+**What:** Script ou job CI: reference + catalog (parcial) + integration + shop profile strangler.
+**Depende de:** T35
+**Gate:** Health 8086 UP; roundtrip amostra cotação + config.
 
-### T37: JaCoCo verify gates
+### T37: Gates JaCoCo verify
 
-**What:** Add jacoco limits on `integration-service` and `sm-integration-core` in parent pom.
-**Depends:** T36
+**What:** Adicionar limites jacoco em `integration-service` e `sm-integration-core` no pom pai.
+**Depende de:** T36
 **Gate:** `./mvnw -pl integration-service,sm-integration-core verify`
 
-### T38: Update STATE.md and ROADMAP
+### T38: Atualizar STATE.md e ROADMAP
 
-**What:** Document AD-015..020, wave5 pattern, GAP-INT-01..05, gate evidence.
-**Depends:** T37
-**Gate:** STATE.md lists onda-5-integration-service READY FOR EXECUTE or COMPLETE per actual status.
-
----
-
-## Parallel Execution Map
-
-```
-Phase 1: T1 → T2 → (T3 ∥ T4) → T5
-
-Phase 2 (after T5):
-  Payment:  T6 → T7 → T8 → T9 → T10 → T11
-  Shipping: T12 → T13 → T14 → T15 → T16
-
-Phase 3: T17 → T18 → T19 → T20 → T21 → T22
-
-Phase 4: T23 → T24 → T25 → T26 → T27 → T28
-
-Phase 5: T29 → (T30 ∥ T31) → T32 → T33 → T34 → T35 → T36 → T37 → T38
-```
-
-**Subagent rule:** `[P]` → parallel subagent in same phase. Phase 2 → **2 parallel tracks** (payment vs shipping).
+**What:** Documentar AD-015..020, padrão wave5, GAP-INT-01..05, evidência de gate.
+**Depende de:** T37
+**Gate:** STATE.md lista onda-5-integration-service READY FOR EXECUTE ou COMPLETE conforme status real.
 
 ---
 
-## Compozy Mapping
+## Mapa de execução paralela
 
-| TLC | Compozy task |
+```
+Fase 1: T1 → T2 → (T3 ∥ T4) → T5
+
+Fase 2 (após T5):
+  Pagamento:  T6 → T7 → T8 → T9 → T10 → T11
+  Frete: T12 → T13 → T14 → T15 → T16
+
+Fase 3: T17 → T18 → T19 → T20 → T21 → T22
+
+Fase 4: T23 → T24 → T25 → T26 → T27 → T28
+
+Fase 5: T29 → (T30 ∥ T31) → T32 → T33 → T34 → T35 → T36 → T37 → T38
+```
+
+**Regra subagent:** `[P]` → subagent paralelo na mesma fase. Fase 2 → **2 trilhas paralelas** (pagamento vs frete).
+
+---
+
+## Mapeamento Compozy
+
+| TLC | Task Compozy |
 |-----|--------------|
 | T1–T5 | task_01 |
 | T6–T11 | task_02, task_03 |

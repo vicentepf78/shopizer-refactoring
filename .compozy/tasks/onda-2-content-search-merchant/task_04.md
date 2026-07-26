@@ -7,7 +7,7 @@ complexity: medium
 
 # Rewire sm-core content e trim CMS de produto
 
-## Overview
+## Visão geral
 Consolida TLC T17. Remove do `sm-core` as classes de content já movidas, adiciona dependência de `sm-content-core` e deixa `shopizer-core-cms.xml` apenas com beans de produto. Fecha o rewire content do monólito após C-ready, preparando o Strangler Content.
 
 <critical>
@@ -27,37 +27,37 @@ Consolida TLC T17. Remove do `sm-core` as classes de content já movidas, adicio
 6. SHOULD validar que consumers in-process do monólito resolvem ContentService via o thin core.
 </requirements>
 
-## Subtasks
+## Subtarefas
 - [x] 4.1 Remover classes content movidas de sm-core
 - [x] 4.2 Adicionar dep `sm-content-core` no pom sm-core
 - [x] 4.3 Trim CMS XML para product-only
 - [x] 4.4 Gate `./mvnw test -pl sm-core`
 - [x] 4.5 Smoke: ContentService disponível no contexto monólito
 
-## Implementation Details
+## Detalhes de implementação
 Ver TechSpec: **Análise de impacto** (`sm-core`), **Ordem de construção** passo 14. Coordenar com task_02/task_03 já concluídas.
 
-### Relevant Files
+### Arquivos relevantes
 - `sm-core/pom.xml` — deps
 - `sm-core/src/main/resources/spring/shopizer-core-cms.xml` — trim product-only
 - `sm-core/src/main/java/com/salesmanager/core/business/services/content/` — classes a remover/delegar
 - `sm-content-core/` — módulo fonte da dep
 
-### Dependent Files
+### Arquivos dependentes
 - `sm-core/pom.xml` — dep sm-content-core
 - `sm-shop/` — consumers indiretos de ContentService (regressão)
 
-### Related ADRs
+### ADRs relacionados
 - [ADR-004: Módulos thin](adrs/adr-004.md) — rewire via thin core
 - [ADR-008: Colocalização content](adrs/adr-008.md) — product CMS fica no monólito
 
-## Deliverables
+## Entregáveis
 - sm-core delegando content a sm-content-core
 - CMS XML product-only no sm-core
 - Unit/integration tests sm-core com 80%+ nas áreas tocadas **(REQUIRED)**
 - Gate `./mvnw test -pl sm-core` **(REQUIRED)**
 
-## Tests
+## Testes
 - Unit tests:
   - [x] Contexto Spring resolve ContentService a partir do thin core
 - [x] Beans product CMS permanecem no XML do sm-core
@@ -67,7 +67,7 @@ Ver TechSpec: **Análise de impacto** (`sm-core`), **Ordem de construção** pas
 - Test coverage target: >=80%
 - All tests must pass
 
-## Success Criteria
+## Critérios de sucesso
 - All tests passing
 - Test coverage >=80%
 - Zero duplicação de ContentService entre módulos

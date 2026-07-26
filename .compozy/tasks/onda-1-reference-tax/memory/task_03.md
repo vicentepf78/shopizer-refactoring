@@ -27,6 +27,6 @@ Wire `sm-shop-model` → `shopizer-api-contracts` — complete.
 
 ## Errors / Corrections
 
-## Ready for Next Run
+## Pronto para próxima execução
 
 Done. Hand off: task_04/task_05 cores can depend on contracts via sm-shop-model wiring; adapters (task_08) get contracts transitively through sm-shop.

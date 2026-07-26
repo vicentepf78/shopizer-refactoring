@@ -22,6 +22,6 @@ Wire sm-shop Wave2 strangler for content + merchant: HTTP facades, static proxy,
 - sm-shop: ImagesController, FilesController, ProductOptionFacadeImpl, ProductVariantGroupFacadeImpl, MerchantStoreArgumentResolver
 - content-service: InternalCatalogBlobController
 
-## Ready for Next Run
+## Pronto para próxima execução
 
 - task_12+ can assume Wave2 BFF adapters wired; Pact/compose validation may follow in later tasks.

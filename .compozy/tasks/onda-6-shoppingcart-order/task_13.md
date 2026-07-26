@@ -1,26 +1,26 @@
 ---
 status: pending
-title: Cart merge on login + correlation/health Wave6
+title: Merge cart no login + correlation/health Wave6
 type: backend
 complexity: medium
 ---
 
-# Cart merge on login + correlation/health Wave6
+# Merge cart no login + correlation/health Wave6
 
-## Overview
-TLC T37–T38. Anonymous cart merge on customer login; actuator health for wave6 dependencies; correlation ID on all Wave6 RestTemplate calls.
+## Visão geral
+TLC T37–T38. Merge de carrinho anônimo no login de cliente; actuator health para deps wave6; correlation ID em todas as chamadas RestTemplate Wave6.
 
 <requirements>
-1. MUST implement mergeAnonymousCart in shoppingcart-service — T37, CART-08.
-2. MUST hook BFF customer login to call merge — T37.
-3. MUST add health indicators for catalog/order/customer/integration deps — T38, STR-05.
-4. MUST propagate X-Correlation-Id on all wave6 clients — T38, STR-06.
+1. MUST implementar mergeAnonymousCart em shoppingcart-service — T37, CART-08.
+2. MUST conectar hook login cliente BFF para chamar merge — T37.
+3. MUST adicionar health indicators para deps catalog/order/customer/integration — T38, STR-05.
+4. MUST propagar X-Correlation-Id em todos os clients wave6 — T38, STR-06.
 </requirements>
 
-## Deliverables
-- Cart merge API + BFF hook
-- Health indicators + correlation tests **(REQUIRED)**
+## Entregáveis
+- API merge cart + hook BFF
+- Health indicators + testes correlation **(REQUIRED)**
 
-## Success Criteria
-- `CartMergeIntegrationTest` green
-- Health shows DOWN when dependency unavailable
+## Critérios de sucesso
+- `CartMergeIntegrationTest` verde
+- Health mostra DOWN quando dependência indisponível

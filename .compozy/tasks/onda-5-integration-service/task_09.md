@@ -1,44 +1,44 @@
 ---
 status: pending
-title: Checkout + OrderShipping HTTP wiring
+title: Wiring HTTP checkout + OrderShipping
 type: backend
 complexity: high
 ---
 
-# Checkout + OrderShipping HTTP wiring
+# Wiring HTTP checkout + OrderShipping
 
-## Overview
-Consolidates TLC T27–T28. Wires `OrderPaymentApi` through `CheckoutApplicationService` → `IntegrationServiceClient`; wires `OrderShippingApi` to build `ShippingQuoteRequest` from cart + catalog snapshots.
+## Visão geral
+Consolida TLC T27–T28. Conecta `OrderPaymentApi` via `CheckoutApplicationService` → `IntegrationServiceClient`; conecta `OrderShippingApi` para montar `ShippingQuoteRequest` a partir de snapshots de carrinho + catálogo.
 
 <critical>
-- ALWAYS READ the PRD and TechSpec before starting
-- Depends on task_07 stateless boundary and task_08 adapters
-- TESTS REQUIRED — every task MUST include tests in deliverables
+- SEMPRE LER o PRD e a TechSpec antes de iniciar
+- Depende da fronteira stateless task_07 e adaptadores task_08
+- TESTES OBRIGATÓRIOS — toda task DEVE incluir testes nos entregáveis
 </critical>
 
 <requirements>
-1. MUST route `OrderPaymentApi` payment processing through checkout service — T27, STR-03.
-2. MUST build `PaymentProcessRequest` from order/cart/customer snapshots — PAY-07.
-3. MUST route `OrderShippingApi` through integration client with DTO assembly — T28, STR-04.
-4. MUST preserve response schemas (`ReadableTransaction`, `ReadableShippingSummary`).
-5. MUST E2E test checkout payment with mock integration-service — T27.
+1. MUST rotear processamento de pagamento de `OrderPaymentApi` pelo checkout service — T27, STR-03.
+2. MUST montar `PaymentProcessRequest` a partir de snapshots order/cart/customer — PAY-07.
+3. MUST rotear `OrderShippingApi` pelo client integration com montagem DTO — T28, STR-04.
+4. MUST preservar schemas de resposta (`ReadableTransaction`, `ReadableShippingSummary`).
+5. MUST teste E2E pagamento checkout com integration-service mock — T27.
 </requirements>
 
-## Subtasks
-- [ ] 9.1 CheckoutApplicationService integration client injection (T27)
-- [ ] 9.2 OrderPaymentApi rewire (T27)
-- [ ] 9.3 OrderShippingApi DTO builder (T28)
-- [ ] 9.4 E2E tests with TestRestTemplate or WireMock
+## Subtarefas
+- [ ] 9.1 Injeção client integration em CheckoutApplicationService (T27)
+- [ ] 9.2 Rewire OrderPaymentApi (T27)
+- [ ] 9.3 Builder DTO OrderShippingApi (T28)
+- [ ] 9.4 Testes E2E com TestRestTemplate ou WireMock
 
-## Related ADRs
+## ADRs relacionados
 - [ADR-006](adrs/adr-006.md)
 - [ADR-002](adrs/adr-002.md)
 
-## Deliverables
-- Checkout + OrderShipping wiring
+## Entregáveis
+- Wiring Checkout + OrderShipping
 - `CheckoutPaymentE2ETest` **(REQUIRED)**
 - `OrderShippingQuoteE2ETest` **(REQUIRED)**
 
-## Success Criteria
-- Payment flow updates order only in checkout saga, not integration client path
-- Shipping quote returns options in strangler profile
+## Critérios de sucesso
+- Fluxo de pagamento atualiza pedido apenas na saga checkout, não no caminho do client integration
+- Cotação de frete retorna opções no profile strangler

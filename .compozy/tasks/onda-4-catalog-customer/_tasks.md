@@ -72,53 +72,53 @@ graph:
       to: task_15
 ---
 
-# Onda 4 — Catalog + Customer Task List
+# Onda 4 — Lista de tasks Catalog + Customer
 
-Consolidated list (mode C) for Wave 4: **15 Compozy tasks** mapped from TLC T1–T38 and TechSpec build order.
+Lista consolidada (modo C) para a Onda 4: **15 tasks Compozy** mapeadas do TLC T1–T38 e da ordem de construção da TechSpec.
 
-**External prerequisite (hard gate):** Onda 3 Execute MUST be complete before any task here — including `task_01`. Requires `ProductSnapshot`, `CustomerSnapshot`, `LanguageCode`, `MerchantStoreId` in `shopizer-api-contracts`.
+**Pré-requisito externo (gate rígido):** Execute da Onda 3 DEVE estar completo antes de qualquer task aqui — incluindo `task_01`. Requer `ProductSnapshot`, `CustomerSnapshot`, `LanguageCode`, `MerchantStoreId` em `shopizer-api-contracts`.
 
-## TLC → task mapping
+## Mapeamento TLC → task
 
-| Task | Title | TLC | Type | Complexity |
+| Task | Título | TLC | Tipo | Complexidade |
 |------|--------|-----|------|--------------|
-| task_01 | Contracts catalog/customer snapshots + Wave4 Strangler config | T1–T4 | backend | medium |
-| task_02 | Extract sm-catalog-core read services | T5–T8 | backend | high |
-| task_03 | catalog-service Boot, clients, public read REST (CAT-ready) | T9–T13 | backend | high |
-| task_04 | Extract sm-customer-core | T14–T17 | backend | high |
+| task_01 | Contratos catalog/customer snapshots + config Strangler Wave4 | T1–T4 | backend | medium |
+| task_02 | Extrair serviços de leitura sm-catalog-core | T5–T8 | backend | high |
+| task_03 | catalog-service Boot, clients, REST read público (CAT-ready) | T9–T13 | backend | high |
+| task_04 | Extrair sm-customer-core | T14–T17 | backend | high |
 | task_05 | customer-service Boot, REST, snapshot (CUS-ready) | T18–T20 | backend | high |
-| task_06 | ProductSnapshot builder + search v2 migration | T21–T23 | backend | high |
-| task_07 | Cart merge decoupling + CustomerFacade orchestration | T24–T25 | backend | high |
-| task_08 | Product images via content-service (P2) | T26 | backend | medium |
-| task_09 | Strangler catalog + customer HTTP adapters | T27–T30 | backend | high |
-| task_10 | Cross-track integration checkpoint | T10,T13,T20 | backend | medium |
+| task_06 | ProductSnapshot builder + migração search v2 | T21–T23 | backend | high |
+| task_07 | Desacoplamento merge de carrinho + orquestração CustomerFacade | T24–T25 | backend | high |
+| task_08 | Imagens de produto via content-service (P2) | T26 | backend | medium |
+| task_09 | Adaptadores HTTP Strangler catalog + customer | T27–T30 | backend | high |
+| task_10 | Checkpoint de integração cross-track | T10,T13,T20 | backend | medium |
 | task_11 | Correlation ID + health indicators Wave4 | T31 | infra | medium |
-| task_12 | JaCoCo verify gates Wave4 modules | T32 | test | low |
-| task_13 | Pact providers + Wave4ConsumerPactTest | T33–T34 | test | medium |
-| task_14 | ProductFacadeV2 + wiring guards (admin writes local) | T29–T30 | backend | medium |
+| task_12 | Gates JaCoCo verify módulos Wave4 | T32 | test | low |
+| task_13 | Providers Pact + Wave4ConsumerPactTest | T33–T34 | test | medium |
+| task_14 | ProductFacadeV2 + guards de wiring (writes admin locais) | T29–T30 | backend | medium |
 | task_15 | Docker Compose wave4, gate, STATE | T35–T38 | infra | medium |
 
-## Milestones
+## Marcos
 
-- **CAT-ready:** end of `task_03` (public catalog read + internal ProductSnapshot).
-- **CUS-ready:** end of `task_05` (customer profile REST + internal CustomerSnapshot).
-- Do not start `task_06` (search migration) before CAT-ready + contracts from `task_01`.
-- Do not start `task_07` (cart merge) before CUS-ready.
-- Do not start strangler adapters (`task_09`) before `task_10` checkpoint.
+- **CAT-ready:** fim de `task_03` (leitura pública de catálogo + ProductSnapshot interno).
+- **CUS-ready:** fim de `task_05` (REST profile de customer + CustomerSnapshot interno).
+- Não iniciar `task_06` (migração search) antes de CAT-ready + contratos de `task_01`.
+- Não iniciar `task_07` (merge de carrinho) antes de CUS-ready.
+- Não iniciar adaptadores strangler (`task_09`) antes do checkpoint `task_10`.
 
-## Parallelism
+## Paralelismo
 
-After `task_01` (and Onda 3 gate):
+Após `task_01` (e gate da Onda 3):
 
-- Track catalog: `task_02` → `task_03`
-- Track customer: `task_04` → `task_05` (fan-out from `task_01`)
-- Converge: `task_10` → `task_06` + `task_07` (merge/search can parallel after checkpoint)
-- Strangler: `task_09` + `task_14` after `task_10`
-- Tail: `task_11` + `task_12` → `task_13` → `task_15`; `task_08` parallel after CAT-ready
+- Trilha catalog: `task_02` → `task_03`
+- Trilha customer: `task_04` → `task_05` (fan-out de `task_01`)
+- Convergência: `task_10` → `task_06` + `task_07` (merge/search podem paralelizar após checkpoint)
+- Strangler: `task_09` + `task_14` após `task_10`
+- Cauda: `task_11` + `task_12` → `task_13` → `task_15`; `task_08` paralelo após CAT-ready
 
-## Source
+## Fonte
 
 - PRD: `_prd.md`
 - TechSpec: `_techspec.md`
 - ADRs: `adrs/adr-001.md` … `adr-007.md`
-- TLC (reference WHAT): `.specs/features/onda-4-catalog-customer/tasks.md` — do not modify from Compozy execute without TLC review
+- TLC (referência WHAT): `.specs/features/onda-4-catalog-customer/tasks.md` — não modificar no Execute Compozy sem revisão TLC

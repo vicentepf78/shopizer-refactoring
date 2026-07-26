@@ -1,70 +1,70 @@
 ---
 status: pending
-title: CheckoutApplicationService extraction
+title: Extração CheckoutApplicationService
 type: backend
 complexity: high
 ---
 
-# CheckoutApplicationService extraction
+# Extração CheckoutApplicationService
 
-## Overview
-Consolidates TLC T39–T43. Extracts place-order orchestration from `OrderFacadeImpl` into `CheckoutApplicationService` without changing public REST behavior (CHK requirements).
+## Visão geral
+Consolida TLC T39–T43. Extrai orquestração place-order de `OrderFacadeImpl` para `CheckoutApplicationService` sem alterar comportamento REST público (requisitos CHK).
 
 <critical>
-- ALWAYS READ the PRD and TechSpec before starting
-- REFERENCE TECHSPEC for implementation details — do not duplicate here
-- FOCUS ON "WHAT" — describe what needs to be accomplished, not how
-- MINIMIZE CODE — show code only to illustrate current structure or problem areas
-- TESTS REQUIRED — every task MUST include tests in deliverables
+- SEMPRE LER o PRD e a TechSpec antes de começar
+- REFERENCIAR A TECHSPEC para detalhes de implementação — não duplicar aqui
+- FOCAR NO "O QUÊ" — descrever o que precisa ser feito, não como
+- MINIMIZAR CÓDIGO — mostrar código apenas para ilustrar estrutura atual ou áreas problemáticas
+- TESTES OBRIGATÓRIOS — toda task DEVE incluir testes nos entregáveis
 </critical>
 
 <requirements>
-1. MUST define `CheckoutApplicationService` and `CheckoutCommand` in `sm-core/.../checkout` — TLC T39.
-2. MUST move orchestration logic from `OrderFacadeImpl` place-order methods to service — TLC T40–T41.
-3. MUST keep `OrderFacadeImpl` as thin delegate (validation + DTO mapping only) — TLC T42.
-4. MUST use `CustomerSnapshot` / tenant types in command where applicable — TLC T43.
-5. MUST preserve identical outcomes for happy path and known validation errors (CHK-01..CHK-06).
-6. MUST NOT change `OrderApi` paths or request/response schemas.
+1. MUST definir `CheckoutApplicationService` e `CheckoutCommand` em `sm-core/.../checkout` — TLC T39.
+2. MUST mover lógica de orquestração dos métodos place-order de `OrderFacadeImpl` ao serviço — TLC T40–T41.
+3. MUST manter `OrderFacadeImpl` como delegação fina (apenas validação + mapeamento DTO) — TLC T42.
+4. MUST usar `CustomerSnapshot` / tipos tenant no command onde aplicável — TLC T43.
+5. MUST preservar resultados idênticos para happy path e erros de validação conhecidos (CHK-01..CHK-06).
+6. MUST NOT alterar caminhos ou schemas request/response de `OrderApi`.
 </requirements>
 
-## Subtasks
-- [ ] 9.1 CheckoutApplicationService interface + command (T39)
-- [ ] 9.2 Extract process flow from OrderFacadeImpl (T40–T41)
-- [ ] 9.3 Thin facade delegation (T42)
-- [ ] 9.4 Parity integration tests (T43)
+## Subtarefas
+- [ ] 9.1 Interface CheckoutApplicationService + command (T39)
+- [ ] 9.2 Extrair fluxo process de OrderFacadeImpl (T40–T41)
+- [ ] 9.3 Delegação fina facade (T42)
+- [ ] 9.4 Testes integração paridade (T43)
 
-## Implementation Details
-See TechSpec: **Checkout flow**. `OrderFacadeImpl` currently injects 12+ services — CAS should own orchestration, facade keeps HTTP concerns.
+## Detalhes de implementação
+Ver TechSpec: **Fluxo checkout**. `OrderFacadeImpl` injeta 12+ serviços hoje — CAS deve ser dono da orquestração, facade mantém preocupações HTTP.
 
-### Relevant Files
-- `sm-shop/.../order/facade/OrderFacadeImpl.java` (~1600 lines)
+### Arquivos relevantes
+- `sm-shop/.../order/facade/OrderFacadeImpl.java` (~1600 linhas)
 - `sm-core/.../order/OrderServiceImpl.java`
 - `sm-shop/.../api/v1/order/OrderApi.java`
 
-### Dependent Files
-- `sm-core/.../checkout/CheckoutApplicationService.java` — create
-- `sm-core/.../checkout/CheckoutApplicationServiceImpl.java` — create
-- `sm-core/.../checkout/CheckoutCommand.java` — create
+### Arquivos dependentes
+- `sm-core/.../checkout/CheckoutApplicationService.java` — criar
+- `sm-core/.../checkout/CheckoutApplicationServiceImpl.java` — criar
+- `sm-core/.../checkout/CheckoutCommand.java` — criar
 
-### Related ADRs
-- [ADR-001: Monolith-only](../adrs/adr-001.md)
-- [ADR-005: Outbox hooks prepared in task_10](../adrs/adr-005.md)
+### ADRs relacionados
+- [ADR-001: Apenas monólito](../adrs/adr-001.md)
+- [ADR-005: Hooks outbox preparados em task_10](../adrs/adr-005.md)
 
-## Deliverables
-- CheckoutApplicationService with extracted flow
-- Thinned OrderFacadeImpl
-- Checkout parity integration tests **(REQUIRED)**
+## Entregáveis
+- CheckoutApplicationService com fluxo extraído
+- OrderFacadeImpl reduzido
+- Testes integração paridade checkout **(OBRIGATÓRIO)**
 
-## Tests
-- Unit tests:
-  - [ ] CheckoutCommand builder validation
-- Integration tests:
-  - [ ] Place order happy path matches pre-extraction behavior
-  - [ ] Payment failure paths unchanged
-- Test coverage target: >=80%
-- All tests must pass
+## Testes
+- Testes unitários:
+  - [ ] Validação builder CheckoutCommand
+- Testes de integração:
+  - [ ] Happy path place order bate com comportamento pré-extração
+  - [ ] Caminhos falha payment inalterados
+- Meta de cobertura: >=80%
+- Todos os testes devem passar
 
-## Success Criteria
-- All tests passing
-- CHK-ready milestone
-- OrderFacadeImpl line count materially reduced
+## Critérios de sucesso
+- Todos os testes passando
+- Milestone CHK-ready
+- Contagem de linhas OrderFacadeImpl materialmente reduzida

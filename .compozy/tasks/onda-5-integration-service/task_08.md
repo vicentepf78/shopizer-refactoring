@@ -1,42 +1,42 @@
 ---
 status: pending
-title: Strangler payment/shipping facades
+title: Facades Strangler pagamento/frete
 type: backend
 complexity: high
 ---
 
-# Strangler payment/shipping facades
+# Facades Strangler pagamento/frete
 
-## Overview
-Consolidates TLC T25–T26. Implements `PaymentFacadeHttpAdapter` and `ShippingFacadeHttpAdapter` with `@ConditionalOnProperty(wave5.strangler.enabled)`; maps 503 on remote failure without in-process fallback.
+## Visão geral
+Consolida TLC T25–T26. Implementa `PaymentFacadeHttpAdapter` e `ShippingFacadeHttpAdapter` com `@ConditionalOnProperty(wave5.strangler.enabled)`; mapeia 503 em falha remota sem fallback in-process.
 
 <critical>
-- ALWAYS READ the PRD and TechSpec before starting
-- TESTS REQUIRED — every task MUST include tests in deliverables
+- SEMPRE LER o PRD e a TechSpec antes de iniciar
+- TESTES OBRIGATÓRIOS — toda task DEVE incluir testes nos entregáveis
 </critical>
 
 <requirements>
-1. MUST implement HTTP adapters for `PaymentConfigurationFacade` — T25, STR-01.
-2. MUST implement HTTP adapters for `ShippingFacade` / shipping configuration — T26.
-3. MUST propagate `X-Correlation-Id` — STR-05.
-4. MUST return 503 on connection/timeout errors — STR-02.
-5. MUST use stub `IntegrationServiceClientRestTemplateImpl` until task_11 completes full client.
+1. MUST implementar adaptadores HTTP para `PaymentConfigurationFacade` — T25, STR-01.
+2. MUST implementar adaptadores HTTP para `ShippingFacade` / configuração de frete — T26.
+3. MUST propagar `X-Correlation-Id` — STR-05.
+4. MUST retornar 503 em erros de conexão/timeout — STR-02.
+5. MUST usar stub `IntegrationServiceClientRestTemplateImpl` até task_11 completar client completo.
 </requirements>
 
-## Subtasks
+## Subtarefas
 - [ ] 8.1 PaymentConfigurationFacadeHttpAdapter (T25)
 - [ ] 8.2 ShippingFacadeHttpAdapter (T26)
-- [ ] 8.3 Adapter unit tests with MockRestServiceServer
-- [ ] 8.4 Profile wiring in Wave5ClientConfig
+- [ ] 8.3 Testes unitários de adapter com MockRestServiceServer
+- [ ] 8.4 Wiring de profile em Wave5ClientConfig
 
-## Related ADRs
+## ADRs relacionados
 - [ADR-001](adrs/adr-001.md)
 - [ADR-006](adrs/adr-006.md)
 
-## Deliverables
-- Strangler facade adapters in sm-shop
-- Adapter tests **(REQUIRED)**
+## Entregáveis
+- Adaptadores de facade Strangler em sm-shop
+- Testes de adapter **(REQUIRED)**
 
-## Success Criteria
-- `wave5.strangler.enabled=true` routes to HTTP client
-- `matchIfMissing=false` preserves in-process default
+## Critérios de sucesso
+- `wave5.strangler.enabled=true` roteia para client HTTP
+- `matchIfMissing=false` preserva default in-process

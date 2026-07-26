@@ -1,31 +1,31 @@
-# Wave 3 — Contracts DTO + Checkout Application Service Design
+# Onda 3 — Contracts DTO + Checkout Application Service Design
 
 **Spec:** `.specs/features/onda-3-contracts-dto/spec.md`  
 **Context:** `.specs/features/onda-3-contracts-dto/context.md`  
-**Status:** Approved for Tasks — Execute blocked until tasks.md approved  
+**Status:** Aprovado para Tasks — Execute bloqueado até tasks.md aprovado  
 **Compozy:** `.compozy/tasks/onda-3-contracts-dto/`
 
 ---
 
-## Architecture Overview
+## Visão geral da arquitetura
 
-Wave 3 modifies **existing Maven modules only** — no new deployables. Deployment topology from Waves 1–2 is unchanged.
+A Onda 3 modifica **apenas módulos Maven existentes** — sem novos deployables. Topologia de implantação das Ondas 1–2 inalterada.
 
 ```mermaid
 flowchart TB
-    subgraph clients [Clients]
+    subgraph clients [Clientes]
         ADMIN[Admin UI]
         STOREFRONT[Storefront]
     end
 
-    subgraph monolith [sm-shop + sm-core — Wave 3 focus]
+    subgraph monolith [sm-shop + sm-core — foco Onda 3]
         API[REST Controllers]
-        FAC[Facades P1 migrated]
+        FAC[Facades P1 migradas]
         CAS[CheckoutApplicationService]
         OUT[CheckoutOutbox]
         BRIDGE[TenantEntityBridge]
         PSB[ProductSnapshotBuilder]
-        OFI[OrderFacadeImpl thinned]
+        OFI[OrderFacadeImpl reduzido]
     end
 
     subgraph contracts [shopizer-api-contracts]
@@ -38,7 +38,7 @@ flowchart TB
         IDTO[Integration DTOs]
     end
 
-    subgraph wave12 [Wave 1+2 — unchanged runtime]
+    subgraph wave12 [Onda 1+2 — runtime inalterado]
         REF[reference-service]
         CNT[content-service]
         SRCH[search-service]
@@ -55,48 +55,48 @@ flowchart TB
     PSB -->|ProductIndexPayload v2| SRCH
 ```
 
-### Principles
+### Princípios
 
-1. **No new services** — AD-W3-001
-2. **Contracts = DTOs only** — L-002
-3. **Frozen REST paths** — checkout/reference unchanged
+1. **Sem novos serviços** — AD-W3-001
+2. **Contracts = apenas DTOs** — L-002
+3. **Caminhos REST congelados** — checkout/reference inalterados
 4. **Feature flags** — `checkout.outbox.enabled` default false
-5. **Phased facade migration** — 6 facades Wave 3; plan for rest
-6. **Behavioral parity** — integration tests gate refactors
-7. **Shared DB** — AD-003; outbox in SALESMANAGER
+5. **Migração facade faseada** — 6 facades Onda 3; plano para o restante
+6. **Paridade comportamental** — testes integração gate refactors
+7. **DB compartilhado** — AD-003; outbox em SALESMANAGER
 
 ---
 
-## Design Decisions (OQ-01 – OQ-06)
+## Decisões de design (OQ-01 – OQ-06)
 
-| ID | Decision | Choice | Rationale |
-|----|----------|--------|-----------|
-| OQ-01 | ProductIndexPayload | **Snapshot canonical + mapper** | AD-002; avoids Pact break |
-| OQ-02 | Facade scope | **P1 six facades** | B-001 partial; manageable diff |
-| OQ-03 | Broker | **None** | YAGNI until Wave 6 consumer |
-| OQ-04 | Plugin compat | **V2 parallel + bridge** | AD-004 |
-| OQ-05 | CAS package | **sm-core/checkout** | Domain orchestration |
-| OQ-06 | SearchItem | **api-contracts** | Close Wave 2 debt |
-
----
-
-## Module Changes
-
-| Module | Changes |
-| ------ | ------- |
-| `shopizer-api-contracts` | Snapshots, tenant types, SearchItem |
-| `sm-core-modules` | Integration DTOs, V2 interfaces |
-| `sm-core` | Builders, CAS, outbox, payment/shipping routing |
-| `sm-shop-model` | P1 facade interface signatures |
-| `sm-shop` | Facade impls, bridge, ReferencesApi, ArchUnit |
-| `search-service` | Import SearchItem from contracts; index v2 |
-| `shopizer-commons` | Deprecated SearchItem aliases (optional) |
-
-**No changes:** `reference-service`, `content-service`, `merchant-service`, `tax-service` runtime (except search-service contract imports).
+| ID | Decisão | Escolha | Justificativa |
+|----|---------|---------|-----------|
+| OQ-01 | ProductIndexPayload | **Snapshot canônico + mapper** | AD-002; evita quebra Pact |
+| OQ-02 | Escopo facade | **Seis facades P1** | B-001 parcial; diff gerenciável |
+| OQ-03 | Broker | **Nenhum** | YAGNI até consumidor Onda 6 |
+| OQ-04 | Compat plugin | **V2 paralelo + bridge** | AD-004 |
+| OQ-05 | Pacote CAS | **sm-core/checkout** | Orquestração de domínio |
+| OQ-06 | SearchItem | **api-contracts** | Fecha débito Onda 2 |
 
 ---
 
-## Package Layout (new)
+## Mudanças por módulo
+
+| Módulo | Mudanças |
+| ------ | -------- |
+| `shopizer-api-contracts` | Snapshots, tipos tenant, SearchItem |
+| `sm-core-modules` | DTOs integração, interfaces V2 |
+| `sm-core` | Builders, CAS, outbox, roteamento payment/shipping |
+| `sm-shop-model` | Assinaturas interface facade P1 |
+| `sm-shop` | Impls facade, bridge, ReferencesApi, ArchUnit |
+| `search-service` | Import SearchItem de contracts; índice v2 |
+| `shopizer-commons` | Aliases SearchItem deprecados (opcional) |
+
+**Sem mudanças:** runtime `reference-service`, `content-service`, `merchant-service`, `tax-service` (exceto imports contrato search-service).
+
+---
+
+## Layout de packages (novos)
 
 ```
 shopizer-api-contracts/
@@ -114,7 +114,7 @@ shopizer-api-contracts/
     CustomerSnapshot.java
     AddressSnapshot.java
   com.salesmanager.contracts.search/
-    SearchItem.java          # migrated
+    SearchItem.java          # migrado
     SearchProductRequest.java
 
 sm-core-modules/
@@ -151,36 +151,36 @@ sm-shop/
 
 ## CheckoutApplicationService
 
-### Responsibility boundary
+### Fronteira de responsabilidade
 
-| Layer | Owns |
-| ----- | ---- |
+| Camada | Dono de |
+| ------ | ------- |
 | `OrderApi` / `OrderPaymentApi` | HTTP, binding, status codes |
-| `OrderFacadeImpl` | DTO↔entity mapping, validation assembly |
-| `CheckoutApplicationService` | Place-order orchestration, stage coordination |
-| `OrderServiceImpl` | Persistence primitives (`create`, `processOrder` internals) |
-| `PaymentServiceImpl` | Payment module invocation |
+| `OrderFacadeImpl` | Mapeamento DTO↔entidade, montagem validação |
+| `CheckoutApplicationService` | Orquestração place-order, coordenação estágios |
+| `OrderServiceImpl` | Primitivas persistência (`create`, internals `processOrder`) |
+| `PaymentServiceImpl` | Invocação módulo payment |
 
-### CheckoutCommand (conceptual)
+### CheckoutCommand (conceitual)
 
 - `MerchantStoreId storeId`
 - `LanguageCode language`
-- `CustomerSnapshot customer` (or entity during transition — prefer snapshot)
-- `List<ShoppingCartItem> items` (entities until Wave 6)
+- `CustomerSnapshot customer` (ou entidade durante transição — preferir snapshot)
+- `List<ShoppingCartItem> items` (entidades até Onda 6)
 - `Payment payment`
 - `OrderTotalSummary summary`
-- Optional `Transaction` for pre-auth flows
+- `Transaction` opcional para fluxos pré-auth
 
-### Extraction strategy
+### Estratégia de extração
 
-1. Copy existing `OrderFacadeImpl` place-order block into `CheckoutApplicationServiceImpl` verbatim.
-2. Wire facade to delegate.
-3. Run parity tests.
-4. Introduce outbox hooks per stage (task T44–T47).
+1. Copiar bloco place-order existente de `OrderFacadeImpl` em `CheckoutApplicationServiceImpl` verbatim.
+2. Conectar facade para delegar.
+3. Executar testes paridade.
+4. Introduzir hooks outbox por estágio (tasks T44–T47).
 
 ---
 
-## processOrder Staging
+## Estágios processOrder
 
 ```mermaid
 sequenceDiagram
@@ -190,7 +190,7 @@ sequenceDiagram
     participant INV as Inventory
     participant OB as CHECKOUT_OUTBOX
 
-    CAS->>OB: PAYMENT_REQUESTED (if enabled)
+    CAS->>OB: PAYMENT_REQUESTED (se habilitado)
     CAS->>PAY: processPayment
     PAY-->>CAS: Transaction
     CAS->>OB: PAYMENT_CONFIRMED
@@ -200,24 +200,24 @@ sequenceDiagram
     CAS->>OB: INVENTORY_DECREMENTED
 ```
 
-When `checkout.outbox.enabled=false`, stages run without outbox writes (legacy path).
+Quando `checkout.outbox.enabled=false`, estágios rodam sem escritas outbox (caminho legacy).
 
 ---
 
-## Integration Module V2
+## Módulo integração V2
 
-### Registry behavior
+### Comportamento registry
 
 ```
 resolvePaymentModule(code):
-  if bean implements PaymentModuleV2 → use DTO path
+  if bean implements PaymentModuleV2 → use caminho DTO
   else if bean implements PaymentModule → LegacyPaymentModuleBridge.asV2(bean)
 ```
 
-### Entity → DTO mapping (centralized)
+### Mapeamento entidade → DTO (centralizado)
 
-| Entity | DTO field |
-| ------ | --------- |
+| Entidade | Campo DTO |
+| -------- | ----------- |
 | `MerchantStore` | `IntegrationStoreContext.storeCode` |
 | `ShoppingCartItem` | `PaymentLineItemDto` (sku, qty, price) |
 | `Order` | `PaymentCaptureContext.orderId`, amounts |
@@ -225,25 +225,25 @@ resolvePaymentModule(code):
 
 ---
 
-## Facade Migration (Phase 1)
+## Migração facade (Fase 1)
 
-| Facade | Methods affected | Wave |
+| Facade | Métodos afetados | Onda |
 | ------ | ---------------- | ---- |
-| OrderFacade | All store/lang params | 3 |
-| ShoppingCartFacade | All | 3 |
+| OrderFacade | Todos params store/lang | 3 |
+| ShoppingCartFacade | Todos | 3 |
 | SearchFacade | search, autocomplete | 3 |
 | ShippingFacade | quote, config | 3 |
-| CategoryFacade | Read hierarchy | 3 |
+| CategoryFacade | Leitura hierarquia | 3 |
 | ProductCommonFacade | getProduct*, list | 3 |
 | CustomerFacade | — | 4 |
 | ProductFacade* | — | 4 |
-| ContentFacade | — | Done Wave 2 HTTP |
-| Remaining ~60 | — | 4–6 per FACADE-MIGRATION-PLAN |
+| ContentFacade | — | HTTP Onda 2 |
+| ~60 restantes | — | 4–6 conforme FACADE-MIGRATION-PLAN |
 
-### Controller pattern
+### Padrão controller
 
 ```java
-// OrderApi — resolver still gives MerchantStore entity
+// OrderApi — resolver ainda fornece entidade MerchantStore
 public void placeOrder(@Store MerchantStore store, @Language Language lang, ...) {
   orderFacade.processOrder(
       MerchantStoreId.of(store.getCode()),
@@ -254,75 +254,75 @@ public void placeOrder(@Store MerchantStore store, @Language Language lang, ...)
 
 ---
 
-## ProductSnapshot → Index Pipeline
+## Pipeline ProductSnapshot → Índice
 
 ```
-IndexProductEventListener (monolith)
+IndexProductEventListener (monólito)
   → ProductSnapshotBuilder.build(product, storeId, lang)
   → ProductIndexPayloadMapper.toPayload(snapshot)  // schemaVersion=2
   → SearchIndexClient.index(payload)
 ```
 
-search-service normalizes v1/v2 to internal OpenSearch document.
+search-service normaliza v1/v2 para documento OpenSearch interno.
 
 ---
 
 ## ReferencesApi (B-002)
 
-| Endpoint | Response type |
+| Endpoint | Tipo resposta |
 | -------- | ------------- |
 | `GET /api/v1/languages` | `List<ReadableLanguage>` |
 | `GET /api/v1/currency` | `List<ReadableCurrency>` |
 
-Reuse `ReadableLanguagePopulator` / reference strangler mappers from Wave 1.
+Reutilizar `ReadableLanguagePopulator` / mappers strangler reference da Onda 1.
 
 ---
 
-## Testing & Fitness
+## Testes & fitness
 
-| Test | Module | Purpose |
-| ---- | ------ | ------- |
+| Teste | Módulo | Objetivo |
+| ----- | ------ | -------- |
 | `ContractsMustNotDependOnCoreModel` | shopizer-api-contracts | CTR-01 |
 | `FacadesNoNewEntityParams` | sm-shop-model | TNT-05 |
 | `CheckoutApplicationServicePlaceOrderTest` | sm-core | CHK-04 |
 | `CheckoutOutboxIntegrationTest` | sm-core | SAG-03 |
-| Wave2 Pact suite | sm-shop, search-service | GAT-02 |
+| Suite Pact Onda 2 | sm-shop, search-service | GAT-02 |
 | `./mvnw clean install` | reactor | GAT-01 |
 
 ---
 
-## Build Order
+## Ordem de construção
 
-See TechSpec and `tasks.md` — 48 TLC tasks in 4 phases:
+Ver TechSpec e `tasks.md` — 48 tasks TLC em 4 fases:
 
-1. **T1–T6:** Contracts foundation
-2. **T7–T38:** Parallel tracks (snapshots, integration, facades)
-3. **T39–T47:** Checkout + outbox convergence
-4. **T48:** Reactor gate
+1. **T1–T6:** Base contracts
+2. **T7–T38:** Tracks paralelas (snapshots, integração, facades)
+3. **T39–T47:** Convergência checkout + outbox
+4. **T48:** Gate reactor
 
-Compozy mapping: 10 tasks (`task_01`..`task_10`).
-
----
-
-## Risks
-
-| Risk | Mitigation |
-| ---- | ---------- |
-| OrderFacadeImpl regression | Copy-then-refactor; parity tests |
-| Large compile blast radius | Phased facades; continuous compile |
-| Pact drift on SearchItem | Single PR slice for contracts + search-service |
-| Outbox schema in prod | Flag off default until Wave 6 |
+Mapeamento Compozy: 10 tasks (`task_01`..`task_10`).
 
 ---
 
-## Handoff to Wave 4
+## Riscos
 
-When Wave 3 gate is green:
+| Risco | Mitigação |
+| ----- | --------- |
+| Regressão OrderFacadeImpl | Copy-then-refactor; testes paridade |
+| Raio blast compile grande | Facades faseadas; compile contínuo |
+| Drift Pact SearchItem | Slice PR único contracts + search-service |
+| Schema outbox em prod | Flag off default até Onda 6 |
 
-- `ProductSnapshot` available for catalog-read APIs
-- `CustomerSnapshot` for customer-service boundary
-- P1 facades demonstrate tenant ID pattern
-- B-002 closed; B-001 partially closed with migration plan
-- Checkout stages observable via outbox
+---
 
-Wave 4 Specify: `onda-4-catalog-customer` (not in this workflow).
+## Handoff para Onda 4
+
+Quando gate Onda 3 estiver verde:
+
+- `ProductSnapshot` disponível para APIs catalog-read
+- `CustomerSnapshot` para fronteira customer-service
+- Facades P1 demonstram padrão tenant ID
+- B-002 fechado; B-001 parcialmente fechado com plano migração
+- Estágios checkout observáveis via outbox
+
+Specify Onda 4: `onda-4-catalog-customer` (fora deste workflow).

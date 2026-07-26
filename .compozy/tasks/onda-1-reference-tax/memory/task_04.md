@@ -25,6 +25,6 @@ Extract Country/Zone/Language/Currency repos+CRUD into `sm-reference-core`, REF-
 - Missing `spring-boot-starter-cache` version in parent BOM override → use `spring-context-support` instead.
 - JaCoCo check excludes must be plugin-level (not only check execution) to affect the ratio.
 
-## Ready for Next Run
+## Pronto para próxima execução
 
 Done. Hand off: task_05 can mirror this thin-core pattern; generics/CacheUtils already on classpath via `sm-core` → `sm-reference-core` (tax-core may need its own slice or a shared home later).

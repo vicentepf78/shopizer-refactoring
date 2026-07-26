@@ -1,327 +1,327 @@
-# Onda 4 — Catalog + Customer Specification
+# Onda 4 — Especificação Catalog + Customer
 
-**Feature ID:** `onda-4-catalog-customer`
-**Phase:** Specify → Design → Tasks (Execute blocked until Onda 3 complete)
-**Complexity:** Large (2 deployable services + Strangler + contract migration)
-**Source:** [MIGRATION-MASTER-PLAN.md](../../../docs/decomposition/MIGRATION-MASTER-PLAN.md) § Onda 4
-**Prerequisite:** Onda 3 — `ProductSnapshot`, `CustomerSnapshot`, `LanguageCode`, `MerchantStoreId`, Checkout Application Service foundations
-
----
-
-## Problem Statement
-
-Catalog is the **highest afferent-coupling domain** in `sm-core` (10 inbound service references: order, cart, shipping, search, merchant, reference, and others). Extracting catalog CRUD wholesale would drag half the monolith into the first cut. Customer is comparatively isolated at the service layer (score 5/10) but is **transactionally coupled to order** (customer creation during checkout) and to **shopping cart merge** (session cart + authenticated customer cart in one DB transaction).
-
-Wave 3 delivers cross-service DTOs (`ProductSnapshot`, `CustomerSnapshot`) and tenant primitives (`LanguageCode`, `MerchantStoreId`) that unblock read-path extraction. Without a formal Wave 4 spec, teams either:
-
-- Extract catalog writes too early and recreate the upstream blocker graph remotely, or
-- Delay customer extraction indefinitely because cart merge cannot be untangled.
-
-This spec defines **phased catalog read extraction** and **customer profile extraction with explicit cart-merge decoupling**, following the Strangler pattern proven in Waves 1–2.
+**ID da feature:** `onda-4-catalog-customer`
+**Fase:** Specify → Design → Tasks (Execute bloqueado até conclusão da Onda 3)
+**Complexidade:** Grande (2 serviços deployáveis + Strangler + migração de contratos)
+**Fonte:** [MIGRATION-MASTER-PLAN.md](../../../docs/decomposition/MIGRATION-MASTER-PLAN.md) § Onda 4
+**Pré-requisito:** Onda 3 — fundações de `ProductSnapshot`, `CustomerSnapshot`, `LanguageCode`, `MerchantStoreId`, Checkout Application Service
 
 ---
 
-## Goals
+## Declaração do problema
 
-- [ ] `catalog-service` deployable as Spring Boot application serving **storefront and public read APIs** for products, categories, manufacturers, inventory, and pricing
-- [ ] `customer-service` deployable serving **profile, addresses, opt-in, and review read/write** APIs (excluding login/checkout orchestration)
-- [ ] Monolith remains **write authority** for admin catalog mutations (private product CRUD) until a later wave
-- [ ] Monolith consumes both services via HTTP Strangler on **frozen REST paths**
-- [ ] Zero JPA entities in JSON responses from migrated endpoints (Onda 1 criterion)
-- [ ] `ProductIndexPayload` migrates to **`ProductSnapshot`** for search indexing (Wave 3 contract)
-- [ ] Cart merge decoupled: monolith orchestrates merge using **`CustomerSnapshot`** from customer-service
-- [ ] Pact tests for P1 catalog read + customer profile surfaces
-- [ ] Reuse `shopizer-api-contracts`, thin cores (`sm-catalog-core`, `sm-customer-core`), RestTemplate, JWT replication
+Catalog é o **domínio de maior acoplamento aferente** em `sm-core` (10 referências de serviço de entrada: order, cart, shipping, search, merchant, reference e outros). Extrair o CRUD de catalog de uma vez arrastaria metade do monólito para o primeiro corte. Customer é comparativamente isolado na camada de serviço (score 5/10), mas está **acoplado transacionalmente a order** (criação de customer durante checkout) e ao **merge de shopping cart** (carrinho de sessão + carrinho autenticado do customer em uma transação de DB).
 
----
+A Onda 3 entrega DTOs cross-service (`ProductSnapshot`, `CustomerSnapshot`) e primitivas de tenant (`LanguageCode`, `MerchantStoreId`) que desbloqueiam a extração do read path. Sem uma spec formal da Onda 4, as equipes ou:
 
-## Out of Scope
+- Extraem writes de catalog cedo demais e recriam o grafo de bloqueadores upstream remotamente, ou
+- Adiam a extração de customer indefinidamente porque o merge de cart não pode ser desemaranhado.
 
-| Feature | Reason |
-| ------- | ------ |
-| Admin catalog write APIs in `catalog-service` | Master plan: write stays in monolith temporarily; score 7/10 full extraction |
-| `shoppingcart-service` / cart persistence extraction | Onda 6; cart merge only **decoupled**, not extracted |
-| `order-service`, checkout, `processOrder` saga | Onda 6; Checkout Application Service from Onda 3 stays monolith |
-| `ProductTypeApi` admin CRUD in catalog-service | Deferred — read-only product-type listing MAY be included; mutations stay monolith |
-| Customer authentication (`AuthenticateCustomerApi`, JWT issuance) | Login authority remains `sm-shop` (AD-006 pattern) |
-| Database split per service | AD-003 / AD-022 — shared `SALESMANAGER` schema |
-| Full Mapper/Populator consolidation (4 product facades) | Fase 1 quick wins; parallel, not blocking |
-| `PaymentModule` / `ShippingQuoteModule` DTO redesign | Onda 5 integration service |
-| Greenfield `InitializationDatabaseImpl` move | AD-004 — bootstrap stays monolith |
-| Pricing engine / promotion rules redesign | Read pricing only; rules stay in monolith services |
+Esta spec define **extração faseada de leitura de catalog** e **extração de perfil de customer com desacoplamento explícito do merge de cart**, seguindo o padrão Strangler comprovado nas Ondas 1–2.
 
 ---
 
-## User Stories
+## Objetivos
 
-### P1: Catalog Service — storefront product & category reads ⭐ MVP
+- [ ] `catalog-service` deployável como aplicação Spring Boot servindo **APIs públicas e de storefront de leitura** para produtos, categorias, fabricantes, inventário e preços
+- [ ] `customer-service` deployável servindo APIs de **perfil, endereços, opt-in e leitura/escrita de reviews** (excluindo orquestração de login/checkout)
+- [ ] Monólito permanece **autoridade de escrita** para mutações admin de catalog (CRUD privado de produto) até onda posterior
+- [ ] Monólito consome ambos os serviços via HTTP Strangler em **paths REST congelados**
+- [ ] Zero entidades JPA nas respostas JSON dos endpoints migrados (critério Onda 1)
+- [ ] `ProductIndexPayload` migra para **`ProductSnapshot`** na indexação de search (contrato Onda 3)
+- [ ] Merge de cart desacoplado: monólito orquestra merge usando **`CustomerSnapshot`** do customer-service
+- [ ] Testes Pact para superfícies P1 de leitura de catalog + perfil de customer
+- [ ] Reutilizar `shopizer-api-contracts`, cores finos (`sm-catalog-core`, `sm-customer-core`), RestTemplate, replicação JWT
 
-**User Story**: As a storefront visitor, I want to browse products and categories via existing public APIs, so product discovery does not depend on in-process catalog services in the monolith.
+---
 
-**Why P1**: Catalog read path is the highest-traffic, highest-coupling surface that Wave 3 `ProductSnapshot` unlocks without moving writes.
+## Fora de escopo
 
-**Acceptance Criteria**:
+| Funcionalidade | Motivo |
+| -------------- | ------ |
+| APIs admin de escrita de catalog em `catalog-service` | Plano mestre: escrita permanece no monólito temporariamente; score 7/10 extração completa |
+| `shoppingcart-service` / extração de persistência de cart | Onda 6; merge de cart apenas **desacoplado**, não extraído |
+| `order-service`, checkout, saga `processOrder` | Onda 6; Checkout Application Service da Onda 3 permanece no monólito |
+| CRUD admin de `ProductTypeApi` em catalog-service | Adiado — listagem read-only de product-type PODE ser incluída; mutações permanecem no monólito |
+| Autenticação de customer (`AuthenticateCustomerApi`, emissão JWT) | Autoridade de login permanece em `sm-shop` (padrão AD-006) |
+| Database split por serviço | AD-003 / AD-022 — schema compartilhado `SALESMANAGER` |
+| Consolidação completa Mapper/Populator (4 facades de produto) | Quick wins Fase 1; paralelo, não bloqueante |
+| Redesign de DTOs `PaymentModule` / `ShippingQuoteModule` | Serviço de integração Onda 5 |
+| Movimentação greenfield de `InitializationDatabaseImpl` | AD-004 — bootstrap permanece no monólito |
+| Redesign de motor de preços / regras de promoção | Leitura de preços apenas; regras permanecem nos serviços do monólito |
 
-1. WHEN `GET /api/v1/products/**` (public list, by id, by sku, related, group) THEN `catalog-service` SHALL return `ReadableProduct` / list DTOs — SHALL NOT expose entity `Product`
-2. WHEN `GET /api/v1/category/**` (tree, by id, product counts) THEN `catalog-service` SHALL return `ReadableCategory` DTOs localized by `lang`
-3. WHEN `GET /api/v1/products/inventory/**` or price endpoints (public read) THEN `catalog-service` SHALL return inventory/price DTOs without cross-call to order/cart
-4. WHEN tenant context is required THEN `catalog-service` SHALL accept `store` code and resolve via `MerchantStoreId` / reference to merchant-service HTTP (Wave 2) — SHALL NOT inject `MerchantStore` entity
-5. WHEN `lang` is required THEN `catalog-service` SHALL resolve `LanguageCode` via `reference-service` HTTP
-6. WHEN product not found THEN SHALL return HTTP 404 with same error envelope as monolith
-7. WHEN `catalog-service` unavailable and strangler enabled THEN BFF SHALL return HTTP 503 with correlation id — no silent in-process fallback
+---
 
-**Independent Test**: Deploy `catalog-service` + Wave 1–2 deps; `GET /api/v1/products?store=DEFAULT&lang=en` returns paginated products; category tree matches monolith baseline.
+## Histórias de usuário
 
-**Source components:**
+### P1: Catalog Service — leituras de produto e categoria no storefront ⭐ MVP
 
-| Role | Path |
-| ---- | ---- |
-| Entities | `sm-core-model/.../catalog/` |
-| Services | `sm-core/.../services/catalog/product/`, `category/`, `inventory/`, `pricing/`, `manufacturer/` |
+**História de usuário**: Como visitante da loja, quero navegar produtos e categorias via APIs públicas existentes, para que a descoberta de produtos não dependa de serviços de catalog in-process no monólito.
+
+**Por quê P1**: O read path de catalog é a superfície de maior tráfego e maior acoplamento que `ProductSnapshot` da Onda 3 desbloqueia sem mover writes.
+
+**Critérios de aceite**:
+
+1. WHEN `GET /api/v1/products/**` (lista pública, por id, por sku, relacionados, grupo) THEN `catalog-service` SHALL retornar `ReadableProduct` / DTOs de lista — SHALL NOT expor entidade `Product`
+2. WHEN `GET /api/v1/category/**` (árvore, por id, contagens de produto) THEN `catalog-service` SHALL retornar DTOs `ReadableCategory` localizados por `lang`
+3. WHEN `GET /api/v1/products/inventory/**` ou endpoints de preço (leitura pública) THEN `catalog-service` SHALL retornar DTOs de inventário/preço sem chamada cross a order/cart
+4. WHEN contexto de tenant é necessário THEN `catalog-service` SHALL aceitar código `store` e resolver via `MerchantStoreId` / referência HTTP ao merchant-service (Onda 2) — SHALL NOT injetar entidade `MerchantStore`
+5. WHEN `lang` é necessário THEN `catalog-service` SHALL resolver `LanguageCode` via HTTP ao `reference-service`
+6. WHEN produto não encontrado THEN SHALL retornar HTTP 404 com mesmo envelope de erro do monólito
+7. WHEN `catalog-service` indisponível e strangler habilitado THEN BFF SHALL retornar HTTP 503 com correlation id — sem fallback silencioso in-process
+
+**Teste independente**: Deploy `catalog-service` + deps Ondas 1–2; `GET /api/v1/products?store=DEFAULT&lang=en` retorna produtos paginados; árvore de categorias corresponde ao baseline do monólito.
+
+**Componentes fonte:**
+
+| Papel | Caminho |
+| ----- | ------- |
+| Entidades | `sm-core-model/.../catalog/` |
+| Serviços | `sm-core/.../services/catalog/product/`, `category/`, `inventory/`, `pricing/`, `manufacturer/` |
 | APIs | `sm-shop/.../api/v1/product/ProductApi.java`, `CategoryApi.java`, `ProductInventoryApi.java`, `ProductPriceApi.java`, `ProductManufacturerApi.java`, `ProductGroupApi.java` |
 | Facades | `ProductFacadeImpl`, `ProductCommonFacadeImpl`, `CategoryFacadeImpl` |
 | DTOs | `sm-shop-model/.../model/catalog/` |
 
-**Explicitly OUT of this story:** `POST/PUT/DELETE` private product admin APIs — remain monolith through Wave 4.
+**Explicitamente FORA desta story:** APIs admin privadas `POST/PUT/DELETE` de produto — permanecem no monólito durante a Onda 4.
 
 ---
 
-### P1: Catalog Service — internal ProductSnapshot API ⭐ MVP
+### P1: Catalog Service — API interna ProductSnapshot ⭐ MVP
 
-**User Story**: As platform engineer, I want a versioned `ProductSnapshot` HTTP API inside catalog-service, so search indexing and cross-service reads use one canonical contract from Wave 3.
+**História de usuário**: Como engenheiro de plataforma, quero uma API HTTP versionada de `ProductSnapshot` dentro do catalog-service, para que indexação de search e leituras cross-service usem um contrato canônico da Onda 3.
 
-**Acceptance Criteria**:
+**Critérios de aceite**:
 
-1. WHEN `GET /internal/v1/products/{id}/snapshot?store=&lang=` with network policy THEN SHALL return `ProductSnapshot` with `schemaVersion`
-2. WHEN `schemaVersion` requested is unsupported THEN SHALL return HTTP 422
-3. WHEN monolith `ProductSnapshotBuilder` (replaces `ProductIndexPayloadBuilder`) builds index document THEN MAY call internal snapshot API OR build in-process during transition — Design picks single builder owner
-4. WHEN `search-service` receives snapshot for indexing THEN SHALL accept `ProductSnapshot` schema v2 (supersedes `ProductIndexPayload` v1)
+1. WHEN `GET /internal/v1/products/{id}/snapshot?store=&lang=` com network policy THEN SHALL retornar `ProductSnapshot` com `schemaVersion`
+2. WHEN `schemaVersion` solicitada não é suportada THEN SHALL retornar HTTP 422
+3. WHEN monólito `ProductSnapshotBuilder` (substitui `ProductIndexPayloadBuilder`) monta documento de índice THEN MAY chamar API interna de snapshot OU montar in-process durante transição — Design escolhe único dono do builder
+4. WHEN `search-service` recebe snapshot para indexação THEN SHALL aceitar schema v2 de `ProductSnapshot` (substitui `ProductIndexPayload` v1)
 
-**Requirement IDs:** CAT-08, CAT-09, STR-07
+**IDs de requisito:** CAT-08, CAT-09, STR-07
 
 ---
 
-### P1: Customer Service — profile, addresses, opt-in ⭐ MVP
+### P1: Customer Service — perfil, endereços, opt-in ⭐ MVP
 
-**User Story**: As a registered customer, I want to manage my profile, shipping/billing addresses, and marketing opt-in via existing APIs, without the monolith owning customer persistence for those operations.
+**História de usuário**: Como customer registrado, quero gerenciar meu perfil, endereços de entrega/cobrança e opt-in de marketing via APIs existentes, sem o monólito ser dono da persistência de customer para essas operações.
 
-**Acceptance Criteria**:
+**Critérios de aceite**:
 
-1. WHEN `GET /api/v1/customer/profile` (authenticated) THEN `customer-service` SHALL return `ReadableCustomer` — no `Customer` entity in JSON
-2. WHEN `PUT /api/v1/customer/profile` or address endpoints THEN SHALL mutate customer rows with store scoping equivalent to monolith
-3. WHEN `POST /api/v1/customer/optin` THEN SHALL persist opt-in via `CustomerOptinService` logic in `sm-customer-core`
-4. WHEN country/zone/language resolution needed THEN SHALL call `reference-service` HTTP
-5. WHEN `POST /api/v1/customer` (registration body) is called on **private admin** paths THEN MAY remain monolith OR delegate per OQ-06 — **public self-registration stays monolith**
-6. WHEN customer not found THEN HTTP 404; unauthorized THEN 401/403 per existing security rules
+1. WHEN `GET /api/v1/customer/profile` (autenticado) THEN `customer-service` SHALL retornar `ReadableCustomer` — sem entidade `Customer` no JSON
+2. WHEN `PUT /api/v1/customer/profile` ou endpoints de endereço THEN SHALL mutar linhas de customer com escopo de loja equivalente ao monólito
+3. WHEN `POST /api/v1/customer/optin` THEN SHALL persistir opt-in via lógica de `CustomerOptinService` em `sm-customer-core`
+4. WHEN resolução de country/zone/language necessária THEN SHALL chamar HTTP ao `reference-service`
+5. WHEN `POST /api/v1/customer` (corpo de registro) é chamado em paths **admin privados** THEN MAY permanecer no monólito OU delegar conforme OQ-06 — **auto-registro público permanece no monólito**
+6. WHEN customer não encontrado THEN HTTP 404; não autorizado THEN 401/403 conforme regras de segurança existentes
 
-**Independent Test**: JWT customer token; update profile; add address; verify DB row; opt-in recorded.
+**Teste independente**: Token JWT de customer; atualizar perfil; adicionar endereço; verificar linha no DB; opt-in registrado.
 
-**Source components:**
+**Componentes fonte:**
 
-| Role | Path |
-| ---- | ---- |
-| Entities | `sm-core-model/.../customer/` |
-| Services | `sm-core/.../services/customer/`, `optin/`, `attribute/` |
-| APIs | `sm-shop/.../api/v1/customer/CustomerApi.java`, `CustomerNewsletterApi.java`, review APIs (read path) |
+| Papel | Caminho |
+| ----- | ------- |
+| Entidades | `sm-core-model/.../customer/` |
+| Serviços | `sm-core/.../services/customer/`, `optin/`, `attribute/` |
+| APIs | `sm-shop/.../api/v1/customer/CustomerApi.java`, `CustomerNewsletterApi.java`, APIs de review (read path) |
 | Facade | `CustomerFacadeImpl` |
 | DTOs | `sm-shop-model/.../model/customer/` |
 
 ---
 
-### P1: Cart merge decoupling ⭐ MVP
+### P1: Desacoplamento do merge de cart ⭐ MVP
 
-**User Story**: As a returning customer, I want my session cart merged with my saved cart on login, without `customer-service` participating in the shopping-cart database transaction.
+**História de usuário**: Como customer recorrente, quero que meu carrinho de sessão seja mesclado com meu carrinho salvo no login, sem `customer-service` participar da transação de banco do shopping cart.
 
-**Why P1**: Master plan explicitly calls out "decouple cart merge" as Wave 4 customer deliverable.
+**Por quê P1**: O plano mestre explicita "desacoplar merge de cart" como entregável de customer da Onda 4.
 
-**Acceptance Criteria**:
+**Critérios de aceite**:
 
-1. WHEN login succeeds in monolith THEN `CustomerFacade` SHALL obtain `CustomerSnapshot` from `customer-service` (or cache) before calling `ShoppingCartService.mergeShoppingCarts`
-2. WHEN merge executes THEN `ShoppingCartService` SHALL NOT require in-process `Customer` entity from `CustomerService` — uses snapshot id + store code
-3. WHEN `customer-service` is down during merge THEN monolith SHALL fail merge with clear error OR documented degrade path (Design: fail closed preferred)
-4. WHEN order checkout creates customer in same transaction (today) THEN behavior unchanged in Wave 4 — order coupling deferred to Onda 6
+1. WHEN login bem-sucedido no monólito THEN `CustomerFacade` SHALL obter `CustomerSnapshot` do `customer-service` (ou cache) antes de chamar `ShoppingCartService.mergeShoppingCarts`
+2. WHEN merge executa THEN `ShoppingCartService` SHALL NOT exigir entidade `Customer` in-process de `CustomerService` — usa id do snapshot + código da loja
+3. WHEN `customer-service` está down durante merge THEN monólito SHALL falhar merge com erro claro OU caminho de degradação documentado (Design: fail closed preferido)
+4. WHEN checkout de order cria customer na mesma transação (hoje) THEN comportamento inalterado na Onda 4 — acoplamento com order adiado para Onda 6
 
-**Requirement IDs:** CUS-08, CUS-09, STR-08
-
----
-
-### P1: Strangler BFF — catalog + customer HTTP adapters ⭐ MVP
-
-**User Story**: As platform engineer, I want feature-flagged HTTP adapters for catalog and customer facades, to validate extraction without rewriting controllers.
-
-**Acceptance Criteria**:
-
-1. WHEN `wave4.strangler.enabled=true` THEN public product/category/manufacturer/inventory/price GET adapters SHALL delegate to `catalog-service`
-2. WHEN strangler enabled THEN customer profile/address/optin adapters SHALL delegate to `customer-service`
-3. WHEN strangler disabled THEN in-process facades SHALL behave as today
-4. WHEN private admin product **write** APIs invoked THEN SHALL remain in-process monolith (no catalog-service delegation)
-5. WHEN remote failure THEN HTTP 503 + `X-Correlation-Id` — no silent fallback
-6. JWT forwarded on private customer routes per Wave 1–2 pattern
-
-**Requirement IDs:** STR-01…STR-06
+**IDs de requisito:** CUS-08, CUS-09, STR-08
 
 ---
 
-### P2: Product images via content-service
+### P1: Strangler BFF — adapters HTTP catalog + customer ⭐ MVP
 
-**User Story**: As store admin, I want product/variant/option images uploaded through existing flows, with blobs owned by content-service (Onda 2 deferral OQ-02).
+**História de usuário**: Como engenheiro de plataforma, quero adapters HTTP com feature flag para facades de catalog e customer, para validar extração sem reescrever controllers.
 
-**Acceptance Criteria**:
+**Critérios de aceite**:
 
-1. WHEN `ProductOptionFacadeImpl` / variant group uploads image THEN monolith SHALL use `ContentServiceClient` (already Wave 2) with `FileContentType` PRODUCT/VARIANT/PROPERTY
-2. WHEN `catalog-service` serves product read DTOs THEN image URLs SHALL remain consistent with `LocationImageConfig` / static proxy semantics
-3. WHEN `/static/products/**` requested THEN monolith `StaticContentProxy` extended OR catalog-service redirect — Design detail
+1. WHEN `wave4.strangler.enabled=true` THEN adapters GET públicos de product/category/manufacturer/inventory/price SHALL delegar ao `catalog-service`
+2. WHEN strangler habilitado THEN adapters de perfil/endereço/optin de customer SHALL delegar ao `customer-service`
+3. WHEN strangler desabilitado THEN facades in-process SHALL comportar-se como hoje
+4. WHEN APIs admin privadas de **escrita** de produto invocadas THEN SHALL permanecer in-process no monólito (sem delegação ao catalog-service)
+5. WHEN falha remota THEN HTTP 503 + `X-Correlation-Id` — sem fallback silencioso
+6. JWT encaminhado em rotas privadas de customer conforme padrão Ondas 1–2
 
-**Requirement IDs:** CAT-10, CNT-W4-01
-
----
-
-### P2: Pact contract tests — Wave 4
-
-**User Story**: As developer, I want Pact coverage for catalog read and customer profile endpoints, so contract drift fails CI before deploy.
-
-**Acceptance Criteria**:
-
-1. WHEN `ProductSnapshot` or `ReadableProduct` schema breaks THEN consumer pact SHALL fail
-2. WHEN gate Full runs THEN SHALL include `Wave4ConsumerPactTest` + provider tests on both services
-3. WHEN `schemaVersion` increments THEN pact fixtures SHALL pin supported versions
-
-**Requirement IDs:** STR-02, CAT-11, CUS-10
+**IDs de requisito:** STR-01…STR-06
 
 ---
 
-### P3: Observability — Wave 4
+### P2: Imagens de produto via content-service
 
-**User Story**: As operator, I want health checks and correlation IDs on catalog-service and customer-service.
+**História de usuário**: Como admin de loja, quero imagens de produto/variante/opção enviadas pelos fluxos existentes, com blobs pertencentes ao content-service (adiamento Onda 2 OQ-02).
 
-**Acceptance Criteria**:
+**Critérios de aceite**:
 
-1. WHEN `GET /actuator/health` THEN each service reports DB + HTTP deps (reference, merchant for catalog)
-2. WHEN request processed THEN `X-Correlation-Id` propagated per Waves 1–2
-3. WHEN catalog read p95 exceeds 2× monolith baseline THEN document tuning (connection pool, snapshot cache)
+1. WHEN `ProductOptionFacadeImpl` / grupo de variante faz upload de imagem THEN monólito SHALL usar `ContentServiceClient` (já Onda 2) com `FileContentType` PRODUCT/VARIANT/PROPERTY
+2. WHEN `catalog-service` serve DTOs de leitura de produto THEN URLs de imagem SHALL permanecer consistentes com semântica de `LocationImageConfig` / proxy estático
+3. WHEN `/static/products/**` solicitado THEN monólito `StaticContentProxy` estendido OU redirect do catalog-service — detalhe em Design
 
-**Requirement IDs:** STR-05
+**IDs de requisito:** CAT-10, CNT-W4-01
 
 ---
 
-## Edge Cases
+### P2: Testes de contrato (Pact) — Onda 4
+
+**História de usuário**: Como desenvolvedor, quero cobertura Pact para endpoints de leitura de catalog e perfil de customer, para que drift de contrato falhe no CI antes do deploy.
+
+**Critérios de aceite**:
+
+1. WHEN schema de `ProductSnapshot` ou `ReadableProduct` quebra THEN consumer pact SHALL falhar
+2. WHEN gate Full executa THEN SHALL incluir `Wave4ConsumerPactTest` + testes provider nos dois serviços
+3. WHEN `schemaVersion` incrementa THEN fixtures pact SHALL fixar versões suportadas
+
+**IDs de requisito:** STR-02, CAT-11, CUS-10
+
+---
+
+### P3: Observabilidade — Onda 4
+
+**História de usuário**: Como operador, quero health checks e correlation IDs em catalog-service e customer-service.
+
+**Critérios de aceite**:
+
+1. WHEN `GET /actuator/health` THEN cada serviço reporta DB + deps HTTP (reference, merchant para catalog)
+2. WHEN requisição processada THEN `X-Correlation-Id` propagado conforme Ondas 1–2
+3. WHEN p95 de leitura de catalog excede 2× baseline do monólito THEN documentar tuning (connection pool, cache de snapshot)
+
+**IDs de requisito:** STR-05
+
+---
+
+## Casos extremos
 
 ### Catalog
 
-- WHEN product has variants without inventory THEN read DTO SHALL match monolith empty-inventory semantics
-- WHEN category tree depth exceeds pagination THEN SHALL preserve lazy-load behavior of `CategoryFacadeImpl`
-- WHEN `ProductFacadeV2` and `ProductFacadeImpl` diverge THEN strangler adapter MUST target **V1 public paths first**; V2 delegation documented in Design
-- WHEN only price changes (no product save event) THEN search index MAY be stale — accept per GAP-SRCH; snapshot reindex is monolith producer responsibility
-- WHEN digital product file metadata requested on public API THEN SHALL NOT expose download tokens without auth — preserve monolith rules
+- WHEN produto tem variantes sem inventário THEN DTO de leitura SHALL corresponder à semântica de inventário vazio do monólito
+- WHEN profundidade da árvore de categorias excede paginação THEN SHALL preservar comportamento lazy-load de `CategoryFacadeImpl`
+- WHEN `ProductFacadeV2` e `ProductFacadeImpl` divergem THEN adapter strangler MUST mirar **paths públicos V1 primeiro**; delegação V2 documentada em Design
+- WHEN apenas preço muda (sem evento de save de produto) THEN índice de search PODE ficar stale — aceitar conforme GAP-SRCH; reindex de snapshot é responsabilidade do producer no monólito
+- WHEN metadados de arquivo de produto digital solicitados na API pública THEN SHALL NOT expor tokens de download sem auth — preservar regras do monólito
 
 ### Customer
 
-- WHEN duplicate email per store THEN registration conflict semantics unchanged (monolith auth path)
-- WHEN address `stateProvince` populator bug (quick win) THEN fix MAY land in Wave 4 if trivial — not required for gate
-- WHEN customer review POST remains monolith THEN `customer-service` MAY expose read-only reviews initially — Design phases write path
-- WHEN merge races (two tabs login) THEN merge idempotency follows existing `ShoppingCartService` behavior
+- WHEN email duplicado por loja THEN semântica de conflito de registro inalterada (path de auth no monólito)
+- WHEN bug do populator de address `stateProvince` (quick win) THEN fix PODE entrar na Onda 4 se trivial — não obrigatório para gate
+- WHEN POST de review de customer permanece no monólito THEN `customer-service` PODE expor reviews somente leitura inicialmente — Design faseia write path
+- WHEN corridas de merge (dois tabs no login) THEN idempotência de merge segue comportamento existente de `ShoppingCartService`
 
-### Cross-cutting
+### Transversal
 
-- WHEN `reference-service` or `merchant-service` down THEN catalog/customer SHALL 503 on routes needing resolution
-- WHEN shared DB migration runs THEN coordinate ownership — catalog/customer services use same tables as monolith writers temporarily
-
----
-
-## Requirement Traceability
-
-| Requirement ID | Story | Summary | Phase | Status |
-| -------------- | ----- | ------- | ----- | ------ |
-| CAT-01 | P1 Catalog | `catalog-service` deployable Spring Boot | Execute | Planned |
-| CAT-02 | P1 Catalog | Public product read APIs frozen paths | Execute | Planned |
-| CAT-03 | P1 Catalog | Category read APIs | Execute | Planned |
-| CAT-04 | P1 Catalog | Manufacturer + product group read | Execute | Planned |
-| CAT-05 | P1 Catalog | Inventory/price public read | Execute | Planned |
-| CAT-06 | P1 Catalog | Zero JPA in JSON responses | Execute | Planned |
-| CAT-07 | P1 Catalog | reference + merchant HTTP for tenant/lang | Execute | Planned |
-| CAT-08 | P1 Snapshot | Internal `ProductSnapshot` API | Execute | Planned |
-| CAT-09 | P1 Snapshot | Search index uses ProductSnapshot v2 | Execute | Planned |
-| CAT-10 | P2 Images | Product images via content-service | Execute | Planned |
-| CAT-11 | P2 Pact | Catalog provider pact | Execute | Planned |
-| CAT-12 | P1 Core | `sm-catalog-core` read services extracted | Execute | Planned |
-| CUS-01 | P1 Customer | `customer-service` deployable | Execute | Planned |
-| CUS-02 | P1 Customer | Profile read/update | Execute | Planned |
-| CUS-03 | P1 Customer | Address CRUD | Execute | Planned |
-| CUS-04 | P1 Customer | Opt-in endpoints | Execute | Planned |
-| CUS-05 | P1 Customer | Zero JPA in JSON | Execute | Planned |
-| CUS-06 | P1 Customer | reference HTTP for geo/lang | Execute | Planned |
-| CUS-07 | P1 Customer | Reviews read (write optional P2) | Execute | Planned |
-| CUS-08 | P1 Merge | CustomerSnapshot for cart merge | Execute | Planned |
-| CUS-09 | P1 Merge | ShoppingCart merge without in-process CustomerService | Execute | Planned |
-| CUS-10 | P2 Pact | Customer provider pact | Execute | Planned |
-| STR-01 | P1 Strangler | `wave4.strangler.enabled` feature flag | Execute | Planned |
-| STR-02 | P2 Pact | Wave4 consumer pact in sm-shop | Execute | Planned |
-| STR-03 | AD-022 | Shared DB schema | Execute | Planned |
-| STR-04 | P1 | Frozen REST paths | Execute | Planned |
-| STR-05 | P3 | Actuator health + correlation | Execute | Planned |
-| STR-06 | P1 | catalog→reference/merchant; customer→reference | Execute | Planned |
-| STR-07 | P1 | ProductSnapshot builder migration | Execute | Planned |
-| STR-08 | P1 | Cart merge orchestration in monolith | Execute | Planned |
-
-**Coverage:** 30 total, 30 mapped, 0 unmapped
+- WHEN `reference-service` ou `merchant-service` down THEN catalog/customer SHALL 503 em rotas que precisam de resolução
+- WHEN migration de DB compartilhado executa THEN coordenar ownership — serviços catalog/customer usam mesmas tabelas que writers do monólito temporariamente
 
 ---
 
-## Open Questions — Resolved ✅
+## Rastreabilidade de requisitos
 
-See [context.md](./context.md) and [design.md](./design.md).
+| ID de requisito | Story | Resumo | Fase | Status |
+| --------------- | ----- | ------ | ---- | ------ |
+| CAT-01 | P1 Catalog | `catalog-service` deployável Spring Boot | Execute | Planejado |
+| CAT-02 | P1 Catalog | APIs públicas de leitura de produto paths congelados | Execute | Planejado |
+| CAT-03 | P1 Catalog | APIs de leitura de categoria | Execute | Planejado |
+| CAT-04 | P1 Catalog | Leitura de fabricante + grupo de produto | Execute | Planejado |
+| CAT-05 | P1 Catalog | Leitura pública de inventário/preço | Execute | Planejado |
+| CAT-06 | P1 Catalog | Zero JPA em respostas JSON | Execute | Planejado |
+| CAT-07 | P1 Catalog | HTTP reference + merchant para tenant/lang | Execute | Planejado |
+| CAT-08 | P1 Snapshot | API interna `ProductSnapshot` | Execute | Planejado |
+| CAT-09 | P1 Snapshot | Índice de search usa ProductSnapshot v2 | Execute | Planejado |
+| CAT-10 | P2 Images | Imagens de produto via content-service | Execute | Planejado |
+| CAT-11 | P2 Pact | Provider pact de catalog | Execute | Planejado |
+| CAT-12 | P1 Core | Serviços de leitura `sm-catalog-core` extraídos | Execute | Planejado |
+| CUS-01 | P1 Customer | `customer-service` deployável | Execute | Planejado |
+| CUS-02 | P1 Customer | Leitura/atualização de perfil | Execute | Planejado |
+| CUS-03 | P1 Customer | CRUD de endereço | Execute | Planejado |
+| CUS-04 | P1 Customer | Endpoints de opt-in | Execute | Planejado |
+| CUS-05 | P1 Customer | Zero JPA em JSON | Execute | Planejado |
+| CUS-06 | P1 Customer | HTTP reference para geo/lang | Execute | Planejado |
+| CUS-07 | P1 Customer | Leitura de reviews (escrita opcional P2) | Execute | Planejado |
+| CUS-08 | P1 Merge | CustomerSnapshot para merge de cart | Execute | Planejado |
+| CUS-09 | P1 Merge | Merge ShoppingCart sem CustomerService in-process | Execute | Planejado |
+| CUS-10 | P2 Pact | Provider pact de customer | Execute | Planejado |
+| STR-01 | P1 Strangler | Feature flag `wave4.strangler.enabled` | Execute | Planejado |
+| STR-02 | P2 Pact | Consumer pact Onda 4 em sm-shop | Execute | Planejado |
+| STR-03 | AD-022 | Schema DB compartilhado | Execute | Planejado |
+| STR-04 | P1 | Paths REST congelados | Execute | Planejado |
+| STR-05 | P3 | Actuator health + correlation | Execute | Planejado |
+| STR-06 | P1 | catalog→reference/merchant; customer→reference | Execute | Planejado |
+| STR-07 | P1 | Migração do builder ProductSnapshot | Execute | Planejado |
+| STR-08 | P1 | Orquestração de merge de cart no monólito | Execute | Planejado |
 
-| ID | Decision |
-|----|----------|
-| OQ-01 | Catalog read-first; writes in monolith |
-| OQ-02 | ProductSnapshot canonical |
-| OQ-03 | CustomerSnapshot + monolith merge orchestration |
-| OQ-04 | Product images via content-service |
-| OQ-05 | Strangler on V1 paths; V2 delegates same adapter |
-| OQ-06 | Auth endpoints stay monolith |
+**Cobertura:** 30 total, 30 mapeados, 0 não mapeados
 
 ---
 
-## Success Criteria
+## Questões em aberto — Resolvidas ✅
 
-- [ ] `catalog-service` and `customer-service` pass health check and all P1 endpoints in integration
-- [ ] Strangler produces equivalent responses to in-process baseline (pact green)
-- [ ] No migrated endpoint returns JPA entity types in JSON
-- [ ] Search indexing accepts `ProductSnapshot` v2 from monolith producer
-- [ ] Cart merge integration test passes with customer-service remote
-- [ ] Admin product **write** APIs still function in monolith only
-- [ ] `./mvnw clean install` reactor green with Wave 4 modules
-- [ ] Pattern documented in STATE.md for Onda 5
-- [ ] Public read p95 ≤ 2× monolith baseline
+Ver [context.md](./context.md) e [design.md](./design.md).
 
----
-
-## Appendix A — Coupling scores (master plan)
-
-| Domain | Difficulty | Afferent | Wave 4 approach |
-|--------|------------|----------|-----------------|
-| catalog | 7/10 | 10 refs | Read API extraction only |
-| customer | 5/10 | order creates customer | Profile extraction; order txn deferred |
+| ID | Decisão |
+|----|---------|
+| OQ-01 | Catalog read-first; writes no monólito |
+| OQ-02 | ProductSnapshot canônico |
+| OQ-03 | CustomerSnapshot + orquestração de merge no monólito |
+| OQ-04 | Imagens de produto via content-service |
+| OQ-05 | Strangler em paths V1; V2 delega no mesmo adapter |
+| OQ-06 | Endpoints de auth permanecem no monólito |
 
 ---
 
-## Appendix B — Key source files
+## Critérios de sucesso
+
+- [ ] `catalog-service` e `customer-service` passam health check e todos os endpoints P1 em integração
+- [ ] Strangler produz respostas equivalentes ao baseline in-process (pact verdes)
+- [ ] Nenhum endpoint migrado retorna tipos de entidade JPA no JSON
+- [ ] Indexação de search aceita `ProductSnapshot` v2 do producer no monólito
+- [ ] Teste de integração de merge de cart passa com customer-service remoto
+- [ ] APIs admin de **escrita** de produto ainda funcionam somente no monólito
+- [ ] Reator `./mvnw clean install` verde com módulos Onda 4
+- [ ] Padrão documentado em STATE.md para Onda 5
+- [ ] p95 de leitura pública ≤ 2× baseline do monólito
+
+---
+
+## Apêndice A — Scores de acoplamento (plano mestre)
+
+| Domínio | Dificuldade | Aferente | Abordagem Onda 4 |
+|---------|-------------|----------|------------------|
+| catalog | 7/10 | 10 refs | Extração de API de leitura apenas |
+| customer | 5/10 | order cria customer | Extração de perfil; txn de order adiada |
+
+---
+
+## Apêndice B — Arquivos-fonte principais
 
 ### Catalog
 
-| Role | Path |
-|------|------|
-| Product service | `sm-core/.../catalog/product/ProductServiceImpl.java` |
-| Category service | `sm-core/.../catalog/category/CategoryServiceImpl.java` |
-| Product API | `sm-shop/.../api/v1/product/ProductApi.java` |
-| Category API | `sm-shop/.../api/v1/category/CategoryApi.java` |
+| Papel | Caminho |
+|-------|---------|
+| Serviço de produto | `sm-core/.../catalog/product/ProductServiceImpl.java` |
+| Serviço de categoria | `sm-core/.../catalog/category/CategoryServiceImpl.java` |
+| API de produto | `sm-shop/.../api/v1/product/ProductApi.java` |
+| API de categoria | `sm-shop/.../api/v1/category/CategoryApi.java` |
 | Facades | `sm-shop/.../facade/product/ProductFacadeImpl.java` |
 
 ### Customer
 
-| Role | Path |
-|------|------|
-| Customer service | `sm-core/.../customer/CustomerServiceImpl.java` |
-| Cart merge | `sm-core/.../shoppingcart/ShoppingCartServiceImpl.java` (`mergeShoppingCarts`) |
-| Customer API | `sm-shop/.../api/v1/customer/CustomerApi.java` |
+| Papel | Caminho |
+|-------|---------|
+| Serviço de customer | `sm-core/.../customer/CustomerServiceImpl.java` |
+| Merge de cart | `sm-core/.../shoppingcart/ShoppingCartServiceImpl.java` (`mergeShoppingCarts`) |
+| API de customer | `sm-shop/.../api/v1/customer/CustomerApi.java` |
 | Facade | `sm-shop/.../facade/customer/CustomerFacadeImpl.java` |

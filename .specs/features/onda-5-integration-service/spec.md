@@ -1,79 +1,79 @@
-# Onda 5 — Integration Service Specification
+# Onda 5 — Especificação Integration Service
 
-**Feature ID:** `onda-5-integration-service`
-**Phase:** Specify → Design → Tasks (Execute blocked)
-**Complexity:** Large (1 deployable service + Strangler + plugin registry)
-**Source:** [MIGRATION-MASTER-PLAN.md](../../../docs/decomposition/MIGRATION-MASTER-PLAN.md) § Onda 5
-**Coupling rank:** 9th of 10 extraction domains (lower than originally assumed; still blocks Wave 6 payments split)
-
----
-
-## Problem Statement
-
-Payment and shipping quote orchestration today lives inside `sm-core` with **MODEL coupling disguised as plugins**: `PaymentModule` and `ShippingQuoteModule` in `sm-core-modules` accept JPA entities (`Order`, `Customer`, `ShoppingCartItem`, `MerchantStore`). `PaymentServiceImpl` mutates `Order` via `OrderService` after gateway calls, creating the **order ↔ payments cycle** that blocks Order service extraction (Wave 6).
-
-Shipping orchestration depends on catalog pricing/weights (`PricingService`, `Product`), reference data (countries), and system configuration — but does not own order state. Payment orchestration depends on system module configuration and gateway plugins under `modules/integration/`.
-
-Without a formal boundary, Wave 6 cannot split payments from order without duplicating gateway logic or breaking checkout. Wave 3 must deliver DTO-based module contracts and checkout saga foundation first; Wave 4 partial must expose catalog read paths for shipping product snapshots.
-
-This spec defines **what** `integration-service` owns, **what** stays in the monolith BFF/checkout layer, and **how** to remain stateless with respect to `Order` entities.
+**ID da feature:** `onda-5-integration-service`
+**Fase:** Specify → Design → Tasks (Execute bloqueado)
+**Complexidade:** Grande (1 serviço implantável + Strangler + registry de plugins)
+**Fonte:** [MIGRATION-MASTER-PLAN.md](../../../docs/decomposition/MIGRATION-MASTER-PLAN.md) § Onda 5
+**Ranking de acoplamento:** 9º de 10 domínios de extração (menor que o assumido originalmente; ainda bloqueia split payments da Onda 6)
 
 ---
 
-## Goals
+## Declaração do problema
 
-- [ ] `integration-service` deployable as independent Spring Boot application (:8086)
-- [ ] Monolith consumes integration via HTTP Strangler on existing payment/shipping configuration and quote surfaces
-- [ ] Zero JPA entity types in REST JSON responses for migrated endpoints
-- [ ] Payment and shipping **orchestration** (module registry, config CRUD, gateway calls) owned by integration-service
-- [ ] **Stateless** regarding `Order` — service returns transaction/quote DTOs; order persistence stays in monolith/checkout saga
-- [ ] `PaymentModuleV2` / `ShippingQuoteModuleV2` DTO contracts from Onda 3 used at runtime boundaries
-- [ ] Break `PaymentServiceImpl` → `OrderService.saveOrUpdate` path for new strangler flow
-- [ ] Contract tests (Pact) covering P1 payment config, shipping quotes, and module listing endpoints
-- [ ] Reuse `shopizer-api-contracts` for shared integration DTOs and HTTP clients
+A orquestração de pagamento e cotação de frete hoje vive dentro de `sm-core` com **acoplamento MODEL disfarçado de plugins**: `PaymentModule` e `ShippingQuoteModule` em `sm-core-modules` aceitam entidades JPA (`Order`, `Customer`, `ShoppingCartItem`, `MerchantStore`). `PaymentServiceImpl` muta `Order` via `OrderService` após chamadas ao gateway, criando o **ciclo order ↔ payments** que bloqueia extração do serviço Order (Onda 6).
+
+A orquestração de frete depende de preço/peso de catálogo (`PricingService`, `Product`), dados de referência (países) e configuração de sistema — mas não é dona do estado do pedido. A orquestração de pagamento depende de configuração de módulos de sistema e plugins de gateway sob `modules/integration/`.
+
+Sem fronteira formal, a Onda 6 não consegue separar payments de order sem duplicar lógica de gateway ou quebrar checkout. A Onda 3 deve entregar contratos de módulo baseados em DTO e fundação de saga de checkout primeiro; a Onda 4 parcial deve expor caminhos de leitura de catálogo para snapshots de produto de frete.
+
+Esta spec define **o que** `integration-service` é dono, **o que** permanece na camada BFF/checkout do monólito e **como** permanecer stateless em relação a entidades `Order`.
 
 ---
 
-## Out of Scope
+## Objetivos
 
-| Feature | Reason |
+- [ ] `integration-service` implantável como aplicação Spring Boot independente (:8086)
+- [ ] Monólito consome integration via HTTP Strangler nas superfícies existentes de configuração de pagamento/frete e cotação
+- [ ] Zero tipos de entidade JPA em respostas JSON REST para endpoints migrados
+- [ ] **Orquestração** de pagamento e frete (registry de módulos, CRUD de config, chamadas gateway) de propriedade de integration-service
+- [ ] **Stateless** em relação a `Order` — serviço retorna DTOs de transação/cotação; persistência de pedido permanece no monólito/saga checkout
+- [ ] Contratos DTO `PaymentModuleV2` / `ShippingQuoteModuleV2` da Onda 3 usados nas fronteiras de runtime
+- [ ] Quebrar caminho `PaymentServiceImpl` → `OrderService.saveOrUpdate` para novo fluxo strangler
+- [ ] Testes de contrato (Pact) cobrindo endpoints P1 de config pagamento, cotações de frete e listagem de módulos
+- [ ] Reutilizar `shopizer-api-contracts` para DTOs e clients HTTP compartilhados de integration
+
+---
+
+## Não-objetivos
+
+| Funcionalidade | Motivo |
 | ------- | ------ |
-| Order entity ownership / `OrderService` extraction | Wave 6 |
-| Shopping cart calculation | Wave 6 |
-| Tax calculation at checkout | Remains monolith until order split |
-| Full catalog CRUD | Wave 4 — only read snapshots for shipping |
-| `ProductType` / catalog write paths | Wave 4+ |
-| Database split per service | AD-003 inherited — shared schema during runtime extraction |
-| New payment gateways beyond existing plugins | No new providers in this wave |
-| Marketplace signup / payment stubs | Incomplete; defer |
-| Feign/WebClient/service discovery | AD-005 pattern — RestTemplate only |
-| Replacing global AOP transaction for checkout | Saga/outbox foundation from Onda 3; full order saga in Wave 6 |
-| Stripe/Braintree SDK upgrades | Maintenance; not decomposition scope |
+| Ownership de entidade Order / extração `OrderService` | Onda 6 |
+| Cálculo de shopping cart | Onda 6 |
+| Cálculo de imposto no checkout | Permanece monólito até split de order |
+| CRUD completo de catálogo | Onda 4 — apenas snapshots de leitura para frete |
+| Caminhos write `ProductType` / catálogo | Onda 4+ |
+| Split de banco por serviço | AD-003 herdado — schema compartilhado durante extração runtime |
+| Novos gateways de pagamento além dos plugins existentes | Sem novos provedores nesta onda |
+| Stubs marketplace signup / payment | Incompletos; adiar |
+| Feign/WebClient/service discovery | Padrão AD-005 — apenas RestTemplate |
+| Substituir transação global AOP de checkout | Fundação saga/outbox da Onda 3; saga completa de order na Onda 6 |
+| Upgrades SDK Stripe/Braintree | Manutenção; fora do escopo de decomposição |
 
 ---
 
 ## User Stories
 
-### P1: Integration Service — payment module configuration ⭐ MVP
+### P1: Integration Service — configuração de módulo de pagamento ⭐ MVP
 
-**User Story**: As a store administrator, I want to configure payment modules (Stripe, PayPal, money order, etc.) via existing admin APIs, so gateway setup does not depend on the monolith runtime.
+**História de usuário**: Como administrador de loja, quero configurar módulos de pagamento (Stripe, PayPal, money order, etc.) pelas APIs admin existentes, para que setup de gateway não dependa do runtime do monólito.
 
-**Why P1**: Configuration is the lowest-risk surface — no order mutation, validates Strangler + JWT + shared DB pattern for integration domain.
+**Por que P1**: Configuração é a superfície de menor risco — sem mutação de pedido, valida padrão Strangler + JWT + DB compartilhado para domínio de integration.
 
-**Acceptance Criteria**:
+**Critérios de aceite**:
 
-1. WHEN `GET /api/v1/private/modules/payment` THEN `integration-service` SHALL return configured payment modules as DTOs — SHALL NOT expose `IntegrationModule` JPA types
-2. WHEN `POST /api/v1/private/modules/payment/{code}` with module configuration THEN service SHALL validate, encrypt secrets, and persist via `MerchantConfigurationService` equivalent
-3. WHEN `DELETE /api/v1/private/modules/payment/{code}` THEN service SHALL remove merchant configuration for that module
-4. WHEN `GET /api/v1/payment/config` (public store config) THEN service SHALL return accepted payment methods for the store
-5. WHEN admin routes require auth THEN JWT validation SHALL match Wave 1–2 pattern for `/private/**`
-6. WHEN tenant is identified THEN service SHALL resolve store by code — without requiring `MerchantStore` entity in request body
+1. WHEN `GET /api/v1/private/modules/payment` THEN `integration-service` SHALL retornar módulos de pagamento configurados como DTOs — SHALL NOT expor tipos JPA `IntegrationModule`
+2. WHEN `POST /api/v1/private/modules/payment/{code}` com configuração de módulo THEN service SHALL validar, criptografar segredos e persistir via equivalente `MerchantConfigurationService`
+3. WHEN `DELETE /api/v1/private/modules/payment/{code}` THEN service SHALL remover configuração merchant daquele módulo
+4. WHEN `GET /api/v1/payment/config` (config pública da loja) THEN service SHALL retornar métodos de pagamento aceitos para a loja
+5. WHEN rotas admin exigem auth THEN validação JWT SHALL seguir padrão Ondas 1–2 para `/private/**`
+6. WHEN tenant é identificado THEN service SHALL resolver loja por code — sem exigir entidade `MerchantStore` no body da request
 
-**Independent Test**: Deploy `integration-service` + `reference-service`; configure Stripe module; list payment methods; verify encrypted config in `MERCHANT_CONFIGURATION`.
+**Teste independente**: Implantar `integration-service` + `reference-service`; configurar módulo Stripe; listar métodos de pagamento; verificar config criptografada em `MERCHANT_CONFIGURATION`.
 
-**Source components:**
+**Componentes-fonte:**
 
-| Role | Path |
+| Papel | Caminho |
 |------|------|
 | Service | `sm-core/.../services/payments/PaymentServiceImpl.java` |
 | Module API | `sm-shop/.../api/v1/payment/PaymentApi.java` |
@@ -81,30 +81,30 @@ This spec defines **what** `integration-service` owns, **what** stays in the mon
 | Contract | `sm-core-modules/.../payment/model/PaymentModule.java` |
 | Plugins | `sm-core/.../modules/integration/payment/impl/*.java` |
 
-**Requirement IDs:** PAY-01…PAY-06
+**IDs de requisito:** PAY-01…PAY-06
 
 ---
 
-### P1: Integration Service — shipping configuration and quotes ⭐ MVP
+### P1: Integration Service — configuração de frete e cotações ⭐ MVP
 
-**User Story**: As a storefront customer, I want shipping quotes for my cart via existing APIs, so checkout can show carrier options without the monolith executing shipping plugins in-process.
+**História de usuário**: Como cliente da vitrine, quero cotações de frete para meu carrinho pelas APIs existentes, para que checkout mostre opções de transportadora sem o monólito executar plugins de frete in-process.
 
-**Why P1**: Shipping has no order↔payments cycle; quote path is read-heavy and validates catalog snapshot integration from Wave 4.
+**Por que P1**: Frete não tem ciclo order↔payments; caminho de cotação é read-heavy e valida integração de snapshot de catálogo da Onda 4.
 
-**Acceptance Criteria**:
+**Critérios de aceite**:
 
-1. WHEN `POST /api/v1/auth/cart/{code}/shipping` with delivery address THEN BFF SHALL assemble `ShippingQuoteRequest` DTO and `integration-service` SHALL return `ReadableShippingQuote` with options
-2. WHEN shipping modules are configured THEN service SHALL invoke `ShippingQuoteModuleV2` plugins with DTO inputs (delivery, packages, product snapshots)
-3. WHEN `GET /api/v1/shipping/countries` THEN service SHALL return ship-to country list using reference-service HTTP for localization
-4. WHEN admin configures shipping modules/origin/packaging THEN private configuration APIs SHALL persist settings equivalent to monolith behavior
-5. WHEN product weight/dimensions are needed THEN service SHALL fetch `ProductSnapshot` (or shipping subset) from catalog read API — SHALL NOT inject `PricingService` in-process from monolith
-6. WHEN no shipping is required for cart items THEN service SHALL return empty quote with `requiresShipping=false`
+1. WHEN `POST /api/v1/auth/cart/{code}/shipping` com endereço de entrega THEN BFF SHALL montar DTO `ShippingQuoteRequest` e `integration-service` SHALL retornar `ReadableShippingQuote` com opções
+2. WHEN módulos de frete estão configurados THEN service SHALL invocar plugins `ShippingQuoteModuleV2` com inputs DTO (entrega, pacotes, snapshots de produto)
+3. WHEN `GET /api/v1/shipping/countries` THEN service SHALL retornar lista de países de entrega usando HTTP reference-service para localização
+4. WHEN admin configura módulos/origem/empacotamento de frete THEN APIs privadas de configuração SHALL persistir settings equivalentes ao comportamento do monólito
+5. WHEN peso/dimensões de produto são necessários THEN service SHALL buscar `ProductSnapshot` (ou subset de frete) da API de leitura de catálogo — SHALL NOT injetar `PricingService` in-process do monólito
+6. WHEN frete não é necessário para itens do carrinho THEN service SHALL retornar cotação vazia com `requiresShipping=false`
 
-**Independent Test**: Cart with physical product; POST shipping quote; receive UPS/custom options; verify no `Order` entity in integration-service logs.
+**Teste independente**: Carrinho com produto físico; POST cotação de frete; receber opções UPS/custom; verificar ausência de entidade `Order` nos logs de integration-service.
 
-**Source components:**
+**Componentes-fonte:**
 
-| Role | Path |
+| Papel | Caminho |
 |------|------|
 | Service | `sm-core/.../services/shipping/ShippingServiceImpl.java` |
 | APIs | `sm-shop/.../api/v1/order/OrderShippingApi.java`, `ShippingConfigurationApi.java` |
@@ -112,123 +112,123 @@ This spec defines **what** `integration-service` owns, **what** stays in the mon
 | Contract | `sm-core-modules/.../shipping/model/ShippingQuoteModule.java` |
 | Plugins | `sm-core/.../modules/integration/shipping/impl/*.java` |
 
-**Requirement IDs:** SHP-01…SHP-07
+**IDs de requisito:** SHP-01…SHP-07
 
 ---
 
-### P1: Integration Service — stateless payment processing ⭐ MVP
+### P1: Integration Service — processamento de pagamento stateless ⭐ MVP
 
-**User Story**: As the checkout flow, I want payment authorization/capture/refund executed via integration-service returning a transaction result, so order status updates remain in the checkout application service and the order↔payments cycle is broken.
+**História de usuário**: Como fluxo de checkout, quero autorização/captura/reembolso executados via integration-service retornando resultado de transação, para que atualizações de status do pedido permaneçam no application service de checkout e o ciclo order↔payments seja quebrado.
 
-**Why P1**: Core value of Wave 5 — enables Wave 6 order/payments split.
+**Por que P1**: Valor central da Onda 5 — habilita split order/payments da Onda 6.
 
-**Acceptance Criteria**:
+**Critérios de aceite**:
 
-1. WHEN `POST /internal/v1/payments/process` with `PaymentProcessRequest` (customer snapshot, payment DTO, cart line snapshots, order snapshot id, amount) THEN service SHALL invoke appropriate `PaymentModuleV2` and return `TransactionResult` — SHALL NOT call `OrderService.saveOrUpdate`
-2. WHEN `POST /internal/v1/payments/capture` with capturable transaction reference THEN service SHALL capture and return `TransactionResult`
-3. WHEN `POST /internal/v1/payments/refund` with partial flag and amount THEN service SHALL refund via gateway and return `TransactionResult`
-4. WHEN `POST /internal/v1/payments/init` for express checkout THEN service SHALL return initialization token/transaction without order persistence
-5. WHEN gateway fails THEN service SHALL return structured error — checkout saga in monolith handles order status rollback
-6. WHEN transaction is successful THEN service MAY persist `Transaction` record in shared DB — SHALL NOT mutate `Order` rows
+1. WHEN `POST /internal/v1/payments/process` com `PaymentProcessRequest` (snapshot customer, DTO payment, snapshots de linha de carrinho, id snapshot order, amount) THEN service SHALL invocar `PaymentModuleV2` apropriado e retornar `TransactionResult` — SHALL NOT chamar `OrderService.saveOrUpdate`
+2. WHEN `POST /internal/v1/payments/capture` com referência de transação capturável THEN service SHALL capturar e retornar `TransactionResult`
+3. WHEN `POST /internal/v1/payments/refund` com flag parcial e amount THEN service SHALL reembolsar via gateway e retornar `TransactionResult`
+4. WHEN `POST /internal/v1/payments/init` para express checkout THEN service SHALL retornar token/transação de inicialização sem persistência de pedido
+5. WHEN gateway falha THEN service SHALL retornar erro estruturado — saga checkout no monólito trata rollback de status do pedido
+6. WHEN transação é bem-sucedida THEN service MAY persistir registro `Transaction` no DB compartilhado — SHALL NOT mutar linhas `Order`
 
-**Independent Test**: Mock gateway; process payment via internal API; verify `Transaction` saved; verify no `Order` update in integration-service integration test.
+**Teste independente**: Gateway mock; processar pagamento via API interna; verificar `Transaction` salva; verificar ausência de update `Order` em teste de integração de integration-service.
 
-**Requirement IDs:** PAY-07…PAY-12
-
----
-
-### P1: Strangler BFF — payment and shipping delegation ⭐ MVP
-
-**User Story**: As a platform engineer, I want HTTP adapters for payment/shipping facades behind `wave5.strangler.enabled`, so we can cut over without changing storefront/admin REST paths.
-
-**Acceptance Criteria**:
-
-1. WHEN `wave5.strangler.enabled=true` THEN `PaymentConfigurationFacade` and shipping facades SHALL delegate to `integration-service`
-2. WHEN remote failure THEN SHALL return HTTP 503 with `correlationId` — no silent in-process fallback
-3. WHEN `OrderPaymentApi` processes payment THEN SHALL use checkout application service → integration HTTP client (not in-process `PaymentService`)
-4. WHEN `OrderShippingApi` requests quote THEN SHALL build DTO request from cart facade + catalog snapshots
-5. WHEN correlation header present THEN SHALL propagate `X-Correlation-Id` to integration-service
-
-**Requirement IDs:** STR-01…STR-06
+**IDs de requisito:** PAY-07…PAY-12
 
 ---
 
-### P2: Contract tests and observability
+### P1: Strangler BFF — delegação de pagamento e frete ⭐ MVP
 
-**User Story**: As a developer/operator, I want Pact coverage and health indicators for integration-service dependencies.
+**História de usuário**: Como engenheiro de plataforma, quero adaptadores HTTP para facades de pagamento/frete atrás de `wave5.strangler.enabled`, para cortar over sem mudar caminhos REST da vitrine/admin.
 
-**Acceptance Criteria**:
+**Critérios de aceite**:
 
-1. Pact provider tests for payment config and shipping quote P1 endpoints
-2. Consumer pact in `sm-shop` (`Wave5ConsumerPactTest`)
-3. Actuator health reports DB, module registry, reference-service, catalog-service reachability
-4. JaCoCo gate on `integration-service` and `sm-integration-core` per repository convention
+1. WHEN `wave5.strangler.enabled=true` THEN `PaymentConfigurationFacade` e facades de frete SHALL delegar a `integration-service`
+2. WHEN falha remota THEN SHALL retornar HTTP 503 com `correlationId` — sem fallback in-process silencioso
+3. WHEN `OrderPaymentApi` processa pagamento THEN SHALL usar application service de checkout → client HTTP integration (não `PaymentService` in-process)
+4. WHEN `OrderShippingApi` solicita cotação THEN SHALL montar request DTO a partir de facade de carrinho + snapshots de catálogo
+5. WHEN header de correlation presente THEN SHALL propagar `X-Correlation-Id` para integration-service
 
-**Requirement IDs:** STR-07…STR-09
-
----
-
-### P3: Docker local topology
-
-**User Story**: As a developer, I want `docker-compose-wave5.yml` extending Wave 1–4 topology with integration-service.
-
-**Requirement IDs:** STR-10
+**IDs de requisito:** STR-01…STR-06
 
 ---
 
-## Requirement Traceability
+### P2: Testes de contrato e observabilidade
 
-| ID | Priority | Summary | Wave 3 dependency |
+**História de usuário**: Como desenvolvedor/operador, quero cobertura Pact e health indicators para dependências de integration-service.
+
+**Critérios de aceite**:
+
+1. Testes provider Pact para endpoints P1 de config pagamento e cotação frete
+2. Consumer pact em `sm-shop` (`Wave5ConsumerPactTest`)
+3. Actuator health reporta DB, registry de módulos, reference-service, catalog-service alcançáveis
+4. Gate JaCoCo em `integration-service` e `sm-integration-core` conforme convenção do repositório
+
+**IDs de requisito:** STR-07…STR-09
+
+---
+
+### P3: Topologia Docker local
+
+**História de usuário**: Como desenvolvedor, quero `docker-compose-wave5.yml` estendendo topologia Ondas 1–4 com integration-service.
+
+**IDs de requisito:** STR-10
+
+---
+
+## Rastreabilidade de requisitos
+
+| ID | Prioridade | Resumo | Dependência Onda 3 |
 |----|----------|---------|-------------------|
-| PAY-01 | P1 | List payment modules | `IntegrationModuleDto` |
-| PAY-02 | P1 | Save payment module config | `PersistableIntegrationConfig` |
-| PAY-03 | P1 | Delete payment module config | — |
-| PAY-04 | P1 | Public accepted payment methods | `PaymentMethodDto` |
-| PAY-05 | P1 | JWT on private routes | — |
-| PAY-06 | P1 | Store code tenant resolution | `MerchantStoreId` |
-| PAY-07 | P1 | Process payment stateless | `PaymentProcessRequest`, `OrderSnapshot` |
-| PAY-08 | P1 | Capture payment | `TransactionResult` |
-| PAY-09 | P1 | Refund payment | — |
-| PAY-10 | P1 | Init transaction (express) | — |
-| PAY-11 | P1 | Gateway error mapping | — |
-| PAY-12 | P1 | Transaction persistence only | — |
-| SHP-01 | P1 | Cart shipping quote | `ShippingQuoteRequest` |
-| SHP-02 | P1 | Plugin invocation with DTOs | `ShippingQuoteModuleV2` |
-| SHP-03 | P1 | Ship-to countries | reference HTTP |
-| SHP-04 | P1 | Admin shipping config | — |
-| SHP-05 | P1 | Catalog product snapshots | `ProductSnapshot` (Onda 4) |
-| SHP-06 | P1 | Empty quote when not required | — |
-| SHP-07 | P1 | Shipping summary DTO | `ShippingSummaryDto` |
-| STR-01 | P1 | Strangler facades | `wave5.*` properties |
-| STR-02 | P1 | 503 on remote failure | — |
+| PAY-01 | P1 | Listar módulos de pagamento | `IntegrationModuleDto` |
+| PAY-02 | P1 | Salvar config módulo pagamento | `PersistableIntegrationConfig` |
+| PAY-03 | P1 | Excluir config módulo pagamento | — |
+| PAY-04 | P1 | Métodos de pagamento aceitos públicos | `PaymentMethodDto` |
+| PAY-05 | P1 | JWT em rotas privadas | — |
+| PAY-06 | P1 | Resolução tenant por store code | `MerchantStoreId` |
+| PAY-07 | P1 | Processar pagamento stateless | `PaymentProcessRequest`, `OrderSnapshot` |
+| PAY-08 | P1 | Capturar pagamento | `TransactionResult` |
+| PAY-09 | P1 | Reembolsar pagamento | — |
+| PAY-10 | P1 | Init transação (express) | — |
+| PAY-11 | P1 | Mapeamento erro gateway | — |
+| PAY-12 | P1 | Persistência apenas Transaction | — |
+| SHP-01 | P1 | Cotação frete carrinho | `ShippingQuoteRequest` |
+| SHP-02 | P1 | Invocação plugin com DTOs | `ShippingQuoteModuleV2` |
+| SHP-03 | P1 | Países de entrega | HTTP reference |
+| SHP-04 | P1 | Config admin frete | — |
+| SHP-05 | P1 | Snapshots produto catálogo | `ProductSnapshot` (Onda 4) |
+| SHP-06 | P1 | Cotação vazia quando não necessário | — |
+| SHP-07 | P1 | DTO resumo frete | `ShippingSummaryDto` |
+| STR-01 | P1 | Facades Strangler | properties `wave5.*` |
+| STR-02 | P1 | 503 em falha remota | — |
 | STR-03 | P1 | OrderPaymentApi → checkout + HTTP | Checkout app service |
-| STR-04 | P1 | OrderShippingApi DTO assembly | — |
-| STR-05 | P1 | Correlation propagation | — |
-| STR-06 | P1 | Frozen REST paths | — |
+| STR-04 | P1 | Montagem DTO OrderShippingApi | — |
+| STR-05 | P1 | Propagação correlation | — |
+| STR-06 | P1 | Caminhos REST congelados | — |
 | STR-07 | P2 | Pact provider | — |
 | STR-08 | P2 | Health indicators | — |
-| STR-09 | P2 | JaCoCo gates | — |
+| STR-09 | P2 | Gates JaCoCo | — |
 | STR-10 | P3 | Docker Compose wave5 | — |
 
 ---
 
-## Success Criteria
+## Critérios de sucesso
 
-- [ ] `integration-service` health UP with module registry loaded
-- [ ] Payment config CRUD parity with monolith for ≥ 2 modules (e.g. moneyorder + stripe)
-- [ ] Shipping quote returns options for configured store with catalog snapshot data
-- [ ] Payment process via internal API does not update `Order` table
-- [ ] Pact green for P1 surfaces
-- [ ] `wave5.strangler.enabled` profile documented in Compose
-- [ ] Pattern documented in `STATE.md` for Wave 6 reuse
+- [ ] Health `integration-service` UP com registry de módulos carregado
+- [ ] Paridade CRUD config pagamento com monólito para ≥ 2 módulos (ex.: moneyorder + stripe)
+- [ ] Cotação de frete retorna opções para loja configurada com dados de snapshot de catálogo
+- [ ] Processamento de pagamento via API interna não atualiza tabela `Order`
+- [ ] Pact verde para superfícies P1
+- [ ] Profile `wave5.strangler.enabled` documentado no Compose
+- [ ] Padrão documentado em `STATE.md` para reuso Onda 6
 
 ---
 
-## Open Questions
+## Questões em aberto
 
-All OQ-01…OQ-06 resolved in `context.md`. No blocking product ambiguities remain.
+Todas OQ-01…OQ-06 resolvidas em `context.md`. Não restam ambiguidades de produto bloqueadoras.
 
-**Residual (non-blocking):**
+**Residual (não bloqueador):**
 
-- Exact catalog snapshot fields for packaging — confirm with Onda 4 partial deliverable
-- Whether `TransactionService` moves entirely to integration-service or shared thin module — see ADR-003
+- Campos exatos de snapshot de catálogo para empacotamento — confirmar com entregável parcial Onda 4
+- Se `TransactionService` move inteiramente para integration-service ou módulo thin compartilhado — ver ADR-003

@@ -7,7 +7,7 @@ complexity: medium
 
 # Contratos Pact provider e consumer
 
-## Overview
+## Visão geral
 Consolida TLC T25–T27. Adiciona verificação Pact provider em `reference-service` e `tax-service` e testes consumer no monolito Strangler, cobrindo todos os endpoints migrados P1 para que drift de schema falhe no CI (TechSpec **Ordem de build** passo 9; STR-02, TAX-08, ADR-005). Artefatos Pact locais são aceitáveis na Wave 1.
 
 <critical>
@@ -27,40 +27,40 @@ Consolida TLC T25–T27. Adiciona verificação Pact provider em `reference-serv
 6. MUST gerar/consumir pacts sob paths locais convencionados (ex.: `target/pacts`).
 </requirements>
 
-## Subtasks
+## Subtarefas
 - [x] 9.1 Pact provider reference-service (5 endpoints)
 - [x] 9.2 Pact provider tax-service (class + rate)
 - [x] 9.3 Pact consumer Wave1 no sm-shop
 - [x] 9.4 Prova negativa: quebra de campo falha verificação consumer
 - [x] 9.5 Documentar comando gate Pact na task verify
 
-## Implementation Details
+## Detalhes de implementação
 Ver TechSpec: **Abordagem de testes** (Contratos / gate), **Pontos de integração** (Artefatos Pact), **Ordem de build** passo 9, ADR-005. Endpoints cobertos = listas do TechSpec **Endpoints da API**.
 
-### Relevant Files
+### Arquivos relevantes
 - `reference-service/src/main/java/...` — providers REST (task_06)
 - `tax-service/src/main/java/...` — providers REST (task_07)
 - `sm-shop/.../strangler/` — consumers HTTP (task_08)
 - `shopizer-api-contracts/` — shape dos DTOs wire
 
-### Dependent Files
+### Arquivos dependentes
 - `reference-service/src/test/java/.../contract/ReferenceProviderPactTest.java`
 - `reference-service/src/test/java/.../contract/ReferenceProviderDriftProofTest.java`
 - `tax-service/src/test/java/.../contract/TaxProviderPactTest.java`
 - `sm-shop/src/test/java/.../contract/Wave1ConsumerPactTest.java`
 - Artefatos em `pacts/` (repo root; consumer escreve, providers leem)
 
-### Related ADRs
+### ADRs relacionados
 - [ADR-005: Contract DTOs / no JPA in REST responses; Pact](adrs/adr-005.md) — gates Pact obrigatórios
 
-## Deliverables
+## Entregáveis
 - Provider tests reference + tax
 - Consumer test monolito
 - Prova de falha por drift documentada
 - Contract tests com cobertura dos endpoints P1 **(REQUIRED)**
 - Gates Maven dos três módulos **(REQUIRED)**
 
-## Tests
+## Testes
 - Unit tests:
   - [x] N/A específico — foco em contrato; `ReferenceProviderDriftProofTest` cobre mismatch de body
 - Integration tests:
@@ -71,7 +71,7 @@ Ver TechSpec: **Abordagem de testes** (Contratos / gate), **Pontos de integraç�
 - Test coverage target: >=80% (código de suporte a contrato introduzido)
 - All tests must pass
 
-## Success Criteria
+## Critérios de sucesso
 - All tests passing
 - Test coverage >=80%
 - Pacts gerados e consumidos localmente

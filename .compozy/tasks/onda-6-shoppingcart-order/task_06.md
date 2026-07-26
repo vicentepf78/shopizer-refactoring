@@ -1,37 +1,37 @@
 ---
 status: pending
-title: Extract sm-order-core + cart totals service
+title: Extrair sm-order-core + serviço cart totals
 type: backend
 complexity: high
 ---
 
-# Extract sm-order-core + cart totals service
+# Extrair sm-order-core + serviço cart totals
 
-## Overview
-TLC T15–T17. New `sm-order-core` with order repositories, read services, and `CartTotalsService` (stateless totals from `CartTotalsRequest`). Move totals logic from task_02 boundary into order-core.
+## Visão geral
+TLC T15–T17. Novo `sm-order-core` com repositórios order, serviços de leitura e `CartTotalsService` (totais stateless a partir de `CartTotalsRequest`). Mover lógica de totais da fronteira task_02 para order-core.
 
 <requirements>
-1. MUST scaffold sm-order-core with order repositories — T15.
-2. MUST extract order read services (get/list/history) without PaymentService — T16, ORD-01–03.
-3. MUST implement CartTotalsService with parity tests — T17, CART-03.
-4. MUST keep tax lines as input on totals request (pre-computed optional) per ADR-006.
+1. MUST fazer scaffold sm-order-core com repositórios order — T15.
+2. MUST extrair serviços de leitura order (get/list/history) sem PaymentService — T16, ORD-01–03.
+3. MUST implementar CartTotalsService com testes de paridade — T17, CART-03.
+4. MUST manter linhas de tax como input na requisição de totais (pré-computadas opcional) conforme ADR-006.
 </requirements>
 
-## Subtasks
-- [ ] 6.1 Module + repositories (T15)
+## Subtarefas
+- [ ] 6.1 Módulo + repositórios (T15)
 - [ ] 6.2 OrderReadService (T16)
 - [ ] 6.3 CartTotalsService (T17)
 
-## Related ADRs
-- [ADR-006: Tax at BFF](adrs/adr-006.md)
+## ADRs relacionados
+- [ADR-006: Tax no BFF](adrs/adr-006.md)
 
-## Deliverables
-- `sm-order-core` module
+## Entregáveis
+- Módulo `sm-order-core`
 - `OrderReadServiceTest`, `CartTotalsServiceTest` **(REQUIRED)**
 
-## Tests
+## Testes
 - `./mvnw test -pl sm-order-core`
 
-## Success Criteria
-- Totals parity vs legacy
-- No PaymentService on read path
+## Critérios de sucesso
+- Paridade de totais vs legado
+- Sem PaymentService no caminho de leitura

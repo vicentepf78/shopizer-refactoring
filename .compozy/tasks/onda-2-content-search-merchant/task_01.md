@@ -7,7 +7,7 @@ complexity: medium
 
 # Contracts Content/Search/Merchant e properties Strangler Wave2
 
-## Overview
+## Visão geral
 Consolida TLC T1–T4. Entrega os DTOs e clients de content, search e merchant em `shopizer-api-contracts`, mais o profile/properties Strangler Wave2 e RestTemplate no monólito. **Pré-requisito externo:** Execute da Onda 1 completo (reference-service, tax-service, pacote de contratos base, padrões Strangler/JWT/Pact) — esta task NÃO inicia sem esse gate.
 
 <critical>
@@ -28,17 +28,17 @@ Consolida TLC T1–T4. Entrega os DTOs e clients de content, search e merchant e
 7. MUST compilar `shopizer-api-contracts` e passar testes de config Wave2 em sm-shop.
 </requirements>
 
-## Subtasks
+## Subtarefas
 - [ ] 1.1 DTOs content + `ContentServiceClient` nos contracts (T1)
 - [ ] 1.2 DTOs search índice + `SearchIndexClient` (T2)
 - [ ] 1.3 DTOs merchant + `MerchantStoreSnapshot` + `MerchantServiceClient` (T3)
 - [ ] 1.4 Config Wave2ClientConfig, properties e RestTemplate no sm-shop (T4)
 - [ ] 1.5 Stub `SearchIndexClientRestTemplateImpl` e testes de config
 
-## Implementation Details
+## Detalhes de implementação
 Ver TechSpec: **Interfaces principais**, **Modelos de dados**, **Configuração Strangler (`sm-shop`)**, **Ordem de construção** passos 2–5. Reutilizar padrão Wave1ClientConfig da Onda 1. Fontes DTO atuais em `sm-shop-model`.
 
-### Relevant Files
+### Arquivos relevantes
 - `sm-shop-model/src/main/java/com/salesmanager/shop/model/content/` — fonte DTOs content
 - `sm-shop-model/src/main/java/com/salesmanager/shop/model/store/` — fonte DTOs merchant / Configs
 - `sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/content/ContentApi.java` — paths REST congelados content
@@ -46,7 +46,7 @@ Ver TechSpec: **Interfaces principais**, **Modelos de dados**, **Configuração 
 - `sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/store/MerchantStoreApi.java` — paths merchant
 - `pom.xml` — reactor (módulo contracts da Onda 1)
 
-### Dependent Files
+### Arquivos dependentes
 - `shopizer-api-contracts/src/main/java/com/salesmanager/contracts/content/` — DTOs content (a criar)
 - `shopizer-api-contracts/src/main/java/com/salesmanager/contracts/search/` — DTOs índice (a criar)
 - `shopizer-api-contracts/src/main/java/com/salesmanager/contracts/merchant/` — DTOs merchant (a criar)
@@ -54,18 +54,18 @@ Ver TechSpec: **Interfaces principais**, **Modelos de dados**, **Configuração 
 - `sm-shop/.../strangler/config/Wave2ClientConfig.java` — config Wave2 (a criar)
 - `sm-shop/src/main/resources/application-strangler-wave2.properties` — properties (a criar)
 
-### Related ADRs
+### ADRs relacionados
 - [ADR-001: Um workflow Compozy para Content + Search + Merchant](adrs/adr-001.md) — bloqueio Onda 1
 - [ADR-002: Contrato intermediário ProductIndexPayload](adrs/adr-002.md) — schemaVersion
 - [ADR-005: APIs internas e X-Internal-Token](adrs/adr-005.md) — token de índice
 
-## Deliverables
+## Entregáveis
 - Packages contracts content/search/merchant + 3 interfaces de client
 - Profile e properties Strangler Wave2 no sm-shop
 - Unit tests com 80%+ coverage dos DTOs serializáveis **(REQUIRED)**
 - Integration/unit tests de `Wave2ClientConfig` **(REQUIRED)**
 
-## Tests
+## Testes
 - Unit tests:
   - [ ] `ProductIndexPayload` serializa com `schemaVersion` default 1
   - [ ] DTOs content/merchant compilam sem `com.salesmanager.core.model`
@@ -76,7 +76,7 @@ Ver TechSpec: **Interfaces principais**, **Modelos de dados**, **Configuração 
 - Test coverage target: >=80%
 - All tests must pass
 
-## Success Criteria
+## Critérios de sucesso
 - All tests passing
 - Test coverage >=80%
 - Contracts Wave2 compilam isolados

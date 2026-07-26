@@ -1,6 +1,6 @@
-# PRD: Wave 1 — Extração dos serviços Reference + Tax
+# PRD: Onda 1 — Extração dos serviços Reference + Tax
 
-**Feature slug:** `onda-1-reference-tax`  
+**Slug da feature:** `onda-1-reference-tax`  
 **Fonte de verdade:** pacote TLC `.specs/features/onda-1-reference-tax/` (ADR-001)  
 **Date:** 2026-07-18
 

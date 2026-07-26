@@ -52,46 +52,46 @@ graph:
       to: task_10
 ---
 
-# Wave 3 — Contracts DTO + Checkout Application Service Task List
+# Onda 3 — Contracts DTO + Checkout Application Service Task List
 
-Consolidated task list (mode C) for Wave 3: **10 Compozy tasks** mapped from TLC T1–T48 and TechSpec build order.
+Lista consolidada de tasks (modo C) para a Onda 3: **10 tasks Compozy** mapeadas das TLC T1–T48 e da ordem de construção do TechSpec.
 
-**Hard external prerequisite:** Wave 2 Execute (`onda-2-content-search-merchant`) MUST be complete before starting any task — including `task_01`. No new microservices in this wave.
+**Pré-requisito externo rígido:** Execute da Onda 2 (`onda-2-content-search-merchant`) MUST estar completo antes de iniciar qualquer task — incluindo `task_01`. Sem novos microserviços nesta onda.
 
-## TLC → Compozy mapping
+## Mapeamento TLC → Compozy
 
-| Task | Title | TLC | Type | Complexity |
-|------|-------|-----|------|------------|
-| task_01 | Tenant types and contracts foundation | T1–T6 | backend | medium |
-| task_02 | ProductSnapshot and index payload evolution | T7–T12 | backend | high |
-| task_03 | OrderSnapshot and CustomerSnapshot DTOs | T13–T16 | backend | medium |
-| task_04 | SearchItem migration to api-contracts | T17–T20 | backend | medium |
-| task_05 | Integration payment/shipping DTOs | T21–T24 | backend | high |
-| task_06 | PaymentModuleV2/ShippingQuoteModuleV2 and bridges | T25–T29 | backend | high |
-| task_07 | Facade P1 migration to tenant identifiers | T30–T34 | refactor | high |
-| task_08 | ReferencesApi DTO fix and facade migration plan | T35–T38 | backend | medium |
-| task_09 | CheckoutApplicationService extraction | T39–T43 | backend | high |
-| task_10 | processOrder outbox, gate, and STATE update | T44–T48 | infra | medium |
+| Task | Título | TLC | Type | Complexity |
+|------|--------|-----|------|------------|
+| task_01 | Tipos tenant e base de contracts | T1–T6 | backend | medium |
+| task_02 | ProductSnapshot e evolução do payload de índice | T7–T12 | backend | high |
+| task_03 | DTOs OrderSnapshot e CustomerSnapshot | T13–T16 | backend | medium |
+| task_04 | Migração SearchItem para api-contracts | T17–T20 | backend | medium |
+| task_05 | DTOs de integração payment/shipping | T21–T24 | backend | high |
+| task_06 | PaymentModuleV2/ShippingQuoteModuleV2 e bridges | T25–T29 | backend | high |
+| task_07 | Migração facade P1 para identificadores tenant | T30–T34 | refactor | high |
+| task_08 | Correção DTO ReferencesApi e plano de migração facade | T35–T38 | backend | medium |
+| task_09 | Extração CheckoutApplicationService | T39–T43 | backend | high |
+| task_10 | Outbox processOrder, gate e atualização STATE | T44–T48 | infra | medium |
 
 ## Milestones
 
-- **SNP-ready:** end of `task_02` + `task_03` (snapshots compile and serialize).
-- **INT-ready:** end of `task_06` (V2 payment path callable in tests).
-- **CHK-ready:** end of `task_09` (facade delegates to application service).
-- **Wave 3 complete:** end of `task_10` (`./mvnw clean install` green).
+- **SNP-ready:** fim de `task_02` + `task_03` (snapshots compilam e serializam).
+- **INT-ready:** fim de `task_06` (caminho payment V2 invocável em testes).
+- **CHK-ready:** fim de `task_09` (facade delega ao application service).
+- **Onda 3 completa:** fim de `task_10` (`./mvnw clean install` verde).
 
-## Parallelism
+## Paralelismo
 
-After `task_01` (and Wave 2 gate):
+Após `task_01` (e gate Onda 2):
 
 - Track snapshots: `task_02` → `task_04`; `task_03` → `task_09`
-- Track integration: `task_05` → `task_06`
+- Track integração: `task_05` → `task_06`
 - Track facades: `task_07` → `task_08`
-- Convergence: `task_09` + `task_04` + `task_06` + `task_08` → `task_10`
+- Convergência: `task_09` + `task_04` + `task_06` + `task_08` → `task_10`
 
-## Source
+## Fonte
 
 - PRD: `_prd.md`
 - TechSpec: `_techspec.md`
 - ADRs: `adrs/adr-001.md` … `adr-005.md`
-- TLC (authoritative WHAT): `.specs/features/onda-3-contracts-dto/tasks.md`
+- TLC (WHAT autoritativo): `.specs/features/onda-3-contracts-dto/tasks.md`

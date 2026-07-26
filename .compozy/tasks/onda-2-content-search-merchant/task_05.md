@@ -7,7 +7,7 @@ complexity: high
 
 # search-service OpenSearch, query e índice (S-ready)
 
-## Overview
+## Visão geral
 Consolida TLC T18–T22. Entrega o `search-service` (:8084) **sem JPA**, com bootstrap OpenSearch, `SearchQueryService`/`SearchIndexService`, API interna de índice com `X-Internal-Token` e REST público search/autocomplete (reindex admin → 501). Marco **S-ready** para o producer HTTP do monólito.
 
 <critical>
@@ -28,7 +28,7 @@ Consolida TLC T18–T22. Entrega o `search-service` (:8084) **sem JPA**, com boo
 7. MUST passar testes de integração do search-service.
 </requirements>
 
-## Subtasks
+## Subtarefas
 - [ ] 5.1 Scaffold Boot sem JPA + package (T18)
 - [ ] 5.2 Migrar config/bootstrap OpenSearch (T19)
 - [ ] 5.3 SearchQueryServiceImpl query + autocomplete (T20)
@@ -36,16 +36,16 @@ Consolida TLC T18–T22. Entrega o `search-service` (:8084) **sem JPA**, com boo
 - [ ] 5.5 SearchController público + reindex 501 (T22)
 - [ ] 5.6 Suite integração S-ready
 
-## Implementation Details
+## Detalhes de implementação
 Ver TechSpec: **Endpoints search-service**, **Interfaces** SearchQueryService/SearchIndexService, **Ordem de construção** passos 15–18. Fonte: `SearchServiceImpl` no sm-core.
 
-### Relevant Files
+### Arquivos relevantes
 - `sm-core/src/main/java/com/salesmanager/core/business/services/search/SearchServiceImpl.java` — lógica a extrair
 - `sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/search/SearchApi.java` — paths públicos
 - `sm-shop/src/test/java/com/salesmanager/test/shop/integration/search/SearchApiIntegrationTest.java` — paridade esperada
 - `shopizer-api-contracts/.../search/` — ProductIndexPayload (task_01)
 
-### Dependent Files
+### Arquivos dependentes
 - `search-service/pom.xml` — novo módulo
 - `search-service/.../SearchServiceApplication.java` — entrypoint
 - `search-service/src/main/resources/search/` — mappings/settings
@@ -54,20 +54,20 @@ Ver TechSpec: **Endpoints search-service**, **Interfaces** SearchQueryService/Se
 - `search-service/.../api/internal/InternalIndexController.java` — índice interno
 - `search-service/.../api/v1/SearchController.java` — REST público
 
-### Related ADRs
+### ADRs relacionados
 - [ADR-002: ProductIndexPayload](adrs/adr-002.md) — schemaVersion
 - [ADR-003: search-service sem JPA](adrs/adr-003.md) — só OpenSearch
 - [ADR-005: APIs internas e token](adrs/adr-005.md) — X-Internal-Token
 - [ADR-010: SearchItem em commons](adrs/adr-010.md) — sem mover schema
 - [ADR-011: stubs/deprecated](adrs/adr-011.md) — reindex 501
 
-## Deliverables
+## Entregáveis
 - `search-service` implantável sem DataSource
 - Query + índice interno + REST público (S-ready)
 - Unit tests 80%+ Query/Index services **(REQUIRED)**
 - Integration tests index token/schema + search/autocomplete **(REQUIRED)**
 
-## Tests
+## Testes
 - Unit tests:
   - [ ] SearchQueryServiceImpl zero imports sm-core-model
   - [ ] Index com payload válido chama OpenSearch client (mock)
@@ -80,7 +80,7 @@ Ver TechSpec: **Endpoints search-service**, **Interfaces** SearchQueryService/Se
 - Test coverage target: >=80%
 - All tests must pass
 
-## Success Criteria
+## Critérios de sucesso
 - All tests passing
 - Test coverage >=80%
 - Marco **S-ready** atingido

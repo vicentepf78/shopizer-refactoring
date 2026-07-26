@@ -25,6 +25,6 @@ Rewire sm-core to delegate content to sm-content-core; trim shopizer-core-cms.xm
 - Initial Spring-heavy CMS test caused integration test pollution; replaced with static XML checks.
 - Package typo (`com.salesmanager/core.business`) caught via compile error.
 
-## Ready for Next Run
+## Pronto para próxima execução
 
 Complete. Monolith resolves ContentService via component scan from sm-content-core JAR; product CMS stays in sm-core XML. task_11 strangler adapters can assume in-process content wiring.

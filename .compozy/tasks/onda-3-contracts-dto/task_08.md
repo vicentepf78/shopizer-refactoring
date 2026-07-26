@@ -1,65 +1,65 @@
 ---
 status: pending
-title: ReferencesApi DTO fix and facade migration plan
+title: Correção DTO ReferencesApi e plano de migração facade
 type: backend
 complexity: medium
 ---
 
-# ReferencesApi DTO fix and facade migration plan
+# Correção DTO ReferencesApi e plano de migração facade
 
-## Overview
-Consolidates TLC T35–T38. Closes blocker B-002 on ReferencesApi and publishes phased inventory for remaining facade migrations (FAC-06).
+## Visão geral
+Consolida TLC T35–T38. Fecha blocker B-002 em ReferencesApi e publica inventário faseado para migrações facade restantes (FAC-06).
 
 <critical>
-- ALWAYS READ the PRD and TechSpec before starting
-- REFERENCE TECHSPEC for implementation details — do not duplicate here
-- FOCUS ON "WHAT" — describe what needs to be accomplished, not how
-- MINIMIZE CODE — show code only to illustrate current structure or problem areas
-- TESTS REQUIRED — every task MUST include tests in deliverables
+- SEMPRE LER o PRD e a TechSpec antes de começar
+- REFERENCIAR A TECHSPEC para detalhes de implementação — não duplicar aqui
+- FOCAR NO "O QUÊ" — descrever o que precisa ser feito, não como
+- MINIMIZAR CÓDIGO — mostrar código apenas para ilustrar estrutura atual ou áreas problemáticas
+- TESTES OBRIGATÓRIOS — toda task DEVE incluir testes nos entregáveis
 </critical>
 
 <requirements>
-1. MUST return `List<ReadableLanguage>` from language list endpoints — TLC T35, REF-01.
-2. MUST return `List<ReadableCurrency>` from currency endpoints — TLC T36, REF-02.
-3. MUST wire existing populators/mappers (Wave 1 pattern) — TLC T37.
-4. MUST add `docs/decomposition/FACADE-MIGRATION-PLAN.md` inventory of 76 facades with Wave 4–6 phases — TLC T38, FAC-06.
-5. MUST update Reference Pact if response types change.
+1. MUST retornar `List<ReadableLanguage>` dos endpoints de lista de language — TLC T35, REF-01.
+2. MUST retornar `List<ReadableCurrency>` dos endpoints de currency — TLC T36, REF-02.
+3. MUST conectar populators/mappers existentes (padrão Onda 1) — TLC T37.
+4. MUST adicionar `docs/decomposition/FACADE-MIGRATION-PLAN.md` inventário de 76 facades com fases Onda 4–6 — TLC T38, FAC-06.
+5. MUST atualizar Pact Reference se tipos de resposta mudam.
 </requirements>
 
-## Subtasks
-- [ ] 8.1 ReferencesApi language DTO wiring (T35)
-- [ ] 8.2 ReferencesApi currency DTO wiring (T36)
-- [ ] 8.3 Integration test ReferencesApi (T37)
-- [ ] 8.4 Facade migration plan document (T38)
+## Subtarefas
+- [ ] 8.1 Wiring DTO language ReferencesApi (T35)
+- [ ] 8.2 Wiring DTO currency ReferencesApi (T36)
+- [ ] 8.3 Teste integração ReferencesApi (T37)
+- [ ] 8.4 Documento plano migração facade (T38)
 
-## Implementation Details
-See TechSpec: **ReferencesApi fix (B-002)**. `ReadableLanguage` / `ReadableCurrency` already exist in api-contracts from Wave 1.
+## Detalhes de implementação
+Ver TechSpec: **Correção ReferencesApi (B-002)**. `ReadableLanguage` / `ReadableCurrency` já existem em api-contracts da Onda 1.
 
-### Relevant Files
+### Arquivos relevantes
 - `sm-shop/.../api/v1/references/ReferencesApi.java`
 - `shopizer-api-contracts/.../reference/ReadableLanguage.java`
 - `sm-shop/.../populator/references/`
 
-### Dependent Files
-- `docs/decomposition/FACADE-MIGRATION-PLAN.md` — create
+### Arquivos dependentes
+- `docs/decomposition/FACADE-MIGRATION-PLAN.md` — criar
 
-### Related ADRs
-- [ADR-003: Remaining facades deferred](../adrs/adr-003.md)
+### ADRs relacionados
+- [ADR-003: Facades restantes adiadas](../adrs/adr-003.md)
 
-## Deliverables
-- B-002 closed on ReferencesApi
-- Facade migration plan markdown
-- Pact/reference tests green **(REQUIRED)**
+## Entregáveis
+- B-002 fechado em ReferencesApi
+- Markdown plano migração facade
+- Testes Pact/reference verdes **(OBRIGATÓRIO)**
 
-## Tests
-- Unit tests:
-  - [ ] ReferencesApi JSON contains no JPA entity type names
-- Integration tests:
-  - [ ] `GET /api/v1/languages` returns ReadableLanguage shape
-- Test coverage target: >=80%
-- All tests must pass
+## Testes
+- Testes unitários:
+  - [ ] JSON ReferencesApi não contém nomes de tipo entidade JPA
+- Testes de integração:
+  - [ ] `GET /api/v1/languages` retorna shape ReadableLanguage
+- Meta de cobertura: >=80%
+- Todos os testes devem passar
 
-## Success Criteria
-- All tests passing
-- B-002 resolved
-- FAC-06 document published
+## Critérios de sucesso
+- Todos os testes passando
+- B-002 resolvido
+- Documento FAC-06 publicado

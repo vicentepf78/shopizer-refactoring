@@ -1,33 +1,33 @@
 ---
 status: pending
-title: Product images via content-service (P2)
+title: Imagens de produto via content-service (P2)
 type: backend
 complexity: medium
 ---
 
-# Product images via content-service (P2)
+# Imagens de produto via content-service (P2)
 
-## Overview
-Consolidates TLC T26. Completes Onda 2 OQ-02 deferral: product/variant/option image uploads use ContentServiceClient; extend content-service if needed for product file types.
+## Visão geral
+Consolida TLC T26. Completa adiamento Onda 2 OQ-02: uploads de imagem produto/variante/opção usam ContentServiceClient; estende content-service se necessário para tipos de arquivo de produto.
 
 <requirements>
-1. MUST wire ProductOptionFacadeImpl / ProductVariantGroupFacadeImpl to ContentServiceClient — T26.
-2. MUST support FileContentType PRODUCT/VARIANT/PROPERTY uploads.
-3. MAY extend content-service internal APIs for product blobs if Wave 2 insufficient.
-4. MUST extend StaticContentProxy for `/static/products/**` if required by parity tests.
-5. SHOULD NOT store blobs in catalog-service.
+1. MUST wire ProductOptionFacadeImpl / ProductVariantGroupFacadeImpl para ContentServiceClient — T26.
+2. MUST suportar uploads FileContentType PRODUCT/VARIANT/PROPERTY.
+3. MAY estender APIs internas content-service para blobs de produto se Onda 2 insuficiente.
+4. MUST estender StaticContentProxy para `/static/products/**` se exigido por testes de paridade.
+5. SHOULD NOT armazenar blobs no catalog-service.
 </requirements>
 
-## Related ADRs
+## ADRs relacionados
 - [ADR-007](adrs/adr-007.md)
 
-## Deliverables
-- Monolith facade HTTP blob calls
-- Integration test option image upload **(REQUIRED)**
+## Entregáveis
+- Facades monólito com chamadas HTTP blob
+- Teste de integração upload imagem de opção **(OBRIGATÓRIO)**
 
-## Tests
+## Testes
 - `./mvnw test -pl content-service,sm-shop -Dtest=*ProductImage*Test -DfailIfNoTests=false`
 
-## Success Criteria
-- Admin option image upload hits content-service
-- Catalog read DTOs return consistent image URLs
+## Critérios de sucesso
+- Upload admin de imagem de opção atinge content-service
+- DTOs read de catálogo retornam URLs de imagem consistentes

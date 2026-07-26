@@ -60,45 +60,45 @@ graph:
 
 # Onda 5 — Integration Service Task List
 
-Consolidated Wave 5 task list: **12 Compozy tasks** mapped from TLC T1–T38 and TechSpec build order.
+Lista consolidada da Onda 5: **12 tasks Compozy** mapeadas a partir do TLC T1–T38 e da ordem de construção do TechSpec.
 
-**External gates (hard):** Onda 3 Execute (`PaymentModuleV2`, checkout saga) AND Onda 4 partial catalog read (`ShippingProductSnapshot`) MUST be complete before `task_01`. Waves 1–2 patterns (RestTemplate, JWT, Pact, correlation) MUST be stable.
+**Gates externos (rígidos):** Execute da Onda 3 (`PaymentModuleV2`, saga checkout) E leitura parcial de catálogo da Onda 4 (`ShippingProductSnapshot`) DEVEM estar completos antes de `task_01`. Padrões Ondas 1–2 (RestTemplate, JWT, Pact, correlation) DEVEM estar estáveis.
 
-## TLC → task mapping
+## Mapeamento TLC → task
 
-| Task | Title | TLC | Type | Complexity |
+| Task | Título | TLC | Tipo | Complexidade |
 |------|-------|-----|------|------------|
-| task_01 | Integration contracts, client, Wave5 Strangler config | T1–T5 | backend | medium |
-| task_02 | Payment plugins + PaymentOrchestrator extract | T6–T8 | backend | high |
-| task_03 | Stateless payment ops + P-ready tests | T9–T11 | backend | high |
-| task_04 | Shipping plugins + orchestrator + catalog client | T12–T16 | backend | high |
-| task_05 | integration-service Boot + admin REST | T17–T19 | backend | high |
-| task_06 | Public + internal REST APIs (I-ready) | T20–T22 | backend | high |
-| task_07 | Trim sm-core + stateless monolith boundary | T23–T24 | backend | medium |
-| task_08 | Strangler payment/shipping facades | T25–T26 | backend | high |
-| task_09 | Checkout + OrderShipping HTTP wiring | T27–T28 | backend | high |
+| task_01 | Contratos integration, client, config Strangler Wave5 | T1–T5 | backend | medium |
+| task_02 | Plugins pagamento + extração PaymentOrchestrator | T6–T8 | backend | high |
+| task_03 | Ops pagamento stateless + testes P-ready | T9–T11 | backend | high |
+| task_04 | Plugins frete + orquestrador + client catálogo | T12–T16 | backend | high |
+| task_05 | Boot integration-service + REST admin | T17–T19 | backend | high |
+| task_06 | APIs REST públicas + internas (I-ready) | T20–T22 | backend | high |
+| task_07 | Trim sm-core + fronteira stateless monólito | T23–T24 | backend | medium |
+| task_08 | Facades Strangler pagamento/frete | T25–T26 | backend | high |
+| task_09 | Wiring HTTP checkout + OrderShipping | T27–T28 | backend | high |
 | task_10 | Correlation ID + health indicators Wave5 | T29 | infra | medium |
 | task_11 | Pact provider/consumer + IntegrationServiceClient | T30–T32 | test | medium |
-| task_12 | Docker Compose, integration gate, STATE | T33–T38 | infra | medium |
+| task_12 | Docker Compose, gate integração, STATE | T33–T38 | infra | medium |
 
-## Milestones
+## Marcos
 
-- **P-ready:** end of `task_03` (payment orchestrator + plugins without OrderService).
-- **S-ready:** end of `task_04` (shipping orchestrator + catalog client).
-- **I-ready:** end of `task_06` (integration-service health + internal payment/quote APIs).
-- Do not start `task_04` catalog client work until Onda 4 partial gate verified.
-- Do not start `task_09` until `task_07` stateless boundary merged.
+- **P-ready:** fim de `task_03` (orquestrador de pagamento + plugins sem OrderService).
+- **S-ready:** fim de `task_04` (orquestrador de frete + client catálogo).
+- **I-ready:** fim de `task_06` (health integration-service + APIs internas pagamento/cotação).
+- Não iniciar trabalho de client catálogo em `task_04` até gate Onda 4 parcial verificado.
+- Não iniciar `task_09` até fronteira stateless de `task_07` mergeada.
 
-## Parallelism
+## Paralelismo
 
-After `task_01` (and external gates):
+Após `task_01` (e gates externos):
 
-- Payment track: `task_02` → `task_03`
-- Shipping track: `task_04` (parallel with task_02 after task_01)
-- Converge: `task_05` requires P-ready + S-ready
-- Tail: `task_11` → `task_12`; `task_10` parallel after `task_05` apps boot
+- Trilha pagamento: `task_02` → `task_03`
+- Trilha frete: `task_04` (paralelo com task_02 após task_01)
+- Convergência: `task_05` exige P-ready + S-ready
+- Cauda: `task_11` → `task_12`; `task_10` paralelo após apps Boot em `task_05`
 
-## Source
+## Fonte
 
 - PRD: `_prd.md`
 - TechSpec: `_techspec.md`

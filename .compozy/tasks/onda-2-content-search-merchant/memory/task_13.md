@@ -25,6 +25,6 @@ Completed Wave2 Pact: consumer `sm-shop-wave2`, providers content/search/merchan
 - `pacts/sm-shop-wave2-*.json`, `docs/PACT-WAVE2.md`
 - pom.xml pact deps on three Wave2 services
 
-## Ready for Next Run
+## Pronto para próxima execução
 
 - task_14+ can assume Wave2 pact gate green; extend contracts if new P1 endpoints added to strangler adapters.

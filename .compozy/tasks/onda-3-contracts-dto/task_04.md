@@ -1,67 +1,67 @@
 ---
 status: pending
-title: SearchItem migration to api-contracts
+title: Migração SearchItem para api-contracts
 type: backend
 complexity: medium
 ---
 
-# SearchItem migration to api-contracts
+# Migração SearchItem para api-contracts
 
-## Overview
-Consolidates TLC T17–T20. Moves `SearchItem` and related search response types from `shopizer-commons` to `shopizer-api-contracts`, resolving Wave 2 OQ-06.
+## Visão geral
+Consolida TLC T17–T20. Move `SearchItem` e tipos de resposta de search relacionados de `shopizer-commons` para `shopizer-api-contracts`, resolvendo OQ-06 da Onda 2.
 
 <critical>
-- ALWAYS READ the PRD and TechSpec before starting
-- REFERENCE TECHSPEC for implementation details — do not duplicate here
-- FOCUS ON "WHAT" — describe what needs to be accomplished, not how
-- MINIMIZE CODE — show code only to illustrate current structure or problem areas
-- TESTS REQUIRED — every task MUST include tests in deliverables
+- SEMPRE LER o PRD e a TechSpec antes de começar
+- REFERENCIAR A TECHSPEC para detalhes de implementação — não duplicar aqui
+- FOCAR NO "O QUÊ" — descrever o que precisa ser feito, não como
+- MINIMIZAR CÓDIGO — mostrar código apenas para ilustrar estrutura atual ou áreas problemáticas
+- TESTES OBRIGATÓRIOS — toda task DEVE incluir testes nos entregáveis
 </critical>
 
 <requirements>
-1. MUST copy/move `SearchItem`, `SearchProductRequest` (if not already in contracts) to `com.salesmanager.contracts.search` — TLC T17.
-2. MUST update `search-service`, `sm-shop` SearchApi/Facade imports to contracts package — TLC T18.
-3. MUST add deprecation re-exports in commons (optional thin aliases) for one release — TLC T19.
-4. MUST update Wave2 Pact tests to use contracts types — TLC T20.
-5. MUST preserve JSON field names byte-compatible with existing Pact.
+1. MUST copiar/mover `SearchItem`, `SearchProductRequest` (se ainda não em contracts) para `com.salesmanager.contracts.search` — TLC T17.
+2. MUST atualizar imports `search-service`, `sm-shop` SearchApi/Facade para package contracts — TLC T18.
+3. MUST adicionar re-exports deprecados em commons (aliases finos opcionais) por uma release — TLC T19.
+4. MUST atualizar testes Pact Wave2 para usar tipos contracts — TLC T20.
+5. MUST preservar nomes de campo JSON byte-compatíveis com Pact existente.
 </requirements>
 
-## Subtasks
-- [ ] 4.1 Search DTOs in api-contracts (T17)
-- [ ] 4.2 Import rewires in sm-shop and search-service (T18)
-- [ ] 4.3 Commons deprecation aliases if needed (T19)
-- [ ] 4.4 Pact consumer/provider updates (T20)
+## Subtarefas
+- [ ] 4.1 DTOs search em api-contracts (T17)
+- [ ] 4.2 Reescrita de imports em sm-shop e search-service (T18)
+- [ ] 4.3 Aliases deprecados em commons se necessário (T19)
+- [ ] 4.4 Atualizações consumer/provider Pact (T20)
 
-## Implementation Details
-See TechSpec: **Testing strategy**. Depends on `task_02` for aligned search document model.
+## Detalhes de implementação
+Ver TechSpec: **Estratégia de testes**. Depende de `task_02` para modelo de documento search alinhado.
 
-### Relevant Files
-- `modules/shopizer-commons/` or `modules.commons.search` — current SearchItem
+### Arquivos relevantes
+- `modules/shopizer-commons/` ou `modules.commons.search` — SearchItem atual
 - `sm-shop/.../api/v1/search/SearchApi.java`
 - `search-service/.../SearchController.java`
-- `sm-shop/src/test/.../pact/` — Wave2 Pact tests
+- `sm-shop/src/test/.../pact/` — testes Pact Wave2
 
-### Dependent Files
-- `shopizer-api-contracts/.../search/SearchItem.java` — create
-- `shopizer-api-contracts/.../search/SearchProductRequest.java` — verify/move
+### Arquivos dependentes
+- `shopizer-api-contracts/.../search/SearchItem.java` — criar
+- `shopizer-api-contracts/.../search/SearchProductRequest.java` — verificar/mover
 
-### Related ADRs
-- [ADR-002: ProductSnapshot](../adrs/adr-002.md) — index/query alignment
+### ADRs relacionados
+- [ADR-002: ProductSnapshot](../adrs/adr-002.md) — alinhamento index/query
 
-## Deliverables
-- SearchItem in api-contracts
-- All modules compile with new imports
-- Pact tests green **(REQUIRED)**
+## Entregáveis
+- SearchItem em api-contracts
+- Todos os módulos compilam com novos imports
+- Testes Pact verdes **(OBRIGATÓRIO)**
 
-## Tests
-- Unit tests:
-  - [ ] SearchItem Jackson compatibility with legacy JSON fixtures
-- Integration tests:
+## Testes
+- Testes unitários:
+  - [ ] SearchItem Jackson compatível com fixtures JSON legacy
+- Testes de integração:
   - [ ] `./mvnw test -pl sm-shop,search-service -Dtest=*Pact* -DfailIfNoTests=false`
-- Test coverage target: >=80%
-- All tests must pass
+- Meta de cobertura: >=80%
+- Todos os testes devem passar
 
-## Success Criteria
-- All tests passing
-- OQ-06 closed
-- No search API path changes
+## Critérios de sucesso
+- Todos os testes passando
+- OQ-06 fechado
+- Sem mudanças de caminho API search

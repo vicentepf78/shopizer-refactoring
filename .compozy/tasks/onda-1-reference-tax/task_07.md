@@ -7,7 +7,7 @@ complexity: high
 
 # tax-service Boot, JWT, client Reference e REST
 
-## Overview
+## Visão geral
 Consolida TLC T17–T20. Entrega `tax-service` (porta 8082) com cadeia JWT, implementação HTTP de `ReferenceServiceClient`, facade/mappers de tax e REST privado sob `/api/v1/private/tax/*` — TechSpec **Ordem de build** passo 7. Depende dos endpoints de reference (task_06) e do core tax (task_05).
 
 <critical>
@@ -28,17 +28,17 @@ Consolida TLC T17–T20. Entrega `tax-service` (porta 8082) com cadeia JWT, impl
 7. MUST NOT mover `TaxService.calculateTax` para este serviço (ADR-003).
 </requirements>
 
-## Subtasks
+## Subtarefas
 - [x] 7.1 Scaffold Boot + JWT security chain + IT 401
 - [x] 7.2 Implementar `ReferenceServiceClient` HTTP + testes MockRestServiceServer/WireMock
 - [x] 7.3 Portar TaxFacadeImpl + 4 mappers (rate usa client)
 - [x] 7.4 Expor controllers REST private tax (class + rate)
 - [x] 7.5 IT CRUD autenticado + validação country/zone inválido → 400
 
-## Implementation Details
+## Detalhes de implementação
 Ver TechSpec: **Endpoints da API** (tax-service), **Pontos de integração** (tax→reference, JWT), **Configuração**, **Ordem de build** passo 7, **Convenções de erro**. Login permanece só no monolito.
 
-### Relevant Files
+### Arquivos relevantes
 - `sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/tax/TaxClassApi.java` — paths class
 - `sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/tax/TaxRatesApi.java` — paths rate
 - `sm-shop/src/main/java/com/salesmanager/shop/store/facade/tax/TaxFacadeImpl.java` — fonte facade
@@ -48,23 +48,23 @@ Ver TechSpec: **Endpoints da API** (tax-service), **Pontos de integração** (ta
 - `shopizer-api-contracts/.../client/ReferenceServiceClient.java` — contrato
 - `reference-service/` — upstream HTTP (task_06)
 
-### Dependent Files
+### Arquivos dependentes
 - `tax-service/` — novo módulo (a criar)
 - Config JWT/`jwt.secret` compartilhado com monolito
 - Root `pom.xml` — registrar módulo
 
-### Related ADRs
+### ADRs relacionados
 - [ADR-003: Tax admin only; calculation stays in monolith](adrs/adr-003.md) — só admin
 - [ADR-004: RestTemplate Strangler clients](adrs/adr-004.md) — client HTTP
 - [ADR-008: JWT replication for tax-service](adrs/adr-008.md) — cadeia JWT completa
 
-## Deliverables
+## Entregáveis
 - JAR `tax-service` na 8082 com JWT
 - Client Reference + facade/mappers + REST private
 - Unit + security/API ITs com 80%+ coverage **(REQUIRED)**
 - Paridade de paths com monolito para tax privado **(REQUIRED)**
 
-## Tests
+## Testes
 - Unit tests:
   - [x] `ReferenceServiceClient` resolve country/zone por code (MockRestServiceServer)
   - [x] PersistableTaxRateMapper falha com validação quando reference retorna country inválido
@@ -78,7 +78,7 @@ Ver TechSpec: **Endpoints da API** (tax-service), **Pontos de integração** (ta
 - Test coverage target: >=80%
 - All tests must pass
 
-## Success Criteria
+## Critérios de sucesso
 - All tests passing
 - Test coverage >=80%
 - `./mvnw test -pl tax-service -Dtest=TaxSecurityIntegrationTest,TaxApiIntegrationTest` verdes

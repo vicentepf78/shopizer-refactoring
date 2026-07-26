@@ -1,12 +1,12 @@
 # Onda 1 — Reference + Tax Design
 
 **Spec:** `.specs/features/onda-1-reference-tax/spec.md`
-**Status:** Approved — Tasks geradas
+**Status:** Aprovado — Tasks geradas
 **Decisões OQ:** OQ-01 a OQ-06 resolvidas (2026-07-04) — ver [Decisões de Design](#decisões-de-design-oq-01--oq-06)
 
 ---
 
-## Architecture Overview
+## Visão geral da arquitetura
 
 A Onda 1 extrai **runtime e API** de Reference e Tax admin para dois serviços Spring Boot independentes, mantendo **schema DB compartilhado** (AD-003). O monólito (`sm-shop`) atua como **BFF Strangler**: valida JWT nas rotas privadas, resolve `store`/`lang`, e delega via HTTP client configurável.
 

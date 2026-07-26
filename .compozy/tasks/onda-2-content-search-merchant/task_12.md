@@ -7,7 +7,7 @@ complexity: medium
 
 # Correlation ID e health indicators Wave2
 
-## Overview
+## Visão geral
 Consolida TLC T47–T48. Propaga `X-Correlation-Id` nos apps Wave2 + sm-shop (filter + interceptor RestTemplate) e adiciona health indicators customizados (content: db/cms/reference; search: openSearch; merchant: db/reference/content). Pode avançar em paralelo ao Strangler após os Boot apps existirem.
 
 <critical>
@@ -27,36 +27,36 @@ Consolida TLC T47–T48. Propaga `X-Correlation-Id` nos apps Wave2 + sm-shop (fi
 6. SHOULD reutilizar padrão da Onda 1 se já existir filter equivalente.
 </requirements>
 
-## Subtasks
+## Subtarefas
 - [x] 12.1 CorrelationIdFilter nos 3 serviços + sm-shop (T47)
 - [x] 12.2 Interceptor RestTemplate de propagação (T47)
 - [x] 12.3 Health indicators content (T48)
 - [x] 12.4 Health indicators search (T48)
 - [x] 12.5 Health indicators merchant (T48)
 
-## Implementation Details
+## Detalhes de implementação
 Ver TechSpec: **Monitoramento e observabilidade**, **Ordem de construção** passo 28. Requisito STR-05.
 
-### Relevant Files
+### Arquivos relevantes
 - `content-service/`, `search-service/`, `merchant-service/`, `sm-shop/` — apps alvo
 - `sm-shop/.../strangler/config/Wave2ClientConfig.java` — RestTemplate a interceptar
 - Padrão Onda 1 em reference-service/tax-service (se existir) — reutilizar
 
-### Dependent Files
+### Arquivos dependentes
 - `*/.../web/CorrelationIdFilter.java` — filters
 - `{content,search,merchant}-service/.../health/*HealthIndicator.java` — indicators
 - Configs RestTemplate dos três serviços + sm-shop
 
-### Related ADRs
+### ADRs relacionados
 - [ADR-001: workflow único](adrs/adr-001.md) — observabilidade compartilhada Wave2
 
-## Deliverables
+## Entregáveis
 - Correlation ID end-to-end nos hops Wave2
 - Health components nos 3 serviços
 - Unit tests filters/indicators 80%+ **(REQUIRED)**
 - Integration smoke `/actuator/health` **(REQUIRED)**
 
-## Tests
+## Testes
 - Unit tests:
   - [x] Filter gera UUID quando header ausente
   - [x] Filter preserva header inbound existente
@@ -70,7 +70,7 @@ Ver TechSpec: **Monitoramento e observabilidade**, **Ordem de construção** pas
 - Test coverage target: >=80%
 - All tests must pass
 
-## Success Criteria
+## Critérios de sucesso
 - All tests passing
 - Test coverage >=80%
 - Correlation id visível em falhas 503

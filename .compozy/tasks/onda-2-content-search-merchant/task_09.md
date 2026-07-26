@@ -7,7 +7,7 @@ complexity: high
 
 # merchant-service Boot, JWT e clients Reference/Content
 
-## Overview
+## Visão geral
 Consolida TLC T33–T34. Scaffold do `merchant-service` (:8085) com cadeia JWT e clients HTTP para `reference-service` (Onda 1) e `content-service` (logo/C-ready). Bloqueia em `task_03` (C-ready) e `task_08` (merchant-core).
 
 <critical>
@@ -28,41 +28,41 @@ Consolida TLC T33–T34. Scaffold do `merchant-service` (:8085) com cadeia JWT e
 7. MUST passar testes de security e clients.
 </requirements>
 
-## Subtasks
+## Subtarefas
 - [ ] 9.1 Scaffold Boot merchant-service :8085 (T33)
 - [ ] 9.2 Cadeia JWT private/public (T33)
 - [ ] 9.3 ReferenceServiceClient HTTP (T34)
 - [ ] 9.4 ContentServiceClient HTTP logo (T34)
 - [ ] 9.5 Testes security + clients mock
 
-## Implementation Details
+## Detalhes de implementação
 Ver TechSpec: **Pontos de integração** (merchant→reference, merchant→content), **Ordem de construção** passos 23–24. Reutilizar padrões tax-service / content-service clients.
 
-### Relevant Files
+### Arquivos relevantes
 - `sm-merchant-core/` — domínio (task_08)
 - `shopizer-api-contracts/.../client/ContentServiceClient.java` — contrato logo
 - `shopizer-api-contracts/.../client/MerchantServiceClient.java` — contrato snapshot
 - `content-service/.../api/internal/` — APIs logo (task_03 C-ready)
 
-### Dependent Files
+### Arquivos dependentes
 - `merchant-service/pom.xml` — novo módulo
 - `merchant-service/.../MerchantServiceApplication.java` — entrypoint
 - `merchant-service/.../security/` — JWT
 - `merchant-service/.../client/ReferenceServiceClientRestTemplateImpl.java` — client ref
 - `merchant-service/.../client/ContentServiceClientRestTemplateImpl.java` — client content
 
-### Related ADRs
+### ADRs relacionados
 - [ADR-005: APIs internas](adrs/adr-005.md) — chamadas logo internas
 - [ADR-006: Logo blob-first](adrs/adr-006.md) — client content usado na task_10
 - [ADR-007: Sem ProductType](adrs/adr-007.md) — escopo merchant
 
-## Deliverables
+## Entregáveis
 - merchant-service Boot + JWT
 - Clients Reference e Content
 - Unit tests clients 80%+ **(REQUIRED)**
 - Integration test security JWT **(REQUIRED)**
 
-## Tests
+## Testes
 - Unit tests:
   - [ ] ReferenceServiceClient resolve country/zone/language/currency (mock)
   - [ ] ContentServiceClient uploadLogo/deleteLogo chama paths internos corretos
@@ -73,7 +73,7 @@ Ver TechSpec: **Pontos de integração** (merchant→reference, merchant→conte
 - Test coverage target: >=80%
 - All tests must pass
 
-## Success Criteria
+## Critérios de sucesso
 - All tests passing
 - Test coverage >=80%
 - App sobe na 8085 com JWT

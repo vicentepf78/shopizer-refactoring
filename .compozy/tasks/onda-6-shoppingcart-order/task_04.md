@@ -1,36 +1,36 @@
 ---
 status: pending
-title: shoppingcart-service Boot, REST, internal clear (SC-ready partial)
+title: shoppingcart-service Boot, REST, internal clear (SC-ready parcial)
 type: backend
 complexity: high
 ---
 
-# shoppingcart-service Boot, REST, internal clear (SC-ready partial)
+# shoppingcart-service Boot, REST, internal clear (SC-ready parcial)
 
-## Overview
-TLC T10–T12, T52, T54. Spring Boot app :8086; public cart REST mirroring `ShoppingCartApi`; internal post-checkout cart clear; JWT on `/private/**`.
+## Visão geral
+TLC T10–T12, T52, T54. App Spring Boot :8086; REST cart público espelhando `ShoppingCartApi`; clear interno pós-checkout; JWT em `/private/**`.
 
 <requirements>
-1. MUST scaffold `shoppingcart-service` on port 8086 — T10.
-2. MUST implement cart CRUD REST with DTO mappers — T11, CART-01, CART-07.
-3. MUST implement `DELETE /internal/v1/carts/{id}/after-checkout` — T12, CHK-06.
-4. MUST replicate JWT security pattern from wave1 services — T54.
-5. MUST NOT expose JPA entities in JSON.
+1. MUST fazer scaffold `shoppingcart-service` na porta 8086 — T10.
+2. MUST implementar REST CRUD cart com mappers DTO — T11, CART-01, CART-07.
+3. MUST implementar `DELETE /internal/v1/carts/{id}/after-checkout` — T12, CHK-06.
+4. MUST replicar padrão JWT security dos serviços wave1 — T54.
+5. MUST NOT expor entidades JPA em JSON.
 </requirements>
 
-## Subtasks
+## Subtarefas
 - [ ] 4.1 Boot app + JPA + actuator (T10)
-- [ ] 4.2 Public cart controllers + mappers (T11, T52)
-- [ ] 4.3 Internal clear API (T12)
-- [ ] 4.4 JWT config (T54)
+- [ ] 4.2 Controllers cart públicos + mappers (T11, T52)
+- [ ] 4.3 API internal clear (T12)
+- [ ] 4.4 Config JWT (T54)
 
-## Deliverables
-- `shoppingcart-service` deployable JAR
+## Entregáveis
+- JAR implantável `shoppingcart-service`
 - `ShoppingCartApiIntegrationTest`, `InternalCartControllerTest` **(REQUIRED)**
 
-## Tests
+## Testes
 - `./mvnw test -pl shoppingcart-service -Dtest=ShoppingCartApiIntegrationTest,InternalCartControllerTest`
 
-## Success Criteria
-- All cart-service tests pass
-- Health endpoint UP
+## Critérios de sucesso
+- Todos os testes cart-service passam
+- Endpoint health UP

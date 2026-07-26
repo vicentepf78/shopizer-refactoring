@@ -1,33 +1,33 @@
 ---
 status: pending
-title: ProductFacadeV2 + wiring guards (admin writes local)
+title: ProductFacadeV2 + guards de wiring (writes admin locais)
 type: backend
 complexity: medium
 ---
 
-# ProductFacadeV2 + wiring guards (admin writes local)
+# ProductFacadeV2 + guards de wiring (writes admin locais)
 
-## Overview
-Consolidates TLC T29–T30. ProductFacadeV2 read delegation via CatalogServiceClient; ArchUnit/wiring tests proving admin writes never route HTTP.
+## Visão geral
+Consolida TLC T29–T30. Delegação de leitura ProductFacadeV2 via CatalogServiceClient; testes ArchUnit/wiring provando que writes admin nunca roteiam HTTP.
 
 <requirements>
-1. MUST delegate ProductFacadeV2Impl read paths to CatalogServiceClient when strangler on — T29.
-2. MUST add Wave4WiringTest or ArchUnit rule: no HTTP on private product mutations — T30.
-3. MUST document adapter matrix in code comment referencing AD-006.
-4. MUST preserve V1/V2 behavioral parity for GET within documented GAP-CAT-01.
+1. MUST delegar caminhos de leitura ProductFacadeV2Impl para CatalogServiceClient quando strangler on — T29.
+2. MUST adicionar Wave4WiringTest ou regra ArchUnit: sem HTTP em mutações privadas de produto — T30.
+3. MUST documentar matriz de adaptadores em comentário de código referenciando AD-006.
+4. MUST preservar paridade comportamental V1/V2 para GET dentro de GAP-CAT-01 documentado.
 </requirements>
 
-## Related ADRs
+## ADRs relacionados
 - [ADR-006](adrs/adr-006.md)
 - OQ-05
 
-## Deliverables
-- V2 read delegation
-- Wiring guard test **(REQUIRED)**
+## Entregáveis
+- Delegação read V2
+- Teste guard de wiring **(OBRIGATÓRIO)**
 
-## Tests
+## Testes
 - `./mvnw test -pl sm-shop -Dtest=*ProductFacadeV2*Test,*Wave4Wiring*Test`
 
-## Success Criteria
-- V2 GET uses HTTP when strangler on
-- Private POST product never uses CatalogFacadeHttpAdapter
+## Critérios de sucesso
+- V2 GET usa HTTP quando strangler on
+- POST privado de produto nunca usa CatalogFacadeHttpAdapter

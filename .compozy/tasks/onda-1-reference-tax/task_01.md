@@ -7,7 +7,7 @@ complexity: medium
 
 # Scaffold shopizer-api-contracts e DTOs comuns
 
-## Overview
+## Visão geral
 Consolida TLC T1–T2. Cria o módulo Maven `shopizer-api-contracts` no reactor e migra os wrappers DTO comuns (`Entity`, `ShopEntity`, listas, `EntityExists`) para `com.salesmanager.contracts.common`, sem dependência de JPA/`sm-core-model`. Fundação obrigatória para todos os contratos da Wave 1 (TechSpec **Ordem de build** passo 1 e início do passo 2).
 
 <critical>
@@ -27,17 +27,17 @@ Consolida TLC T1–T2. Cria o módulo Maven `shopizer-api-contracts` no reactor 
 6. MUST NOT introduzir imports de `com.salesmanager.core.model`.
 </requirements>
 
-## Subtasks
+## Subtarefas
 - [x] 1.1 Scaffold do módulo `shopizer-api-contracts` e registro no reactor
 - [x] 1.2 Configurar dependências mínimas (jackson-annotations, validation-api)
 - [x] 1.3 Migrar wrappers DTO comuns para `contracts.common`
 - [x] 1.4 Validar compile do módulo isolado
 - [x] 1.5 Smoke test de serialização Jackson dos wrappers comuns
 
-## Implementation Details
+## Detalhes de implementação
 Ver TechSpec: **Arquitetura do sistema** (`shopizer-api-contracts`), **Modelos de dados** (wrappers comuns), **Ordem de build** passo 1. Fontes atuais em `sm-shop-model/.../model/entity/`.
 
-### Relevant Files
+### Arquivos relevantes
 - `pom.xml` — registrar módulo no reactor
 - `sm-core-modules/pom.xml` — template de JAR fino
 - `sm-shop-model/src/main/java/com/salesmanager/shop/model/entity/Entity.java` — fonte do wrapper base
@@ -45,20 +45,20 @@ Ver TechSpec: **Arquitetura do sistema** (`shopizer-api-contracts`), **Modelos d
 - `sm-shop-model/src/main/java/com/salesmanager/shop/model/entity/ReadableEntityList.java` — fonte lista paginada
 - `sm-shop-model/src/main/java/com/salesmanager/shop/model/entity/EntityExists.java` — fonte exists
 
-### Dependent Files
+### Arquivos dependentes
 - `shopizer-api-contracts/pom.xml` — novo módulo (a criar)
 - `shopizer-api-contracts/src/main/java/com/salesmanager/contracts/common/*` — DTOs comuns (a criar)
 
-### Related ADRs
+### ADRs relacionados
 - [ADR-005: Contract DTOs / no JPA in REST responses; Pact](adrs/adr-005.md) — contracts livres de JPA
 
-## Deliverables
+## Entregáveis
 - Módulo `shopizer-api-contracts` no reactor
 - Package `com.salesmanager.contracts.common` com 5 wrappers
 - Unit tests com 80%+ coverage dos wrappers serializáveis **(REQUIRED)**
 - Integration/compile gate do módulo **(REQUIRED)**
 
-## Tests
+## Testes
 - Unit tests:
   - [x] `Entity` serializa/deserializa `id` via Jackson sem campos JPA
   - [x] `EntityExists` serializa `{exists: true|false}` corretamente
@@ -69,7 +69,7 @@ Ver TechSpec: **Arquitetura do sistema** (`shopizer-api-contracts`), **Modelos d
 - Test coverage target: >=80%
 - All tests must pass
 
-## Success Criteria
+## Critérios de sucesso
 - All tests passing
 - Test coverage >=80%
 - Módulo listado no root `<modules>`

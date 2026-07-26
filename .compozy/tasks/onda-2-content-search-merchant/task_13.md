@@ -7,7 +7,7 @@ complexity: medium
 
 # Pact providers e consumer Wave2
 
-## Overview
+## Visão geral
 Consolida TLC T49–T50. Adiciona verificação Pact provider nos três serviços (endpoints P1 content/search/merchant) e o consumer `Wave2ConsumerPactTest` em sm-shop. Garante estabilidade de contrato (STR-02) após o Strangler estar wired (`task_11`).
 
 <critical>
@@ -28,40 +28,40 @@ Consolida TLC T49–T50. Adiciona verificação Pact provider nos três serviço
 7. SHOULD espelhar layout de pastas `contract/*ProviderPactTest` da Onda 1.
 </requirements>
 
-## Subtasks
+## Subtarefas
 - [x] 13.1 Provider Pact content-service (T49)
 - [x] 13.2 Provider Pact search-service (T49)
 - [x] 13.3 Provider Pact merchant-service (T49)
 - [x] 13.4 Consumer Wave2ConsumerPactTest em sm-shop (T50)
 - [x] 13.5 Gates Maven dos quatro módulos
 
-## Implementation Details
+## Detalhes de implementação
 Ver TechSpec: **Abordagem de testes** (Pact), **Ordem de construção** passo 29. Requisito STR-02 / SRCH-07.
 
-### Relevant Files
+### Arquivos relevantes
 - `content-service/`, `search-service/`, `merchant-service/` — providers
 - `sm-shop/.../strangler/` — adapters consumer
 - Padrão Pact Onda 1 em reference-service/tax-service/sm-shop (se existir)
 
-### Dependent Files
+### Arquivos dependentes
 - `content-service/src/test/java/**/contract/*ProviderPactTest.java`
 - `search-service/src/test/java/**/contract/*ProviderPactTest.java`
 - `merchant-service/src/test/java/**/contract/*ProviderPactTest.java`
 - `sm-shop/src/test/java/**/contract/Wave2ConsumerPactTest.java`
 - Contratos/pacts gerados sob pasta de build Pact do projeto
 
-### Related ADRs
+### ADRs relacionados
 - [ADR-011: stubs deprecated](adrs/adr-011.md) — paridade stubs nos contratos
 - [ADR-002: ProductIndexPayload](adrs/adr-002.md) — schema índice no Pact search
 - [ADR-007: Sem ProductType](adrs/adr-007.md) — contratos merchant sem product-type
 
-## Deliverables
+## Entregáveis
 - 3 provider Pact suites + 1 consumer Wave2
 - Pact verification verde nos 4 módulos
 - Contract tests cobrindo endpoints P1 **(REQUIRED)**
 - Documentação mínima de como rodar Pact localmente **(REQUIRED)**
 
-## Tests
+## Testes
 - Unit tests:
   - [x] N/A — foco em contract tests (coverage aplicado aos fixtures/helpers se houver)
 - Integration tests:
@@ -74,7 +74,7 @@ Ver TechSpec: **Abordagem de testes** (Pact), **Ordem de construção** passo 29
 - Test coverage target: >=80% (helpers/fixtures Pact quando aplicável)
 - All tests must pass
 
-## Success Criteria
+## Critérios de sucesso
 - All tests passing
 - Test coverage >=80%
 - STR-02 satisfeito para superfícies P1 Wave2

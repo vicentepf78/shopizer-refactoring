@@ -2,13 +2,13 @@
 
 **Design:** `.specs/features/onda-2-content-search-merchant/design.md`
 **Spec:** `.specs/features/onda-2-content-search-merchant/spec.md`
-**Status:** Approved — pronto para Execute
+**Status:** Aprovado — pronto para Execute
 **Testing:** `.specs/codebase/TESTING.md`
-**Prerequisite:** Onda 1 Execute completo (`onda-1-reference-tax` T1–T32)
+**Pré-requisito:** Onda 1 Execute completo (`onda-1-reference-tax` T1–T32)
 
 ---
 
-## Execution Plan
+## Plano de execução
 
 ### Phase 1: Contracts + Wave2 Config (Sequential → Parallel)
 
@@ -49,7 +49,7 @@ T48,T49 ──→ T50 ──→ T51 ──→ T52 ──→ T53 ──→ T54
 
 ---
 
-## Parallel Execution Map
+## Mapa de execução paralela
 
 ```
 Phase 1:
@@ -73,11 +73,11 @@ Phase 4:
 
 ---
 
-## Task Breakdown
+## Decomposição de tarefas
 
 ### T1: Content DTOs + `ContentServiceClient` em contracts
 
-**What:** Migrar DTOs content para `com.salesmanager.contracts.content`; criar `ContentServiceClient` (storeCode/langCode, sem JPA).
+**O quê:** Migrar DTOs content para `com.salesmanager.contracts.content`; criar `ContentServiceClient` (storeCode/langCode, sem JPA).
 **Where:** `shopizer-api-contracts/.../content/`, `.../client/ContentServiceClient.java`
 **Depends on:** Onda 1 T6
 **Reuses:** `sm-shop-model/.../model/content/*`
@@ -96,7 +96,7 @@ Phase 4:
 
 ### T2: Search DTOs + `SearchIndexClient` em contracts [P]
 
-**What:** Criar `ProductIndexPayload`, `ProductIndexBulkPayload`, `ValueList`; interface `SearchIndexClient`.
+**O quê:** Criar `ProductIndexPayload`, `ProductIndexBulkPayload`, `ValueList`; interface `SearchIndexClient`.
 **Where:** `shopizer-api-contracts/.../search/`, `.../client/SearchIndexClient.java`
 **Depends on:** Onda 1 T6
 **Reuses:** design § ProductIndexPayload (`schemaVersion=1`)
@@ -115,7 +115,7 @@ Phase 4:
 
 ### T3: Merchant DTOs + `MerchantServiceClient` em contracts [P]
 
-**What:** Migrar DTOs merchant; criar `MerchantStoreSnapshot`; `MerchantServiceClient`.
+**O quê:** Migrar DTOs merchant; criar `MerchantStoreSnapshot`; `MerchantServiceClient`.
 **Where:** `shopizer-api-contracts/.../merchant/`, `.../client/MerchantServiceClient.java`
 **Depends on:** Onda 1 T6
 **Reuses:** `sm-shop-model/.../model/store/*`, `Configs.java`
@@ -134,7 +134,7 @@ Phase 4:
 
 ### T4: Wave2 Strangler properties + `RestTemplate` (monólito)
 
-**What:** Profile `strangler-wave2`; properties `wave2.*.base-url`, `wave2.strangler.enabled`, `wave2.search-service.internal-token`; `@Bean RestTemplate` + correlation interceptor stub; `SearchIndexClientRestTemplateImpl` no sm-shop.
+**O quê:** Profile `strangler-wave2`; properties `wave2.*.base-url`, `wave2.strangler.enabled`, `wave2.search-service.internal-token`; `@Bean RestTemplate` + correlation interceptor stub; `SearchIndexClientRestTemplateImpl` no sm-shop.
 **Where:** `sm-shop/.../strangler/config/Wave2ClientConfig.java`, `application-strangler-wave2.properties`
 **Depends on:** T1, T2, T3
 **Reuses:** Onda 1 `Wave1ClientConfig`; STR-01
@@ -153,7 +153,7 @@ Phase 4:
 
 ### T5: Scaffold `sm-content-core` + repositories
 
-**What:** Novo módulo; mover `ContentRepository*`, `PageContentRepository`.
+**O quê:** Novo módulo; mover `ContentRepository*`, `PageContentRepository`.
 **Where:** `sm-content-core/`, root `pom.xml`
 **Depends on:** T1
 **Reuses:** Onda 1 `sm-reference-core` pattern
@@ -172,7 +172,7 @@ Phase 4:
 
 ### T6: Mover `ContentService` + CMS content modules
 
-**What:** Mover `ContentServiceImpl`; `modules/cms/content/` (exceto `product/`); cache managers.
+**O quê:** Mover `ContentServiceImpl`; `modules/cms/content/` (exceto `product/`); cache managers.
 **Where:** `sm-content-core/.../services/content/`, `.../modules/cms/`
 **Depends on:** T5
 **Reuses:** design § sm-content-core
@@ -191,7 +191,7 @@ Phase 4:
 
 ### T7: Split `shopizer-content-cms.xml`
 
-**What:** Subset XML só `contentFileManager` + backends (infinispan/local/aws/gcp).
+**O quê:** Subset XML só `contentFileManager` + backends (infinispan/local/aws/gcp).
 **Where:** `sm-content-core/src/main/resources/spring/shopizer-content-cms.xml`
 **Depends on:** T6
 **Reuses:** `sm-core/.../shopizer-core-cms.xml`
@@ -210,7 +210,7 @@ Phase 4:
 
 ### T8: Scaffold `content-service` Boot app
 
-**What:** Executable jar port 8083; `ContentServiceApplication` + `@ImportResource` CMS XML.
+**O quê:** Executable jar port 8083; `ContentServiceApplication` + `@ImportResource` CMS XML.
 **Where:** `content-service/`
 **Depends on:** T7
 **Reuses:** `reference-service` packaging
@@ -229,7 +229,7 @@ Phase 4:
 
 ### T9: JWT security em `content-service`
 
-**What:** Copiar cadeia JWT de tax-service; proteger `/private/**`; público aberto.
+**O quê:** Copiar cadeia JWT de tax-service; proteger `/private/**`; público aberto.
 **Where:** `content-service/.../security/`
 **Depends on:** T8
 **Reuses:** AD-006
@@ -248,7 +248,7 @@ Phase 4:
 
 ### T10: `ReferenceServiceClient` em content-service
 
-**What:** `ReferenceServiceClientRestTemplateImpl` → `wave1.reference-service.base-url`.
+**O quê:** `ReferenceServiceClientRestTemplateImpl` → `wave1.reference-service.base-url`.
 **Where:** `content-service/.../client/`
 **Depends on:** T9
 **Reuses:** Onda 1 tax client pattern
@@ -267,7 +267,7 @@ Phase 4:
 
 ### T11: `ContentPagesController`
 
-**What:** Endpoints pages espelhando `ContentApi` (list, get, CRUD private).
+**O quê:** Endpoints pages espelhando `ContentApi` (list, get, CRUD private).
 **Where:** `content-service/.../api/v1/content/ContentPagesController.java`
 **Depends on:** T10
 **Reuses:** `ContentApi` paths
@@ -286,7 +286,7 @@ Phase 4:
 
 ### T12: `ContentBoxesController`
 
-**What:** Endpoints boxes (list, get by code, CRUD).
+**O quê:** Endpoints boxes (list, get by code, CRUD).
 **Where:** `content-service/.../api/v1/content/ContentBoxesController.java`
 **Depends on:** T11
 **Requirement:** CNT-02
@@ -304,7 +304,7 @@ Phase 4:
 
 ### T13: `ContentFilesController`
 
-**What:** Upload `POST /private/file(s)`; `GET /content/images`.
+**O quê:** Upload `POST /private/file(s)`; `GET /content/images`.
 **Where:** `content-service/.../api/v1/content/ContentFilesController.java`
 **Depends on:** T12
 **Requirement:** CNT-03, CNT-04
@@ -322,7 +322,7 @@ Phase 4:
 
 ### T14: `ContentAdminController`
 
-**What:** Admin CMS list/folder/images add/rename/remove; stubs OQ-04 preservados.
+**O quê:** Admin CMS list/folder/images add/rename/remove; stubs OQ-04 preservados.
 **Where:** `content-service/.../api/v1/content/ContentAdminController.java`
 **Depends on:** T13
 **Requirement:** CNT-03, OQ-04
@@ -340,7 +340,7 @@ Phase 4:
 
 ### T15: Internal APIs — static files + logo (`C-ready`)
 
-**What:** `StaticFilesInternalController` (`/internal/v1/static/files/**`); `InternalLogoController` (`POST/DELETE /internal/v1/content/logo`).
+**O quê:** `StaticFilesInternalController` (`/internal/v1/static/files/**`); `InternalLogoController` (`POST/DELETE /internal/v1/content/logo`).
 **Where:** `content-service/.../api/internal/`
 **Depends on:** T14
 **Reuses:** OQ-03 B, AD-014, AD-013
@@ -360,7 +360,7 @@ Phase 4:
 
 ### T16: Portar `ContentFacadeImpl` + mappers
 
-**What:** Mover facade/populators/mappers para content-service; wire controllers → facade.
+**O quê:** Mover facade/populators/mappers para content-service; wire controllers → facade.
 **Where:** `content-service/.../facade/content/`
 **Depends on:** T15
 **Reuses:** `sm-shop/.../ContentFacadeImpl.java`
@@ -379,7 +379,7 @@ Phase 4:
 
 ### T17: `sm-core` delegate content + trim CMS XML
 
-**What:** Remover classes movidas; dep `sm-content-core`; `shopizer-core-cms.xml` só product beans.
+**O quê:** Remover classes movidas; dep `sm-content-core`; `shopizer-core-cms.xml` só product beans.
 **Where:** `sm-core/pom.xml`, `shopizer-core-cms.xml`
 **Depends on:** T7, T16
 **Requirement:** CNT-04, CNT-05, STR-03
@@ -396,7 +396,7 @@ Phase 4:
 
 ### T18: Scaffold `search-service` + OpenSearch deps
 
-**What:** Módulo executable port 8084; deps commons + opensearch starter; **sem JPA**.
+**O quê:** Módulo executable port 8084; deps commons + opensearch starter; **sem JPA**.
 **Where:** `search-service/`
 **Depends on:** T2, T4
 **Reuses:** AD-012
@@ -415,7 +415,7 @@ Phase 4:
 
 ### T19: Migrar OpenSearch config + `SearchModuleBootstrap`
 
-**What:** Mover `search/*.json`, `ApplicationSearchConfiguration`, bootstrap `@PostConstruct`.
+**O quê:** Mover `search/*.json`, `ApplicationSearchConfiguration`, bootstrap `@PostConstruct`.
 **Where:** `search-service/src/main/resources/search/`, `.../configuration/`
 **Depends on:** T18
 **Requirement:** SRCH-03
@@ -433,7 +433,7 @@ Phase 4:
 
 ### T20: `SearchQueryServiceImpl`
 
-**What:** Extrair query/autocomplete de `SearchServiceImpl`; retorno `SearchItem` (commons).
+**O quê:** Extrair query/autocomplete de `SearchServiceImpl`; retorno `SearchItem` (commons).
 **Where:** `search-service/.../services/SearchQueryServiceImpl.java`
 **Depends on:** T19
 **Requirement:** SRCH-02, OQ-06
@@ -451,7 +451,7 @@ Phase 4:
 
 ### T21: `SearchIndexServiceImpl` + internal index API (`S-ready` partial)
 
-**What:** Index/delete from `ProductIndexPayload`; `InternalIndexController`; `X-Internal-Token` filter.
+**O quê:** Index/delete from `ProductIndexPayload`; `InternalIndexController`; `X-Internal-Token` filter.
 **Where:** `search-service/.../services/`, `.../api/internal/`
 **Depends on:** T2, T19
 **Requirement:** SRCH-04, AD-013, OQ-01
@@ -470,7 +470,7 @@ Phase 4:
 
 ### T22: Public `SearchController` (`S-ready`)
 
-**What:** `POST /search`, `/autocomplete`; admin reindex → 501.
+**O quê:** `POST /search`, `/autocomplete`; admin reindex → 501.
 **Where:** `search-service/.../api/v1/SearchController.java`
 **Depends on:** T20, T21
 **Requirement:** SRCH-02, SRCH-08, OQ-04
@@ -488,7 +488,7 @@ Phase 4:
 
 ### T23: `ProductIndexPayloadBuilder` em sm-core [P]
 
-**What:** Extrair build logic de `SearchServiceImpl` → `List<ProductIndexPayload>` por idioma.
+**O quê:** Extrair build logic de `SearchServiceImpl` → `List<ProductIndexPayload>` por idioma.
 **Where:** `sm-core/.../search/index/ProductIndexPayloadBuilder.java`
 **Depends on:** T2
 **Reuses:** `SearchServiceImpl` index methods
@@ -509,7 +509,7 @@ Phase 4:
 
 ### T24: `SearchIndexProducer` InProcess + Http
 
-**What:** Interface + `SearchIndexProducerInProcess` + `SearchIndexProducerHttp` (DELETE + bulk POST).
+**O quê:** Interface + `SearchIndexProducerInProcess` + `SearchIndexProducerHttp` (DELETE + bulk POST).
 **Where:** `sm-core/.../search/index/`, `sm-shop/.../strangler/search/`
 **Depends on:** T21, T23, T4
 **Requirement:** SRCH-06, STR-01
@@ -527,7 +527,7 @@ Phase 4:
 
 ### T25: Refatorar `IndexProductEventListener`
 
-**What:** Injetar `SearchIndexProducer` em vez de `SearchService`.
+**O quê:** Injetar `SearchIndexProducer` em vez de `SearchService`.
 **Where:** `sm-core/.../IndexProductEventListener.java`
 **Depends on:** T24
 **Requirement:** SRCH-06
@@ -544,7 +544,7 @@ Phase 4:
 
 ### T26: `SearchBulkIndexOrchestrator`
 
-**What:** `indexAllData` via `ProductService.listByStore` + producer; delay configurável.
+**O quê:** `indexAllData` via `ProductService.listByStore` + producer; delay configurável.
 **Where:** `sm-shop/.../strangler/search/SearchBulkIndexOrchestrator.java`
 **Depends on:** T24
 **Requirement:** SRCH-08, GAP-SRCH-06
@@ -562,7 +562,7 @@ Phase 4:
 
 ### T27: `SearchFacadeHttpAdapter`
 
-**What:** HTTP delegate query/autocomplete; `indexAllData` local via orchestrator.
+**O quê:** HTTP delegate query/autocomplete; `indexAllData` local via orchestrator.
 **Where:** `sm-shop/.../strangler/search/SearchFacadeHttpAdapter.java`
 **Depends on:** T22, T4, T26
 **Requirement:** SRCH-05, STR-01
@@ -579,7 +579,7 @@ Phase 4:
 
 ### T28: Desabilitar OpenSearch no monólito (strangler profile)
 
-**What:** `@ConditionalOnProperty` SearchFacade; remover starter de sm-core em strangler; desativar bootstrap monólito.
+**O quê:** `@ConditionalOnProperty` SearchFacade; remover starter de sm-core em strangler; desativar bootstrap monólito.
 **Where:** `sm-core/pom.xml`, `sm-shop/.../SearchFacadeImpl.java`
 **Depends on:** T24, T27
 **Requirement:** STR-01, AD-012
@@ -597,7 +597,7 @@ Phase 4:
 
 ### T29: GAP-SRCH documentation [P]
 
-**What:** `search-service/README.md` seção Known gaps GAP-SRCH-01..10.
+**O quê:** `search-service/README.md` seção Known gaps GAP-SRCH-01..10.
 **Where:** `search-service/README.md`
 **Depends on:** T19
 **Requirement:** OQ-05
@@ -614,7 +614,7 @@ Phase 4:
 
 ### T30: Scaffold `sm-merchant-core` + repositories [P]
 
-**What:** Mover merchant repos + MerchantConfiguration/MerchantLog repos.
+**O quê:** Mover merchant repos + MerchantConfiguration/MerchantLog repos.
 **Where:** `sm-merchant-core/`
 **Depends on:** T3
 **Requirement:** MCH-01, STR-03
@@ -631,7 +631,7 @@ Phase 4:
 
 ### T31: Move merchant services + drop `ProductTypeService`
 
-**What:** Mover `MerchantStoreService*`, `MerchantConfiguration*`, `MerchantLog*`; remover injeção morta.
+**O quê:** Mover `MerchantStoreService*`, `MerchantConfiguration*`, `MerchantLog*`; remover injeção morta.
 **Where:** `sm-merchant-core/.../services/`
 **Depends on:** T30
 **Requirement:** MCH-01, MCH-06
@@ -649,7 +649,7 @@ Phase 4:
 
 ### T32: Wire `sm-core` → `sm-merchant-core`
 
-**What:** Remover classes movidas; dep `sm-merchant-core`.
+**O quê:** Remover classes movidas; dep `sm-merchant-core`.
 **Where:** `sm-core/pom.xml`
 **Depends on:** T31
 **Requirement:** STR-03
@@ -666,7 +666,7 @@ Phase 4:
 
 ### T33: Scaffold `merchant-service` + JWT
 
-**What:** Boot app port 8085; security chain replicada.
+**O quê:** Boot app port 8085; security chain replicada.
 **Where:** `merchant-service/`
 **Depends on:** T32
 **Requirement:** MCH-01, MCH-02
@@ -683,7 +683,7 @@ Phase 4:
 
 ### T34: HTTP clients reference + content
 
-**What:** `ReferenceServiceClient` + `ContentServiceClient` RestTemplate em merchant-service.
+**O quê:** `ReferenceServiceClient` + `ContentServiceClient` RestTemplate em merchant-service.
 **Where:** `merchant-service/.../client/`
 **Depends on:** T33, **T15**
 **Requirement:** MCH-04, MCH-05, STR-06
@@ -701,7 +701,7 @@ Phase 4:
 
 ### T35: Port `StoreFacadeImpl` + populators
 
-**What:** Mover facade + populators; refs via HTTP client.
+**O quê:** Mover facade + populators; refs via HTTP client.
 **Where:** `merchant-service/.../facade/`, `.../populator/`
 **Depends on:** T34
 **Requirement:** MCH-02, MCH-05
@@ -718,7 +718,7 @@ Phase 4:
 
 ### T36: `MerchantConfigurationFacade` + `GET /config`
 
-**What:** Port config facade; `PublicConfigsController`.
+**O quê:** Port config facade; `PublicConfigsController`.
 **Where:** `merchant-service/.../api/v1/system/`
 **Depends on:** T35
 **Requirement:** MCH-03
@@ -735,7 +735,7 @@ Phase 4:
 
 ### T37: `MerchantStoreController` — store REST
 
-**What:** Espelhar `MerchantStoreApi` (~18 endpoints, sem logo).
+**O quê:** Espelhar `MerchantStoreApi` (~18 endpoints, sem logo).
 **Where:** `merchant-service/.../api/v1/store/`
 **Depends on:** T35
 **Requirement:** MCH-02, MCH-06
@@ -753,7 +753,7 @@ Phase 4:
 
 ### T38: `InternalStoreController` snapshot
 
-**What:** `GET /internal/v1/store/{code}` → `MerchantStoreSnapshot`.
+**O quê:** `GET /internal/v1/store/{code}` → `MerchantStoreSnapshot`.
 **Where:** `merchant-service/.../api/internal/`
 **Depends on:** T35
 **Requirement:** MCH-07, AD-013
@@ -770,7 +770,7 @@ Phase 4:
 
 ### T39: Logo orchestration AD-014
 
-**What:** Upload blob-first + compensate; delete DB-first + tolerate orphan blob.
+**O quê:** Upload blob-first + compensate; delete DB-first + tolerate orphan blob.
 **Where:** `merchant-service/.../facade/StoreFacadeImpl.java`
 **Depends on:** T34, T37, T15
 **Requirement:** MCH-04, AD-014
@@ -788,7 +788,7 @@ Phase 4:
 
 ### T40: Merchant track module gate
 
-**What:** `./mvnw test -pl merchant-service` completo.
+**O quê:** `./mvnw test -pl merchant-service` completo.
 **Where:** `merchant-service/`
 **Depends on:** T36, T37, T38, T39
 **Requirement:** MCH-01
@@ -805,7 +805,7 @@ Phase 4:
 
 ### T41: `ContentFacadeHttpAdapter`
 
-**What:** Strangler adapter content; `@ConditionalOnProperty`; JWT + correlation forward.
+**O quê:** Strangler adapter content; `@ConditionalOnProperty`; JWT + correlation forward.
 **Where:** `sm-shop/.../strangler/content/ContentFacadeHttpAdapter.java`
 **Depends on:** T16, T17, T4
 **Requirement:** CNT-09, STR-01
@@ -822,7 +822,7 @@ Phase 4:
 
 ### T42: `StaticContentProxy`
 
-**What:** Wire `ImagesController`/`FilesController` → content internal static API.
+**O quê:** Wire `ImagesController`/`FilesController` → content internal static API.
 **Where:** `sm-shop/.../strangler/content/StaticContentProxy.java`
 **Depends on:** T15, T41
 **Requirement:** CNT-08, OQ-03
@@ -840,7 +840,7 @@ Phase 4:
 
 ### T43: `ContentBlobClient` (catalog P2)
 
-**What:** HTTP client para `ProductOptionFacadeImpl` (PROPERTY) e `ProductVariantGroupFacadeImpl` (VARIANT).
+**O quê:** HTTP client para `ProductOptionFacadeImpl` (PROPERTY) e `ProductVariantGroupFacadeImpl` (VARIANT).
 **Where:** `sm-shop/.../strangler/content/ContentBlobClient.java`
 **Depends on:** T15, T41
 **Requirement:** CNT-08, STR-06
@@ -857,7 +857,7 @@ Phase 4:
 
 ### T44: Merchant strangler adapters
 
-**What:** `StoreFacadeHttpAdapter`, `MerchantConfigurationFacadeHttpAdapter`.
+**O quê:** `StoreFacadeHttpAdapter`, `MerchantConfigurationFacadeHttpAdapter`.
 **Where:** `sm-shop/.../strangler/merchant/`
 **Depends on:** T40, T4
 **Requirement:** MCH-08, STR-01
@@ -874,7 +874,7 @@ Phase 4:
 
 ### T45: `MerchantServiceClient` + resolver + hydrator
 
-**What:** Client RestTemplate; `MerchantStoreEntityHydrator`; atualizar `MerchantStoreArgumentResolver`; cache TTL opcional.
+**O quê:** Client RestTemplate; `MerchantStoreEntityHydrator`; atualizar `MerchantStoreArgumentResolver`; cache TTL opcional.
 **Where:** `sm-shop/.../strangler/merchant/`, `MerchantStoreArgumentResolver.java`
 **Depends on:** T38, T44
 **Requirement:** MCH-07, MCH-08
@@ -892,7 +892,7 @@ Phase 4:
 
 ### T46: Strangler conditional wiring gate
 
-**What:** Verificar um bean por interface (Content/Search/Merchant facades + producers); profiles monolith vs strangler-wave2.
+**O quê:** Verificar um bean por interface (Content/Search/Merchant facades + producers); profiles monolith vs strangler-wave2.
 **Where:** `sm-shop/`, `sm-core/`
 **Depends on:** T28, T41, T43, T45
 **Requirement:** STR-01, STR-04
@@ -910,7 +910,7 @@ Phase 4:
 
 ### T47: Correlation ID filter (all Wave2 apps)
 
-**What:** `CorrelationIdFilter` em content/search/merchant/sm-shop; RestTemplate interceptor.
+**O quê:** `CorrelationIdFilter` em content/search/merchant/sm-shop; RestTemplate interceptor.
 **Where:** `*/.../web/CorrelationIdFilter.java`
 **Depends on:** T8, T18, T33, T4
 **Requirement:** STR-05
@@ -928,7 +928,7 @@ Phase 4:
 
 ### T48: Actuator health indicators [P]
 
-**What:** Custom health: content (db/cms/reference); search (openSearch); merchant (db/reference/content).
+**O quê:** Custom health: content (db/cms/reference); search (openSearch); merchant (db/reference/content).
 **Where:** `{content,search,merchant}-service/.../health/`
 **Depends on:** T17, T22, T40
 **Requirement:** STR-05
@@ -948,7 +948,7 @@ Phase 4:
 
 ### T49: Pact provider tests [P]
 
-**What:** Provider verification content + search + merchant endpoints P1.
+**O quê:** Provider verification content + search + merchant endpoints P1.
 **Where:** `*/src/test/java/**/contract/*ProviderPactTest.java`
 **Depends on:** T17, T22, T40
 **Requirement:** STR-02
@@ -967,7 +967,7 @@ Phase 4:
 
 ### T50: Pact consumer (sm-shop)
 
-**What:** `Wave2ConsumerPactTest` verifica contratos dos 3 serviços.
+**O quê:** `Wave2ConsumerPactTest` verifica contratos dos 3 serviços.
 **Where:** `sm-shop/src/test/java/.../contract/Wave2ConsumerPactTest.java`
 **Depends on:** T49
 **Requirement:** STR-02
@@ -984,7 +984,7 @@ Phase 4:
 
 ### T51: Docker Compose Wave 2
 
-**What:** `docker-compose-wave2.yml` — mysql, opensearch, 4 services + sm-shop; CMS volume só content.
+**O quê:** `docker-compose-wave2.yml` — mysql, opensearch, 4 services + sm-shop; CMS volume só content.
 **Where:** `/docker-compose-wave2.yml`
 **Depends on:** T46
 **Requirement:** STR-03, STR-06
@@ -1001,7 +1001,7 @@ Phase 4:
 
 ### T52: Wave2 integration test suite
 
-**What:** Consolidar testes search/content/merchant strangler; `@Ignore` ES opcional documentado.
+**O quê:** Consolidar testes search/content/merchant strangler; `@Ignore` ES opcional documentado.
 **Where:** `*/src/test/java/`
 **Depends on:** T46, T50
 **Requirement:** SRCH-01..06, CNT-01..09, MCH-01..08
@@ -1018,7 +1018,7 @@ Phase 4:
 
 ### T53: Full build gate
 
-**What:** `./mvnw clean install` reactor completo Onda 1 + Onda 2.
+**O quê:** `./mvnw clean install` reactor completo Onda 1 + Onda 2.
 **Where:** root
 **Depends on:** T51, T52
 **Requirement:** all Wave 2
@@ -1036,7 +1036,7 @@ Phase 4:
 
 ### T54: Traceability + STATE update
 
-**What:** Atualizar `spec.md` requirements → Verified; `STATE.md` Onda 2 Tasks complete; `design.md` Status Approved.
+**O quê:** Atualizar `spec.md` requirements → Verified; `STATE.md` Onda 2 Tasks complete; `design.md` Status Approved.
 **Where:** `.specs/features/onda-2-content-search-merchant/`, `.specs/project/STATE.md`
 **Depends on:** T53
 **Requirement:** STR-02, STR-05

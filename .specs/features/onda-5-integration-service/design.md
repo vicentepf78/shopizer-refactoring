@@ -1,15 +1,15 @@
 # Onda 5 — Integration Service Design
 
 **Spec:** `.specs/features/onda-5-integration-service/spec.md`
-**Context:** `.specs/features/onda-5-integration-service/context.md` (OQ-01..06 confirmed)
-**Status:** Approved — Execute blocked on Onda 3 + Onda 4 partial
-**Exploration:** Payment/shipping services, `sm-core-modules` contracts, checkout hub (2026-07-04 master plan)
+**Context:** `.specs/features/onda-5-integration-service/context.md` (OQ-01..06 confirmadas)
+**Status:** Aprovado — Execute bloqueado em Onda 3 + Onda 4 parcial
+**Exploração:** Serviços payment/shipping, contratos `sm-core-modules`, hub checkout (plano mestre 2026-07-04)
 
 ---
 
-## Architecture Overview
+## Visão geral da arquitetura
 
-Wave 5 extracts **one Spring Boot service** — `integration-service` (:8086) — owning payment/shipping **orchestration** and the **plugin registry**, while `sm-shop` remains the Strangler BFF and checkout application service (from Onda 3) owns order lifecycle mutations.
+A Onda 5 extrai **um serviço Spring Boot** — `integration-service` (:8086) — dono da **orquestração** de pagamento/frete e do **registry de plugins**, enquanto `sm-shop` permanece o Strangler BFF e o application service de checkout (da Onda 3) é dono das mutações do ciclo de vida do pedido.
 
 ```mermaid
 flowchart TB
@@ -37,11 +37,11 @@ flowchart TB
         TXN[TransactionPersistence]
     end
 
-    subgraph wave3 [Onda 3 — monolith]
+    subgraph wave3 [Onda 3 — monólito]
         SAGA[Checkout saga / outbox]
     end
 
-    subgraph wave4 [Onda 4 partial]
+    subgraph wave4 [Onda 4 parcial]
         CAT[catalog-service read API]
     end
 
@@ -71,45 +71,45 @@ flowchart TB
     SHP_ORCH --> DB
 ```
 
-### Principles (inherited + Wave 5)
+### Princípios (herdados + Onda 5)
 
-1. **Frozen REST paths** — STR-06; BFF keeps original controllers
-2. **DTOs without JPA** in JSON — `shopizer-api-contracts` + Onda 3 integration DTOs
-3. **RestTemplate** clients — `wave5.integration-service.base-url`
-4. **JWT replicated** for `/private/**` admin routes
-5. **Stateless order boundary** — integration returns `TransactionResult`; checkout saga updates order (OQ-01)
-6. **Plugin registry in-process** inside integration-service (OQ-03) — no separate gateway microservice per provider
-7. **Shared DB** for merchant integration configuration (AD-003, OQ-04)
-8. **Catalog read via HTTP** for shipping weights — no in-process `PricingService` (OQ-02)
+1. **Caminhos REST congelados** — STR-06; BFF mantém controllers originais
+2. **DTOs sem JPA** em JSON — `shopizer-api-contracts` + DTOs integration Onda 3
+3. **Clients RestTemplate** — `wave5.integration-service.base-url`
+4. **JWT replicado** para rotas admin `/private/**`
+5. **Fronteira stateless de pedido** — integration retorna `TransactionResult`; saga checkout atualiza pedido (OQ-01)
+6. **Registry de plugins in-process** dentro de integration-service (OQ-03) — sem microsserviço gateway separado por provedor
+7. **DB compartilhado** para configuração de integração merchant (AD-003, OQ-04)
+8. **Leitura de catálogo via HTTP** para pesos de frete — sem `PricingService` in-process (OQ-02)
 
 ---
 
-## Design Decisions (OQ-01 – OQ-06)
+## Decisões de design (OQ-01 – OQ-06)
 
-| ID | Decision | Choice | Rationale |
+| ID | Decisão | Escolha | Fundamentação |
 |----|----------|--------|-----------|
-| **OQ-01** | Order mutation on payment | **Stateless integration** | Breaks `PaymentServiceImpl` → `OrderService` cycle; saga owns order status |
-| **OQ-02** | Shipping product data | **Catalog HTTP snapshots** | Aligns with Onda 4 read extraction; `ShippingProductSnapshot` subset |
-| **OQ-03** | Plugin hosting | **In-process Spring beans** | Existing `Map<String, PaymentModule>` pattern; plugins are libraries not services |
-| **OQ-04** | Config persistence | **Shared MySQL** | `MERCHANT_CONFIGURATION` already keyed by store; split DB deferred |
-| **OQ-05** | Admin config APIs | **Migrate to integration-service** | Full orchestration ownership |
-| **OQ-06** | Checkout APIs location | **BFF + checkout service** | `OrderPaymentApi` orchestrates; integration is capability provider |
+| **OQ-01** | Mutação de pedido no pagamento | **Integration stateless** | Quebra ciclo `PaymentServiceImpl` → `OrderService`; saga é dona do status do pedido |
+| **OQ-02** | Dados de produto para frete | **Snapshots HTTP catálogo** | Alinha com extração de leitura Onda 4; subset `ShippingProductSnapshot` |
+| **OQ-03** | Hospedagem de plugins | **Beans Spring in-process** | Padrão existente `Map<String, PaymentModule>`; plugins são bibliotecas, não serviços |
+| **OQ-04** | Persistência de config | **MySQL compartilhado** | `MERCHANT_CONFIGURATION` já keyed por loja; split DB adiado |
+| **OQ-05** | APIs admin config | **Migrar para integration-service** | Ownership completo de orquestração |
+| **OQ-06** | Localização APIs checkout | **BFF + checkout service** | `OrderPaymentApi` orquestra; integration é capability provider |
 
-**AD-015:** Port 8086; Maven module `integration-service`; thin core `sm-integration-core`.
+**AD-015:** Porta 8086; módulo Maven `integration-service`; core thin `sm-integration-core`.
 
-**AD-016:** Runtime uses `PaymentModuleV2` / `ShippingQuoteModuleV2` (Onda 3); legacy adapters delegate until plugins rewritten.
+**AD-016:** Runtime usa `PaymentModuleV2` / `ShippingQuoteModuleV2` (Onda 3); adaptadores legados delegam até plugins reescritos.
 
-**AD-017:** `PaymentServiceImpl` order writes gated behind `!wave5.strangler.enabled` for rollback.
+**AD-017:** Writes de pedido em `PaymentServiceImpl` condicionados a `!wave5.strangler.enabled` para rollback.
 
-**AD-018:** `Encryption` bean and credential handling stay in integration-service only.
+**AD-018:** Bean `Encryption` e tratamento de credenciais permanecem apenas em integration-service.
 
-**AD-019:** `DefaultPackagingImpl`, preprocessors, and shipping rules move to `sm-integration-core`.
+**AD-019:** `DefaultPackagingImpl`, preprocessors e regras de frete movem para `sm-integration-core`.
 
-**AD-020:** Internal payment APIs require `orderSnapshotId` (Long) — not full `Order` entity.
+**AD-020:** APIs internas de pagamento exigem `orderSnapshotId` (Long) — não entidade `Order` completa.
 
 ---
 
-## Module Structure
+## Estrutura de módulos
 
 ```
 shopizer-api-contracts/
@@ -120,17 +120,17 @@ shopizer-api-contracts/
     IntegrationServiceClient
 
 sm-core-modules/
-  integration/payment/model/PaymentModuleV2.java    # Onda 3 deliverable
+  integration/payment/model/PaymentModuleV2.java    # entregável Onda 3
   integration/shipping/model/ShippingQuoteModuleV2.java
 
-sm-integration-core/                               # NEW
+sm-integration-core/                               # NOVO
   services/payments/PaymentOrchestratorImpl
   services/shipping/ShippingOrchestratorImpl
-  modules/integration/payment/impl/*               # moved from sm-core
+  modules/integration/payment/impl/*               # movido de sm-core
   modules/integration/shipping/impl/*
   configuration/ModulesConfiguration
 
-integration-service/                               # NEW :8086
+integration-service/                               # NOVO :8086
   IntegrationServiceApplication
   api/v1/payment/*
   api/v1/shipping/*
@@ -147,10 +147,10 @@ sm-shop/
 
 ---
 
-## Key Interfaces
+## Interfaces principais
 
 ```java
-// shopizer-api-contracts — integration client
+// shopizer-api-contracts — client integration
 package com.salesmanager.contracts.client;
 
 import com.salesmanager.contracts.integration.*;
@@ -166,7 +166,7 @@ public interface IntegrationServiceClient {
 ```
 
 ```java
-// sm-core-modules — V2 payment plugin (Onda 3)
+// sm-core-modules — plugin pagamento V2 (Onda 3)
 package com.salesmanager.core.modules.integration.payment.model;
 
 public interface PaymentModuleV2 {
@@ -180,7 +180,7 @@ public interface PaymentModuleV2 {
 ```
 
 ```java
-// sm-integration-core — orchestrator port
+// sm-integration-core — porta orquestrador
 package com.salesmanager.integration.services;
 
 public interface PaymentOrchestrator {
@@ -192,70 +192,70 @@ public interface PaymentOrchestrator {
 }
 ```
 
-Error convention: remote/strangler failures → **503** `{ error, correlationId }`; validation → **400**; gateway/integration → **502** with `IntegrationErrorCode`; invalid module → **404**; never silent in-process fallback when strangler enabled.
+Convenção de erro: falhas remotas/strangler → **503** `{ error, correlationId }`; validação → **400**; gateway/integration → **502** com `IntegrationErrorCode`; módulo inválido → **404**; nunca fallback in-process silencioso quando strangler habilitado.
 
 ---
 
-## Data Models
+## Modelos de dados
 
 ### PaymentProcessRequest (`shopizer-api-contracts`)
 
-| Field | Type | Notes |
+| Campo | Tipo | Notas |
 | ----- | ---- | ----- |
 | `storeCode` | String | tenant |
-| `orderSnapshotId` | Long | reference only — no Order entity |
+| `orderSnapshotId` | Long | apenas referência — sem entidade Order |
 | `customerSnapshot` | CustomerSnapshot | Onda 3 |
 | `lineItems` | List\<CartLineSnapshot\> | |
-| `payment` | PersistablePaymentDto | card/token details |
+| `payment` | PersistablePaymentDto | detalhes card/token |
 | `amount` | BigDecimal | |
 | `currency` | String | |
 
 ### TransactionResult
 
-| Field | Type | Notes |
+| Campo | Tipo | Notas |
 | ----- | ---- | ----- |
-| `transactionId` | Long | persisted in shared DB |
+| `transactionId` | Long | persistido no DB compartilhado |
 | `gatewayTransactionId` | String | |
 | `type` | enum | AUTH, CAPTURE, REFUND, INIT |
 | `success` | boolean | |
-| `errorCode` | String | optional |
+| `errorCode` | String | opcional |
 | `amount` | BigDecimal | |
 
 ### ShippingQuoteRequest
 
-| Field | Type | Notes |
+| Campo | Tipo | Notas |
 | ----- | ---- | ----- |
 | `storeCode` | String | |
-| `cartId` | Long | optional |
+| `cartId` | Long | opcional |
 | `delivery` | DeliveryDto | |
-| `products` | List\<ShippingProductSnapshot\> | from catalog read |
+| `products` | List\<ShippingProductSnapshot\> | da leitura catálogo |
 | `languageCode` | String | |
 | `orderTotal` | BigDecimal | |
 
-### Persistence (shared schema)
+### Persistência (schema compartilhado)
 
-- `MERCHANT_CONFIGURATION` — encrypted module configs
-- `TRANSACTION` — payment transaction records (integration-service writes)
-- `SHIPPING_ORIGIN`, shipping merchant configs — as today
-- **No `ORDERS` table writes** from integration-service
+- `MERCHANT_CONFIGURATION` — configs de módulo criptografadas
+- `TRANSACTION` — registros de transação de pagamento (integration-service escreve)
+- `SHIPPING_ORIGIN`, configs merchant de frete — como hoje
+- **Sem writes na tabela `ORDERS`** a partir de integration-service
 
 ---
 
-## API Endpoints
+## Endpoints de API
 
-### integration-service (:8086) — public/admin (frozen paths via BFF)
+### integration-service (:8086) — público/admin (caminhos congelados via BFF)
 
-| Area | Paths | Auth |
+| Área | Caminhos | Auth |
 | ---- | ----- | ---- |
-| Payment modules | `/api/v1/private/modules/payment*` | JWT |
-| Payment config | `/api/v1/payment/*` | public/store |
-| Shipping modules | `/api/v1/private/modules/shipping*` | JWT |
-| Shipping config | `/api/v1/private/shipping/*` | JWT |
-| Ship countries | `/api/v1/shipping/countries` | public |
+| Módulos pagamento | `/api/v1/private/modules/payment*` | JWT |
+| Config pagamento | `/api/v1/payment/*` | público/loja |
+| Módulos frete | `/api/v1/private/modules/shipping*` | JWT |
+| Config frete | `/api/v1/private/shipping/*` | JWT |
+| Países entrega | `/api/v1/shipping/countries` | público |
 
-### Internal (BFF / checkout only)
+### Internos (apenas BFF / checkout)
 
-| Method | Path | Auth |
+| Método | Caminho | Auth |
 | ------ | ---- | ---- |
 | POST | `/internal/v1/payments/process` | `X-Internal-Token` |
 | POST | `/internal/v1/payments/capture` | token |
@@ -264,7 +264,7 @@ Error convention: remote/strangler failures → **503** `{ error, correlationId 
 | POST | `/internal/v1/shipping/quote` | token |
 | POST | `/internal/v1/shipping/summary` | token |
 
-### Strangler configuration (`sm-shop`)
+### Configuração Strangler (`sm-shop`)
 
 ```properties
 wave5.strangler.enabled=true
@@ -277,17 +277,17 @@ wave5.catalog-service.base-url=http://catalog-service:8087
 
 ---
 
-## Integration Points
+## Pontos de integração
 
-| Integration | Purpose | Failure |
+| Integração | Propósito | Falha |
 | ----------- | ------- | ------- |
-| integration → reference-service | country/language resolution | 503 |
-| integration → catalog-service | product weight/dimensions for packaging | 503; quote may degrade with documented GAP-INT-01 |
-| monolith → integration | facades + checkout client | 503 no fallback |
-| Plugins → external gateways | Stripe, PayPal, UPS, USPS | 502 mapped to `TransactionResult.success=false` |
-| Checkout saga → integration | payment process after order draft | compensating refund on saga failure |
+| integration → reference-service | resolução país/idioma | 503 |
+| integration → catalog-service | peso/dimensões produto para empacotamento | 503; cotação pode degradar com GAP-INT-01 documentado |
+| monólito → integration | facades + client checkout | 503 sem fallback |
+| Plugins → gateways externos | Stripe, PayPal, UPS, USPS | 502 mapeado para `TransactionResult.success=false` |
+| Saga checkout → integration | process payment após rascunho pedido | reembolso compensatório em falha de saga |
 
-### Payment flow (stateless)
+### Fluxo de pagamento (stateless)
 
 ```mermaid
 sequenceDiagram
@@ -312,50 +312,50 @@ sequenceDiagram
 
 ---
 
-## Impact Analysis
+## Análise de impacto
 
-| Component | Impact | Action |
+| Componente | Impacto | Ação |
 | --------- | ------ | ------ |
-| `shopizer-api-contracts` | modified | Integration DTOs + client |
-| `sm-core-modules` | modified | V2 module interfaces (Onda 3) |
-| `sm-integration-core` | **new** | Extract orchestration + plugins |
-| `integration-service` | **new** | Boot app :8086 |
-| `sm-core` | modified | Delegate/remove moved services |
-| `sm-shop` | modified | Wave5 adapters, checkout wiring |
-| `PaymentServiceImpl` | modified | Remove order writes in strangler path |
-| `docker-compose-wave5.yml` | **new** | Extend topology |
+| `shopizer-api-contracts` | modificado | DTOs integration + client |
+| `sm-core-modules` | modificado | Interfaces módulo V2 (Onda 3) |
+| `sm-integration-core` | **novo** | Extrair orquestração + plugins |
+| `integration-service` | **novo** | App Boot :8086 |
+| `sm-core` | modificado | Delegar/remover serviços movidos |
+| `sm-shop` | modificado | Adaptadores Wave5, wiring checkout |
+| `PaymentServiceImpl` | modificado | Remover writes de pedido no caminho strangler |
+| `docker-compose-wave5.yml` | **novo** | Estender topologia |
 
 ---
 
-## Known Gaps (document only)
+## Known Gaps (apenas documentar)
 
-| ID | Gap | Mitigation |
+| ID | Lacuna | Mitigação |
 |----|-----|------------|
-| GAP-INT-01 | Catalog snapshot missing dimensions | Fallback to monolith packaging defaults; log WARN |
-| GAP-INT-02 | Legacy plugins still use entity adapters | AD-017 bridge until plugin rewrite |
-| GAP-INT-03 | No outbox for failed post-payment order update | Onda 3 saga handles; document compensation |
-| GAP-INT-04 | `ConfigurationsApi` payment/shipping stubs | Out of scope — remain null in BFF |
-| GAP-INT-05 | Credit card validation regex in PaymentServiceImpl | Move as-is to orchestrator |
+| GAP-INT-01 | Snapshot catálogo sem dimensões | Fallback para defaults de empacotamento do monólito; log WARN |
+| GAP-INT-02 | Plugins legados ainda usam adaptadores entity | Ponte AD-017 até rewrite de plugin |
+| GAP-INT-03 | Sem outbox para update de pedido pós-pagamento falho | Saga Onda 3 trata; documentar compensação |
+| GAP-INT-04 | Stubs payment/shipping em `ConfigurationsApi` | Fora de escopo — permanecem null no BFF |
+| GAP-INT-05 | Regex validação cartão de crédito em PaymentServiceImpl | Mover as-is para orquestrador |
 
 ---
 
-## Testing Approach
+## Abordagem de testes
 
-- Unit: orchestrators with mocked `PaymentModuleV2` / catalog client
-- Unit: DTO mappers; encryption round-trip
-- Integration: config CRUD; quote with fixture snapshots
-- Integration: payment process asserts no `Order` UPDATE
-- Pact: provider on integration-service; consumer `Wave5ConsumerPactTest`
+- Unitário: orquestradores com `PaymentModuleV2` / client catálogo mockados
+- Unitário: mappers DTO; round-trip criptografia
+- Integração: CRUD config; cotação com snapshots fixture
+- Integração: process payment asserta sem UPDATE `Order`
+- Pact: provider em integration-service; consumer `Wave5ConsumerPactTest`
 - Gate: `./mvnw -pl integration-service,sm-shop -am verify`
 
 ---
 
-## Build Order
+## Ordem de construção
 
-1. Confirm Onda 3 contracts (`PaymentModuleV2`, snapshots, checkout service)
-2. Contracts in `shopizer-api-contracts` + Wave5 properties
-3. Extract `sm-integration-core` (shipping track can start with snapshots)
-4. `integration-service` Boot + admin APIs
-5. Internal payment APIs + stateless boundary
-6. Strangler adapters + checkout wiring
+1. Confirmar contratos Onda 3 (`PaymentModuleV2`, snapshots, checkout service)
+2. Contratos em `shopizer-api-contracts` + properties Wave5
+3. Extrair `sm-integration-core` (trilha frete pode iniciar com snapshots)
+4. Boot `integration-service` + APIs admin
+5. APIs internas de pagamento + fronteira stateless
+6. Adaptadores Strangler + wiring checkout
 7. Pact + Compose + STATE

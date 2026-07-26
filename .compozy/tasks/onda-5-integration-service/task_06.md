@@ -1,44 +1,44 @@
 ---
 status: pending
-title: Public + internal REST APIs (I-ready)
+title: APIs REST públicas + internas (I-ready)
 type: backend
 complexity: high
 ---
 
-# Public + internal REST APIs (I-ready)
+# APIs REST públicas + internas (I-ready)
 
-## Overview
-Consolidates TLC T20–T22. Adds public payment methods endpoint, internal payment and shipping APIs with `X-Internal-Token` filter. Achieves **I-ready** milestone.
+## Visão geral
+Consolida TLC T20–T22. Adiciona endpoint público de métodos de pagamento, APIs internas de pagamento e frete com filtro `X-Internal-Token`. Atinge marco **I-ready**.
 
 <critical>
-- ALWAYS READ the PRD and TechSpec before starting
-- TESTS REQUIRED — every task MUST include tests in deliverables
+- SEMPRE LER o PRD e a TechSpec antes de iniciar
+- TESTES OBRIGATÓRIOS — toda task DEVE incluir testes nos entregáveis
 </critical>
 
 <requirements>
-1. MUST expose public accepted payment methods — T20, PAY-04.
-2. MUST expose `/internal/v1/payments/*` with token auth — T21, PAY-07..12.
-3. MUST expose `/internal/v1/shipping/quote` and `/summary` — T22, SHP-01..07.
-4. MUST NOT register Order JPA repository in integration-service.
-5. MUST map gateway errors to `TransactionResult` or 502 per TechSpec.
-6. MUST pass integration test: process payment without Order UPDATE — I-ready.
+1. MUST expor métodos de pagamento aceitos publicamente — T20, PAY-04.
+2. MUST expor `/internal/v1/payments/*` com auth por token — T21, PAY-07..12.
+3. MUST expor `/internal/v1/shipping/quote` e `/summary` — T22, SHP-01..07.
+4. MUST NOT registrar repositório JPA Order em integration-service.
+5. MUST mapear erros de gateway para `TransactionResult` ou 502 conforme TechSpec.
+6. MUST passar teste de integração: processar pagamento sem UPDATE em Order — I-ready.
 </requirements>
 
-## Subtasks
-- [ ] 6.1 Public payment methods controller (T20)
-- [ ] 6.2 Internal payment controller + token filter (T21)
-- [ ] 6.3 Internal shipping controller (T22)
-- [ ] 6.4 I-ready integration tests
+## Subtarefas
+- [ ] 6.1 Controller público métodos de pagamento (T20)
+- [ ] 6.2 Controller interno pagamento + filtro de token (T21)
+- [ ] 6.3 Controller interno frete (T22)
+- [ ] 6.4 Testes de integração I-ready
 
-## Related ADRs
+## ADRs relacionados
 - [ADR-002](adrs/adr-002.md)
 - [ADR-006](adrs/adr-006.md)
 
-## Deliverables
-- Internal + public API controllers
-- `InternalPaymentIntegrationTest` asserting no Order writes **(REQUIRED)**
-- Token filter tests **(REQUIRED)**
+## Entregáveis
+- Controllers API internos + públicos
+- `InternalPaymentIntegrationTest` assertando sem writes em Order **(REQUIRED)**
+- Testes de filtro de token **(REQUIRED)**
 
-## Success Criteria
-- I-ready milestone met
-- Health endpoint UP on :8086
+## Critérios de sucesso
+- Marco I-ready atingido
+- Endpoint health UP em :8086

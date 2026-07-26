@@ -1,6 +1,6 @@
 # TechSpec: Wave 1 — Extração dos serviços Reference + Tax
 
-**Feature slug:** `onda-1-reference-tax`  
+**Slug da feature:** `onda-1-reference-tax`  
 **PRD:** [`_prd.md`](_prd.md)  
 **Fonte de design TLC:** `.specs/features/onda-1-reference-tax/design.md`  
 **Date:** 2026-07-18

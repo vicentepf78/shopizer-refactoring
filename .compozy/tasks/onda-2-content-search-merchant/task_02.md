@@ -7,7 +7,7 @@ complexity: high
 
 # Extrair sm-content-core e CMS content
 
-## Overview
+## Visão geral
 Consolida TLC T5–T7. Cria o módulo thin `sm-content-core`, extrai repositórios e `ContentService` com backends CMS de conteúdo (sem product file managers) e adiciona `shopizer-content-cms.xml`. Base para o content-service e para o marco C-ready. Depende dos contracts content de `task_01`; Execute da Onda 1 já deve ter sido gateado.
 
 <critical>
@@ -28,41 +28,41 @@ Consolida TLC T5–T7. Cria o módulo thin `sm-content-core`, extrai repositóri
 7. MUST passar `./mvnw test -pl sm-content-core`.
 </requirements>
 
-## Subtasks
+## Subtarefas
 - [x] 2.1 Scaffold módulo + mover repositórios content (T5)
 - [x] 2.2 Mover ContentService e CMS content modules (T6)
 - [x] 2.3 Split `shopizer-content-cms.xml` content-only (T7)
 - [x] 2.4 Registrar módulo no reactor e smoke `@DataJpaTest`
 - [x] 2.5 Garantir zero beans de product file manager no módulo
 
-## Implementation Details
+## Detalhes de implementação
 Ver TechSpec: **Arquitetura** (`sm-content-core`), **Blobs**, **Ordem de construção** passos 6–8. Reutilizar padrão `sm-reference-core` da Onda 1 (ADR-004).
 
-### Relevant Files
+### Arquivos relevantes
 - `sm-core/src/main/java/com/salesmanager/core/business/repositories/content/` — repos a extrair
 - `sm-core/src/main/java/com/salesmanager/core/business/services/content/ContentService.java` — interface
 - `sm-core/src/main/java/com/salesmanager/core/business/services/content/ContentServiceImpl.java` — impl
 - `sm-core/src/main/java/com/salesmanager/core/business/modules/cms/` — CMS (content vs product)
 - `sm-core/src/main/resources/spring/shopizer-core-cms.xml` — XML monolítico a fatiar
 
-### Dependent Files
+### Arquivos dependentes
 - `sm-content-core/pom.xml` — novo módulo
 - `sm-content-core/src/main/java/.../repositories/content/` — repos movidos
 - `sm-content-core/src/main/java/.../services/content/` — serviços movidos
 - `sm-content-core/src/main/resources/spring/shopizer-content-cms.xml` — XML content-only
 - `pom.xml` — registro do módulo
 
-### Related ADRs
+### ADRs relacionados
 - [ADR-004: Módulos thin sm-content-core / sm-merchant-core](adrs/adr-004.md) — padrão thin core
 - [ADR-008: Colocalização content e contentFileManager-only](adrs/adr-008.md) — exclusão product managers
 
-## Deliverables
+## Entregáveis
 - Módulo `sm-content-core` no reactor com repos + ContentService + CMS content
 - XML CMS content-only importável
 - Unit/integration tests com 80%+ coverage das superfícies movidas **(REQUIRED)**
 - Gate `./mvnw test -pl sm-content-core` **(REQUIRED)**
 
-## Tests
+## Testes
 - Unit tests:
   - [x] ContentService métodos de pages/boxes não referenciam productFileManager
   - [x] Beans CMS content resolvem via ImportResource (smoke)
@@ -73,7 +73,7 @@ Ver TechSpec: **Arquitetura** (`sm-content-core`), **Blobs**, **Ordem de constru
 - Test coverage target: >=80%
 - All tests must pass
 
-## Success Criteria
+## Critérios de sucesso
 - All tests passing
 - Test coverage >=80%
 - `sm-content-core` compilável e testável isolado

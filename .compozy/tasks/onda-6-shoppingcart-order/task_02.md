@@ -1,46 +1,46 @@
 ---
 status: pending
-title: Cart totals API — break cart↔order cycle (TOT-ready)
+title: API cart totals — quebra ciclo cart↔order (TOT-ready)
 type: backend
 complexity: high
 ---
 
-# Cart totals API — break cart↔order cycle (TOT-ready)
+# API cart totals — quebra ciclo cart↔order (TOT-ready)
 
-## Overview
-TLC T6, T56. Extract `calculateShoppingCartTotal` to `CartTotalsService`; expose `POST /internal/v1/orders/totals`; wire `ShoppingCartCalculationServiceImpl` to HTTP when `wave6.totals.http.enabled=true`. Milestone **TOT-ready**.
+## Visão geral
+TLC T6, T56. Extrair `calculateShoppingCartTotal` para `CartTotalsService`; expor `POST /internal/v1/orders/totals`; conectar `ShoppingCartCalculationServiceImpl` a HTTP quando `wave6.totals.http.enabled=true`. Marco **TOT-ready**.
 
 <requirements>
-1. MUST break in-process call `ShoppingCartCalculationServiceImpl` → `OrderService.calculateShoppingCartTotal` when flag on — CART-03, OQ-01.
-2. MUST accept `CartTotalsRequest` and return `CartTotalsResponse` matching `OrderTotalSummary` semantics.
-3. MUST preserve byte-parity with legacy totals in integration test.
-4. MUST protect internal endpoint with `X-Internal-Token`.
-5. MUST mark TOT-ready in STATE.md when complete.
+1. MUST quebrar chamada in-process `ShoppingCartCalculationServiceImpl` → `OrderService.calculateShoppingCartTotal` quando flag on — CART-03, OQ-01.
+2. MUST aceitar `CartTotalsRequest` e retornar `CartTotalsResponse` com semântica de `OrderTotalSummary`.
+3. MUST preservar paridade byte-a-byte com totais legados em teste de integração.
+4. MUST proteger endpoint interno com `X-Internal-Token`.
+5. MUST marcar TOT-ready em STATE.md quando completo.
 </requirements>
 
-## Subtasks
-- [ ] 2.1 Extract `CartTotalsService` from OrderServiceImpl logic (T6)
-- [ ] 2.2 Internal `CartTotalsController` in sm-shop or sm-order-core (T6)
-- [ ] 2.3 HTTP client wiring in ShoppingCartCalculationServiceImpl (T6)
-- [ ] 2.4 Property `wave6.totals.http.enabled` + tests (T56)
+## Subtarefas
+- [ ] 2.1 Extrair `CartTotalsService` da lógica OrderServiceImpl (T6)
+- [ ] 2.2 `CartTotalsController` interno em sm-shop ou sm-order-core (T6)
+- [ ] 2.3 Wiring client HTTP em ShoppingCartCalculationServiceImpl (T6)
+- [ ] 2.4 Property `wave6.totals.http.enabled` + testes (T56)
 
-## Implementation Details
-Source: `sm-core/.../shoppingcart/ShoppingCartCalculationServiceImpl.java` line 73; `OrderServiceImpl.calculateShoppingCartTotal`.
+## Detalhes de implementação
+Fonte: `sm-core/.../shoppingcart/ShoppingCartCalculationServiceImpl.java` linha 73; `OrderServiceImpl.calculateShoppingCartTotal`.
 
-### Relevant Files
+### Arquivos relevantes
 - `sm-core/.../order/OrderServiceImpl.java`
 - `sm-core/.../shoppingcart/ShoppingCartCalculationServiceImpl.java`
 
-### Related ADRs
-- [ADR-007: Cart before order phasing](adrs/adr-007.md)
+### ADRs relacionados
+- [ADR-007: Faseamento cart antes de order](adrs/adr-007.md)
 
-## Deliverables
-- CartTotalsService + internal API + flag wiring
+## Entregáveis
+- CartTotalsService + API interna + wiring de flag
 - `CartTotalsParityTest` **(REQUIRED)**
 
-## Tests
-- Integration: `./mvnw test -pl sm-shop -Dtest=CartTotalsParityTest`
+## Testes
+- Integração: `./mvnw test -pl sm-shop -Dtest=CartTotalsParityTest`
 
-## Success Criteria
-- Parity test green with flag on/off
-- TOT-ready milestone recorded
+## Critérios de sucesso
+- Teste de paridade verde com flag on/off
+- Marco TOT-ready registrado
