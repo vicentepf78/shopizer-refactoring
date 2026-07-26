@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-26 18:36 | 1666 files | 260035 tokens
+# rtt index | generated 2026-07-26 18:36 | 1667 files | 260819 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -7381,6 +7381,48 @@ class ProductVariationServiceImpl
   void saveOrUpdate(ProductVariation entity)
   List<ProductVariation> getByIds(List<Long> ids, MerchantStore store)
 
+# sm-core/src/main/java/com/salesmanager/core/business/services/checkout/CheckoutApplicationService.java [java]
+imports: com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.model.order.Order
+interface CheckoutApplicationService
+
+# sm-core/src/main/java/com/salesmanager/core/business/services/checkout/CheckoutApplicationServiceImpl.java [java]
+imports: java.util.Collections, java.util.Comparator, java.util.Date, java.util.HashMap, java.util.LinkedHashSet, java.util.List, java.util.Locale, java.util.Map, java.util.Set, javax.inject.Inject, org.apache.commons.lang3.StringUtils, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.stereotype.Service, com.salesmanager.core.business.constants.Constants, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.catalog.product.ProductService, com.salesmanager.core.business.services.catalog.product.attribute.ProductAttributeService, com.salesmanager.core.business.services.catalog.product.file.DigitalProductService, com.salesmanager.core.business.services.merchant.MerchantStoreService, com.salesmanager.core.business.services.order.OrderService, com.salesmanager.core.business.services.reference.language.LanguageService, com.salesmanager.core.business.utils.CreditCardUtils, com.salesmanager.core.model.catalog.product.Product, com.salesmanager.core.model.catalog.product.availability.ProductAvailability, com.salesmanager.core.model.customer.Customer, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.order.Order, com.salesmanager.core.model.order.OrderTotalSummary, com.salesmanager.core.model.order.orderproduct.OrderProduct
+class CheckoutApplicationServiceImpl
+  Order placeOrder(CheckoutCommand command)
+  Order placeApiOrder(CheckoutCommand command, MerchantStore store)
+  Order placeStorefrontOrder(CheckoutCommand command, MerchantStore store, Language language)
+  Payment buildStorefrontPayment(CheckoutCommand command, Order modelOrder)
+  void populateOrderCustomer(Customer customer, Order order)
+  Locale storeLocale(MerchantStore store)
+
+# sm-core/src/main/java/com/salesmanager/core/business/services/checkout/CheckoutCommand.java [java]
+imports: java.util.Collections, java.util.List, java.util.Map, org.apache.commons.collections4.CollectionUtils, org.apache.commons.lang3.StringUtils, org.apache.commons.lang3.Validate, com.salesmanager.contracts.customer.CustomerSnapshot, com.salesmanager.contracts.tenant.LanguageCode, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.core.model.customer.Customer, com.salesmanager.core.model.order.Order, com.salesmanager.core.model.order.OrderTotalSummary, com.salesmanager.core.model.payments.Payment, com.salesmanager.core.model.payments.Transaction, com.salesmanager.core.model.shoppingcart.ShoppingCartItem
+class CheckoutCommand
+  Builder builder()
+  MerchantStoreId getStoreId()
+  LanguageCode getLanguageCode()
+  CustomerSnapshot getCustomerSnapshot()
+  Customer getCustomer()
+  List<ShoppingCartItem> getShoppingCartItems()
+  OrderTotalSummary getOrderTotalSummary()
+  Payment getPayment()
+  Transaction getTransaction()
+  Order getPreBuiltOrder()
+  String getPaymentModule()
+  String getPaymentMethodType()
+  String getShippingModule()
+  String getComments()
+  Map<String, String> getPaymentDetails()
+  boolean isCustomerAgreed()
+  boolean isApiFlow()
+  class Builder
+
+# sm-core/src/main/java/com/salesmanager/core/business/services/checkout/CheckoutOrderProductAssembler.java [java]
+imports: java.util.HashSet, java.util.List, java.util.Set, org.apache.commons.collections4.CollectionUtils, org.apache.commons.lang3.Validate, com.salesmanager.core.business.exception.ConversionException, com.salesmanager.core.business.services.catalog.product.ProductService, com.salesmanager.core.business.services.catalog.product.attribute.ProductAttributeService, com.salesmanager.core.business.services.catalog.product.file.DigitalProductService, com.salesmanager.core.model.catalog.product.Product, com.salesmanager.core.model.catalog.product.attribute.ProductAttribute, com.salesmanager.core.model.catalog.product.file.DigitalProduct, com.salesmanager.core.model.catalog.product.price.FinalPrice, com.salesmanager.core.model.catalog.product.price.ProductPrice, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.order.orderproduct.OrderProduct, com.salesmanager.core.model.order.orderproduct.OrderProductAttribute, com.salesmanager.core.model.order.orderproduct.OrderProductDownload, com.salesmanager.core.model.order.orderproduct.OrderProductPrice, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.shoppingcart.ShoppingCartAttributeItem, com.salesmanager.core.model.shoppingcart.ShoppingCartItem
+class CheckoutOrderProductAssembler
+  OrderProduct populate(ShoppingCartItem source, OrderProduct target, MerchantStore store, Language language)
+  OrderProductPrice orderProductPrice(FinalPrice price)
+
 # sm-core/src/main/java/com/salesmanager/core/business/services/checkout/CheckoutOutboxSnapshotDesign.java [java]
 class CheckoutOutboxSnapshotDesign
 
@@ -8151,6 +8193,29 @@ class ProductSnapshotBuilderTest
   Product sampleProduct()
   ProductInventory sampleInventory(String sku, String price)
   ProductInventory sampleInventory(String sku, String price, boolean discounted)
+
+# sm-core/src/test/java/com/salesmanager/core/business/services/checkout/CheckoutApplicationServicePlaceOrderTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.junit.jupiter.api.Assertions.assertThrows, org.mockito.ArgumentMatchers.any, org.mockito.ArgumentMatchers.eq, org.mockito.ArgumentMatchers.isNull, org.mockito.Mockito.verify, org.mockito.Mockito.when, java.math.BigDecimal, java.util.Collections, java.util.HashMap, java.util.Map, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.contracts.tenant.LanguageCode, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.catalog.product.ProductService, com.salesmanager.core.business.services.catalog.product.attribute.ProductAttributeService, com.salesmanager.core.business.services.catalog.product.file.DigitalProductService, com.salesmanager.core.business.services.merchant.MerchantStoreService, com.salesmanager.core.business.services.order.OrderService, com.salesmanager.core.business.services.reference.language.LanguageService, com.salesmanager.core.model.catalog.product.Product, com.salesmanager.core.model.catalog.product.availability.ProductAvailability, com.salesmanager.core.model.catalog.product.description.ProductDescription, com.salesmanager.core.model.catalog.product.price.FinalPrice, com.salesmanager.core.model.catalog.product.price.ProductPrice
+class CheckoutApplicationServicePlaceOrderTest
+  void setUp()
+  void apiFlowDelegatesToOrderServiceWithPreBuiltOrder()
+  void storefrontPayPalWithoutTransactionThrowsPaymentError()
+  void storefrontMissingProductThrowsInventoryMismatch()
+  void storefrontWithTransactionUsesLegacyOrderServiceBranch()
+  void storefrontWithoutTransactionUsesTransactionOverloadWithNull()
+  MerchantStore store(String code)
+  OrderTotalSummary summary(BigDecimal total)
+  ShoppingCartItem cartItem(String sku)
+  Product productWithInventory(MerchantStore store, int qty, int requested)
+  Map<String, String> details(String payerId, String token)
+
+# sm-core/src/test/java/com/salesmanager/core/business/services/checkout/CheckoutCommandTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.junit.jupiter.api.Assertions.assertThrows, java.math.BigDecimal, java.util.Collections, java.util.List, org.junit.jupiter.api.Test, com.salesmanager.contracts.customer.CustomerSnapshot, com.salesmanager.contracts.tenant.LanguageCode, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.core.model.customer.Customer, com.salesmanager.core.model.order.Order, com.salesmanager.core.model.order.OrderTotalSummary, com.salesmanager.core.model.payments.Payment, com.salesmanager.core.model.payments.PaymentType, com.salesmanager.core.model.shoppingcart.ShoppingCartItem
+class CheckoutCommandTest
+  void buildRequiresTenantIdentifiersCustomerSnapshotAndCartItems()
+  void buildRejectsBlankStorefrontPaymentFields()
+  void buildRequiresPaymentForApiFlow()
+  void buildAcceptsApiFlowWithPreBuiltOrderAndPayment()
 
 # sm-core/src/test/java/com/salesmanager/core/business/services/checkout/CustomerSnapshotBuilderTest.java [java]
 imports: org.assertj.core.api.Assertions.assertThat, org.junit.jupiter.api.Test, com.fasterxml.jackson.databind.JsonNode, com.fasterxml.jackson.databind.ObjectMapper, com.salesmanager.contracts.customer.CustomerSnapshot, com.salesmanager.core.model.common.Billing, com.salesmanager.core.model.common.Delivery, com.salesmanager.core.model.customer.Customer, com.salesmanager.core.model.reference.country.Country, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.reference.zone.Zone
@@ -14105,7 +14170,6 @@ class OrderFacadeImpl
 			Language language)
   Order processOrderModel(ShopOrder order, Customer customer, Transaction transaction, MerchantStore store,
 			Language language)
-  void orderCustomer(Customer customer, Order order, Language language)
   Customer initEmptyCustomer(MerchantStore store)
   void refreshOrder(ShopOrder order, MerchantStore store, Customer customer, ShoppingCart shoppingCart,
 			Language language)
