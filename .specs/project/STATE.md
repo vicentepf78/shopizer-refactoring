@@ -1,6 +1,6 @@
 # State
 
-**Last Updated:** 2026-07-26T18:51:00-03:00
+**Last Updated:** 2026-07-26T19:30:00-03:00
 **Current Work:** Onda 3 Execute complete (`onda-3-contracts-dto`). Próximo: Onda 4 planning/Execute.
 
 ---
@@ -99,6 +99,16 @@
 **Decision:** Tabela `CHECKOUT_OUTBOX` + `processOrder` em estágios atrás de `checkout.outbox.enabled=false` (default).
 **Reason:** Seam para Onda 6 sem broker na Onda 3 (ADR-005).
 **Impact:** `CheckoutStagedOrderProcessor`, dispatcher in-process; payloads JSON via `OrderSnapshot`/`CustomerSnapshot`.
+**Aggregate ID (SAG-01):** ordem de resolução — `order.id` → `shoppingCartCode` → `CheckoutCommand.idempotencyKey` (tipicamente `X-Correlation-Id`); sem chave estável, checkout com outbox habilitado falha (`checkout.outbox.aggregate-id-required`) em vez de UUID aleatório.
+
+### AD-W3-006: Fronteira transacional única no checkout outbox (2026-07-26)
+
+**Decision:** `CheckoutStagedOrderProcessor.processOrder` usa um único `@Transactional` envolvendo gateway de pagamento, persistência (customer/order/transaction) e appends outbox quando `checkout.outbox.enabled=true`.
+**Reason:** SAG-03 exige que cada escrita outbox ocorra na mesma transação do passo de negócio correspondente. O legado `OrderServiceImpl.process` não tem `@Transactional` — cada chamada downstream commita de forma independente.
+**Trade-offs:**
+1. Conexão DB retida durante HTTP externo ao gateway — aceitável com flag default `false`; revisar pool sizing antes do rollout Onda 6.
+2. Granularidade de rollback: `EXCEPTION_INVENTORY_MISMATCH` (produto ausente em `decrementInventory`) reverte customer/order/outbox no caminho staged; no legado esses passos já estavam commitados. CHK-05 aplica-se com flag off (rota legada intacta); com flag on, atomicidade SAG-03 prevalece sobre commits parciais.
+**Impact:** Desvio documentado e intencional; split de transações adiado para Onda 6 se o rollout exigir paridade fina de rollback.
 
 ---
 
