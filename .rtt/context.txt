@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-26 12:42 | 1577 files | 244135 tokens
+# rtt index | generated 2026-07-26 12:52 | 1593 files | 248326 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -10,6 +10,18 @@ class MavenWrapperDownloader
 imports: org.springframework.boot.SpringApplication, org.springframework.boot.autoconfigure.SpringBootApplication, org.springframework.context.annotation.ImportResource
 class ContentServiceApplication
   void main(String[] args)
+
+# content-service/src/main/java/com/salesmanager/content/api/internal/InternalCatalogBlobController.java [java]
+imports: java.io.ByteArrayInputStream, org.springframework.http.HttpStatus, org.springframework.http.ResponseEntity, org.springframework.web.bind.annotation.DeleteMapping, org.springframework.web.bind.annotation.PostMapping, org.springframework.web.bind.annotation.RequestBody, org.springframework.web.bind.annotation.RequestMapping, org.springframework.web.bind.annotation.RequestParam, org.springframework.web.bind.annotation.RestController, com.salesmanager.core.business.services.content.ContentService, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.content.InputContentFile
+class InternalCatalogBlobController
+  ResponseEntity<Void> addOptionImage(@RequestBody CatalogBlobRequest request)
+  ResponseEntity<Void> addContentFile(@RequestBody CatalogBlobRequest request)
+  ResponseEntity<Void> removeFile(
+			@RequestParam String storeCode,
+			@RequestParam String fileType,
+			@RequestParam String fileName)
+  InputContentFile toInputFile(CatalogBlobRequest request, FileContentType type)
+  class CatalogBlobRequest
 
 # content-service/src/main/java/com/salesmanager/content/api/internal/InternalLogoController.java [java]
 imports: org.springframework.http.HttpStatus, org.springframework.http.ResponseEntity, org.springframework.web.bind.annotation.DeleteMapping, org.springframework.web.bind.annotation.PostMapping, org.springframework.web.bind.annotation.RequestBody, org.springframework.web.bind.annotation.RequestMapping, org.springframework.web.bind.annotation.RequestParam, org.springframework.web.bind.annotation.RestController, com.salesmanager.content.facade.content.ContentFacade
@@ -10731,11 +10743,12 @@ class LocationImageConfig
   ImageFilePath img()
 
 # sm-shop/src/main/java/com/salesmanager/shop/application/config/MerchantStoreArgumentResolver.java [java]
-imports: com.salesmanager.core.business.constants.Constants.DEFAULT_STORE, java.util.Optional, javax.servlet.http.HttpServletRequest, org.apache.commons.lang3.StringUtils, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.beans.factory.annotation.Autowired, org.springframework.core.MethodParameter, org.springframework.stereotype.Component, org.springframework.web.bind.support.WebDataBinderFactory, org.springframework.web.context.request.NativeWebRequest, org.springframework.web.method.support.HandlerMethodArgumentResolver, org.springframework.web.method.support.ModelAndViewContainer, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.shop.store.api.exception.UnauthorizedException, com.salesmanager.shop.store.controller.store.facade.StoreFacade, com.salesmanager.shop.store.controller.user.facade.UserFacade
+imports: com.salesmanager.core.business.constants.Constants.DEFAULT_STORE, java.util.Optional, javax.servlet.http.HttpServletRequest, org.apache.commons.lang3.StringUtils, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.beans.factory.annotation.Autowired, org.springframework.core.MethodParameter, org.springframework.stereotype.Component, org.springframework.web.bind.support.WebDataBinderFactory, org.springframework.web.context.request.NativeWebRequest, org.springframework.web.method.support.HandlerMethodArgumentResolver, org.springframework.web.method.support.ModelAndViewContainer, com.salesmanager.contracts.client.MerchantServiceClient, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.shop.store.api.exception.UnauthorizedException, com.salesmanager.shop.store.controller.store.facade.StoreFacade, com.salesmanager.shop.store.controller.user.facade.UserFacade, com.salesmanager.shop.strangler.merchant.MerchantStoreEntityHydrator
 class MerchantStoreArgumentResolver
   boolean supportsParameter(MethodParameter parameter)
   Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
 			NativeWebRequest webRequest, WebDataBinderFactory binderFactory)
+  MerchantStore resolveStore(String storeValue)
 
 # sm-shop/src/main/java/com/salesmanager/shop/application/config/MethodSecurityConfig.java [java]
 imports: org.springframework.context.annotation.Configuration, org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity, org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration
@@ -10796,13 +10809,13 @@ class Constants
 class EmailConstants
 
 # sm-shop/src/main/java/com/salesmanager/shop/controller/FilesController.java [java]
-imports: com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.content.ContentService, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.content.OutputContentFile, com.salesmanager.shop.constants.Constants, com.salesmanager.shop.store.controller.AbstractController, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.security.access.prepost.PreAuthorize, org.springframework.stereotype.Controller, org.springframework.web.bind.annotation.PathVariable, org.springframework.web.bind.annotation.RequestMapping, org.springframework.web.bind.annotation.ResponseBody, javax.inject.Inject, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.IOException
+imports: com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.content.ContentService, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.content.OutputContentFile, com.salesmanager.shop.constants.Constants, com.salesmanager.shop.store.controller.AbstractController, com.salesmanager.shop.strangler.content.StaticContentProxy, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.beans.factory.annotation.Autowired, org.springframework.security.access.prepost.PreAuthorize, org.springframework.stereotype.Controller, org.springframework.web.bind.annotation.PathVariable, org.springframework.web.bind.annotation.RequestMapping, org.springframework.web.bind.annotation.ResponseBody, javax.inject.Inject, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.IOException
 class FilesController
   byte[] downloadFile(@PathVariable final String storeCode, @PathVariable final String fileName, @PathVariable final String extension, HttpServletRequest request, HttpServletResponse response)
   byte[] downloadProduct(@PathVariable final String storeCode, @PathVariable final String fileName, @PathVariable final String extension, HttpServletRequest request, HttpServletResponse response)
 
 # sm-shop/src/main/java/com/salesmanager/shop/controller/ImagesController.java [java]
-imports: java.io.File, java.io.IOException, java.nio.file.Files, javax.annotation.PostConstruct, javax.inject.Inject, javax.servlet.http.HttpServletRequest, org.apache.commons.lang3.StringUtils, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.stereotype.Controller, org.springframework.util.ResourceUtils, org.springframework.web.bind.annotation.PathVariable, org.springframework.web.bind.annotation.RequestMapping, org.springframework.web.bind.annotation.ResponseBody, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.catalog.product.image.ProductImageService, com.salesmanager.core.business.services.content.ContentService, com.salesmanager.core.model.catalog.product.file.ProductImageSize, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.content.OutputContentFile
+imports: java.io.File, java.io.IOException, java.nio.file.Files, javax.annotation.PostConstruct, javax.inject.Inject, javax.servlet.http.HttpServletRequest, org.apache.commons.lang3.StringUtils, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.beans.factory.annotation.Autowired, org.springframework.stereotype.Controller, org.springframework.util.ResourceUtils, org.springframework.web.bind.annotation.PathVariable, org.springframework.web.bind.annotation.RequestMapping, org.springframework.web.bind.annotation.ResponseBody, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.catalog.product.image.ProductImageService, com.salesmanager.core.business.services.content.ContentService, com.salesmanager.core.model.catalog.product.file.ProductImageSize, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.content.OutputContentFile, com.salesmanager.shop.strangler.content.StaticContentProxy
 class ImagesController
   void init()
   byte[] printImage(@PathVariable final String storeCode, @PathVariable final String imageType, @PathVariable final String imageName, @PathVariable final String extension)
@@ -13437,7 +13450,7 @@ imports: java.util.List, javax.servlet.http.HttpServletRequest, com.salesmanager
 interface StoreFacade
 
 # sm-shop/src/main/java/com/salesmanager/shop/store/controller/store/facade/StoreFacadeImpl.java [java]
-imports: java.util.ArrayList, java.util.Collections, java.util.List, java.util.Optional, java.util.stream.Collectors, javax.inject.Inject, javax.servlet.http.HttpServletRequest, org.apache.commons.collections4.CollectionUtils, org.apache.commons.lang3.Validate, org.drools.core.util.StringUtils, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.beans.factory.annotation.Autowired, org.springframework.beans.factory.annotation.Qualifier, org.springframework.data.domain.Page, org.springframework.stereotype.Service, com.salesmanager.core.business.exception.ConversionException, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.content.ContentService, com.salesmanager.core.business.services.merchant.MerchantStoreService, com.salesmanager.core.business.services.reference.language.LanguageService, com.salesmanager.core.business.services.system.MerchantConfigurationService, com.salesmanager.core.constants.MeasureUnit, com.salesmanager.core.model.common.GenericEntityList, com.salesmanager.core.model.content.InputContentFile, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.merchant.MerchantStoreCriteria, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.system.MerchantConfiguration, com.salesmanager.core.model.system.MerchantConfigurationType
+imports: java.util.ArrayList, java.util.Collections, java.util.List, java.util.Optional, java.util.stream.Collectors, javax.inject.Inject, javax.servlet.http.HttpServletRequest, org.apache.commons.collections4.CollectionUtils, org.apache.commons.lang3.Validate, org.drools.core.util.StringUtils, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.beans.factory.annotation.Autowired, org.springframework.beans.factory.annotation.Qualifier, org.springframework.boot.autoconfigure.condition.ConditionalOnProperty, org.springframework.data.domain.Page, org.springframework.stereotype.Service, com.salesmanager.core.business.exception.ConversionException, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.content.ContentService, com.salesmanager.core.business.services.merchant.MerchantStoreService, com.salesmanager.core.business.services.reference.language.LanguageService, com.salesmanager.core.business.services.system.MerchantConfigurationService, com.salesmanager.core.constants.MeasureUnit, com.salesmanager.core.model.common.GenericEntityList, com.salesmanager.core.model.content.InputContentFile, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.merchant.MerchantStoreCriteria, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.system.MerchantConfiguration
 class StoreFacadeImpl
   MerchantStore getByCode(HttpServletRequest request)
   MerchantStore get(String code)
@@ -13486,7 +13499,7 @@ imports: com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.co
 interface MerchantConfigurationFacade
 
 # sm-shop/src/main/java/com/salesmanager/shop/store/controller/system/MerchantConfigurationFacadeImpl.java [java]
-imports: com.salesmanager.shop.constants.Constants.KEY_FACEBOOK_PAGE_URL, com.salesmanager.shop.constants.Constants.KEY_GOOGLE_ANALYTICS_URL, com.salesmanager.shop.constants.Constants.KEY_INSTAGRAM_URL, com.salesmanager.shop.constants.Constants.KEY_PINTEREST_PAGE_URL, java.util.Optional, javax.inject.Inject, org.apache.commons.lang3.StringUtils, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.beans.factory.annotation.Value, org.springframework.stereotype.Service, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.system.MerchantConfigurationService, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.system.MerchantConfig, com.salesmanager.core.model.system.MerchantConfiguration, com.salesmanager.shop.model.system.Configs, com.salesmanager.shop.store.api.exception.ServiceRuntimeException
+imports: com.salesmanager.shop.constants.Constants.KEY_FACEBOOK_PAGE_URL, com.salesmanager.shop.constants.Constants.KEY_GOOGLE_ANALYTICS_URL, com.salesmanager.shop.constants.Constants.KEY_INSTAGRAM_URL, com.salesmanager.shop.constants.Constants.KEY_PINTEREST_PAGE_URL, java.util.Optional, javax.inject.Inject, org.apache.commons.lang3.StringUtils, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.beans.factory.annotation.Value, org.springframework.boot.autoconfigure.condition.ConditionalOnProperty, org.springframework.stereotype.Service, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.system.MerchantConfigurationService, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.system.MerchantConfig, com.salesmanager.core.model.system.MerchantConfiguration, com.salesmanager.shop.model.system.Configs, com.salesmanager.shop.store.api.exception.ServiceRuntimeException
 class MerchantConfigurationFacadeImpl
   Configs getMerchantConfig(MerchantStore merchantStore, Language language)
   MerchantConfig getMerchantConfig(MerchantStore merchantStore)
@@ -13550,7 +13563,7 @@ class CategoryFacadeImpl
 class AbstractConfigurationFacadeImpl
 
 # sm-shop/src/main/java/com/salesmanager/shop/store/facade/content/ContentFacadeImpl.java [java]
-imports: java.io.ByteArrayInputStream, java.io.IOException, java.io.InputStream, java.net.URLEncoder, java.util.ArrayList, java.util.List, java.util.Optional, java.util.stream.Collectors, javax.inject.Inject, org.apache.commons.lang3.StringUtils, org.jsoup.helper.Validate, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.beans.factory.annotation.Qualifier, org.springframework.data.domain.Page, org.springframework.stereotype.Component, org.springframework.util.CollectionUtils, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.content.ContentService, com.salesmanager.core.business.services.reference.language.LanguageService, com.salesmanager.core.model.content.Content, com.salesmanager.core.model.content.ContentDescription, com.salesmanager.core.model.content.ContentType, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.content.InputContentFile, com.salesmanager.core.model.content.OutputContentFile, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.shop.model.content.ContentDescriptionEntity, com.salesmanager.shop.model.content.ContentFile
+imports: java.io.ByteArrayInputStream, java.io.IOException, java.io.InputStream, java.net.URLEncoder, java.util.ArrayList, java.util.List, java.util.Optional, java.util.stream.Collectors, javax.inject.Inject, org.apache.commons.lang3.StringUtils, org.jsoup.helper.Validate, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.beans.factory.annotation.Qualifier, org.springframework.boot.autoconfigure.condition.ConditionalOnProperty, org.springframework.data.domain.Page, org.springframework.stereotype.Component, org.springframework.util.CollectionUtils, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.content.ContentService, com.salesmanager.core.business.services.reference.language.LanguageService, com.salesmanager.core.model.content.Content, com.salesmanager.core.model.content.ContentDescription, com.salesmanager.core.model.content.ContentType, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.content.InputContentFile, com.salesmanager.core.model.content.OutputContentFile, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.shop.model.content.ContentDescriptionEntity
 class ContentFacadeImpl
   ContentFolder getContentFolder(String folder, MerchantStore store)
   ContentImage convertToContentImage(String name, MerchantStore store)
@@ -14205,10 +14218,13 @@ class Wave1Properties
   class Http
 
 # sm-shop/src/main/java/com/salesmanager/shop/strangler/config/Wave2ClientConfig.java [java]
-imports: java.time.Duration, java.util.UUID, javax.servlet.http.HttpServletRequest, org.springframework.boot.autoconfigure.condition.ConditionalOnProperty, org.springframework.boot.context.properties.EnableConfigurationProperties, org.springframework.boot.web.client.RestTemplateBuilder, org.springframework.context.annotation.Bean, org.springframework.context.annotation.Configuration, org.springframework.http.client.ClientHttpRequestInterceptor, org.springframework.util.StringUtils, org.springframework.web.client.RestTemplate, org.springframework.web.context.request.RequestAttributes, org.springframework.web.context.request.RequestContextHolder, org.springframework.web.context.request.ServletRequestAttributes, com.salesmanager.contracts.client.SearchIndexClient, com.salesmanager.shop.filter.CorrelationIdFilter, com.salesmanager.shop.strangler.search.SearchIndexClientRestTemplateImpl
+imports: java.time.Duration, java.util.UUID, javax.servlet.http.HttpServletRequest, org.springframework.boot.autoconfigure.condition.ConditionalOnProperty, org.springframework.boot.context.properties.EnableConfigurationProperties, org.springframework.boot.web.client.RestTemplateBuilder, org.springframework.context.annotation.Bean, org.springframework.context.annotation.Configuration, org.springframework.http.client.ClientHttpRequestInterceptor, org.springframework.util.StringUtils, org.springframework.web.client.RestTemplate, org.springframework.web.context.request.RequestAttributes, org.springframework.web.context.request.RequestContextHolder, org.springframework.web.context.request.ServletRequestAttributes, com.salesmanager.contracts.client.MerchantServiceClient, com.salesmanager.contracts.client.SearchIndexClient, com.salesmanager.shop.filter.CorrelationIdFilter, com.salesmanager.shop.strangler.merchant.CachedMerchantServiceClient, com.salesmanager.shop.strangler.merchant.MerchantServiceClientRestTemplateImpl, com.salesmanager.shop.strangler.search.SearchIndexClientRestTemplateImpl
 class Wave2ClientConfig
   RestTemplate wave2RestTemplate(RestTemplateBuilder builder, Wave2Properties properties)
   SearchIndexClient searchIndexClient(
+			RestTemplate wave2RestTemplate,
+			Wave2Properties properties)
+  MerchantServiceClient merchantServiceClient(
 			RestTemplate wave2RestTemplate,
 			Wave2Properties properties)
   ClientHttpRequestInterceptor correlationInterceptor()
@@ -14229,6 +14245,116 @@ class Wave2Properties
   class MerchantServiceEndpoint
   class Http
   class Search
+
+# sm-shop/src/main/java/com/salesmanager/shop/strangler/content/ContentBlobClient.java [java]
+imports: java.io.IOException, java.io.InputStream, org.apache.commons.io.IOUtils, org.apache.commons.lang3.StringUtils, org.springframework.beans.factory.annotation.Value, org.springframework.boot.autoconfigure.condition.ConditionalOnProperty, org.springframework.http.HttpMethod, org.springframework.stereotype.Component, org.springframework.web.client.RestTemplate, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.content.InputContentFile, com.salesmanager.shop.strangler.support.StranglerRestClient
+class ContentBlobClient
+  void addOptionImage(String storeCode, InputContentFile cmsContentImage)
+  void addContentFile(String storeCode, InputContentFile cmsContentImage)
+  void removeFile(String storeCode, FileContentType fileType, String fileName)
+  void removeBlob(String storeCode, String fileType, String fileName)
+  void postBlob(String path, String storeCode, InputContentFile file, String fileContentType)
+  byte[] readBytes(InputContentFile file)
+  String encode(String value)
+  class CatalogBlobRequest
+
+# sm-shop/src/main/java/com/salesmanager/shop/strangler/content/ContentFacadeHttpAdapter.java [java]
+imports: java.io.ByteArrayOutputStream, java.io.IOException, java.util.Collections, java.util.List, java.util.Optional, java.util.stream.Collectors, javax.servlet.http.HttpServletRequest, org.apache.commons.lang3.StringUtils, org.apache.commons.lang3.Validate, org.springframework.beans.factory.annotation.Qualifier, org.springframework.beans.factory.annotation.Value, org.springframework.boot.autoconfigure.condition.ConditionalOnProperty, org.springframework.core.ParameterizedTypeReference, org.springframework.core.io.ByteArrayResource, org.springframework.http.HttpEntity, org.springframework.http.HttpHeaders, org.springframework.http.HttpMethod, org.springframework.http.MediaType, org.springframework.stereotype.Service, org.springframework.util.LinkedMultiValueMap, org.springframework.util.MultiValueMap, org.springframework.web.client.RestTemplate, org.springframework.web.context.request.RequestAttributes, org.springframework.web.context.request.RequestContextHolder, org.springframework.web.context.request.ServletRequestAttributes, org.springframework.web.util.UriComponentsBuilder, com.salesmanager.core.model.content.ContentType, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.content.OutputContentFile, com.salesmanager.core.model.merchant.MerchantStore
+class ContentFacadeHttpAdapter
+  ContentFolder getContentFolder(String folder, MerchantStore store)
+  String absolutePath(MerchantStore store, String file)
+  void delete(MerchantStore store, String fileName, String fileType)
+  void delete(MerchantStore store, Long id)
+  ReadableEntityList<ReadableContentPage> getContentPages(MerchantStore store, Language language, int page,
+			int count)
+  ReadableContentPage getContentPage(String code, MerchantStore store, Language language)
+  ReadableContentPage getContentPageByName(String name, MerchantStore store, Language language)
+  ReadableContentBox getContentBox(String code, MerchantStore store, Language language)
+  boolean codeExist(String code, String type, MerchantStore store)
+  ReadableEntityList<ReadableContentBox> getContentBoxes(ContentType type, String codePrefix,
+			MerchantStore store, Language language, int start, int count)
+  ReadableEntityList<ReadableContentBox> getContentBoxes(ContentType type, MerchantStore store,
+			Language language, int page, int count)
+  void addContentFile(ContentFile file, String merchantStoreCode)
+  void addContentFiles(List<ContentFile> files, String merchantStoreCode)
+  Long saveContentPage(PersistableContentPage page, MerchantStore merchantStore, Language language)
+  void updateContentPage(Long id, PersistableContentPage page, MerchantStore merchantStore,
+			Language language)
+  void deleteContent(Long id, MerchantStore merchantStore)
+  Long saveContentBox(PersistableContentBox box, MerchantStore merchantStore, Language language)
+  void updateContentBox(Long id, PersistableContentBox box, MerchantStore merchantStore, Language language)
+  ReadableContentFull getContent(String code, MerchantStore store, Language language)
+  List<ReadableContentEntity> getContents(Optional<String> type, MerchantStore store, Language language)
+  void renameFile(MerchantStore store, FileContentType fileType, String originalName, String newName)
+  OutputContentFile download(MerchantStore store, FileContentType fileType, String fileName)
+  String contentUrl(String path, MerchantStore store, Language language)
+  void appendStoreLang(UriComponentsBuilder builder, MerchantStore store, Language language)
+  void appendStore(UriComponentsBuilder builder, String storeCode)
+  void multipartExchange(String path, String storeCode, Language language, MultiValueMap<String, Object> body)
+  ByteArrayResource fileResource(ContentFile file)
+  void forwardAuthorization(HttpHeaders headers)
+  String currentHeader(String name)
+
+# sm-shop/src/main/java/com/salesmanager/shop/strangler/content/StaticContentProxy.java [java]
+imports: org.apache.commons.lang3.StringUtils, org.springframework.beans.factory.annotation.Value, org.springframework.boot.autoconfigure.condition.ConditionalOnProperty, org.springframework.http.HttpMethod, org.springframework.stereotype.Component, org.springframework.web.client.RestTemplate, com.salesmanager.core.model.content.FileContentType, com.salesmanager.shop.strangler.support.ServiceUnavailableException, com.salesmanager.shop.strangler.support.StranglerRestClient
+class StaticContentProxy
+  byte[] getStaticFile(String storeCode, FileContentType fileType, String fileName)
+  String encode(String value)
+
+# sm-shop/src/main/java/com/salesmanager/shop/strangler/merchant/CachedMerchantServiceClient.java [java]
+imports: java.util.Map, java.util.concurrent.ConcurrentHashMap, com.salesmanager.contracts.client.MerchantServiceClient, com.salesmanager.contracts.merchant.MerchantStoreSnapshot
+class CachedMerchantServiceClient
+  MerchantStoreSnapshot getStoreSnapshot(String code)
+  class CacheEntry
+
+# sm-shop/src/main/java/com/salesmanager/shop/strangler/merchant/MerchantConfigurationFacadeHttpAdapter.java [java]
+imports: org.apache.commons.lang3.StringUtils, org.apache.commons.lang3.Validate, org.springframework.beans.factory.annotation.Value, org.springframework.boot.autoconfigure.condition.ConditionalOnProperty, org.springframework.http.HttpMethod, org.springframework.stereotype.Service, org.springframework.web.client.RestTemplate, org.springframework.web.util.UriComponentsBuilder, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.shop.model.system.Configs, com.salesmanager.shop.store.controller.system.MerchantConfigurationFacade, com.salesmanager.shop.strangler.support.StranglerRestClient
+class MerchantConfigurationFacadeHttpAdapter
+  Configs getMerchantConfig(MerchantStore merchantStore, Language language)
+
+# sm-shop/src/main/java/com/salesmanager/shop/strangler/merchant/MerchantServiceClientRestTemplateImpl.java [java]
+imports: org.apache.commons.lang3.StringUtils, org.springframework.http.HttpMethod, org.springframework.web.client.RestTemplate, org.springframework.web.util.UriComponentsBuilder, com.salesmanager.contracts.client.MerchantServiceClient, com.salesmanager.contracts.merchant.MerchantStoreSnapshot, com.salesmanager.shop.strangler.config.Wave2Properties, com.salesmanager.shop.strangler.support.StranglerRestClient
+class MerchantServiceClientRestTemplateImpl
+  MerchantStoreSnapshot getStoreSnapshot(String code)
+
+# sm-shop/src/main/java/com/salesmanager/shop/strangler/merchant/MerchantStoreEntityHydrator.java [java]
+imports: org.apache.commons.lang3.StringUtils, org.springframework.stereotype.Component, com.salesmanager.contracts.merchant.MerchantStoreSnapshot, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language
+class MerchantStoreEntityHydrator
+  MerchantStore hydrate(MerchantStoreSnapshot snapshot)
+
+# sm-shop/src/main/java/com/salesmanager/shop/strangler/merchant/StoreFacadeHttpAdapter.java [java]
+imports: java.io.IOException, java.io.InputStream, java.util.Collections, java.util.List, java.util.UUID, javax.servlet.http.HttpServletRequest, org.apache.commons.io.IOUtils, org.apache.commons.lang3.StringUtils, org.apache.commons.lang3.Validate, org.springframework.beans.factory.annotation.Value, org.springframework.boot.autoconfigure.condition.ConditionalOnProperty, org.springframework.core.ParameterizedTypeReference, org.springframework.core.io.ByteArrayResource, org.springframework.http.HttpEntity, org.springframework.http.HttpHeaders, org.springframework.http.HttpMethod, org.springframework.http.MediaType, org.springframework.http.ResponseEntity, org.springframework.stereotype.Service, org.springframework.util.LinkedMultiValueMap, org.springframework.util.MultiValueMap, org.springframework.web.client.HttpStatusCodeException, org.springframework.web.client.ResourceAccessException, org.springframework.web.client.RestClientException, org.springframework.web.client.RestTemplate, org.springframework.web.util.UriComponentsBuilder, com.salesmanager.contracts.client.MerchantServiceClient, com.salesmanager.contracts.merchant.MerchantStoreSnapshot, com.salesmanager.core.model.content.InputContentFile, com.salesmanager.core.model.merchant.MerchantStore
+class StoreFacadeHttpAdapter
+  MerchantStore getByCode(HttpServletRequest request)
+  MerchantStore get(String code)
+  MerchantStore getByCode(String code)
+  List<Language> supportedLanguages(MerchantStore store)
+  ReadableMerchantStore getByCode(String code, String lang)
+  ReadableMerchantStore getFullByCode(String code, String lang)
+  ReadableMerchantStoreList findAll(MerchantStoreCriteria criteria, Language language, int page, int count)
+  ReadableMerchantStoreList getChildStores(Language language, String code, int start, int count)
+  ReadableMerchantStore getByCode(String code, Language lang)
+  ReadableMerchantStore getFullByCode(String code, Language language)
+  boolean existByCode(String code)
+  ReadableMerchantStoreList getByCriteria(MerchantStoreCriteria criteria, Language lang)
+  void create(PersistableMerchantStore store)
+  void update(PersistableMerchantStore store)
+  void delete(String code)
+  ReadableBrand getBrand(String code)
+  void createBrand(String merchantStoreCode, PersistableBrand brand)
+  void deleteLogo(String code)
+  void addStoreLogo(String code, InputContentFile cmsContentImage)
+  List<ReadableMerchantStore> getMerchantStoreNames(MerchantStoreCriteria criteria)
+  String publicStoreUrl(String path, String lang)
+  String publicStoreUrl(String path, Language language)
+  String privateStoreUrl(String path, String lang)
+  String privateStoreUrl(String path, Language language)
+  void appendCriteria(UriComponentsBuilder builder, MerchantStoreCriteria criteria)
+  void appendLang(UriComponentsBuilder builder, Language language)
+  void appendStore(UriComponentsBuilder builder, MerchantStore store)
+  byte[] readBytes(InputContentFile file)
+  String resolveCorrelationId()
+  String currentHeader(String name)
 
 # sm-shop/src/main/java/com/salesmanager/shop/strangler/reference/CountryFacadeHttpAdapter.java [java]
 imports: java.util.Collections, java.util.List, org.apache.commons.lang3.StringUtils, org.springframework.beans.factory.annotation.Value, org.springframework.boot.autoconfigure.condition.ConditionalOnProperty, org.springframework.core.ParameterizedTypeReference, org.springframework.http.HttpMethod, org.springframework.stereotype.Service, org.springframework.web.util.UriComponentsBuilder, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.shop.model.references.ReadableCountry, com.salesmanager.shop.store.controller.country.facade.CountryFacade, com.salesmanager.shop.strangler.support.StranglerRestClient
@@ -14620,6 +14746,53 @@ class Wave2ClientConfigTest
   void wave2CoexistsWithWave1Properties()
   void registersWave2RestTemplateAndSearchIndexClient()
 
+# sm-shop/src/test/java/com/salesmanager/shop/strangler/content/ContentBlobClientTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThatThrownBy, org.springframework.test.web.client.match.MockRestRequestMatchers.method, org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo, org.springframework.test.web.client.response.MockRestResponseCreators.withException, org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess, java.io.ByteArrayInputStream, java.net.ConnectException, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.http.HttpMethod, org.springframework.http.MediaType, org.springframework.test.web.client.MockRestServiceServer, org.springframework.web.client.RestTemplate, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.content.InputContentFile, com.salesmanager.shop.strangler.support.ServiceUnavailableException
+class ContentBlobClientTest
+  void setUp()
+  void addOptionImage_postsToInternalCatalogBlobApi()
+  void removeFile_deletesViaInternalCatalogBlobApi()
+  void connectFailure_mapsTo503()
+
+# sm-shop/src/test/java/com/salesmanager/shop/strangler/content/ContentFacadeHttpAdapterTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.assertj.core.api.Assertions.assertThatThrownBy, org.mockito.Mockito.when, org.springframework.test.web.client.match.MockRestRequestMatchers.header, org.springframework.test.web.client.match.MockRestRequestMatchers.method, org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo, org.springframework.test.web.client.response.MockRestResponseCreators.withException, org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess, java.net.ConnectException, org.junit.jupiter.api.AfterEach, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.springframework.http.HttpHeaders, org.springframework.http.HttpMethod, org.springframework.http.MediaType, org.springframework.mock.web.MockHttpServletRequest, org.springframework.test.web.client.MockRestServiceServer, org.springframework.web.client.RestTemplate, org.springframework.web.context.request.RequestContextHolder, org.springframework.web.context.request.ServletRequestAttributes, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.shop.model.content.page.ReadableContentPage, com.salesmanager.shop.strangler.support.ServiceUnavailableException, com.salesmanager.shop.strangler.support.StranglerRestClient, com.salesmanager.shop.utils.ImageFilePath
+class ContentFacadeHttpAdapterTest
+  void setUp()
+  void tearDown()
+  void privateEndpoint_forwardsJwtAndCorrelation()
+  void getContentPage_forwardsCorrelationOnPublicPath()
+  void connectFailure_mapsTo503()
+  void connectFailureOnPrivateEndpoint_mapsTo503()
+  void absolutePath_usesImageUtilsLocally()
+
+# sm-shop/src/test/java/com/salesmanager/shop/strangler/content/StaticContentProxyTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.assertj.core.api.Assertions.assertThatThrownBy, org.springframework.test.web.client.match.MockRestRequestMatchers.method, org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo, org.springframework.test.web.client.response.MockRestResponseCreators.withException, org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess, java.net.ConnectException, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.http.HttpMethod, org.springframework.http.MediaType, org.springframework.test.web.client.MockRestServiceServer, org.springframework.web.client.RestTemplate, com.salesmanager.core.model.content.FileContentType, com.salesmanager.shop.strangler.support.ServiceUnavailableException
+class StaticContentProxyTest
+  void setUp()
+  void getStaticFile_fetchesFromInternalApi()
+  void connectFailure_mapsTo503()
+
+# sm-shop/src/test/java/com/salesmanager/shop/strangler/merchant/MerchantFacadeHttpAdapterTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.assertj.core.api.Assertions.assertThatThrownBy, org.mockito.Mockito.when, org.springframework.test.web.client.match.MockRestRequestMatchers.header, org.springframework.test.web.client.match.MockRestRequestMatchers.method, org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo, org.springframework.test.web.client.response.MockRestResponseCreators.withException, org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess, java.net.ConnectException, org.junit.jupiter.api.AfterEach, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.springframework.http.HttpHeaders, org.springframework.http.HttpMethod, org.springframework.http.MediaType, org.springframework.mock.web.MockHttpServletRequest, org.springframework.test.web.client.MockRestServiceServer, org.springframework.web.client.RestTemplate, org.springframework.web.context.request.RequestContextHolder, org.springframework.web.context.request.ServletRequestAttributes, com.salesmanager.contracts.client.MerchantServiceClient, com.salesmanager.contracts.merchant.MerchantStoreSnapshot, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.shop.model.store.ReadableMerchantStore, com.salesmanager.shop.model.system.Configs, com.salesmanager.shop.store.controller.system.MerchantConfigurationFacade
+class MerchantFacadeHttpAdapterTest
+  void setUp()
+  void tearDown()
+  void get_usesSnapshotHydrator()
+  void getByCode_forwardsJwtOnPrivateStorePath()
+  void getMerchantConfig_fetchesPublicConfig()
+  void connectFailure_mapsTo503()
+
+# sm-shop/src/test/java/com/salesmanager/shop/strangler/merchant/MerchantStoreEntityHydratorTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.junit.jupiter.api.Test, com.salesmanager.contracts.merchant.MerchantStoreSnapshot, com.salesmanager.core.model.merchant.MerchantStore
+class MerchantStoreEntityHydratorTest
+  void hydrate_mapsSnapshotFieldsUsedByResolver()
+
+# sm-shop/src/test/java/com/salesmanager/shop/strangler/merchant/MerchantStoreResolverIntegrationTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.mockito.Mockito.when, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.InjectMocks, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.springframework.mock.web.MockHttpServletRequest, org.springframework.web.context.request.ServletWebRequest, com.salesmanager.contracts.client.MerchantServiceClient, com.salesmanager.contracts.merchant.MerchantStoreSnapshot, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.shop.application.config.MerchantStoreArgumentResolver, com.salesmanager.shop.store.controller.store.facade.StoreFacade, com.salesmanager.shop.store.controller.user.facade.UserFacade
+class MerchantStoreResolverIntegrationTest
+  void authorizeAlways()
+  void resolveArgument_usesHttpSnapshotWhenClientPresent()
+
 # sm-shop/src/test/java/com/salesmanager/shop/strangler/reference/ReferenceFacadeHttpAdapterTest.java [java]
 imports: org.assertj.core.api.Assertions.assertThat, org.assertj.core.api.Assertions.assertThatThrownBy, org.springframework.test.web.client.match.MockRestRequestMatchers.header, org.springframework.test.web.client.match.MockRestRequestMatchers.method, org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo, org.springframework.test.web.client.response.MockRestResponseCreators.withException, org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess, java.net.ConnectException, java.util.List, org.junit.jupiter.api.AfterEach, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.http.HttpMethod, org.springframework.http.MediaType, org.springframework.mock.web.MockHttpServletRequest, org.springframework.test.web.client.MockRestServiceServer, org.springframework.web.client.RestTemplate, org.springframework.web.context.request.RequestContextHolder, org.springframework.web.context.request.ServletRequestAttributes, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.currency.Currency, com.salesmanager.core.model.reference.language.Language, com.salesmanager.shop.model.references.ReadableCountry, com.salesmanager.shop.model.references.ReadableZone, com.salesmanager.shop.strangler.support.ServiceUnavailableException, com.salesmanager.shop.strangler.support.StranglerRestClient
 class ReferenceFacadeHttpAdapterTest
@@ -14819,6 +14992,18 @@ class StranglerConditionalBeanTest
   class StranglerOnConfig
   class MonolithConfig
   class InProcessCountryFacade
+
+# sm-shop/src/test/java/com/salesmanager/test/shop/strangler/Wave2StranglerConditionalBeanTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.junit.jupiter.api.Test, org.springframework.boot.autoconfigure.condition.ConditionalOnProperty, org.springframework.context.annotation.AnnotationConfigApplicationContext, org.springframework.context.annotation.Bean, org.springframework.context.annotation.Configuration, org.springframework.mock.env.MockEnvironment, org.springframework.web.client.RestTemplate, com.salesmanager.contracts.client.MerchantServiceClient, com.salesmanager.shop.store.controller.content.facade.ContentFacade, com.salesmanager.shop.store.controller.store.facade.StoreFacade, com.salesmanager.shop.store.controller.system.MerchantConfigurationFacade, com.salesmanager.shop.store.controller.search.facade.SearchFacade, com.salesmanager.shop.strangler.content.ContentFacadeHttpAdapter, com.salesmanager.shop.strangler.content.StaticContentProxy, com.salesmanager.shop.strangler.merchant.MerchantConfigurationFacadeHttpAdapter, com.salesmanager.shop.strangler.merchant.MerchantServiceClientRestTemplateImpl, com.salesmanager.shop.strangler.merchant.MerchantStoreEntityHydrator, com.salesmanager.shop.strangler.merchant.StoreFacadeHttpAdapter, com.salesmanager.shop.strangler.config.Wave2Properties, com.salesmanager.shop.strangler.search.SearchBulkIndexOrchestrator, com.salesmanager.shop.strangler.search.SearchFacadeHttpAdapter, com.salesmanager.shop.utils.ImageFilePath
+class Wave2StranglerConditionalBeanTest
+  void wave2On_exactlyOneBeanPerFacadeInterface()
+  void wave2Off_exactlyOneInProcessBeanPerFacadeInterface()
+  class Wave2OnConfig
+  class MonolithConfig
+  class InProcessContentFacade
+  class InProcessSearchFacade
+  class InProcessStoreFacade
+  class InProcessMerchantConfigurationFacade
 
 # sm-shop/src/test/java/com/salesmanager/test/shop/util/GeneratePasswordTest.java [java]
 imports: javax.inject.Inject, javax.inject.Named, org.junit.Assert, org.junit.Test, org.junit.runner.RunWith, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.boot.test.context.SpringBootTest, org.springframework.boot.test.context.SpringBootTest.WebEnvironment, org.springframework.security.crypto.password.PasswordEncoder, org.springframework.test.context.junit4.SpringRunner, com.salesmanager.shop.application.ShopApplication, com.salesmanager.test.shop.common.ServicesTestSupport

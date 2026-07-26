@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
@@ -49,6 +50,7 @@ import com.salesmanager.shop.utils.ImageFilePath;
 import com.salesmanager.shop.utils.LanguageUtils;
 
 @Service("storeFacade")
+@ConditionalOnProperty(name = "wave2.strangler.enabled", havingValue = "false", matchIfMissing = true)
 public class StoreFacadeImpl implements StoreFacade {
 
 	@Inject

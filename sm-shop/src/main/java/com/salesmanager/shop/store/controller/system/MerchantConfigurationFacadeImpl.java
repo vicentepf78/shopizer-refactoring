@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import com.salesmanager.core.business.exception.ServiceException;
@@ -26,6 +27,7 @@ import com.salesmanager.shop.store.api.exception.ServiceRuntimeException;
 
 
 @Service
+@ConditionalOnProperty(name = "wave2.strangler.enabled", havingValue = "false", matchIfMissing = true)
 public class MerchantConfigurationFacadeImpl implements MerchantConfigurationFacade {
 
   private static final Logger LOGGER = LoggerFactory

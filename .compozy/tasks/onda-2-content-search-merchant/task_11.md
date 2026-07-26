@@ -1,5 +1,5 @@
 ---
-status: pending
+status: completed
 title: Strangler Content/Merchant, StaticContentProxy e wiring
 type: backend
 complexity: high
@@ -29,12 +29,12 @@ Consolida TLC T41–T46. Liga o BFF sm-shop aos serviços content e merchant via
 </requirements>
 
 ## Subtasks
-- [ ] 11.1 ContentFacadeHttpAdapter (T41)
-- [ ] 11.2 StaticContentProxy em Images/FilesController (T42)
-- [ ] 11.3 ContentBlobClient catálogo P2 (T43)
-- [ ] 11.4 Merchant facade HTTP adapters (T44)
-- [ ] 11.5 MerchantServiceClient + hydrator + resolver (T45)
-- [ ] 11.6 Gate wiring condicional profiles (T46)
+- [x] 11.1 ContentFacadeHttpAdapter (T41)
+- [x] 11.2 StaticContentProxy em Images/FilesController (T42)
+- [x] 11.3 ContentBlobClient catálogo P2 (T43)
+- [x] 11.4 Merchant facade HTTP adapters (T44)
+- [x] 11.5 MerchantServiceClient + hydrator + resolver (T45)
+- [x] 11.6 Gate wiring condicional profiles (T46)
 
 ## Implementation Details
 Ver TechSpec: **Matriz de adapters**, **Análise de impacto** (ImagesController, resolver), **Ordem de construção** passo 27. Search adapter já coberto em task_07.
@@ -68,16 +68,16 @@ Ver TechSpec: **Matriz de adapters**, **Análise de impacto** (ImagesController,
 
 ## Tests
 - Unit tests:
-  - [ ] ContentFacadeHttpAdapter propaga JWT e X-Correlation-Id
-  - [ ] Hydrator mapeia MerchantStoreSnapshot → entidade usada pelo resolver
+  - [x] ContentFacadeHttpAdapter propaga JWT e X-Correlation-Id
+  - [x] Hydrator mapeia MerchantStoreSnapshot → entidade usada pelo resolver
 - Integration tests:
-  - [ ] `/static/files/**` via HTTP quando strangler on
-  - [ ] ContentBlobClient usado por option/variant facades
-  - [ ] Store/Config adapters HTTP; falha → 503
-  - [ ] Resolver usa snapshot HTTP com cache TTL
-  - [ ] Um bean por facade interface em cada profile
-  - [ ] `./mvnw test -pl sm-shop -Dspring.profiles.active=strangler-wave2`
-  - [ ] Profile monolith verde
+  - [x] `/static/files/**` via HTTP quando strangler on
+  - [x] ContentBlobClient usado por option/variant facades
+  - [x] Store/Config adapters HTTP; falha → 503
+  - [x] Resolver usa snapshot HTTP com cache TTL
+  - [x] Um bean por facade interface em cada profile
+  - [x] `./mvnw test -pl sm-shop -Dspring.profiles.active=strangler-wave2`
+  - [x] Profile monolith verde
 - Test coverage target: >=80%
 - All tests must pass
 

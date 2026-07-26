@@ -6,8 +6,10 @@ import com.salesmanager.core.model.content.FileContentType;
 import com.salesmanager.core.model.content.OutputContentFile;
 import com.salesmanager.shop.constants.Constants;
 import com.salesmanager.shop.store.controller.AbstractController;
+import com.salesmanager.shop.strangler.content.StaticContentProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +30,9 @@ public class FilesController extends AbstractController {
 	
 	@Inject
 	private ContentService contentService;
+
+	@Autowired(required = false)
+	private StaticContentProxy staticContentProxy;
 	
 
 	/**
@@ -43,9 +48,17 @@ public class FilesController extends AbstractController {
 
 		// example -> /files/<store code>/myfile.css
 		FileContentType fileType = FileContentType.STATIC_FILE;
-		
-		// needs to query the new API
-		OutputContentFile file =contentService.getContentFile(storeCode, fileType, new StringBuilder().append(fileName).append(".").append(extension).toString());
+		String fileNameAndExtension = new StringBuilder().append(fileName).append(".").append(extension).toString();
+
+		if (staticContentProxy != null) {
+			try {
+				return staticContentProxy.getStaticFile(storeCode, fileType, fileNameAndExtension);
+			} catch (Exception e) {
+				LOGGER.debug("Static proxy miss for {}: {}", fileNameAndExtension, e.getMessage());
+			}
+		}
+
+		OutputContentFile file = contentService.getContentFile(storeCode, fileType, fileNameAndExtension);
 		
 		
 		if(file!=null) {

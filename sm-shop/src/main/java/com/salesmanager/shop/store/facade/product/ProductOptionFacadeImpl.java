@@ -44,6 +44,7 @@ import com.salesmanager.shop.model.entity.CodeEntity;
 import com.salesmanager.shop.store.api.exception.ResourceNotFoundException;
 import com.salesmanager.shop.store.api.exception.ServiceRuntimeException;
 import com.salesmanager.shop.store.controller.product.facade.ProductOptionFacade;
+import com.salesmanager.shop.strangler.content.ContentBlobClient;
 
 @Service
 public class ProductOptionFacadeImpl implements ProductOptionFacade {
@@ -68,6 +69,9 @@ public class ProductOptionFacadeImpl implements ProductOptionFacade {
 
 	@Autowired
 	private ContentService contentService;
+
+	@Autowired(required = false)
+	private ContentBlobClient contentBlobClient;
 
 	@Autowired
 	private ProductAttributeService productAttributeService;
@@ -435,7 +439,11 @@ public class ProductOptionFacadeImpl implements ProductOptionFacade {
 			cmsContentImage.setMimeType(image.getContentType());
 			cmsContentImage.setFile(inputStream);
 
-			contentService.addOptionImage(store.getCode(), cmsContentImage);
+			if (contentBlobClient != null) {
+				contentBlobClient.addOptionImage(store.getCode(), cmsContentImage);
+			} else {
+				contentService.addOptionImage(store.getCode(), cmsContentImage);
+			}
 			value.setProductOptionValueImage(imageName);
 			productOptionValueService.saveOrUpdate(value);
 		} catch (Exception e) {
@@ -459,7 +467,11 @@ public class ProductOptionFacadeImpl implements ProductOptionFacade {
 		
 		try {
 
-			contentService.removeFile(store.getCode(), FileContentType.PROPERTY, value.getProductOptionValueImage());
+			if (contentBlobClient != null) {
+				contentBlobClient.removeFile(store.getCode(), FileContentType.PROPERTY, value.getProductOptionValueImage());
+			} else {
+				contentService.removeFile(store.getCode(), FileContentType.PROPERTY, value.getProductOptionValueImage());
+			}
 			value.setProductOptionValueImage(null);
 			productOptionValueService.saveOrUpdate(value);
 		} catch (Exception e) {

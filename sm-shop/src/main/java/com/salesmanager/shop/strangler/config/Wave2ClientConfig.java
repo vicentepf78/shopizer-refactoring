@@ -17,8 +17,11 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import com.salesmanager.contracts.client.MerchantServiceClient;
 import com.salesmanager.contracts.client.SearchIndexClient;
 import com.salesmanager.shop.filter.CorrelationIdFilter;
+import com.salesmanager.shop.strangler.merchant.CachedMerchantServiceClient;
+import com.salesmanager.shop.strangler.merchant.MerchantServiceClientRestTemplateImpl;
 import com.salesmanager.shop.strangler.search.SearchIndexClientRestTemplateImpl;
 
 @Configuration
@@ -42,6 +45,19 @@ public class Wave2ClientConfig {
 			RestTemplate wave2RestTemplate,
 			Wave2Properties properties) {
 		return new SearchIndexClientRestTemplateImpl(wave2RestTemplate, properties);
+	}
+
+	@Bean
+	@ConditionalOnProperty(name = "wave2.strangler.enabled", havingValue = "true")
+	public MerchantServiceClient merchantServiceClient(
+			RestTemplate wave2RestTemplate,
+			Wave2Properties properties) {
+		MerchantServiceClient delegate = new MerchantServiceClientRestTemplateImpl(wave2RestTemplate, properties);
+		long ttlSeconds = properties.getMerchantService().getCache().getTtlSeconds();
+		if (ttlSeconds > 0) {
+			return new CachedMerchantServiceClient(delegate, ttlSeconds);
+		}
+		return delegate;
 	}
 
 	static ClientHttpRequestInterceptor correlationInterceptor() {
