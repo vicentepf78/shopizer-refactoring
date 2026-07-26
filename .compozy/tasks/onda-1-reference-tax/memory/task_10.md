@@ -12,7 +12,7 @@ Wave 1 close-out: docker-compose topology, custom health indicators, X-Correlati
 4. `CorrelationIdFilter` in reference-service, tax-service, sm-shop (+ tax RestTemplate interceptor) — present
 5. Correlation filter unit tests (generate / propagate) — present (3 modules)
 6. Smoke checklist documented (compose header) — present
-7. `./mvnw clean install` + TaxRateIntegrationTest + Wave1ConsumerPactTest green — pending verify
+7. `./mvnw clean install` + TaxRateIntegrationTest + Wave1ConsumerPactTest green — DONE (2026-07-26, Java 21)
 8. No Eureka/K8s discovery — compose uses WAVE1_* URLs only
 
 ## Pre-change signal
@@ -38,10 +38,10 @@ Wave 1 close-out: docker-compose topology, custom health indicators, X-Correlati
 
 ## Learnings
 
-(none yet — awaiting reactor gate)
-
+- `@ComponentScan("com.salesmanager.shop")` picks up test `@Configuration` inner classes in that package; keep wiring tests under `com.salesmanager.test.shop.*`.
+- Centralize JaCoCo at `${jacoco.version}` (0.8.11) for Java 21 reactor gate.
 
 ## Completion note
 
-- `docker compose config` exit 0; focused health/correlation unit tests green.
-- Full `./mvnw clean install` reactor gate not re-run after park (timeout); recommend CI/local full gate.
+- `docker compose config` exit 0; health/correlation unit tests green.
+- `./mvnw clean install` reactor gate green on Java 21 (2026-07-26).

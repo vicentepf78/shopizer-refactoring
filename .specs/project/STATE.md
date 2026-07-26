@@ -1,7 +1,7 @@
 # State
 
-**Last Updated:** 2026-07-04T21:25:00-03:00
-**Current Work:** onda-2-content-search-merchant — Tasks aprovadas (T1–T54); Execute bloqueado
+**Last Updated:** 2026-07-26T10:13:00-03:00
+**Current Work:** onda-1-reference-tax — COMPLETE (gate verde). Próximo: Execute onda-2-content-search-merchant task_01
 
 ---
 
@@ -176,5 +176,5 @@
 
 ## Todos
 
-- [ ] Aprovar início Execute Onda 2 — T1 (requer Onda 1 T32)
-- [ ] Onda 1: Execute T1 se ainda pendente
+- [x] Onda 1 gate `./mvnw clean install` verde (2026-07-26)
+- [ ] Iniciar Execute Onda 2 — task_01

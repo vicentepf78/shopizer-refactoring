@@ -25,11 +25,12 @@ Keep only durable, cross-task context here. Do not duplicate facts that are obvi
 
 ## Shared Learnings
 
-- JaCoCo 0.8.8 check at 80% line coverage is configured on `shopizer-api-contracts` (`verify` phase).
+- JaCoCo `${jacoco.version}` 0.8.11 on all Wave 1 modules (`verify` phase where configured).
 - After thin-core extraction, `./mvnw test -pl sm-core` (and siblings) needs `-am` (or a prior install); otherwise Maven looks for the new artifact on `repo.spring.io` and 401s.
 - Filtered `-Dtest=...` with `-am` needs `-DfailIfNoTests=false` or upstream modules without matching tests fail the reactor.
 - Do not put version-less Spring Boot starters in parent `dependencyManagement` — that clears the Boot BOM version and breaks modules that declare those starters.
-- On Java 21, JaCoCo needs ≥0.8.11 for Boot IT (0.8.8 hits “Unsupported class file major version 65”).
+- On Java 21, JaCoCo needs ≥0.8.11 for Boot IT (parent `jacoco.version=0.8.11`).
+- Strangler wiring tests MUST live outside `com.salesmanager.shop` to avoid `@ComponentScan` pollution.
 - `reference-service` resolves language from `lang` (or default); `store` is accepted for path parity only — strangler BFF should pass `lang` when calling it.
 
 ## Open Risks
