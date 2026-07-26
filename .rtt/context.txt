@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-26 20:21 | 1706 files | 268881 tokens
+# rtt index | generated 2026-07-26 20:24 | 1707 files | 269084 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -15874,6 +15874,11 @@ class CategoryFacadeImplTest
 imports: org.junit.jupiter.api.Assertions.assertNotNull, org.mockito.ArgumentMatchers.any, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.verify, org.mockito.Mockito.when, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.InjectMocks, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.contracts.tenant.LanguageCode, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.core.model.customer.Customer, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.order.Order, com.salesmanager.core.model.reference.language.Language, com.salesmanager.shop.mapper.customer.ReadableCustomerMapper, com.salesmanager.shop.mapper.order.ReadableOrderProductMapper, com.salesmanager.shop.mapper.order.ReadableOrderTotalMapper, com.salesmanager.shop.model.customer.ReadableCustomer, com.salesmanager.shop.model.order.v1.ReadableOrderConfirmation, com.salesmanager.shop.tenant.TenantEntityBridge, com.salesmanager.shop.utils.LabelUtils
 class OrderFacadeImplTenantBridgeTest
   void orderConfirmationHydratesStoreViaBridge()
+
+# sm-shop/src/test/java/com/salesmanager/shop/store/facade/product/ProductCommonFacadeImplTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertNotNull, org.mockito.ArgumentMatchers.any, org.mockito.Mockito.never, org.mockito.Mockito.verify, org.mockito.Mockito.when, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.InjectMocks, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.core.business.services.catalog.pricing.PricingService, com.salesmanager.core.business.services.catalog.product.ProductService, com.salesmanager.core.model.catalog.product.Product, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.shop.model.catalog.product.ReadableProduct, com.salesmanager.shop.tenant.TenantEntityBridge, com.salesmanager.shop.utils.ImageFilePath
+class ProductCommonFacadeImplTest
+  void getProduct_withNullLanguageCode_doesNotCallBridgeResolveLanguage()
 
 # sm-shop/src/test/java/com/salesmanager/shop/strangler/config/Wave1ClientConfigTest.java [java]
 imports: org.assertj.core.api.Assertions.assertThat, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.context.properties.EnableConfigurationProperties, org.springframework.boot.test.context.SpringBootTest, org.springframework.context.annotation.Configuration, org.springframework.test.context.TestPropertySource
