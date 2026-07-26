@@ -5465,9 +5465,171 @@ class IntegrationException
   void setErrorFields(List<String> errorFields)
   List<String> getErrorFields()
 
+# sm-core-modules/src/main/java/com/salesmanager/core/modules/integration/common/dto/IntegrationStoreContext.java [java]
+imports: java.io.Serializable, com.salesmanager.contracts.tenant.LanguageCode, com.salesmanager.contracts.tenant.MerchantStoreId
+class IntegrationStoreContext
+  MerchantStoreId getStoreId()
+  void setStoreId(MerchantStoreId storeId)
+  String getCurrencyCode()
+  void setCurrencyCode(String currencyCode)
+  LanguageCode getDefaultLanguage()
+  void setDefaultLanguage(LanguageCode defaultLanguage)
+
+# sm-core-modules/src/main/java/com/salesmanager/core/modules/integration/payment/dto/PaymentCaptureContext.java [java]
+imports: java.io.Serializable, com.salesmanager.core.model.system.IntegrationConfiguration, com.salesmanager.core.model.system.IntegrationModule, com.salesmanager.core.modules.integration.common.dto.IntegrationStoreContext
+class PaymentCaptureContext
+  IntegrationStoreContext getStore()
+  void setStore(IntegrationStoreContext store)
+  Long getCustomerId()
+  void setCustomerId(Long customerId)
+  String getCustomerEmail()
+  void setCustomerEmail(String customerEmail)
+  Long getOrderId()
+  void setOrderId(Long orderId)
+  TransactionResult getCapturableTransaction()
+  void setCapturableTransaction(TransactionResult capturableTransaction)
+  IntegrationConfiguration getConfiguration()
+  void setConfiguration(IntegrationConfiguration configuration)
+  IntegrationModule getModule()
+  void setModule(IntegrationModule module)
+
+# sm-core-modules/src/main/java/com/salesmanager/core/modules/integration/payment/dto/PaymentLineItemDto.java [java]
+imports: java.io.Serializable, java.math.BigDecimal
+class PaymentLineItemDto
+  Long getCartItemId()
+  void setCartItemId(Long cartItemId)
+  String getSku()
+  void setSku(String sku)
+  Integer getQuantity()
+  void setQuantity(Integer quantity)
+  BigDecimal getItemPrice()
+  void setItemPrice(BigDecimal itemPrice)
+  Long getProductId()
+  void setProductId(Long productId)
+  Long getVariant()
+  void setVariant(Long variant)
+
+# sm-core-modules/src/main/java/com/salesmanager/core/modules/integration/payment/dto/PaymentRequestContext.java [java]
+imports: java.io.Serializable, java.math.BigDecimal, java.util.ArrayList, java.util.HashMap, java.util.List, java.util.Map, com.salesmanager.core.model.system.IntegrationConfiguration, com.salesmanager.core.model.system.IntegrationModule, com.salesmanager.core.modules.integration.common.dto.IntegrationStoreContext
+class PaymentRequestContext
+  IntegrationStoreContext getStore()
+  void setStore(IntegrationStoreContext store)
+  Long getCustomerId()
+  void setCustomerId(Long customerId)
+  String getCustomerEmail()
+  void setCustomerEmail(String customerEmail)
+  List<PaymentLineItemDto> getLineItems()
+  void setLineItems(List<PaymentLineItemDto> lineItems)
+  BigDecimal getAmount()
+  void setAmount(BigDecimal amount)
+  String getPaymentModuleCode()
+  void setPaymentModuleCode(String paymentModuleCode)
+  String getPaymentType()
+  void setPaymentType(String paymentType)
+  String getTransactionType()
+  void setTransactionType(String transactionType)
+  String getCurrencyCode()
+  void setCurrencyCode(String currencyCode)
+  Map<String, String> getPaymentMetaData()
+  void setPaymentMetaData(Map<String, String> paymentMetaData)
+  IntegrationConfiguration getConfiguration()
+  void setConfiguration(IntegrationConfiguration configuration)
+  IntegrationModule getModule()
+  void setModule(IntegrationModule module)
+
+# sm-core-modules/src/main/java/com/salesmanager/core/modules/integration/payment/dto/TransactionResult.java [java]
+imports: java.io.Serializable, java.math.BigDecimal, java.util.Date, java.util.HashMap, java.util.Map
+class TransactionResult
+  Long getId()
+  void setId(Long id)
+  BigDecimal getAmount()
+  void setAmount(BigDecimal amount)
+  Date getTransactionDate()
+  void setTransactionDate(Date transactionDate)
+  String getTransactionType()
+  void setTransactionType(String transactionType)
+  String getPaymentType()
+  void setPaymentType(String paymentType)
+  String getDetails()
+  void setDetails(String details)
+  Map<String, String> getTransactionDetails()
+  void setTransactionDetails(Map<String, String> transactionDetails)
+
 # sm-core-modules/src/main/java/com/salesmanager/core/modules/integration/payment/model/PaymentModule.java [java]
 imports: java.math.BigDecimal, java.util.List, com.salesmanager.core.model.customer.Customer, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.order.Order, com.salesmanager.core.model.payments.Payment, com.salesmanager.core.model.payments.Transaction, com.salesmanager.core.model.shoppingcart.ShoppingCartItem, com.salesmanager.core.model.system.IntegrationConfiguration, com.salesmanager.core.model.system.IntegrationModule, com.salesmanager.core.modules.integration.IntegrationException
 interface PaymentModule
+
+# sm-core-modules/src/main/java/com/salesmanager/core/modules/integration/shipping/dto/PackageDetailsDto.java [java]
+imports: java.io.Serializable
+class PackageDetailsDto
+  String getCode()
+  void setCode(String code)
+  double getShippingWeight()
+  void setShippingWeight(double shippingWeight)
+  double getShippingMaxWeight()
+  void setShippingMaxWeight(double shippingMaxWeight)
+  double getShippingLength()
+  void setShippingLength(double shippingLength)
+  double getShippingHeight()
+  void setShippingHeight(double shippingHeight)
+  double getShippingWidth()
+  void setShippingWidth(double shippingWidth)
+  int getShippingQuantity()
+  void setShippingQuantity(int shippingQuantity)
+  int getTreshold()
+  void setTreshold(int treshold)
+  String getType()
+  void setType(String type)
+  String getItemName()
+  void setItemName(String itemName)
+
+# sm-core-modules/src/main/java/com/salesmanager/core/modules/integration/shipping/dto/ShippingAddressDto.java [java]
+imports: java.io.Serializable
+class ShippingAddressDto
+  String getFirstName()
+  void setFirstName(String firstName)
+  String getLastName()
+  void setLastName(String lastName)
+  String getCompany()
+  void setCompany(String company)
+  String getAddress()
+  void setAddress(String address)
+  String getCity()
+  void setCity(String city)
+  String getPostalCode()
+  void setPostalCode(String postalCode)
+  String getState()
+  void setState(String state)
+  String getTelephone()
+  void setTelephone(String telephone)
+  String getCountryCode()
+  void setCountryCode(String countryCode)
+  String getZoneCode()
+  void setZoneCode(String zoneCode)
+  String getLatitude()
+  void setLatitude(String latitude)
+  String getLongitude()
+  void setLongitude(String longitude)
+
+# sm-core-modules/src/main/java/com/salesmanager/core/modules/integration/shipping/dto/ShippingQuoteRequestContext.java [java]
+imports: java.io.Serializable, java.math.BigDecimal, java.util.ArrayList, java.util.List, com.salesmanager.core.model.system.IntegrationConfiguration, com.salesmanager.core.model.system.IntegrationModule, com.salesmanager.core.modules.integration.common.dto.IntegrationStoreContext
+class ShippingQuoteRequestContext
+  IntegrationStoreContext getStore()
+  void setStore(IntegrationStoreContext store)
+  List<PackageDetailsDto> getPackages()
+  void setPackages(List<PackageDetailsDto> packages)
+  BigDecimal getOrderTotal()
+  void setOrderTotal(BigDecimal orderTotal)
+  ShippingAddressDto getDelivery()
+  void setDelivery(ShippingAddressDto delivery)
+  ShippingAddressDto getOrigin()
+  void setOrigin(ShippingAddressDto origin)
+  String getLocale()
+  void setLocale(String locale)
+  IntegrationConfiguration getConfiguration()
+  void setConfiguration(IntegrationConfiguration configuration)
+  IntegrationModule getModule()
+  void setModule(IntegrationModule module)
 
 # sm-core-modules/src/main/java/com/salesmanager/core/modules/integration/shipping/model/CustomShippingQuoteItem.java [java]
 imports: java.math.BigDecimal
@@ -5528,6 +5690,23 @@ interface Encryption
 # sm-core-modules/src/main/java/com/salesmanager/core/modules/utils/GeoLocation.java [java]
 imports: com.salesmanager.core.model.common.Address
 interface GeoLocation
+
+# sm-core-modules/src/test/java/com/salesmanager/core/modules/integration/dto/IntegrationDtoNoJpaTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertFalse, java.io.IOException, java.nio.file.Files, java.nio.file.Path, java.nio.file.Paths, java.util.stream.Stream, org.junit.jupiter.api.Test
+class IntegrationDtoNoJpaTest
+  void integrationDtosDoNotImportJpaEntities()
+  void assertNoForbiddenReferences(Path source)
+
+# sm-core-modules/src/test/java/com/salesmanager/core/modules/integration/payment/dto/PaymentRequestContextJacksonTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertNotNull, java.math.BigDecimal, java.util.Collections, org.junit.jupiter.api.Test, com.fasterxml.jackson.databind.JsonNode, com.fasterxml.jackson.databind.ObjectMapper, com.salesmanager.contracts.tenant.LanguageCode, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.core.modules.integration.common.dto.IntegrationStoreContext
+class PaymentRequestContextJacksonTest
+  void roundTripJsonPreservesPaymentRequestFields()
+
+# sm-core-modules/src/test/java/com/salesmanager/core/modules/integration/shipping/dto/ShippingQuoteRequestContextJacksonTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertNotNull, java.math.BigDecimal, org.junit.jupiter.api.Test, com.fasterxml.jackson.databind.JsonNode, com.fasterxml.jackson.databind.ObjectMapper, com.salesmanager.contracts.tenant.LanguageCode, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.core.modules.integration.common.dto.IntegrationStoreContext
+class ShippingQuoteRequestContextJacksonTest
+  void serializesDeliveryAndOriginAddressDtos()
+  ShippingAddressDto address(String firstName, String lastName, String postalCode, String countryCode)
 
 # sm-core/.mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
