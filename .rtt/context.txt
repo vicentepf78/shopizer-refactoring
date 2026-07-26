@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-26 11:54 | 1516 files | 234289 tokens
+# rtt index | generated 2026-07-26 11:54 | 1535 files | 236225 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -500,6 +500,181 @@ class TestDataFactory
   Zone seedZone(String code, Country country)
   Language ensureLanguage(String code)
   class Seed
+
+# merchant-service/src/main/java/com/salesmanager/merchant/MerchantServiceApplication.java [java]
+imports: org.springframework.boot.SpringApplication, org.springframework.boot.autoconfigure.SpringBootApplication
+class MerchantServiceApplication
+  void main(String[] args)
+
+# merchant-service/src/main/java/com/salesmanager/merchant/client/ContentServiceClientRestTemplateImpl.java [java]
+imports: org.apache.commons.lang3.StringUtils, org.springframework.beans.factory.annotation.Qualifier, org.springframework.beans.factory.annotation.Value, org.springframework.http.HttpEntity, org.springframework.http.HttpHeaders, org.springframework.http.HttpMethod, org.springframework.http.MediaType, org.springframework.http.ResponseEntity, org.springframework.stereotype.Component, org.springframework.web.client.RestClientException, org.springframework.web.client.RestTemplate, org.springframework.web.util.UriComponentsBuilder, com.salesmanager.contracts.client.ContentServiceClient, com.salesmanager.merchant.support.ContentUnavailableException
+class ContentServiceClientRestTemplateImpl
+  byte[] getStaticFile(String storeCode, String imageType, String fileName)
+  void uploadLogo(String storeCode, String fileName, byte[] content, String contentType)
+  void deleteLogo(String storeCode, String fileName)
+  String encodePathSegment(String value)
+  class LogoUploadRequest
+
+# merchant-service/src/main/java/com/salesmanager/merchant/client/ReferenceServiceClientRestTemplateImpl.java [java]
+imports: java.util.Collections, java.util.List, org.apache.commons.lang3.StringUtils, org.springframework.beans.factory.annotation.Qualifier, org.springframework.beans.factory.annotation.Value, org.springframework.core.ParameterizedTypeReference, org.springframework.http.HttpMethod, org.springframework.http.ResponseEntity, org.springframework.stereotype.Component, org.springframework.web.client.RestClientException, org.springframework.web.client.RestTemplate, org.springframework.web.util.UriComponentsBuilder, com.salesmanager.contracts.client.ReferenceServiceClient, com.salesmanager.contracts.reference.ReadableCountry, com.salesmanager.contracts.reference.ReadableLanguage, com.salesmanager.contracts.reference.ReadableZone, com.salesmanager.merchant.support.ReferenceUnavailableException
+class ReferenceServiceClientRestTemplateImpl
+  ReadableCountry getCountryByCode(String isoCode, String langCode)
+  ReadableZone getZoneByCode(String countryCode, String zoneCode, String langCode)
+  ReadableLanguage getLanguageByCode(String code)
+  List<ReadableCountry> getCountries(String langCode)
+  List<ReadableZone> getZones(String countryCode, String langCode)
+  List<ReadableLanguage> getLanguages()
+  List<T> exchangeList(String url, ParameterizedTypeReference<List<T>> type)
+
+# merchant-service/src/main/java/com/salesmanager/merchant/config/CacheConfig.java [java]
+imports: org.springframework.cache.Cache, org.springframework.cache.ehcache.EhCacheCacheManager, org.springframework.cache.ehcache.EhCacheManagerFactoryBean, org.springframework.context.annotation.Bean, org.springframework.context.annotation.Configuration, org.springframework.core.io.ClassPathResource
+class CacheConfig
+  EhCacheManagerFactoryBean springCacheManager()
+  EhCacheCacheManager cacheManager(net.sf.ehcache.CacheManager springCacheManager)
+  Cache serviceCache(EhCacheCacheManager cacheManager)
+
+# merchant-service/src/main/java/com/salesmanager/merchant/config/MerchantCoreConfig.java [java]
+imports: org.springframework.boot.autoconfigure.domain.EntityScan, org.springframework.cache.annotation.EnableCaching, org.springframework.context.annotation.ComponentScan, org.springframework.context.annotation.Configuration, org.springframework.data.jpa.repository.config.EnableJpaRepositories
+class MerchantCoreConfig
+
+# merchant-service/src/main/java/com/salesmanager/merchant/config/RestClientConfig.java [java]
+imports: java.time.Duration, java.util.UUID, javax.servlet.http.HttpServletRequest, org.springframework.beans.factory.annotation.Value, org.springframework.boot.web.client.RestTemplateBuilder, org.springframework.context.annotation.Bean, org.springframework.context.annotation.Configuration, org.springframework.http.client.ClientHttpRequestInterceptor, org.springframework.util.StringUtils, org.springframework.web.client.RestTemplate, org.springframework.web.context.request.RequestAttributes, org.springframework.web.context.request.RequestContextHolder, org.springframework.web.context.request.ServletRequestAttributes, com.salesmanager.merchant.web.CorrelationIdFilter
+class RestClientConfig
+  RestTemplate referenceRestTemplate(
+			RestTemplateBuilder builder,
+			@Value("${wave1.http.client.timeout-ms:5000}") long timeoutMs)
+  RestTemplate contentRestTemplate(
+			RestTemplateBuilder builder,
+			@Value("${wave2.http.client.timeout-ms:5000}") long timeoutMs)
+  RestTemplate waveRestTemplate(RestTemplateBuilder builder, long timeoutMs)
+  ClientHttpRequestInterceptor correlationInterceptor()
+  String resolveCorrelationId()
+
+# merchant-service/src/main/java/com/salesmanager/merchant/controller/MerchantPrivateProbeController.java [java]
+imports: org.springframework.http.ResponseEntity, org.springframework.web.bind.annotation.GetMapping, org.springframework.web.bind.annotation.RequestMapping, org.springframework.web.bind.annotation.RestController
+class MerchantPrivateProbeController
+  ResponseEntity<String> probe()
+
+# merchant-service/src/main/java/com/salesmanager/merchant/security/AdminUserRepository.java [java]
+imports: org.springframework.data.jpa.repository.JpaRepository, org.springframework.data.jpa.repository.Query, com.salesmanager.core.model.user.User
+interface AdminUserRepository
+
+# merchant-service/src/main/java/com/salesmanager/merchant/security/AuthenticationTokenFilter.java [java]
+imports: java.io.IOException, javax.servlet.FilterChain, javax.servlet.ServletException, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, org.apache.commons.lang3.StringUtils, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.beans.factory.annotation.Value, org.springframework.security.authentication.UsernamePasswordAuthenticationToken, org.springframework.security.core.context.SecurityContextHolder, org.springframework.security.core.userdetails.UserDetails, org.springframework.security.core.userdetails.UserDetailsService, org.springframework.security.web.authentication.WebAuthenticationDetailsSource, org.springframework.stereotype.Component, org.springframework.web.filter.OncePerRequestFilter, io.jsonwebtoken.ExpiredJwtException
+class AuthenticationTokenFilter
+  void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+
+# merchant-service/src/main/java/com/salesmanager/merchant/security/JWTAdminDetailsService.java [java]
+imports: java.util.ArrayList, java.util.Collection, java.util.List, org.springframework.security.core.GrantedAuthority, org.springframework.security.core.authority.SimpleGrantedAuthority, org.springframework.security.core.userdetails.UserDetails, org.springframework.security.core.userdetails.UserDetailsService, org.springframework.security.core.userdetails.UsernameNotFoundException, org.springframework.stereotype.Service, com.salesmanager.core.model.user.Group, com.salesmanager.core.model.user.User
+class JWTAdminDetailsService
+  UserDetails loadUserByUsername(String userName)
+
+# merchant-service/src/main/java/com/salesmanager/merchant/security/JWTTokenUtil.java [java]
+imports: java.io.Serializable, java.util.Date, java.util.HashMap, java.util.Map, java.util.function.Function, org.springframework.beans.factory.annotation.Value, org.springframework.security.core.userdetails.UserDetails, org.springframework.stereotype.Component, io.jsonwebtoken.Claims, io.jsonwebtoken.Jwts, io.jsonwebtoken.SignatureAlgorithm
+class JWTTokenUtil
+  String getUsernameFromToken(String token)
+  Date getIssuedAtDateFromToken(String token)
+  Date getExpirationDateFromToken(String token)
+  T getClaimFromToken(String token, Function<Claims, T> claimsResolver)
+  Claims getAllClaimsFromToken(String token)
+  Boolean isTokenExpired(String token)
+  Boolean isCreatedBeforeLastPasswordReset(Date created, Date lastPasswordReset)
+  String generateToken(UserDetails userDetails)
+  String doGenerateToken(Map<String, Object> claims, String subject)
+  Boolean validateToken(String token, UserDetails userDetails)
+
+# merchant-service/src/main/java/com/salesmanager/merchant/security/JWTUser.java [java]
+imports: java.util.Collection, java.util.Date, org.springframework.security.core.GrantedAuthority, org.springframework.security.core.userdetails.UserDetails, com.fasterxml.jackson.annotation.JsonIgnore
+class JWTUser
+  Long getId()
+  String getStoreCode()
+  String getUsername()
+  boolean isAccountNonExpired()
+  boolean isAccountNonLocked()
+  boolean isCredentialsNonExpired()
+  String getFirstname()
+  String getLastname()
+  String getEmail()
+  String getPassword()
+  Collection<? extends GrantedAuthority> getAuthorities()
+  boolean isEnabled()
+  Date getLastPasswordResetDate()
+
+# merchant-service/src/main/java/com/salesmanager/merchant/security/MerchantSecurityConfig.java [java]
+imports: org.springframework.context.annotation.Bean, org.springframework.context.annotation.Configuration, org.springframework.core.annotation.Order, org.springframework.http.HttpMethod, org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder, org.springframework.security.config.annotation.web.builders.HttpSecurity, org.springframework.security.config.annotation.web.configuration.EnableWebSecurity, org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter, org.springframework.security.config.http.SessionCreationPolicy, org.springframework.security.core.userdetails.UserDetailsService, org.springframework.security.web.AuthenticationEntryPoint, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter, org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint
+class MerchantSecurityConfig
+  class PrivateApiSecurity
+  class PublicAndActuatorSecurity
+
+# merchant-service/src/main/java/com/salesmanager/merchant/support/ContentUnavailableException.java [java]
+class ContentUnavailableException
+  String getErrorCode()
+
+# merchant-service/src/main/java/com/salesmanager/merchant/support/ReferenceUnavailableException.java [java]
+class ReferenceUnavailableException
+  String getErrorCode()
+
+# merchant-service/src/main/java/com/salesmanager/merchant/support/RestErrorHandler.java [java]
+imports: java.util.HashMap, java.util.Map, java.util.UUID, javax.servlet.http.HttpServletRequest, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.http.HttpStatus, org.springframework.web.bind.annotation.ExceptionHandler, org.springframework.web.bind.annotation.ResponseBody, org.springframework.web.bind.annotation.ResponseStatus, org.springframework.web.bind.annotation.RestControllerAdvice, org.springframework.web.context.request.RequestContextHolder, org.springframework.web.context.request.ServletRequestAttributes
+class RestErrorHandler
+  Map<String, Object> handleRemoteUnavailable(ServiceRuntimeException ex)
+  String correlationId()
+
+# merchant-service/src/main/java/com/salesmanager/merchant/support/ServiceRuntimeException.java [java]
+class ServiceRuntimeException
+  String getErrorCode()
+  String getErrorMessage()
+
+# merchant-service/src/main/java/com/salesmanager/merchant/web/CorrelationIdFilter.java [java]
+imports: java.io.IOException, java.util.Collections, java.util.Enumeration, java.util.UUID, javax.servlet.FilterChain, javax.servlet.ServletException, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletRequestWrapper, javax.servlet.http.HttpServletResponse, org.slf4j.Logger, org.slf4j.LoggerFactory, org.slf4j.MDC, org.springframework.core.Ordered, org.springframework.core.annotation.Order, org.springframework.stereotype.Component, org.springframework.util.StringUtils, org.springframework.web.filter.OncePerRequestFilter
+class CorrelationIdFilter
+  void doFilterInternal(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			FilterChain filterChain)
+  class CorrelationHeaderRequest
+
+# merchant-service/src/test/java/com/salesmanager/merchant/client/ContentServiceClientFailureTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThatThrownBy, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.test.web.client.MockRestServiceServer, org.springframework.web.client.RestTemplate, com.salesmanager.merchant.support.ContentUnavailableException
+class ContentServiceClientFailureTest
+  void setUp()
+  void uploadLogo_whenContentDown_throwsContentUnavailable()
+  void deleteLogo_whenContentDown_throwsContentUnavailable()
+
+# merchant-service/src/test/java/com/salesmanager/merchant/client/ContentServiceClientTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.springframework.test.web.client.match.MockRestRequestMatchers.content, org.springframework.test.web.client.match.MockRestRequestMatchers.method, org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo, org.springframework.test.web.client.response.MockRestResponseCreators.withNoContent, org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.http.HttpMethod, org.springframework.http.MediaType, org.springframework.test.web.client.MockRestServiceServer, org.springframework.web.client.RestTemplate
+class ContentServiceClientTest
+  void setUp()
+  void uploadLogo_postsToInternalLogoPath()
+  void deleteLogo_callsInternalLogoDeleteWithQueryParams()
+  void getStaticFile_callsInternalStaticPath()
+
+# merchant-service/src/test/java/com/salesmanager/merchant/client/ReferenceServiceClientFailureTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThatThrownBy, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.test.web.client.MockRestServiceServer, org.springframework.web.client.RestTemplate, com.salesmanager.merchant.support.ReferenceUnavailableException
+class ReferenceServiceClientFailureTest
+  void setUp()
+  void getLanguageByCode_whenReferenceDown_throwsReferenceUnavailable()
+
+# merchant-service/src/test/java/com/salesmanager/merchant/client/ReferenceServiceClientTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.springframework.test.web.client.match.MockRestRequestMatchers.method, org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo, org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.http.HttpMethod, org.springframework.http.MediaType, org.springframework.test.web.client.MockRestServiceServer, org.springframework.web.client.RestTemplate, com.salesmanager.contracts.reference.ReadableCountry, com.salesmanager.contracts.reference.ReadableLanguage, com.salesmanager.contracts.reference.ReadableZone
+class ReferenceServiceClientTest
+  void setUp()
+  void getCountryByCode_resolvesFromCountryList()
+  void getZoneByCode_resolvesFromZonesList()
+  void getLanguageByCode_resolvesFromLanguagesList()
+  void getCountryByCode_unknown_returnsNull()
+  void blankInputs_returnNullWithoutHttpCall()
+
+# merchant-service/src/test/java/com/salesmanager/merchant/security/MerchantSecurityIntegrationTest.java [java]
+imports: org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get, org.springframework.test.web.servlet.result.MockMvcResultMatchers.status, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc, org.springframework.boot.test.context.SpringBootTest, org.springframework.boot.test.mock.mockito.MockBean, org.springframework.context.annotation.Import, org.springframework.test.context.ActiveProfiles, org.springframework.test.web.servlet.MockMvc, com.salesmanager.contracts.client.ContentServiceClient, com.salesmanager.contracts.client.ReferenceServiceClient, com.salesmanager.merchant.support.TestDataFactory
+class MerchantSecurityIntegrationTest
+  void privateMerchantWithoutJwt_returns401()
+
+# merchant-service/src/test/java/com/salesmanager/merchant/support/TestDataFactory.java [java]
+imports: java.util.Collections, javax.persistence.EntityManager, javax.persistence.PersistenceContext, org.springframework.stereotype.Component, org.springframework.transaction.annotation.Transactional, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.country.Country, com.salesmanager.core.model.reference.currency.Currency, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.user.Group, com.salesmanager.core.model.user.GroupType, com.salesmanager.core.model.user.User, com.salesmanager.merchant.security.AdminUserRepository
+class TestDataFactory
+  void ensureDefaultAdmin()
+  void seedDefaultAdmin(String username, String storeCode)
 
 # reference-service/src/main/java/com/salesmanager/reference/ReferenceServiceApplication.java [java]
 imports: org.springframework.boot.SpringApplication, org.springframework.boot.autoconfigure.SpringBootApplication
