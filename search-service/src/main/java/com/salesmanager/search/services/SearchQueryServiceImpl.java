@@ -21,6 +21,7 @@ import modules.commons.search.request.SearchResponse;
 @Service
 public class SearchQueryServiceImpl implements SearchQueryService {
 
+	private final SearchModule searchModule;
 
 	@Autowired
 	public SearchQueryServiceImpl(@Autowired(required = false) SearchModule searchModule) {
