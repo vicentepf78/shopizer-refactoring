@@ -1,7 +1,7 @@
 # Roadmap — Decomposição Shopizer
 
 **Current Milestone:** Onda 2 — Content, Search, Merchant (Execute)
-**Status:** Ready — aguardando aprovação código
+**Status:** Ready — Execute liberado (Onda 1 gate verde)
 
 **Fonte:** [docs/decomposition/MIGRATION-MASTER-PLAN.md](../../docs/decomposition/MIGRATION-MASTER-PLAN.md)
 
@@ -45,19 +45,19 @@
 
 **Goal:** Serviços deployáveis por onda, ordem baseada em acoplamento.
 
-### Onda 1 — Reference + Tax (semanas 19–24) - IN PROGRESS
+### Onda 1 — Reference + Tax (semanas 19–24) - COMPLETE
 
 - `reference-service` (dificuldade 3/10)
 - `tax-service` admin CRUD (dificuldade 4/10)
 - Strangler Fig + testes de contrato
-- **TLC:** Specify ✅ → Design ✅ → Tasks ✅ → Execute (aguardando aprovação código)
+- **TLC:** Specify ✅ → Design ✅ → Tasks ✅ → Execute ✅ (gate reactor 2026-07-26)
 
-### Onda 2 — Content, Search, Merchant (semanas 25–32) - IN PROGRESS
+### Onda 2 — Content, Search, Merchant (semanas 25–32) - READY
 
 - `content-service` (dificuldade 2–6/10) — split-brain JPA+blob
 - `search-service` (dificuldade 5/10) — `ProductIndexPayload` interim
 - `merchant-service` (dificuldade 5/10) — sem ProductType APIs
-- **TLC:** Specify ✅ → Design ✅ → Tasks ✅ → Execute (bloqueado)
+- **TLC:** Specify ✅ → Design ✅ → Tasks ✅ → Execute (liberado — aguardando task_01)
 
 ### Onda 3 — Contratos DTO (semanas 33–38) - PLANNED
 

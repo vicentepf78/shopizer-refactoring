@@ -1,6 +1,9 @@
-package com.salesmanager.shop.strangler;
+package com.salesmanager.test.shop.strangler;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.Collections;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -8,7 +11,6 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mock.env.MockEnvironment;
-import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.salesmanager.core.model.merchant.MerchantStore;
@@ -18,11 +20,9 @@ import com.salesmanager.shop.store.controller.country.facade.CountryFacade;
 import com.salesmanager.shop.strangler.reference.CountryFacadeHttpAdapter;
 import com.salesmanager.shop.strangler.support.StranglerRestClient;
 
-import java.util.Collections;
-import java.util.List;
-
 /**
  * Lightweight wiring check: exactly one CountryFacade bean per strangler flag.
+ * Lives outside {@code com.salesmanager.shop} so {@code @ComponentScan} does not pick up inner {@code @Configuration} classes.
  */
 class StranglerConditionalBeanTest {
 
@@ -101,7 +101,6 @@ class StranglerConditionalBeanTest {
 		}
 	}
 
-	@Service
 	static class InProcessCountryFacade implements CountryFacade {
 		@Override
 		public List<ReadableCountry> getListCountryZones(Language language, MerchantStore merchantStore) {

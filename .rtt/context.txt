@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-18 15:27 | 1361 files | 211825 tokens
+# rtt index | generated 2026-07-26 10:13 | 1361 files | 211821 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -12661,16 +12661,6 @@ class CorrelationIdFilterTest
   void generatesIdWhenHeaderAbsent()
   void propagatesExistingHeader()
 
-# sm-shop/src/test/java/com/salesmanager/shop/strangler/StranglerConditionalBeanTest.java [java]
-imports: org.assertj.core.api.Assertions.assertThat, org.junit.jupiter.api.Test, org.springframework.boot.autoconfigure.condition.ConditionalOnProperty, org.springframework.context.annotation.AnnotationConfigApplicationContext, org.springframework.context.annotation.Bean, org.springframework.context.annotation.Configuration, org.springframework.mock.env.MockEnvironment, org.springframework.stereotype.Service, org.springframework.web.client.RestTemplate, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.shop.model.references.ReadableCountry, com.salesmanager.shop.store.controller.country.facade.CountryFacade, com.salesmanager.shop.strangler.reference.CountryFacadeHttpAdapter, com.salesmanager.shop.strangler.support.StranglerRestClient, java.util.Collections, java.util.List
-class StranglerConditionalBeanTest
-  void stranglerOn_countryFacadeIsHttpAdapter()
-  void stranglerOff_countryFacadeIsInProcess()
-  void stranglerMissing_defaultsToInProcess()
-  class StranglerOnConfig
-  class MonolithConfig
-  class InProcessCountryFacade
-
 # sm-shop/src/test/java/com/salesmanager/shop/strangler/config/Wave1ClientConfigTest.java [java]
 imports: org.assertj.core.api.Assertions.assertThat, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.context.properties.EnableConfigurationProperties, org.springframework.boot.test.context.SpringBootTest, org.springframework.context.annotation.Configuration, org.springframework.test.context.TestPropertySource
 class Wave1ClientConfigTest
@@ -12819,6 +12809,16 @@ imports: org.junit.Assert.assertNotNull, javax.inject.Inject, org.junit.Test, or
 class UserApiIntegrationTest
   void getUser()
   void createUserChangePassword()
+
+# sm-shop/src/test/java/com/salesmanager/test/shop/strangler/StranglerConditionalBeanTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, java.util.Collections, java.util.List, org.junit.jupiter.api.Test, org.springframework.boot.autoconfigure.condition.ConditionalOnProperty, org.springframework.context.annotation.AnnotationConfigApplicationContext, org.springframework.context.annotation.Bean, org.springframework.context.annotation.Configuration, org.springframework.mock.env.MockEnvironment, org.springframework.web.client.RestTemplate, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.shop.model.references.ReadableCountry, com.salesmanager.shop.store.controller.country.facade.CountryFacade, com.salesmanager.shop.strangler.reference.CountryFacadeHttpAdapter, com.salesmanager.shop.strangler.support.StranglerRestClient
+class StranglerConditionalBeanTest
+  void stranglerOn_countryFacadeIsHttpAdapter()
+  void stranglerOff_countryFacadeIsInProcess()
+  void stranglerMissing_defaultsToInProcess()
+  class StranglerOnConfig
+  class MonolithConfig
+  class InProcessCountryFacade
 
 # sm-shop/src/test/java/com/salesmanager/test/shop/util/GeneratePasswordTest.java [java]
 imports: javax.inject.Inject, javax.inject.Named, org.junit.Assert, org.junit.Test, org.junit.runner.RunWith, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.boot.test.context.SpringBootTest, org.springframework.boot.test.context.SpringBootTest.WebEnvironment, org.springframework.security.crypto.password.PasswordEncoder, org.springframework.test.context.junit4.SpringRunner, com.salesmanager.shop.application.ShopApplication, com.salesmanager.test.shop.common.ServicesTestSupport

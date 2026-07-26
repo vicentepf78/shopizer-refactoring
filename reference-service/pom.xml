@@ -99,7 +99,7 @@
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
         <!-- 0.8.11+ required for Java 21 class files (major 65) -->
-        <version>0.8.11</version>
+        <version>${jacoco.version}</version>
         <configuration>
           <excludes>
             <!-- Boot entrypoint / pure config wiring -->

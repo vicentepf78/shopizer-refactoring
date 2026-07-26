@@ -84,6 +84,7 @@
 		<pact.version>4.6.17</pact.version>
 
 		<!-- jacoco coverage -->
+		<jacoco.version>0.8.11</jacoco.version>
 		<coverage.lines>.30</coverage.lines>
 		<coverage.branches>.37</coverage.branches>
 
