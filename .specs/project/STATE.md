@@ -1,7 +1,7 @@
 # State
 
-**Last Updated:** 2026-07-26T13:15:00-03:00
-**Current Work:** onda-2-content-search-merchant — COMPLETE (gate verde). Próximo: Specify/Execute Onda 3
+**Last Updated:** 2026-07-26T14:20:13-03:00
+**Current Work:** onda-2-content-search-merchant — COMPLETE (gate verde, revalidado). Próximo: PR merge + Specify/Execute Onda 3
 
 ---
 
@@ -178,3 +178,4 @@
 
 - [x] Onda 1 gate `./mvnw clean install` verde (2026-07-26)
 - [x] Onda 2 Execute complete — `docker-compose-wave2.yml`, suite Strangler, gate `./mvnw clean install` (2026-07-26)
+- [x] Onda 1+2 reactor gate revalidado — `./mvnw clean install` verde, 16 módulos, ~4m50s (2026-07-26T14:20)
