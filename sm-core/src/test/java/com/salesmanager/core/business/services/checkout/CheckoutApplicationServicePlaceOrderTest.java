@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -73,6 +74,149 @@ class CheckoutApplicationServicePlaceOrderTest {
 		checkoutApplicationService = new CheckoutApplicationServiceImpl(orderService, productService,
 				productAttributeService, digitalProductService, merchantStoreService, languageService, outboxProperties,
 				stagedOrderProcessor);
+	}
+
+	@Test
+	void whenOutboxEnabledUsesStagedProcessor() throws Exception {
+		MerchantStore store = store("DEFAULT");
+		Language language = new Language("en");
+		Customer customer = new Customer();
+		OrderTotalSummary summary = summary(BigDecimal.TEN);
+		ShoppingCartItem item = cartItem("SKU-1");
+		Order builtOrder = new Order();
+
+		when(outboxProperties.isEnabled()).thenReturn(true);
+		when(merchantStoreService.getByCode("DEFAULT")).thenReturn(store);
+		when(languageService.getByCode("en")).thenReturn(language);
+		when(productService.getBySku("SKU-1", store, language)).thenReturn(productWithInventory(store, 10, 1));
+		when(digitalProductService.getByProduct(eq(store), any(Product.class))).thenReturn(null);
+		when(stagedOrderProcessor.processOrder(any(Order.class), eq(customer), any(), eq(summary), any(Payment.class),
+				isNull(), eq(store))).thenReturn(builtOrder);
+
+		CheckoutCommand command = CheckoutCommand.builder()
+				.storeId(MerchantStoreId.of("DEFAULT"))
+				.languageCode(LanguageCode.of("en"))
+				.customerSnapshot(CustomerSnapshotBuilder.from(customer))
+				.customer(customer)
+				.shoppingCartItems(Collections.singletonList(item))
+				.orderTotalSummary(summary)
+				.paymentModule("moneyorder")
+				.paymentMethodType(PaymentType.MONEYORDER.name())
+				.build();
+
+		checkoutApplicationService.placeOrder(command);
+
+		verify(stagedOrderProcessor).processOrder(any(Order.class), eq(customer), any(), eq(summary), any(Payment.class),
+				isNull(), eq(store));
+		verify(orderService, never()).processOrder(any(), any(), any(), any(), any(), any());
+	}
+
+	@Test
+	void whenOutboxDisabledUsesLegacyOrderService() throws Exception {
+		MerchantStore store = store("DEFAULT");
+		Language language = new Language("en");
+		Customer customer = new Customer();
+		OrderTotalSummary summary = summary(BigDecimal.TEN);
+		ShoppingCartItem item = cartItem("SKU-1");
+
+		when(outboxProperties.isEnabled()).thenReturn(false);
+		when(merchantStoreService.getByCode("DEFAULT")).thenReturn(store);
+		when(languageService.getByCode("en")).thenReturn(language);
+		when(productService.getBySku("SKU-1", store, language)).thenReturn(productWithInventory(store, 10, 1));
+		when(digitalProductService.getByProduct(eq(store), any(Product.class))).thenReturn(null);
+		when(orderService.processOrder(any(Order.class), eq(customer), any(), eq(summary), any(Payment.class), isNull(),
+				eq(store))).thenAnswer(invocation -> invocation.getArgument(0));
+
+		CheckoutCommand command = CheckoutCommand.builder()
+				.storeId(MerchantStoreId.of("DEFAULT"))
+				.languageCode(LanguageCode.of("en"))
+				.customerSnapshot(CustomerSnapshotBuilder.from(customer))
+				.customer(customer)
+				.shoppingCartItems(Collections.singletonList(item))
+				.orderTotalSummary(summary)
+				.paymentModule("moneyorder")
+				.paymentMethodType(PaymentType.MONEYORDER.name())
+				.build();
+
+		checkoutApplicationService.placeOrder(command);
+
+		verify(orderService).processOrder(any(Order.class), eq(customer), any(), eq(summary), any(Payment.class),
+				isNull(), eq(store));
+		verify(stagedOrderProcessor, never()).processOrder(any(), any(), any(), any(), any(), any(), any());
+	}
+
+	@Test
+	void whenOutboxEnabledPayPalOmitsCommandTransaction() throws Exception {
+		MerchantStore store = store("DEFAULT");
+		Language language = new Language("en");
+		Customer customer = new Customer();
+		OrderTotalSummary summary = summary(BigDecimal.TEN);
+		ShoppingCartItem item = cartItem("SKU-1");
+		Transaction commandTransaction = new Transaction();
+		commandTransaction.setTransactionDetails(details("PAYER-1", "TOKEN-1"));
+		Order builtOrder = new Order();
+
+		when(outboxProperties.isEnabled()).thenReturn(true);
+		when(merchantStoreService.getByCode("DEFAULT")).thenReturn(store);
+		when(languageService.getByCode("en")).thenReturn(language);
+		when(productService.getBySku("SKU-1", store, language)).thenReturn(productWithInventory(store, 10, 1));
+		when(digitalProductService.getByProduct(eq(store), any(Product.class))).thenReturn(null);
+		when(stagedOrderProcessor.processOrder(any(Order.class), eq(customer), any(), eq(summary), any(Payment.class),
+				isNull(), eq(store))).thenReturn(builtOrder);
+
+		CheckoutCommand command = CheckoutCommand.builder()
+				.storeId(MerchantStoreId.of("DEFAULT"))
+				.languageCode(LanguageCode.of("en"))
+				.customerSnapshot(CustomerSnapshotBuilder.from(customer))
+				.customer(customer)
+				.shoppingCartItems(Collections.singletonList(item))
+				.orderTotalSummary(summary)
+				.transaction(commandTransaction)
+				.paymentModule("paypal")
+				.paymentMethodType(PaymentType.PAYPAL.name())
+				.build();
+
+		checkoutApplicationService.placeOrder(command);
+
+		verify(stagedOrderProcessor).processOrder(any(Order.class), eq(customer), any(), eq(summary), any(Payment.class),
+				isNull(), eq(store));
+		verify(orderService, never()).processOrder(any(), any(), any(), any(), any(), any());
+	}
+
+	@Test
+	void whenOutboxDisabledPayPalOmitsCommandTransaction() throws Exception {
+		MerchantStore store = store("DEFAULT");
+		Language language = new Language("en");
+		Customer customer = new Customer();
+		OrderTotalSummary summary = summary(BigDecimal.TEN);
+		ShoppingCartItem item = cartItem("SKU-1");
+		Transaction commandTransaction = new Transaction();
+		commandTransaction.setTransactionDetails(details("PAYER-1", "TOKEN-1"));
+
+		when(outboxProperties.isEnabled()).thenReturn(false);
+		when(merchantStoreService.getByCode("DEFAULT")).thenReturn(store);
+		when(languageService.getByCode("en")).thenReturn(language);
+		when(productService.getBySku("SKU-1", store, language)).thenReturn(productWithInventory(store, 10, 1));
+		when(digitalProductService.getByProduct(eq(store), any(Product.class))).thenReturn(null);
+		when(orderService.processOrder(any(Order.class), eq(customer), any(), eq(summary), any(Payment.class), eq(store)))
+				.thenAnswer(invocation -> invocation.getArgument(0));
+
+		CheckoutCommand command = CheckoutCommand.builder()
+				.storeId(MerchantStoreId.of("DEFAULT"))
+				.languageCode(LanguageCode.of("en"))
+				.customerSnapshot(CustomerSnapshotBuilder.from(customer))
+				.customer(customer)
+				.shoppingCartItems(Collections.singletonList(item))
+				.orderTotalSummary(summary)
+				.transaction(commandTransaction)
+				.paymentModule("paypal")
+				.paymentMethodType(PaymentType.PAYPAL.name())
+				.build();
+
+		checkoutApplicationService.placeOrder(command);
+
+		verify(orderService).processOrder(any(Order.class), eq(customer), any(), eq(summary), any(Payment.class), eq(store));
+		verify(stagedOrderProcessor, never()).processOrder(any(), any(), any(), any(), any(), any(), any());
 	}
 
 	@Test
