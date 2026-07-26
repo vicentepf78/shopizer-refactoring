@@ -204,8 +204,9 @@ public class CheckoutApplicationServiceImpl implements CheckoutApplicationServic
 			OrderTotalSummary summary, Payment payment, Transaction transaction, MerchantStore store)
 			throws ServiceException {
 		if (outboxProperties.isEnabled()) {
-			return stagedOrderProcessor.processOrder(modelOrder, customer, shoppingCartItems, summary, payment,
-					transaction, store);
+			// ponytail: legacy storefront PayPal drops command Transaction; outbox path must match
+			return stagedOrderProcessor.processOrder(modelOrder, customer, shoppingCartItems, summary, payment, null,
+					store);
 		}
 		if (transaction != null) {
 			return orderService.processOrder(modelOrder, customer, shoppingCartItems, summary, payment, store);

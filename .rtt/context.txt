@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-26 18:51 | 1699 files | 266677 tokens
+# rtt index | generated 2026-07-26 19:06 | 1699 files | 266761 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -7514,9 +7514,10 @@ imports: java.util.List, com.salesmanager.core.model.checkout.outbox.CheckoutOut
 interface CheckoutOutboxRepository
 
 # sm-core/src/main/java/com/salesmanager/core/business/services/checkout/outbox/CheckoutOutboxRepositoryImpl.java [java]
-imports: java.util.Date, java.util.List, javax.inject.Inject, org.springframework.dao.DataIntegrityViolationException, org.springframework.data.domain.PageRequest, org.springframework.stereotype.Repository, com.salesmanager.core.business.repositories.checkout.CheckoutOutboxJpaRepository, com.salesmanager.core.model.checkout.outbox.CheckoutOutboxEvent
+imports: java.sql.SQLException, java.util.Date, java.util.List, javax.inject.Inject, org.springframework.dao.DataIntegrityViolationException, org.springframework.dao.DuplicateKeyException, org.springframework.data.domain.PageRequest, org.springframework.stereotype.Repository, com.salesmanager.core.business.repositories.checkout.CheckoutOutboxJpaRepository, com.salesmanager.core.model.checkout.outbox.CheckoutOutboxEvent
 class CheckoutOutboxRepositoryImpl
   void append(String aggregateId, CheckoutOutboxEventType eventType, String payloadJson)
+  boolean isDuplicateKeyViolation(DataIntegrityViolationException ex)
   List<CheckoutOutboxEvent> findPending(int limit)
   void markProcessed(CheckoutOutboxEvent event)
 
@@ -8314,23 +8315,27 @@ class OrderSnapshotBuilderTest
   Order sampleOrder()
 
 # sm-core/src/test/java/com/salesmanager/core/business/services/checkout/outbox/CheckoutOutboxIntegrationTest.java [java]
-imports: org.assertj.core.api.Assertions.assertThat, org.mockito.ArgumentMatchers.any, org.mockito.ArgumentMatchers.eq, org.mockito.ArgumentMatchers.isNull, org.mockito.Mockito.never, org.mockito.Mockito.verify, org.mockito.Mockito.when, java.math.BigDecimal, java.util.Collections, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.contracts.tenant.LanguageCode, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.core.business.services.catalog.product.ProductService, com.salesmanager.core.business.services.catalog.product.attribute.ProductAttributeService, com.salesmanager.core.business.services.catalog.product.file.DigitalProductService, com.salesmanager.core.business.services.checkout.CheckoutApplicationService, com.salesmanager.core.business.services.checkout.CheckoutApplicationServiceImpl, com.salesmanager.core.business.services.checkout.CheckoutCommand, com.salesmanager.core.business.services.checkout.CheckoutStagedOrderProcessor, com.salesmanager.core.business.services.checkout.CustomerSnapshotBuilder, com.salesmanager.core.business.services.merchant.MerchantStoreService, com.salesmanager.core.business.services.order.OrderService, com.salesmanager.core.business.services.reference.language.LanguageService, com.salesmanager.core.model.catalog.product.Product, com.salesmanager.core.model.catalog.product.availability.ProductAvailability, com.salesmanager.core.model.catalog.product.description.ProductDescription
+imports: org.assertj.core.api.Assertions.assertThat, org.mockito.ArgumentMatchers.any, org.mockito.ArgumentMatchers.eq, org.mockito.ArgumentMatchers.isNull, org.mockito.Mockito.never, org.mockito.Mockito.verify, org.mockito.Mockito.when, java.math.BigDecimal, java.util.Collections, java.util.HashMap, java.util.Map, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.contracts.tenant.LanguageCode, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.core.business.services.catalog.product.ProductService, com.salesmanager.core.business.services.catalog.product.attribute.ProductAttributeService, com.salesmanager.core.business.services.catalog.product.file.DigitalProductService, com.salesmanager.core.business.services.checkout.CheckoutApplicationService, com.salesmanager.core.business.services.checkout.CheckoutApplicationServiceImpl, com.salesmanager.core.business.services.checkout.CheckoutCommand, com.salesmanager.core.business.services.checkout.CheckoutStagedOrderProcessor, com.salesmanager.core.business.services.checkout.CustomerSnapshotBuilder, com.salesmanager.core.business.services.merchant.MerchantStoreService, com.salesmanager.core.business.services.order.OrderService, com.salesmanager.core.business.services.reference.language.LanguageService, com.salesmanager.core.model.catalog.product.Product
 class CheckoutOutboxIntegrationTest
   void setUp()
   void whenOutboxEnabledUsesStagedProcessor()
   void whenOutboxDisabledUsesLegacyOrderService()
+  void whenOutboxEnabledPayPalOmitsCommandTransaction()
+  void whenOutboxDisabledPayPalOmitsCommandTransaction()
+  Map<String, String> paypalDetails(String payerId, String token)
   MerchantStore store(String code)
   OrderTotalSummary summary(BigDecimal total)
   ShoppingCartItem cartItem(String sku)
   Product productWithInventory(MerchantStore store, int qty, int requested)
 
 # sm-core/src/test/java/com/salesmanager/core/business/services/checkout/outbox/CheckoutOutboxRepositoryTest.java [java]
-imports: org.assertj.core.api.Assertions.assertThat, org.mockito.ArgumentMatchers.any, org.mockito.Mockito.never, org.mockito.Mockito.verify, org.mockito.Mockito.when, java.util.Collections, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.ArgumentCaptor, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.springframework.dao.DataIntegrityViolationException, org.springframework.data.domain.Pageable, com.salesmanager.core.business.repositories.checkout.CheckoutOutboxJpaRepository, com.salesmanager.core.model.checkout.outbox.CheckoutOutboxEvent
+imports: org.assertj.core.api.Assertions.assertThat, org.assertj.core.api.Assertions.assertThatThrownBy, org.mockito.ArgumentMatchers.any, org.mockito.Mockito.never, org.mockito.Mockito.verify, org.mockito.Mockito.when, java.sql.SQLException, java.util.Collections, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.ArgumentCaptor, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.springframework.dao.DataIntegrityViolationException, org.springframework.dao.DuplicateKeyException, org.springframework.data.domain.Pageable, com.salesmanager.core.business.repositories.checkout.CheckoutOutboxJpaRepository, com.salesmanager.core.model.checkout.outbox.CheckoutOutboxEvent
 class CheckoutOutboxRepositoryTest
   void setUp()
   void appendIsIdempotentForAggregateAndEventType()
   void appendPersistsNewEventWhenNotExists()
   void appendIgnoresDuplicateKeyRace()
+  void appendRethrowsNonDuplicateIntegrityViolation()
   void findPendingDelegatesToJpaRepository()
   void markProcessedUpdatesStatusAndTimestamp()
 
