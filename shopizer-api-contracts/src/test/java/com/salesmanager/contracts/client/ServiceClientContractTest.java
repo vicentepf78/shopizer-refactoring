@@ -171,4 +171,63 @@ class ServiceClientContractTest {
 				: client.taxRates("DEFAULT", "en").getItems().size());
 	}
 
+	@Test
+	void wave2ClientsUseStringCodesNotJpaEntities() {
+		for (Class<?> clientType : new Class<?>[] {
+				ContentServiceClient.class,
+				SearchIndexClient.class,
+				MerchantServiceClient.class }) {
+			for (java.lang.reflect.Method method : clientType.getDeclaredMethods()) {
+				for (Class<?> paramType : method.getParameterTypes()) {
+					assertFalse(paramType.getName().contains("core.model"), method.getName());
+					assertFalse(paramType.getName().contains("MerchantStore"), method.getName());
+				}
+				assertFalse(method.getReturnType().getName().startsWith("com.salesmanager.core.model"),
+						method.getName());
+			}
+		}
+
+		ContentServiceClient contentClient = new ContentServiceClient() {
+			@Override
+			public byte[] getStaticFile(String storeCode, String imageType, String fileName) {
+				return new byte[0];
+			}
+
+			@Override
+			public void uploadLogo(String storeCode, String fileName, byte[] content, String contentType) {
+			}
+
+			@Override
+			public void deleteLogo(String storeCode, String fileName) {
+			}
+		};
+		assertEquals(0, contentClient.getStaticFile("DEFAULT", "LOGO", "logo.png").length);
+
+		SearchIndexClient searchClient = new SearchIndexClient() {
+			@Override
+			public void index(com.salesmanager.contracts.search.ProductIndexPayload payload) {
+			}
+
+			@Override
+			public void indexBulk(com.salesmanager.contracts.search.ProductIndexBulkPayload bulk) {
+			}
+
+			@Override
+			public void deleteDocument(Long productId, String store, java.util.List<String> languages) {
+			}
+		};
+		searchClient.deleteDocument(1L, "default", java.util.Collections.singletonList("en"));
+
+		MerchantServiceClient merchantClient = new MerchantServiceClient() {
+			@Override
+			public com.salesmanager.contracts.merchant.MerchantStoreSnapshot getStoreSnapshot(String code) {
+				com.salesmanager.contracts.merchant.MerchantStoreSnapshot snapshot =
+						new com.salesmanager.contracts.merchant.MerchantStoreSnapshot();
+				snapshot.setCode(code);
+				return snapshot;
+			}
+		};
+		assertEquals("DEFAULT", merchantClient.getStoreSnapshot("DEFAULT").getCode());
+	}
+
 }

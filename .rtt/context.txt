@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-26 10:25 | 1361 files | 211821 tokens
+# rtt index | generated 2026-07-26 10:29 | 1418 files | 216940 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -215,9 +215,20 @@ class NamedEntity
   String getTitle()
   void setTitle(String title)
 
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/client/ContentServiceClient.java [java]
+interface ContentServiceClient
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/client/MerchantServiceClient.java [java]
+imports: com.salesmanager.contracts.merchant.MerchantStoreSnapshot
+interface MerchantServiceClient
+
 # shopizer-api-contracts/src/main/java/com/salesmanager/contracts/client/ReferenceServiceClient.java [java]
 imports: com.salesmanager.contracts.reference.ReadableCountry, com.salesmanager.contracts.reference.ReadableLanguage, com.salesmanager.contracts.reference.ReadableZone
 interface ReferenceServiceClient
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/client/SearchIndexClient.java [java]
+imports: java.util.List, com.salesmanager.contracts.search.ProductIndexBulkPayload, com.salesmanager.contracts.search.ProductIndexPayload
+interface SearchIndexClient
 
 # shopizer-api-contracts/src/main/java/com/salesmanager/contracts/client/TaxServiceClient.java [java]
 imports: com.salesmanager.contracts.common.Entity, com.salesmanager.contracts.common.ReadableEntityList, com.salesmanager.contracts.tax.PersistableTaxClass, com.salesmanager.contracts.tax.PersistableTaxRate, com.salesmanager.contracts.tax.ReadableTaxClass, com.salesmanager.contracts.tax.ReadableTaxRate
@@ -234,6 +245,18 @@ imports: java.io.Serializable
 class EntityExists
   boolean isExists()
   void setExists(boolean exists)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/common/ReadableAudit.java [java]
+class ReadableAudit
+  String getCreated()
+  void setCreated(String created)
+  String getModified()
+  void setModified(String modified)
+  String getUser()
+  void setUser(String user)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/common/ReadableAuditable.java [java]
+interface ReadableAuditable
 
 # shopizer-api-contracts/src/main/java/com/salesmanager/contracts/common/ReadableEntityList.java [java]
 imports: java.util.List
@@ -253,11 +276,376 @@ class ReadableList
   int getNumber()
   void setNumber(int number)
 
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/common/ResourceUrlAccess.java [java]
+interface ResourceUrlAccess
+
 # shopizer-api-contracts/src/main/java/com/salesmanager/contracts/common/ShopEntity.java [java]
 imports: java.io.Serializable
 class ShopEntity
   void setLanguage(String language)
   String getLanguage()
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/content/Content.java [java]
+imports: java.io.Serializable, javax.validation.constraints.NotEmpty
+class Content
+  void setName(String name)
+  String getName()
+  String getContentType()
+  void setContentType(String contentType)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/content/ContentDescriptionEntity.java [java]
+imports: com.salesmanager.contracts.catalog.NamedEntity
+class ContentDescriptionEntity
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/content/ContentEntity.java [java]
+imports: com.salesmanager.contracts.common.Entity
+class ContentEntity
+  String getCode()
+  void setCode(String code)
+  String getContentType()
+  void setContentType(String contentType)
+  boolean isDisplayedInMenu()
+  void setDisplayedInMenu(boolean isDisplayedInMenu)
+  boolean isVisible()
+  void setVisible(boolean visible)
+  long getSerialversionuid()
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/content/ContentFile.java [java]
+class ContentFile
+  byte[] getFile()
+  void setFile(byte[] file)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/content/ContentFolder.java [java]
+imports: java.util.ArrayList, java.util.List
+class ContentFolder
+  String getPath()
+  void setPath(String path)
+  List<Content> getContent()
+  void setContent(List<Content> content)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/content/ContentImage.java [java]
+class ContentImage
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/content/ContentName.java [java]
+class ContentName
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/content/ContentPath.java [java]
+class ContentPath
+  String getPath()
+  void setPath(String path)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/content/ContentSettings.java [java]
+imports: java.io.Serializable
+class ContentSettings
+  String getHttpBasePath()
+  void setHttpBasePath(String httpBasePath)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/content/ObjectContent.java [java]
+imports: com.salesmanager.contracts.common.ResourceUrlAccess
+class ObjectContent
+  String getPageContent()
+  void setPageContent(String pageContent)
+  String getSlug()
+  void setSlug(String slug)
+  String getMetaDetails()
+  void setMetaDetails(String metaDetails)
+  String getTitle()
+  void setTitle(String title)
+  String getLanguage()
+  void setLanguage(String language)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/content/PersistableContent.java [java]
+imports: java.io.Serializable, java.util.ArrayList, java.util.List, com.salesmanager.contracts.common.Entity
+class PersistableContent
+  String getCode()
+  void setCode(String code)
+  List<ObjectContent> getDescriptions()
+  void setDescriptions(List<ObjectContent> descriptions)
+  boolean isDisplayedInMenu()
+  void setDisplayedInMenu(boolean isDisplayedInMenu)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/content/PersistableContentEntity.java [java]
+imports: java.io.Serializable, java.util.ArrayList, java.util.List
+class PersistableContentEntity
+  List<ContentDescriptionEntity> getDescriptions()
+  void setDescriptions(List<ContentDescriptionEntity> descriptions)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/content/ReadableContent.java [java]
+class ReadableContent
+  String getContent()
+  void setContent(String content)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/content/ReadableContentEntity.java [java]
+class ReadableContentEntity
+  ContentDescriptionEntity getDescription()
+  void setDescription(ContentDescriptionEntity description)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/content/ReadableContentFull.java [java]
+imports: java.util.ArrayList, java.util.List, com.salesmanager.contracts.common.Entity
+class ReadableContentFull
+  List<ContentDescriptionEntity> getDescriptions()
+  void setDescriptions(List<ContentDescriptionEntity> descriptions)
+  String getCode()
+  void setCode(String code)
+  boolean isVisible()
+  void setVisible(boolean visible)
+  String getContentType()
+  void setContentType(String contentType)
+  boolean isDisplayedInMenu()
+  void setDisplayedInMenu(boolean isDisplayedInMenu)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/content/ReadableContentObject.java [java]
+class ReadableContentObject
+  boolean isDisplayedInMenu()
+  void setDisplayedInMenu(boolean isDisplayedInMenu)
+  String getCode()
+  void setCode(String code)
+  Long getId()
+  void setId(Long id)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/content/ReadableImage.java [java]
+imports: java.io.Serializable
+class ReadableImage
+  String getPath()
+  void setPath(String path)
+  String getName()
+  void setName(String name)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/content/box/ContentBox.java [java]
+imports: com.salesmanager.contracts.content.common.Content
+class ContentBox
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/content/box/PersistableContentBox.java [java]
+imports: java.util.List, com.salesmanager.contracts.content.common.ContentDescription
+class PersistableContentBox
+  List<ContentDescription> getDescriptions()
+  void setDescriptions(List<ContentDescription> descriptions)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/content/box/ReadableContentBox.java [java]
+imports: com.salesmanager.contracts.content.common.Content, com.salesmanager.contracts.content.common.ContentDescription
+class ReadableContentBox
+  ContentDescription getDescription()
+  void setDescription(ContentDescription description)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/content/box/ReadableContentBoxFull.java [java]
+imports: java.util.List, com.salesmanager.contracts.content.common.ContentDescription
+class ReadableContentBoxFull
+  List<ContentDescription> getDescriptions()
+  void setDescriptions(List<ContentDescription> descriptions)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/content/common/Content.java [java]
+imports: com.salesmanager.contracts.common.Entity
+class Content
+  String getCode()
+  void setCode(String code)
+  boolean isVisible()
+  void setVisible(boolean visible)
+  String getContentType()
+  void setContentType(String contentType)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/content/common/ContentDescription.java [java]
+imports: com.salesmanager.contracts.catalog.NamedEntity
+class ContentDescription
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/content/page/ContentPage.java [java]
+imports: com.salesmanager.contracts.content.common.Content
+class ContentPage
+  boolean isLinkToMenu()
+  void setLinkToMenu(boolean linkToMenu)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/content/page/PersistableContentPage.java [java]
+imports: java.util.List, com.salesmanager.contracts.content.common.ContentDescription
+class PersistableContentPage
+  List<ContentDescription> getDescriptions()
+  void setDescriptions(List<ContentDescription> descriptions)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/content/page/ReadableContentPage.java [java]
+imports: com.salesmanager.contracts.content.common.ContentDescription
+class ReadableContentPage
+  ContentDescription getDescription()
+  void setDescription(ContentDescription description)
+  String getPath()
+  void setPath(String path)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/content/page/ReadableContentPageFull.java [java]
+imports: java.util.List, com.salesmanager.contracts.content.common.ContentDescription
+class ReadableContentPageFull
+  List<ContentDescription> getDescriptions()
+  void setDescriptions(List<ContentDescription> descriptions)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/merchant/Configs.java [java]
+class Configs
+  String getFacebook()
+  void setFacebook(String facebook)
+  String getPinterest()
+  void setPinterest(String pinterest)
+  String getGa()
+  void setGa(String ga)
+  String getInstagram()
+  void setInstagram(String instagram)
+  boolean isAllowOnlinePurchase()
+  void setAllowOnlinePurchase(boolean allowOnlinePurchase)
+  boolean isDisplaySearchBox()
+  void setDisplaySearchBox(boolean displaySearchBox)
+  boolean isDisplayContactUs()
+  void setDisplayContactUs(boolean displayContactUs)
+  boolean isDisplayShipping()
+  void setDisplayShipping(boolean displayShipping)
+  boolean isDisplayCustomerSection()
+  void setDisplayCustomerSection(boolean displayCustomerSection)
+  boolean isDisplayAddToCartOnFeaturedItems()
+  void setDisplayAddToCartOnFeaturedItems(boolean displayAddToCartOnFeaturedItems)
+  boolean isDisplayCustomerAgreement()
+  void setDisplayCustomerAgreement(boolean displayCustomerAgreement)
+  boolean isDisplayPagesMenu()
+  void setDisplayPagesMenu(boolean displayPagesMenu)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/merchant/MerchantConfigEntity.java [java]
+imports: com.salesmanager.contracts.common.Entity
+class MerchantConfigEntity
+  String getKey()
+  void setKey(String key)
+  String getType()
+  void setType(String type)
+  String getValue()
+  void setValue(String value)
+  boolean isActive()
+  void setActive(boolean active)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/merchant/MerchantStoreBrand.java [java]
+imports: java.util.ArrayList, java.util.List
+class MerchantStoreBrand
+  List<MerchantConfigEntity> getSocialNetworks()
+  void setSocialNetworks(List<MerchantConfigEntity> socialNetworks)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/merchant/MerchantStoreEntity.java [java]
+imports: java.io.Serializable, javax.validation.constraints.NotNull, com.salesmanager.contracts.reference.MeasureUnit, com.salesmanager.contracts.reference.WeightUnit
+class MerchantStoreEntity
+  int getId()
+  void setId(int id)
+  String getCode()
+  void setCode(String code)
+  String getDefaultLanguage()
+  void setDefaultLanguage(String defaultLanguage)
+  String getName()
+  void setName(String name)
+  String getCurrency()
+  void setCurrency(String currency)
+  String getInBusinessSince()
+  void setInBusinessSince(String inBusinessSince)
+  String getEmail()
+  void setEmail(String email)
+  String getTemplate()
+  void setTemplate(String template)
+  boolean isCurrencyFormatNational()
+  void setCurrencyFormatNational(boolean currencyFormatNational)
+  String getPhone()
+  void setPhone(String phone)
+  boolean isUseCache()
+  void setUseCache(boolean useCache)
+  MeasureUnit getDimension()
+  void setDimension(MeasureUnit dimension)
+  WeightUnit getWeight()
+  void setWeight(WeightUnit weight)
+  boolean isRetailer()
+  void setRetailer(boolean retailer)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/merchant/MerchantStoreSnapshot.java [java]
+imports: java.io.Serializable, java.util.ArrayList, java.util.List, com.salesmanager.contracts.content.ReadableImage, com.salesmanager.contracts.reference.ReadableAddress, com.salesmanager.contracts.reference.ReadableLanguage
+class MerchantStoreSnapshot
+  int getId()
+  void setId(int id)
+  String getCode()
+  void setCode(String code)
+  String getName()
+  void setName(String name)
+  String getDefaultLanguage()
+  void setDefaultLanguage(String defaultLanguage)
+  String getCurrency()
+  void setCurrency(String currency)
+  String getInBusinessSince()
+  void setInBusinessSince(String inBusinessSince)
+  String getEmail()
+  void setEmail(String email)
+  String getPhone()
+  void setPhone(String phone)
+  String getTemplate()
+  void setTemplate(String template)
+  boolean isUseCache()
+  void setUseCache(boolean useCache)
+  boolean isCurrencyFormatNational()
+  void setCurrencyFormatNational(boolean currencyFormatNational)
+  boolean isRetailer()
+  void setRetailer(boolean retailer)
+  String getDimension()
+  void setDimension(String dimension)
+  String getWeight()
+  void setWeight(String weight)
+  ReadableAddress getAddress()
+  void setAddress(ReadableAddress address)
+  ReadableImage getLogo()
+  void setLogo(ReadableImage logo)
+  String getParentCode()
+  void setParentCode(String parentCode)
+  List<ReadableLanguage> getSupportedLanguages()
+  void setSupportedLanguages(List<ReadableLanguage> supportedLanguages)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/merchant/PersistableBrand.java [java]
+class PersistableBrand
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/merchant/PersistableMerchantStore.java [java]
+imports: java.util.List, com.salesmanager.contracts.reference.PersistableAddress
+class PersistableMerchantStore
+  List<String> getSupportedLanguages()
+  void setSupportedLanguages(List<String> supportedLanguages)
+  PersistableAddress getAddress()
+  void setAddress(PersistableAddress address)
+  String getRetailerStore()
+  void setRetailerStore(String retailerStore)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/merchant/ReadableBrand.java [java]
+imports: com.salesmanager.contracts.content.ReadableImage
+class ReadableBrand
+  ReadableImage getLogo()
+  void setLogo(ReadableImage logo)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/merchant/ReadableMerchantStore.java [java]
+imports: java.io.Serializable, java.util.List, com.salesmanager.contracts.content.ReadableImage, com.salesmanager.contracts.common.ReadableAudit, com.salesmanager.contracts.common.ReadableAuditable, com.salesmanager.contracts.reference.ReadableAddress, com.salesmanager.contracts.reference.ReadableLanguage
+class ReadableMerchantStore
+  String getCurrentUserLanguage()
+  void setCurrentUserLanguage(String currentUserLanguage)
+  ReadableAddress getAddress()
+  void setAddress(ReadableAddress address)
+  ReadableImage getLogo()
+  void setLogo(ReadableImage logo)
+  void setReadableAudit(ReadableAudit audit)
+  ReadableAudit getReadableAudit()
+  ReadableMerchantStore getParent()
+  void setParent(ReadableMerchantStore parent)
+  List<ReadableLanguage> getSupportedLanguages()
+  void setSupportedLanguages(List<ReadableLanguage> supportedLanguages)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/merchant/ReadableMerchantStoreList.java [java]
+imports: java.util.ArrayList, java.util.List, com.salesmanager.contracts.common.ReadableList
+class ReadableMerchantStoreList
+  List<ReadableMerchantStore> getData()
+  void setData(List<ReadableMerchantStore> data)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/reference/Address.java [java]
+imports: java.io.Serializable
+class Address
+  boolean isActive()
+  void setActive(boolean active)
+  String getCountry()
+  void setCountry(String country)
+  String getAddress()
+  void setAddress(String address)
+  String getPostalCode()
+  void setPostalCode(String postalCode)
+  String getCity()
+  void setCity(String city)
+  String getStateProvince()
+  void setStateProvince(String stateProvince)
 
 # shopizer-api-contracts/src/main/java/com/salesmanager/contracts/reference/CountryEntity.java [java]
 imports: com.salesmanager.contracts.common.Entity
@@ -270,6 +658,12 @@ class CountryEntity
 # shopizer-api-contracts/src/main/java/com/salesmanager/contracts/reference/DimensionUnitOfMeasure.java [java]
 
 # shopizer-api-contracts/src/main/java/com/salesmanager/contracts/reference/MeasureUnit.java [java]
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/reference/PersistableAddress.java [java]
+class PersistableAddress
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/reference/ReadableAddress.java [java]
+class ReadableAddress
 
 # shopizer-api-contracts/src/main/java/com/salesmanager/contracts/reference/ReadableCountry.java [java]
 imports: java.util.ArrayList, java.util.List
@@ -325,6 +719,52 @@ class ZoneEntity
   void setCountryCode(String countryCode)
   String getCode()
   void setCode(String code)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/search/ProductIndexBulkPayload.java [java]
+imports: java.io.Serializable, java.util.ArrayList, java.util.List, javax.validation.constraints.Size
+class ProductIndexBulkPayload
+  List<ProductIndexPayload> getPayloads()
+  void setPayloads(List<ProductIndexPayload> payloads)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/search/ProductIndexPayload.java [java]
+imports: java.io.Serializable, java.util.ArrayList, java.util.HashMap, java.util.List, java.util.Map
+class ProductIndexPayload
+  int getSchemaVersion()
+  void setSchemaVersion(int schemaVersion)
+  Long getId()
+  void setId(Long id)
+  String getStore()
+  void setStore(String store)
+  String getLanguage()
+  void setLanguage(String language)
+  String getName()
+  void setName(String name)
+  String getDescription()
+  void setDescription(String description)
+  String getLink()
+  void setLink(String link)
+  String getImage()
+  void setImage(String image)
+  String getReviews()
+  void setReviews(String reviews)
+  String getBrand()
+  void setBrand(String brand)
+  String getCategory()
+  void setCategory(String category)
+  Map<String, String> getAttributes()
+  void setAttributes(Map<String, String> attributes)
+  List<Map<String, String>> getVariants()
+  void setVariants(List<Map<String, String>> variants)
+  List<Map<String, String>> getInventory()
+  void setInventory(List<Map<String, String>> inventory)
+  Boolean getAddToCart()
+  void setAddToCart(Boolean addToCart)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/search/ValueList.java [java]
+imports: java.io.Serializable, java.util.ArrayList, java.util.List
+class ValueList
+  List<String> getValues()
+  void setValues(List<String> values)
 
 # shopizer-api-contracts/src/main/java/com/salesmanager/contracts/tax/PersistableTaxClass.java [java]
 class PersistableTaxClass
@@ -400,6 +840,7 @@ imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.As
 class ServiceClientContractTest
   void referenceServiceClientAcceptsOnlyStringCodes()
   void taxServiceClientUsesStoreAndLangStringCodes()
+  void wave2ClientsUseStringCodesNotJpaEntities()
 
 # shopizer-api-contracts/src/test/java/com/salesmanager/contracts/common/CommonDtoJacksonTest.java [java]
 imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertFalse, org.junit.jupiter.api.Assertions.assertTrue, java.util.Arrays, java.util.List, org.junit.jupiter.api.Test, com.fasterxml.jackson.databind.JsonNode, com.fasterxml.jackson.databind.ObjectMapper
@@ -409,6 +850,28 @@ class CommonDtoJacksonTest
   void readableEntityListPreservesItemsAndPaginationMetadata()
   void shopEntitySerializesLanguageAndId()
 
+# shopizer-api-contracts/src/test/java/com/salesmanager/contracts/content/ContentDtoJacksonTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertFalse, org.junit.jupiter.api.Assertions.assertNotNull, java.io.IOException, java.lang.reflect.Modifier, java.nio.file.Files, java.nio.file.Path, java.nio.file.Paths, java.util.ArrayList, java.util.List, java.util.stream.Stream, java.util.Collections, org.junit.jupiter.api.Test, org.junit.jupiter.params.ParameterizedTest, org.junit.jupiter.params.provider.MethodSource, com.fasterxml.jackson.databind.JsonNode, com.fasterxml.jackson.databind.ObjectMapper, com.salesmanager.contracts.content.box.ReadableContentBox, com.salesmanager.contracts.content.common.ContentDescription, com.salesmanager.contracts.content.page.ReadableContentPage, com.salesmanager.contracts.content.page.ReadableContentPageFull
+class ContentDtoJacksonTest
+  void contentDtosSerializeAndDeserialize(Class<?> type)
+  Stream<Class<?>> contentDtoTypes()
+  void readableContentPageRoundTripWithDescription()
+  void readableContentBoxAndPageFullRoundTrip()
+
+# shopizer-api-contracts/src/test/java/com/salesmanager/contracts/content/ContentMerchantDtoClasspathTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertFalse, org.junit.jupiter.api.Assertions.assertNotNull, java.io.IOException, java.nio.file.Files, java.nio.file.Path, java.nio.file.Paths, java.util.stream.Stream, org.junit.jupiter.api.Test
+class ContentMerchantDtoClasspathTest
+  void contentAndMerchantSourcesCompileWithoutCoreModelImports()
+  void representativeContentAndMerchantTypesAreLoadable()
+
+# shopizer-api-contracts/src/test/java/com/salesmanager/contracts/merchant/MerchantDtoJacksonTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertNotNull, java.io.IOException, java.lang.reflect.Modifier, java.nio.file.Files, java.nio.file.Path, java.nio.file.Paths, java.util.ArrayList, java.util.List, java.util.stream.Stream, org.junit.jupiter.api.Test, org.junit.jupiter.params.ParameterizedTest, org.junit.jupiter.params.provider.MethodSource, com.fasterxml.jackson.databind.JsonNode, com.fasterxml.jackson.databind.ObjectMapper, com.salesmanager.contracts.content.ReadableImage, com.salesmanager.contracts.reference.ReadableAddress, com.salesmanager.contracts.reference.ReadableLanguage
+class MerchantDtoJacksonTest
+  void merchantDtosSerializeAndDeserialize(Class<?> type)
+  Stream<Class<?>> merchantDtoTypes()
+  void merchantStoreSnapshotRoundTripWithNestedFields()
+  void configsRoundTripPublicFlags()
+
 # shopizer-api-contracts/src/test/java/com/salesmanager/contracts/reference/ReferenceDtoJacksonTest.java [java]
 imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertFalse, org.junit.jupiter.api.Assertions.assertTrue, java.util.Arrays, java.util.Iterator, org.junit.jupiter.api.Test, com.fasterxml.jackson.databind.JsonNode, com.fasterxml.jackson.databind.ObjectMapper
 class ReferenceDtoJacksonTest
@@ -417,6 +880,13 @@ class ReferenceDtoJacksonTest
   void readableCountryAndZoneRoundTripWithNestedZones()
   void sizeReferencesSerializesMeasureEnums()
   void measureAndWeightEnumValuesAreStable()
+
+# shopizer-api-contracts/src/test/java/com/salesmanager/contracts/search/SearchDtoJacksonTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertFalse, org.junit.jupiter.api.Assertions.assertTrue, org.junit.jupiter.api.Test, com.fasterxml.jackson.databind.JsonNode, com.fasterxml.jackson.databind.ObjectMapper
+class SearchDtoJacksonTest
+  void productIndexPayloadSerializesSchemaVersionDefaultOne()
+  void valueListRoundTripsStringValues()
+  void productIndexBulkPayloadRespectsMaxBatchConstant()
 
 # shopizer-api-contracts/src/test/java/com/salesmanager/contracts/tax/TaxDtoJacksonTest.java [java]
 imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertFalse, java.math.BigDecimal, java.util.Arrays, org.junit.jupiter.api.Test, com.fasterxml.jackson.databind.JsonNode, com.fasterxml.jackson.databind.ObjectMapper
@@ -12313,6 +12783,32 @@ class Wave1Properties
   class ServiceEndpoint
   class Http
 
+# sm-shop/src/main/java/com/salesmanager/shop/strangler/config/Wave2ClientConfig.java [java]
+imports: java.time.Duration, java.util.UUID, javax.servlet.http.HttpServletRequest, org.springframework.boot.autoconfigure.condition.ConditionalOnProperty, org.springframework.boot.context.properties.EnableConfigurationProperties, org.springframework.boot.web.client.RestTemplateBuilder, org.springframework.context.annotation.Bean, org.springframework.context.annotation.Configuration, org.springframework.http.client.ClientHttpRequestInterceptor, org.springframework.util.StringUtils, org.springframework.web.client.RestTemplate, org.springframework.web.context.request.RequestAttributes, org.springframework.web.context.request.RequestContextHolder, org.springframework.web.context.request.ServletRequestAttributes, com.salesmanager.contracts.client.SearchIndexClient, com.salesmanager.shop.filter.CorrelationIdFilter, com.salesmanager.shop.strangler.search.SearchIndexClientRestTemplateImpl
+class Wave2ClientConfig
+  RestTemplate wave2RestTemplate(RestTemplateBuilder builder, Wave2Properties properties)
+  SearchIndexClient searchIndexClient(
+			RestTemplate wave2RestTemplate,
+			Wave2Properties properties)
+  ClientHttpRequestInterceptor correlationInterceptor()
+  String resolveCorrelationId()
+
+# sm-shop/src/main/java/com/salesmanager/shop/strangler/config/Wave2Properties.java [java]
+imports: org.springframework.boot.context.properties.ConfigurationProperties
+class Wave2Properties
+  Strangler getStrangler()
+  ServiceEndpoint getContentService()
+  SearchServiceEndpoint getSearchService()
+  MerchantServiceEndpoint getMerchantService()
+  Http getHttp()
+  Search getSearch()
+  class Strangler
+  class ServiceEndpoint
+  class SearchServiceEndpoint
+  class MerchantServiceEndpoint
+  class Http
+  class Search
+
 # sm-shop/src/main/java/com/salesmanager/shop/strangler/reference/CountryFacadeHttpAdapter.java [java]
 imports: java.util.Collections, java.util.List, org.apache.commons.lang3.StringUtils, org.springframework.beans.factory.annotation.Value, org.springframework.boot.autoconfigure.condition.ConditionalOnProperty, org.springframework.core.ParameterizedTypeReference, org.springframework.http.HttpMethod, org.springframework.stereotype.Service, org.springframework.web.util.UriComponentsBuilder, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.shop.model.references.ReadableCountry, com.salesmanager.shop.store.controller.country.facade.CountryFacade, com.salesmanager.shop.strangler.support.StranglerRestClient
 class CountryFacadeHttpAdapter
@@ -12334,6 +12830,14 @@ class LanguageFacadeHttpAdapter
 imports: java.util.Collections, java.util.List, org.apache.commons.lang3.StringUtils, org.springframework.beans.factory.annotation.Value, org.springframework.boot.autoconfigure.condition.ConditionalOnProperty, org.springframework.core.ParameterizedTypeReference, org.springframework.http.HttpMethod, org.springframework.stereotype.Service, org.springframework.web.util.UriComponentsBuilder, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.shop.model.references.ReadableZone, com.salesmanager.shop.store.controller.zone.facade.ZoneFacade, com.salesmanager.shop.strangler.support.StranglerRestClient
 class ZoneFacadeHttpAdapter
   List<ReadableZone> getZones(String countryCode, Language language, MerchantStore merchantStore)
+
+# sm-shop/src/main/java/com/salesmanager/shop/strangler/search/SearchIndexClientRestTemplateImpl.java [java]
+imports: java.util.List, java.util.stream.Collectors, org.springframework.http.HttpEntity, org.springframework.http.HttpHeaders, org.springframework.http.HttpMethod, org.springframework.util.CollectionUtils, org.springframework.web.client.RestTemplate, org.springframework.web.util.UriComponentsBuilder, com.salesmanager.contracts.client.SearchIndexClient, com.salesmanager.contracts.search.ProductIndexBulkPayload, com.salesmanager.contracts.search.ProductIndexPayload, com.salesmanager.shop.strangler.config.Wave2Properties
+class SearchIndexClientRestTemplateImpl
+  void index(ProductIndexPayload payload)
+  void indexBulk(ProductIndexBulkPayload bulk)
+  void deleteDocument(Long productId, String store, List<String> languages)
+  HttpHeaders internalHeaders()
 
 # sm-shop/src/main/java/com/salesmanager/shop/strangler/support/DownstreamHttpException.java [java]
 imports: org.springframework.http.HttpStatus, com.salesmanager.shop.store.api.exception.GenericRuntimeException
@@ -12666,6 +13170,14 @@ imports: org.assertj.core.api.Assertions.assertThat, org.junit.jupiter.api.Test,
 class Wave1ClientConfigTest
   class TestConfig
   void bindsWave1Properties()
+
+# sm-shop/src/test/java/com/salesmanager/shop/strangler/config/Wave2ClientConfigTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.context.properties.EnableConfigurationProperties, org.springframework.boot.test.context.SpringBootTest, org.springframework.boot.web.client.RestTemplateBuilder, org.springframework.context.annotation.Bean, org.springframework.context.annotation.Configuration, org.springframework.test.context.TestPropertySource, org.springframework.web.client.RestTemplate, com.salesmanager.contracts.client.SearchIndexClient
+class Wave2ClientConfigTest
+  class TestConfig
+  void bindsWave2Properties()
+  void wave2CoexistsWithWave1Properties()
+  void registersWave2RestTemplateAndSearchIndexClient()
 
 # sm-shop/src/test/java/com/salesmanager/shop/strangler/reference/ReferenceFacadeHttpAdapterTest.java [java]
 imports: org.assertj.core.api.Assertions.assertThat, org.assertj.core.api.Assertions.assertThatThrownBy, org.springframework.test.web.client.match.MockRestRequestMatchers.header, org.springframework.test.web.client.match.MockRestRequestMatchers.method, org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo, org.springframework.test.web.client.response.MockRestResponseCreators.withException, org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess, java.net.ConnectException, java.util.List, org.junit.jupiter.api.AfterEach, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.http.HttpMethod, org.springframework.http.MediaType, org.springframework.mock.web.MockHttpServletRequest, org.springframework.test.web.client.MockRestServiceServer, org.springframework.web.client.RestTemplate, org.springframework.web.context.request.RequestContextHolder, org.springframework.web.context.request.ServletRequestAttributes, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.currency.Currency, com.salesmanager.core.model.reference.language.Language, com.salesmanager.shop.model.references.ReadableCountry, com.salesmanager.shop.model.references.ReadableZone, com.salesmanager.shop.strangler.support.ServiceUnavailableException, com.salesmanager.shop.strangler.support.StranglerRestClient
