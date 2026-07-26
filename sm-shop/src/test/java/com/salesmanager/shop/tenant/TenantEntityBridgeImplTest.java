@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.salesmanager.contracts.tenant.LanguageCode;
 import com.salesmanager.contracts.tenant.MerchantStoreId;
 import com.salesmanager.core.business.exception.ConversionException;
+import com.salesmanager.core.business.exception.ServiceException;
 import com.salesmanager.core.business.services.merchant.MerchantStoreService;
 import com.salesmanager.core.business.services.reference.language.LanguageService;
 import com.salesmanager.core.model.merchant.MerchantStore;
@@ -65,6 +66,26 @@ class TenantEntityBridgeImplTest {
 		ConversionException ex = assertThrows(ConversionException.class,
 				() -> bridge.resolveLanguage(LanguageCode.of("xx")));
 		assertEquals("Unknown language: xx", ex.getMessage());
+	}
+
+	@Test
+	void resolveStoreWrapsServiceExceptionInConversionException() throws Exception {
+		ServiceException cause = new ServiceException("db error");
+		when(merchantStoreService.getByCode("DEFAULT")).thenThrow(cause);
+
+		ConversionException ex = assertThrows(ConversionException.class,
+				() -> bridge.resolveStore(MerchantStoreId.of("DEFAULT")));
+		assertSame(cause, ex.getCause());
+	}
+
+	@Test
+	void resolveLanguageWrapsServiceExceptionInConversionException() throws Exception {
+		ServiceException cause = new ServiceException("db error");
+		when(languageService.getByCode("en")).thenThrow(cause);
+
+		ConversionException ex = assertThrows(ConversionException.class,
+				() -> bridge.resolveLanguage(LanguageCode.of("en")));
+		assertSame(cause, ex.getCause());
 	}
 
 }

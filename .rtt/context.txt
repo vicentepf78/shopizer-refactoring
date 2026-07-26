@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-26 19:40 | 1700 files | 267206 tokens
+# rtt index | generated 2026-07-26 19:42 | 1700 files | 267239 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -16006,12 +16006,14 @@ class TaxFacadeHttpAdapterTest
   void updateDeleteAndListTaxRates_delegate()
 
 # sm-shop/src/test/java/com/salesmanager/shop/tenant/TenantEntityBridgeImplTest.java [java]
-imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertSame, org.junit.jupiter.api.Assertions.assertThrows, org.mockito.Mockito.when, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.InjectMocks, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.contracts.tenant.LanguageCode, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.core.business.exception.ConversionException, com.salesmanager.core.business.services.merchant.MerchantStoreService, com.salesmanager.core.business.services.reference.language.LanguageService, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertSame, org.junit.jupiter.api.Assertions.assertThrows, org.mockito.Mockito.when, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.InjectMocks, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.contracts.tenant.LanguageCode, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.core.business.exception.ConversionException, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.merchant.MerchantStoreService, com.salesmanager.core.business.services.reference.language.LanguageService, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language
 class TenantEntityBridgeImplTest
   void resolveStoreReturnsStoreForValidCode()
   void resolveStoreThrowsConversionExceptionForUnknownCode()
   void resolveLanguageReturnsLanguageForValidCode()
   void resolveLanguageThrowsConversionExceptionForUnknownCode()
+  void resolveStoreWrapsServiceExceptionInConversionException()
+  void resolveLanguageWrapsServiceExceptionInConversionException()
 
 # sm-shop/src/test/java/com/salesmanager/test/shop/common/ServicesTestSupport.java [java]
 imports: org.hamcrest.core.Is.is, org.junit.Assert.assertNotNull, org.junit.Assert.assertThat, org.springframework.http.HttpStatus.CREATED, org.springframework.http.HttpStatus.OK, java.math.BigDecimal, java.nio.charset.Charset, java.util.ArrayList, java.util.List, org.junit.jupiter.api.extension.ExtendWith, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.test.context.SpringBootTest, org.springframework.boot.test.context.SpringBootTest.WebEnvironment, org.springframework.boot.test.web.client.TestRestTemplate, org.springframework.http.HttpEntity, org.springframework.http.HttpHeaders, org.springframework.http.HttpMethod, org.springframework.http.MediaType, org.springframework.http.ResponseEntity, org.springframework.test.context.junit.jupiter.SpringExtension, com.salesmanager.core.business.constants.Constants, com.salesmanager.shop.application.ShopApplication, com.salesmanager.shop.model.catalog.category.Category, com.salesmanager.shop.model.catalog.category.CategoryDescription, com.salesmanager.shop.model.catalog.category.PersistableCategory, com.salesmanager.shop.model.catalog.manufacturer.ManufacturerDescription, com.salesmanager.shop.model.catalog.manufacturer.PersistableManufacturer, com.salesmanager.shop.model.catalog.product.PersistableProductPrice, com.salesmanager.shop.model.catalog.product.ProductDescription, com.salesmanager.shop.model.catalog.product.ReadableProduct
