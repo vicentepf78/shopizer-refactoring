@@ -10,11 +10,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.salesmanager.contracts.search.SearchItem;
+import com.salesmanager.contracts.search.SearchProductRequest;
 import com.salesmanager.contracts.tenant.LanguageCode;
 import com.salesmanager.contracts.tenant.MerchantStoreId;
 import com.salesmanager.core.model.merchant.MerchantStore;
 import com.salesmanager.core.model.reference.language.Language;
-import com.salesmanager.shop.model.catalog.SearchProductRequest;
 import com.salesmanager.shop.model.entity.ValueList;
 import com.salesmanager.shop.store.controller.search.facade.SearchFacade;
 
@@ -23,7 +24,6 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.annotations.Tag;
-import modules.commons.search.request.SearchItem;
 import springfox.documentation.annotations.ApiIgnore;
 
 /**

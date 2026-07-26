@@ -62,4 +62,23 @@ class SearchDtoJacksonTest {
 		assertTrue(ProductIndexBulkPayload.MAX_BATCH_SIZE > 0);
 	}
 
+	@Test
+	void searchItemRoundTripsLegacyPactJsonShape() throws Exception {
+		String legacyJson = "[{\"id\":1,\"name\":\"Phone\",\"description\":\"Smart phone\"}]";
+
+		SearchItem[] items = mapper.readValue(legacyJson, SearchItem[].class);
+
+		assertEquals(1, items.length);
+		assertEquals(Long.valueOf(1L), items[0].getId());
+		assertEquals("Phone", items[0].getName());
+		assertEquals("Smart phone", items[0].getDescription());
+		assertTrue(items[0].isAddToCart());
+
+		String reserialized = mapper.writeValueAsString(items[0]);
+		JsonNode tree = mapper.readTree(reserialized);
+		assertEquals(1L, tree.get("id").asLong());
+		assertEquals("Phone", tree.get("name").asText());
+		assertEquals("Smart phone", tree.get("description").asText());
+	}
+
 }

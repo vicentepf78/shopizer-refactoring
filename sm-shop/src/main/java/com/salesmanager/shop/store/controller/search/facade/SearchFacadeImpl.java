@@ -14,6 +14,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.salesmanager.contracts.search.SearchItem;
+import com.salesmanager.contracts.search.SearchProductRequest;
 import com.salesmanager.contracts.tenant.LanguageCode;
 import com.salesmanager.contracts.tenant.MerchantStoreId;
 import com.salesmanager.core.business.exception.ConversionException;
@@ -26,7 +29,6 @@ import com.salesmanager.core.model.catalog.category.Category;
 import com.salesmanager.core.model.catalog.product.Product;
 import com.salesmanager.core.model.merchant.MerchantStore;
 import com.salesmanager.core.model.reference.language.Language;
-import com.salesmanager.shop.model.catalog.SearchProductRequest;
 import com.salesmanager.shop.model.catalog.category.ReadableCategory;
 import com.salesmanager.shop.model.catalog.product.ReadableProduct;
 import com.salesmanager.shop.model.entity.ValueList;
@@ -38,7 +40,6 @@ import com.salesmanager.shop.tenant.TenantEntityBridge;
 import com.salesmanager.shop.utils.ImageFilePath;
 
 import modules.commons.search.request.Aggregation;
-import modules.commons.search.request.SearchItem;
 import modules.commons.search.request.SearchRequest;
 import modules.commons.search.request.SearchResponse;
 
@@ -47,6 +48,7 @@ import modules.commons.search.request.SearchResponse;
 public class SearchFacadeImpl implements SearchFacade {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SearchFacadeImpl.class);
+	private static final ObjectMapper MAPPER = new ObjectMapper();
 
 	@Inject
 	private SearchService searchService;
@@ -103,7 +105,7 @@ public class SearchFacadeImpl implements SearchFacade {
 		}
 		SearchResponse response = search(store, language.getCode(), searchRequest.getQuery(), searchRequest.getCount(),
 				searchRequest.getStart());
-		return response.getItems();
+		return response.getItems().stream().map(SearchFacadeImpl::toContractItem).collect(Collectors.toList());
 	}
 
 	private SearchResponse search(MerchantStore store, String languageCode, String query, Integer count,
@@ -225,6 +227,11 @@ public class SearchFacadeImpl implements SearchFacade {
 		return valueList;
 		
 
+	}
+
+	// ponytail: Jackson convertValue — commons SearchItem shares field names with contract DTO
+	private static SearchItem toContractItem(modules.commons.search.request.SearchItem source) {
+		return MAPPER.convertValue(source, SearchItem.class);
 	}
 
 

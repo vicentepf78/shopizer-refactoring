@@ -330,10 +330,10 @@ class Wave2StranglerConditionalBeanTest {
 		}
 
 		@Override
-		public java.util.List<modules.commons.search.request.SearchItem> search(
+		public java.util.List<com.salesmanager.contracts.search.SearchItem> search(
 				MerchantStoreId storeId,
 				LanguageCode language,
-				com.salesmanager.shop.model.catalog.SearchProductRequest searchRequest) {
+				com.salesmanager.contracts.search.SearchProductRequest searchRequest) {
 			return java.util.Collections.emptyList();
 		}
 

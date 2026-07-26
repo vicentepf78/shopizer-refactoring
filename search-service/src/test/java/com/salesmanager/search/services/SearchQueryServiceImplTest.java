@@ -14,8 +14,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.salesmanager.contracts.search.SearchProductRequest;
 import com.salesmanager.contracts.search.ValueList;
-import com.salesmanager.search.api.v1.SearchProductRequest;
 import com.salesmanager.search.support.SearchUnavailableException;
 
 import modules.commons.search.SearchModule;

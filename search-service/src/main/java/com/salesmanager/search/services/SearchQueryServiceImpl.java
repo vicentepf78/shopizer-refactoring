@@ -7,19 +7,20 @@ import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.salesmanager.contracts.search.ProductIndexPayload;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.salesmanager.contracts.search.SearchItem;
+import com.salesmanager.contracts.search.SearchProductRequest;
 import com.salesmanager.contracts.search.ValueList;
-import com.salesmanager.search.api.v1.SearchProductRequest;
 import com.salesmanager.search.support.SearchUnavailableException;
 
 import modules.commons.search.SearchModule;
-import modules.commons.search.request.IndexItem;
-import modules.commons.search.request.SearchItem;
 import modules.commons.search.request.SearchRequest;
 import modules.commons.search.request.SearchResponse;
 
 @Service
 public class SearchQueryServiceImpl implements SearchQueryService {
+
+	private static final ObjectMapper MAPPER = new ObjectMapper();
 
 	private final SearchModule searchModule;
 
@@ -42,7 +43,7 @@ public class SearchQueryServiceImpl implements SearchQueryService {
 			searchRequest.setSearchString(request.getQuery());
 			searchRequest.setStore(store.toLowerCase());
 			SearchResponse response = searchModule.searchProducts(searchRequest);
-			return response.getItems();
+			return response.getItems().stream().map(SearchQueryServiceImpl::toContractItem).collect(Collectors.toList());
 		} catch (SearchUnavailableException e) {
 			throw e;
 		} catch (Exception e) {
@@ -64,7 +65,7 @@ public class SearchQueryServiceImpl implements SearchQueryService {
 			req.setSearchString(query);
 			SearchResponse response = searchModule.searchKeywords(req);
 			List<String> keywords = response.getItems().stream()
-					.map(SearchItem::getSuggestions)
+					.map(modules.commons.search.request.SearchItem::getSuggestions)
 					.collect(Collectors.toList());
 			ValueList valueList = new ValueList();
 			valueList.setValues(keywords);
@@ -84,5 +85,10 @@ public class SearchQueryServiceImpl implements SearchQueryService {
 
 	SearchModule getSearchModule() {
 		return searchModule;
+	}
+
+	// ponytail: Jackson convertValue — commons SearchItem shares field names with contract DTO
+	private static SearchItem toContractItem(modules.commons.search.request.SearchItem source) {
+		return MAPPER.convertValue(source, SearchItem.class);
 	}
 }

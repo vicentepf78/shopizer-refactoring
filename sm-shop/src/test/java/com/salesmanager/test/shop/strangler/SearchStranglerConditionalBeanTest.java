@@ -125,8 +125,9 @@ class SearchStranglerConditionalBeanTest {
 		}
 
 		@Override
-		public List<modules.commons.search.request.SearchItem> search(
-				MerchantStoreId storeId, LanguageCode language, SearchProductRequest searchRequest) {
+		public List<com.salesmanager.contracts.search.SearchItem> search(
+				MerchantStoreId storeId, LanguageCode language,
+				com.salesmanager.contracts.search.SearchProductRequest searchRequest) {
 			return Collections.emptyList();
 		}
 

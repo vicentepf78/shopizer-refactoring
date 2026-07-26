@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-26 18:26 | 1627 files | 254403 tokens
+# rtt index | generated 2026-07-26 18:34 | 1662 files | 259545 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -1320,7 +1320,7 @@ class InternalIndexController
   List<String> parseLanguages(String languages)
 
 # search-service/src/main/java/com/salesmanager/search/api/v1/SearchController.java [java]
-imports: java.util.List, org.springframework.web.bind.annotation.PostMapping, org.springframework.web.bind.annotation.RequestBody, org.springframework.web.bind.annotation.RequestMapping, org.springframework.web.bind.annotation.RequestParam, org.springframework.web.bind.annotation.ResponseBody, org.springframework.web.bind.annotation.RestController, com.salesmanager.contracts.search.ValueList, com.salesmanager.search.services.SearchQueryService, modules.commons.search.request.SearchItem
+imports: java.util.List, org.springframework.web.bind.annotation.PostMapping, org.springframework.web.bind.annotation.RequestBody, org.springframework.web.bind.annotation.RequestMapping, org.springframework.web.bind.annotation.RequestParam, org.springframework.web.bind.annotation.ResponseBody, org.springframework.web.bind.annotation.RestController, com.salesmanager.contracts.search.SearchItem, com.salesmanager.contracts.search.SearchProductRequest, com.salesmanager.contracts.search.ValueList, com.salesmanager.search.services.SearchQueryService
 class SearchController
   List<SearchItem> search(
 			@RequestBody SearchProductRequest searchRequest,
@@ -1330,16 +1330,6 @@ class SearchController
 			@RequestBody SearchProductRequest searchRequest,
 			@RequestParam(defaultValue = "DEFAULT") String store,
 			@RequestParam(defaultValue = "en") String lang)
-
-# search-service/src/main/java/com/salesmanager/search/api/v1/SearchProductRequest.java [java]
-imports: java.io.Serializable, javax.validation.constraints.NotEmpty
-class SearchProductRequest
-  String getQuery()
-  void setQuery(String query)
-  int getStart()
-  void setStart(int start)
-  int getCount()
-  void setCount(int count)
 
 # search-service/src/main/java/com/salesmanager/search/api/v1/SearchReindexController.java [java]
 imports: org.springframework.http.HttpStatus, org.springframework.http.ResponseEntity, org.springframework.web.bind.annotation.PostMapping, org.springframework.web.bind.annotation.RequestMapping, org.springframework.web.bind.annotation.RestController
@@ -1393,16 +1383,17 @@ class SearchIndexServiceImpl
   SearchModule getSearchModule()
 
 # search-service/src/main/java/com/salesmanager/search/services/SearchQueryService.java [java]
-imports: java.util.List, com.salesmanager.contracts.search.ValueList, com.salesmanager.search.api.v1.SearchProductRequest, modules.commons.search.request.SearchItem
+imports: java.util.List, com.salesmanager.contracts.search.SearchItem, com.salesmanager.contracts.search.SearchProductRequest, com.salesmanager.contracts.search.ValueList
 interface SearchQueryService
 
 # search-service/src/main/java/com/salesmanager/search/services/SearchQueryServiceImpl.java [java]
-imports: java.util.List, java.util.stream.Collectors, org.apache.commons.lang3.Validate, org.springframework.beans.factory.annotation.Autowired, org.springframework.stereotype.Service, com.salesmanager.contracts.search.ProductIndexPayload, com.salesmanager.contracts.search.ValueList, com.salesmanager.search.api.v1.SearchProductRequest, com.salesmanager.search.support.SearchUnavailableException, modules.commons.search.SearchModule, modules.commons.search.request.IndexItem, modules.commons.search.request.SearchItem, modules.commons.search.request.SearchRequest, modules.commons.search.request.SearchResponse
+imports: java.util.List, java.util.stream.Collectors, org.apache.commons.lang3.Validate, org.springframework.beans.factory.annotation.Autowired, org.springframework.stereotype.Service, com.fasterxml.jackson.databind.ObjectMapper, com.salesmanager.contracts.search.SearchItem, com.salesmanager.contracts.search.SearchProductRequest, com.salesmanager.contracts.search.ValueList, com.salesmanager.search.support.SearchUnavailableException, modules.commons.search.SearchModule, modules.commons.search.request.SearchRequest, modules.commons.search.request.SearchResponse
 class SearchQueryServiceImpl
   List<SearchItem> search(String store, String lang, SearchProductRequest request)
   ValueList autocomplete(String store, String lang, String query)
   void ensureAvailable()
   SearchModule getSearchModule()
+  SearchItem toContractItem(modules.commons.search.request.SearchItem source)
 
 # search-service/src/main/java/com/salesmanager/search/support/SearchUnavailableException.java [java]
 class SearchUnavailableException
@@ -1438,7 +1429,7 @@ class RestErrorHandler
   Map<String, String> errorBody(String error)
 
 # search-service/src/test/java/com/salesmanager/search/SearchServiceIntegrationTest.java [java]
-imports: org.assertj.core.api.Assertions.assertThat, org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete, org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get, org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post, org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath, org.springframework.test.web.servlet.result.MockMvcResultMatchers.status, org.mockito.ArgumentMatchers.any, org.mockito.Mockito.when, javax.sql.DataSource, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc, org.springframework.boot.test.context.SpringBootTest, org.springframework.boot.test.mock.mockito.MockBean, org.springframework.http.MediaType, org.springframework.test.context.ActiveProfiles, org.springframework.test.web.servlet.MockMvc, com.fasterxml.jackson.databind.ObjectMapper, com.salesmanager.contracts.search.ProductIndexPayload, com.salesmanager.search.api.v1.SearchProductRequest, com.salesmanager.search.web.InternalTokenFilter, modules.commons.search.SearchModule, modules.commons.search.request.SearchRequest, modules.commons.search.request.SearchResponse
+imports: org.assertj.core.api.Assertions.assertThat, org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete, org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get, org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post, org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath, org.springframework.test.web.servlet.result.MockMvcResultMatchers.status, org.mockito.ArgumentMatchers.any, org.mockito.Mockito.when, javax.sql.DataSource, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc, org.springframework.boot.test.context.SpringBootTest, org.springframework.boot.test.mock.mockito.MockBean, org.springframework.http.MediaType, org.springframework.test.context.ActiveProfiles, org.springframework.test.web.servlet.MockMvc, com.fasterxml.jackson.databind.ObjectMapper, com.salesmanager.contracts.search.ProductIndexPayload, com.salesmanager.contracts.search.SearchProductRequest, com.salesmanager.search.web.InternalTokenFilter, modules.commons.search.SearchModule, modules.commons.search.request.SearchRequest, modules.commons.search.request.SearchResponse
 class SearchServiceIntegrationTest
   void stubOpenSearch()
   void contextLoadsWithoutDataSource(@Autowired(required = false) DataSource dataSource)
@@ -1467,7 +1458,7 @@ class SearchModuleBootstrapTest
   void initConfiguresSearchModuleWhenEnabled()
 
 # search-service/src/test/java/com/salesmanager/search/contract/SearchProviderPactTest.java [java]
-imports: org.mockito.ArgumentMatchers.any, org.mockito.ArgumentMatchers.anyString, org.mockito.Mockito.doNothing, java.util.Collections, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.TestTemplate, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.springframework.http.converter.json.MappingJackson2HttpMessageConverter, org.springframework.test.web.servlet.setup.MockMvcBuilders, com.salesmanager.contracts.search.ValueList, com.salesmanager.search.api.internal.InternalIndexController, com.salesmanager.search.api.v1.SearchController, com.salesmanager.search.services.SearchIndexService, com.salesmanager.search.services.SearchQueryService, com.salesmanager.search.web.RestErrorHandler, au.com.dius.pact.provider.junit5.PactVerificationContext, au.com.dius.pact.provider.junit5.PactVerificationInvocationContextProvider, au.com.dius.pact.provider.junitsupport.Provider, au.com.dius.pact.provider.junitsupport.State, au.com.dius.pact.provider.junitsupport.loader.PactFolder, au.com.dius.pact.provider.spring.junit5.MockMvcTestTarget, modules.commons.search.request.SearchItem
+imports: org.mockito.ArgumentMatchers.any, org.mockito.ArgumentMatchers.anyString, org.mockito.Mockito.doNothing, java.util.Collections, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.TestTemplate, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.springframework.http.converter.json.MappingJackson2HttpMessageConverter, org.springframework.test.web.servlet.setup.MockMvcBuilders, com.salesmanager.contracts.search.SearchItem, com.salesmanager.contracts.search.ValueList, com.salesmanager.search.api.internal.InternalIndexController, com.salesmanager.search.api.v1.SearchController, com.salesmanager.search.services.SearchIndexService, com.salesmanager.search.services.SearchQueryService, com.salesmanager.search.web.RestErrorHandler, au.com.dius.pact.provider.junit5.PactVerificationContext, au.com.dius.pact.provider.junit5.PactVerificationInvocationContextProvider, au.com.dius.pact.provider.junitsupport.Provider, au.com.dius.pact.provider.junitsupport.State, au.com.dius.pact.provider.junitsupport.loader.PactFolder, au.com.dius.pact.provider.spring.junit5.MockMvcTestTarget
 class SearchProviderPactTest
   void setUp(PactVerificationContext context)
   void verifyInteraction(PactVerificationContext context)
@@ -1496,7 +1487,7 @@ class SearchIndexServiceImplTest
   ProductIndexPayload samplePayload()
 
 # search-service/src/test/java/com/salesmanager/search/services/SearchQueryServiceImplTest.java [java]
-imports: org.assertj.core.api.Assertions.assertThat, org.assertj.core.api.Assertions.assertThatThrownBy, org.mockito.ArgumentMatchers.any, org.mockito.Mockito.verify, org.mockito.Mockito.when, java.util.Collections, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.contracts.search.ValueList, com.salesmanager.search.api.v1.SearchProductRequest, com.salesmanager.search.support.SearchUnavailableException, modules.commons.search.SearchModule, modules.commons.search.request.SearchItem, modules.commons.search.request.SearchRequest, modules.commons.search.request.SearchResponse
+imports: org.assertj.core.api.Assertions.assertThat, org.assertj.core.api.Assertions.assertThatThrownBy, org.mockito.ArgumentMatchers.any, org.mockito.Mockito.verify, org.mockito.Mockito.when, java.util.Collections, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.contracts.search.SearchProductRequest, com.salesmanager.contracts.search.ValueList, com.salesmanager.search.support.SearchUnavailableException, modules.commons.search.SearchModule, modules.commons.search.request.SearchItem, modules.commons.search.request.SearchRequest, modules.commons.search.request.SearchResponse
 class SearchQueryServiceImplTest
   void setUp()
   void searchUsesOpenSearchModule()
@@ -2275,6 +2266,50 @@ class ProductSnapshotIndexMapper
   List<Map<String, String>> toInventoryMaps(List<ProductSnapshotInventory> inventory)
   boolean isNotBlank(String value)
 
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/search/SearchItem.java [java]
+imports: java.io.Serializable, java.util.ArrayList, java.util.HashMap, java.util.List, java.util.Map
+class SearchItem
+  Long getId()
+  void setId(Long id)
+  String getStore()
+  void setStore(String store)
+  String getLanguage()
+  void setLanguage(String language)
+  String getName()
+  void setName(String name)
+  String getDescription()
+  void setDescription(String description)
+  String getImage()
+  void setImage(String image)
+  boolean isAddToCart()
+  void setAddToCart(boolean addToCart)
+  String getBrand()
+  void setBrand(String brand)
+  String getCategory()
+  void setCategory(String category)
+  String getLink()
+  void setLink(String link)
+  String getReviews()
+  void setReviews(String reviews)
+  String getSuggestions()
+  void setSuggestions(String suggestions)
+  Map<String, String> getAttributes()
+  void setAttributes(Map<String, String> attributes)
+  List<Map<String, String>> getVariants()
+  void setVariants(List<Map<String, String>> variants)
+  List<Map<String, String>> getInventory()
+  void setInventory(List<Map<String, String>> inventory)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/search/SearchProductRequest.java [java]
+imports: java.io.Serializable, javax.validation.constraints.NotEmpty
+class SearchProductRequest
+  String getQuery()
+  void setQuery(String query)
+  int getStart()
+  void setStart(int start)
+  int getCount()
+  void setCount(int count)
+
 # shopizer-api-contracts/src/main/java/com/salesmanager/contracts/search/ValueList.java [java]
 imports: java.io.Serializable, java.util.ArrayList, java.util.List
 class ValueList
@@ -2450,6 +2485,7 @@ class SearchDtoJacksonTest
   void productIndexPayloadSerializesSchemaVersionDefaultOne()
   void valueListRoundTripsStringValues()
   void productIndexBulkPayloadRespectsMaxBatchConstant()
+  void searchItemRoundTripsLegacyPactJsonShape()
 
 # shopizer-api-contracts/src/test/java/com/salesmanager/contracts/tax/TaxDtoJacksonTest.java [java]
 imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertFalse, java.math.BigDecimal, java.util.Arrays, org.junit.jupiter.api.Test, com.fasterxml.jackson.databind.JsonNode, com.fasterxml.jackson.databind.ObjectMapper
@@ -8538,14 +8574,7 @@ class SearchProductList
   void setCategoryFacets(List<ReadableCategory> categoryFacets)
 
 # sm-shop-model/src/main/java/com/salesmanager/shop/model/catalog/SearchProductRequest.java [java]
-imports: java.io.Serializable, javax.validation.constraints.NotEmpty
 class SearchProductRequest
-  String getQuery()
-  void setQuery(String query)
-  int getStart()
-  void setStart(int start)
-  int getCount()
-  void setCount(int count)
 
 # sm-shop-model/src/main/java/com/salesmanager/shop/model/catalog/catalog/CatalogEntity.java [java]
 imports: java.io.Serializable, com.salesmanager.shop.model.entity.Entity
@@ -13317,7 +13346,7 @@ class ReferencesApi
   SizeReferences measures()
 
 # sm-shop/src/main/java/com/salesmanager/shop/store/api/v1/search/SearchApi.java [java]
-imports: java.util.List, javax.inject.Inject, org.springframework.web.bind.annotation.PostMapping, org.springframework.web.bind.annotation.RequestBody, org.springframework.web.bind.annotation.RequestMapping, org.springframework.web.bind.annotation.ResponseBody, org.springframework.web.bind.annotation.RestController, com.salesmanager.contracts.tenant.LanguageCode, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.shop.model.catalog.SearchProductRequest, com.salesmanager.shop.model.entity.ValueList, com.salesmanager.shop.store.controller.search.facade.SearchFacade, io.swagger.annotations.Api, io.swagger.annotations.ApiImplicitParam, io.swagger.annotations.ApiImplicitParams, io.swagger.annotations.SwaggerDefinition, io.swagger.annotations.Tag, modules.commons.search.request.SearchItem, springfox.documentation.annotations.ApiIgnore
+imports: java.util.List, javax.inject.Inject, org.springframework.web.bind.annotation.PostMapping, org.springframework.web.bind.annotation.RequestBody, org.springframework.web.bind.annotation.RequestMapping, org.springframework.web.bind.annotation.ResponseBody, org.springframework.web.bind.annotation.RestController, com.salesmanager.contracts.search.SearchItem, com.salesmanager.contracts.search.SearchProductRequest, com.salesmanager.contracts.tenant.LanguageCode, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.shop.model.entity.ValueList, com.salesmanager.shop.store.controller.search.facade.SearchFacade, io.swagger.annotations.Api, io.swagger.annotations.ApiImplicitParam, io.swagger.annotations.ApiImplicitParams, io.swagger.annotations.SwaggerDefinition, io.swagger.annotations.Tag, springfox.documentation.annotations.ApiIgnore
 class SearchApi
   List<SearchItem> search(
       @RequestBody SearchProductRequest searchRequest,
@@ -13956,11 +13985,11 @@ class OrderFacadeImpl
   void updateOrderStatus(Order order, OrderStatus newStatus, MerchantStore store)
 
 # sm-shop/src/main/java/com/salesmanager/shop/store/controller/search/facade/SearchFacade.java [java]
-imports: java.util.List, com.salesmanager.contracts.tenant.LanguageCode, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.shop.model.catalog.SearchProductRequest, com.salesmanager.shop.model.entity.ValueList, modules.commons.search.request.SearchItem
+imports: java.util.List, com.salesmanager.contracts.search.SearchItem, com.salesmanager.contracts.search.SearchProductRequest, com.salesmanager.contracts.tenant.LanguageCode, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.shop.model.entity.ValueList
 interface SearchFacade
 
 # sm-shop/src/main/java/com/salesmanager/shop/store/controller/search/facade/SearchFacadeImpl.java [java]
-imports: java.util.List, java.util.Map, java.util.stream.Collectors, javax.inject.Inject, org.jsoup.helper.Validate, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.beans.factory.annotation.Qualifier, org.springframework.boot.autoconfigure.condition.ConditionalOnProperty, org.springframework.scheduling.annotation.Async, org.springframework.stereotype.Service, com.salesmanager.contracts.tenant.LanguageCode, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.core.business.exception.ConversionException, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.catalog.category.CategoryService, com.salesmanager.core.business.services.catalog.pricing.PricingService, com.salesmanager.core.business.services.catalog.product.ProductService, com.salesmanager.core.business.services.search.SearchService, com.salesmanager.core.model.catalog.category.Category, com.salesmanager.core.model.catalog.product.Product, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.shop.model.catalog.SearchProductRequest, com.salesmanager.shop.model.catalog.category.ReadableCategory, com.salesmanager.shop.model.catalog.product.ReadableProduct, com.salesmanager.shop.model.entity.ValueList, com.salesmanager.shop.populator.catalog.ReadableCategoryPopulator, com.salesmanager.shop.populator.catalog.ReadableProductPopulator, com.salesmanager.shop.store.api.exception.ConversionRuntimeException
+imports: java.util.List, java.util.Map, java.util.stream.Collectors, javax.inject.Inject, org.jsoup.helper.Validate, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.beans.factory.annotation.Qualifier, org.springframework.boot.autoconfigure.condition.ConditionalOnProperty, org.springframework.scheduling.annotation.Async, org.springframework.stereotype.Service, com.fasterxml.jackson.databind.ObjectMapper, com.salesmanager.contracts.search.SearchItem, com.salesmanager.contracts.search.SearchProductRequest, com.salesmanager.contracts.tenant.LanguageCode, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.core.business.exception.ConversionException, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.catalog.category.CategoryService, com.salesmanager.core.business.services.catalog.pricing.PricingService, com.salesmanager.core.business.services.catalog.product.ProductService, com.salesmanager.core.business.services.search.SearchService, com.salesmanager.core.model.catalog.category.Category, com.salesmanager.core.model.catalog.product.Product, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.shop.model.catalog.category.ReadableCategory, com.salesmanager.shop.model.catalog.product.ReadableProduct, com.salesmanager.shop.model.entity.ValueList, com.salesmanager.shop.populator.catalog.ReadableCategoryPopulator
 class SearchFacadeImpl
   void indexAllData(MerchantStoreId storeId)
   List<SearchItem> search(MerchantStoreId storeId, LanguageCode languageCode, SearchProductRequest searchRequest)
@@ -13972,6 +14001,7 @@ class SearchFacadeImpl
   ReadableProduct convertProductToReadableProduct(Product product, MerchantStore merchantStore,
 			Language language)
   ValueList autocompleteRequest(String word, MerchantStoreId storeId, LanguageCode languageCode)
+  SearchItem toContractItem(modules.commons.search.request.SearchItem source)
 
 # sm-shop/src/main/java/com/salesmanager/shop/store/controller/security/facade/SecurityFacade.java [java]
 imports: java.util.List, com.salesmanager.shop.model.security.ReadablePermission
@@ -15019,7 +15049,7 @@ class SearchBulkIndexOrchestrator
   void indexAllData(MerchantStore store)
 
 # sm-shop/src/main/java/com/salesmanager/shop/strangler/search/SearchFacadeHttpAdapter.java [java]
-imports: java.util.Collections, java.util.List, org.apache.commons.lang3.StringUtils, org.apache.commons.lang3.Validate, org.springframework.beans.factory.annotation.Value, org.springframework.boot.autoconfigure.condition.ConditionalOnProperty, org.springframework.core.ParameterizedTypeReference, org.springframework.http.HttpMethod, org.springframework.scheduling.annotation.Async, org.springframework.stereotype.Service, org.springframework.web.client.RestTemplate, org.springframework.web.util.UriComponentsBuilder, com.salesmanager.contracts.tenant.LanguageCode, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.shop.model.catalog.SearchProductRequest, com.salesmanager.shop.model.entity.ValueList, com.salesmanager.shop.store.controller.search.facade.SearchFacade, com.salesmanager.shop.strangler.support.StranglerRestClient, com.salesmanager.shop.tenant.TenantEntityBridge, modules.commons.search.request.SearchItem
+imports: java.util.Collections, java.util.List, org.apache.commons.lang3.StringUtils, org.apache.commons.lang3.Validate, org.springframework.beans.factory.annotation.Value, org.springframework.boot.autoconfigure.condition.ConditionalOnProperty, org.springframework.core.ParameterizedTypeReference, org.springframework.http.HttpMethod, org.springframework.scheduling.annotation.Async, org.springframework.stereotype.Service, org.springframework.web.client.RestTemplate, org.springframework.web.util.UriComponentsBuilder, com.salesmanager.contracts.search.SearchItem, com.salesmanager.contracts.search.SearchProductRequest, com.salesmanager.contracts.tenant.LanguageCode, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.shop.model.entity.ValueList, com.salesmanager.shop.store.controller.search.facade.SearchFacade, com.salesmanager.shop.strangler.support.StranglerRestClient, com.salesmanager.shop.tenant.TenantEntityBridge
 class SearchFacadeHttpAdapter
   void indexAllData(MerchantStoreId storeId)
   List<SearchItem> search(MerchantStoreId storeId, LanguageCode language, SearchProductRequest searchRequest)

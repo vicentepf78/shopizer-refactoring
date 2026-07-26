@@ -24,7 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.salesmanager.contracts.search.ProductIndexPayload;
-import com.salesmanager.search.api.v1.SearchProductRequest;
+import com.salesmanager.contracts.search.SearchProductRequest;
 import com.salesmanager.search.web.InternalTokenFilter;
 
 import modules.commons.search.SearchModule;

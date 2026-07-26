@@ -2,12 +2,11 @@ package com.salesmanager.shop.store.controller.search.facade;
 
 import java.util.List;
 
+import com.salesmanager.contracts.search.SearchItem;
+import com.salesmanager.contracts.search.SearchProductRequest;
 import com.salesmanager.contracts.tenant.LanguageCode;
 import com.salesmanager.contracts.tenant.MerchantStoreId;
-import com.salesmanager.shop.model.catalog.SearchProductRequest;
 import com.salesmanager.shop.model.entity.ValueList;
-
-import modules.commons.search.request.SearchItem;
 
 /**
  * Different services for searching and indexing data

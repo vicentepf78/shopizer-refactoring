@@ -14,16 +14,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.salesmanager.contracts.search.SearchItem;
+import com.salesmanager.contracts.search.SearchProductRequest;
 import com.salesmanager.contracts.tenant.LanguageCode;
 import com.salesmanager.contracts.tenant.MerchantStoreId;
 import com.salesmanager.core.model.merchant.MerchantStore;
-import com.salesmanager.shop.model.catalog.SearchProductRequest;
 import com.salesmanager.shop.model.entity.ValueList;
 import com.salesmanager.shop.store.controller.search.facade.SearchFacade;
 import com.salesmanager.shop.strangler.support.StranglerRestClient;
 import com.salesmanager.shop.tenant.TenantEntityBridge;
-
-import modules.commons.search.request.SearchItem;
 
 @Service("searchFacade")
 @ConditionalOnProperty(name = "wave2.strangler.enabled", havingValue = "true")

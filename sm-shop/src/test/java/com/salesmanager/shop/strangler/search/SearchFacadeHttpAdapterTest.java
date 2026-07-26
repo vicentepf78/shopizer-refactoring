@@ -93,7 +93,7 @@ class SearchFacadeHttpAdapterTest {
 		searchRequest.setCount(10);
 		searchRequest.setStart(0);
 
-		List<modules.commons.search.request.SearchItem> items = adapter.search(storeId, languageCode, searchRequest);
+		List<com.salesmanager.contracts.search.SearchItem> items = adapter.search(storeId, languageCode, searchRequest);
 
 		assertThat(items).hasSize(1);
 		assertThat(items.get(0).getName()).isEqualTo("Phone");
