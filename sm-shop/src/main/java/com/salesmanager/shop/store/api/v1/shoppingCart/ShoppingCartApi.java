@@ -28,6 +28,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.salesmanager.contracts.tenant.LanguageCode;
+import com.salesmanager.contracts.tenant.MerchantStoreId;
 import com.salesmanager.core.business.services.customer.CustomerService;
 import com.salesmanager.core.model.customer.Customer;
 import com.salesmanager.core.model.merchant.MerchantStore;
@@ -238,7 +240,8 @@ public class ShoppingCartApi {
 
 		customerFacadev1.authorize(customer, principal);
 
-		ReadableShoppingCart readableCart = shoppingCartFacadev1.get(cart, id, merchantStore, language);
+		ReadableShoppingCart readableCart = shoppingCartFacadev1.get(cart, id, MerchantStoreId.of(merchantStore.getCode()),
+				LanguageCode.of(language.getCode()));
 
 		if (readableCart == null) {
 			throw new ResourceNotFoundException("No cart found for customerid [" + id + "]");
@@ -273,7 +276,8 @@ public class ShoppingCartApi {
 		}
 		
 		customerFacadev1.authorize(customer, principal);
-		ReadableShoppingCart readableCart = shoppingCartFacadev1.get(cart, customer.getId(), merchantStore, language);
+		ReadableShoppingCart readableCart = shoppingCartFacadev1.get(cart, customer.getId(),
+				MerchantStoreId.of(merchantStore.getCode()), LanguageCode.of(language.getCode()));
 
 		if (readableCart == null) {
 			throw new ResourceNotFoundException("No cart found for customer [" + principal.getName() + "]");

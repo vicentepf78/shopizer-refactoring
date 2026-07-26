@@ -25,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.salesmanager.contracts.tenant.LanguageCode;
+import com.salesmanager.contracts.tenant.MerchantStoreId;
 import com.salesmanager.core.business.services.catalog.pricing.PricingService;
 import com.salesmanager.core.business.services.catalog.product.ProductService;
 import com.salesmanager.core.model.catalog.product.Product;
@@ -179,7 +181,8 @@ public class ProductVariationApi {
       HttpServletResponse response)
       throws Exception {
     
-    return categoryFacade.categoryProductVariants(id, merchantStore, language);
+    return categoryFacade.categoryProductVariants(id, MerchantStoreId.of(merchantStore.getCode()),
+    		LanguageCode.of(language.getCode()));
     
   }
 

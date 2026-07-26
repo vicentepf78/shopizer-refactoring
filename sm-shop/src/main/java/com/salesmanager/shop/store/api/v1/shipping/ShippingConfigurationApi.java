@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.salesmanager.contracts.tenant.MerchantStoreId;
 import com.salesmanager.core.business.exception.ServiceException;
 import com.salesmanager.core.business.services.shipping.ShippingService;
 import com.salesmanager.core.model.merchant.MerchantStore;
@@ -73,7 +74,7 @@ public class ShippingConfigurationApi {
 		authorizationUtils.authorizeUser(user, Stream.of(Constants.GROUP_SUPERADMIN, Constants.GROUP_ADMIN,
 				Constants.GROUP_SHIPPING, Constants.GROUP_ADMIN_RETAIL).collect(Collectors.toList()), merchantStore);
 
-		return shippingFacade.getShippingOrigin(merchantStore);
+		return shippingFacade.getShippingOrigin(MerchantStoreId.of(merchantStore.getCode()));
 
 	}
 
@@ -86,7 +87,7 @@ public class ShippingConfigurationApi {
 		authorizationUtils.authorizeUser(user, Stream.of(Constants.GROUP_SUPERADMIN, Constants.GROUP_ADMIN,
 				Constants.GROUP_SHIPPING, Constants.GROUP_ADMIN_RETAIL).collect(Collectors.toList()), merchantStore);
 
-		shippingFacade.saveShippingOrigin(address, merchantStore);
+		shippingFacade.saveShippingOrigin(address, MerchantStoreId.of(merchantStore.getCode()));
 
 	}
 
@@ -100,7 +101,7 @@ public class ShippingConfigurationApi {
 		authorizationUtils.authorizeUser(user, Stream.of(Constants.GROUP_SUPERADMIN, Constants.GROUP_ADMIN,
 				Constants.GROUP_SHIPPING, Constants.GROUP_ADMIN_RETAIL).collect(Collectors.toList()), merchantStore);
 
-		return shippingFacade.listPackages(merchantStore);
+		return shippingFacade.listPackages(MerchantStoreId.of(merchantStore.getCode()));
 
 	}
 
@@ -115,7 +116,7 @@ public class ShippingConfigurationApi {
 		authorizationUtils.authorizeUser(user, Stream.of(Constants.GROUP_SUPERADMIN, Constants.GROUP_ADMIN,
 				Constants.GROUP_SHIPPING, Constants.GROUP_ADMIN_RETAIL).collect(Collectors.toList()), merchantStore);
 
-		return shippingFacade.getPackage(code, merchantStore);
+		return shippingFacade.getPackage(code, MerchantStoreId.of(merchantStore.getCode()));
 
 	}
 
@@ -130,7 +131,7 @@ public class ShippingConfigurationApi {
 		authorizationUtils.authorizeUser(user, Stream.of(Constants.GROUP_SUPERADMIN, Constants.GROUP_ADMIN,
 				Constants.GROUP_SHIPPING, Constants.GROUP_ADMIN_RETAIL).collect(Collectors.toList()), merchantStore);
 
-		shippingFacade.createPackage(details, merchantStore);
+		shippingFacade.createPackage(details, MerchantStoreId.of(merchantStore.getCode()));
 
 	}
 
@@ -145,7 +146,7 @@ public class ShippingConfigurationApi {
 		authorizationUtils.authorizeUser(user, Stream.of(Constants.GROUP_SUPERADMIN, Constants.GROUP_ADMIN,
 				Constants.GROUP_SHIPPING, Constants.GROUP_ADMIN_RETAIL).collect(Collectors.toList()), merchantStore);
 
-		shippingFacade.updatePackage(code, details, merchantStore);
+		shippingFacade.updatePackage(code, details, MerchantStoreId.of(merchantStore.getCode()));
 
 	}
 
@@ -160,7 +161,7 @@ public class ShippingConfigurationApi {
 		authorizationUtils.authorizeUser(user, Stream.of(Constants.GROUP_SUPERADMIN, Constants.GROUP_ADMIN,
 				Constants.GROUP_SHIPPING, Constants.GROUP_ADMIN_RETAIL).collect(Collectors.toList()), merchantStore);
 
-		shippingFacade.deletePackage(code, merchantStore);
+		shippingFacade.deletePackage(code, MerchantStoreId.of(merchantStore.getCode()));
 
 	}
 

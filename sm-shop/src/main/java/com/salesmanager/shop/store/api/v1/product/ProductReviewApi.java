@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.salesmanager.contracts.tenant.LanguageCode;
+import com.salesmanager.contracts.tenant.MerchantStoreId;
 import com.salesmanager.core.business.services.catalog.product.ProductService;
 import com.salesmanager.core.business.services.catalog.product.review.ProductReviewService;
 import com.salesmanager.core.model.catalog.product.Product;
@@ -123,7 +125,8 @@ public class ProductReviewApi {
       }
 
       List<ReadableProductReview> reviews =
-    		  productCommonFacade.getProductReviews(product, merchantStore, language);
+    		  productCommonFacade.getProductReviews(product, MerchantStoreId.of(merchantStore.getCode()),
+    				  LanguageCode.of(language.getCode()));
 
       return reviews;
 

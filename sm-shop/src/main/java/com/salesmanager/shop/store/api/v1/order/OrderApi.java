@@ -29,6 +29,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.salesmanager.contracts.tenant.LanguageCode;
+import com.salesmanager.contracts.tenant.MerchantStoreId;
 import com.salesmanager.core.business.services.customer.CustomerService;
 import com.salesmanager.core.business.services.shoppingcart.ShoppingCartService;
 import com.salesmanager.core.model.customer.Customer;
@@ -377,7 +379,8 @@ public class OrderApi {
 			modelOrder.setId(orderId);
 
 
-			return orderFacadeV1.orderConfirmation(modelOrder, customer, merchantStore, language);
+			return orderFacadeV1.orderConfirmation(modelOrder, customer, MerchantStoreId.of(merchantStore.getCode()),
+					LanguageCode.of(language.getCode()));
 
 
 
@@ -451,7 +454,8 @@ public class OrderApi {
 			// set customer id
 			order.getCustomer().setId(modelOrder.getCustomerId());
 
-			return orderFacadeV1.orderConfirmation(modelOrder, customer, merchantStore, language);
+			return orderFacadeV1.orderConfirmation(modelOrder, customer, MerchantStoreId.of(merchantStore.getCode()),
+					LanguageCode.of(language.getCode()));
 
 
 		} catch (Exception e) {

@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
+import com.salesmanager.contracts.tenant.LanguageCode;
+import com.salesmanager.contracts.tenant.MerchantStoreId;
 import com.salesmanager.core.business.exception.ServiceException;
 import com.salesmanager.core.business.services.catalog.product.variant.ProductVariantService;
 import com.salesmanager.core.business.services.catalog.product.variation.ProductVariationService;
@@ -81,7 +83,8 @@ public class ProductVariantFacadeImpl implements ProductVariantFacade {
 	public boolean exists(String sku, MerchantStore store, Long productId, Language language) {
 		ReadableProduct product = null;
 		try {
-			product = productCommonFacade.getProduct(store, productId, language);
+			product = productCommonFacade.getProduct(MerchantStoreId.of(store.getCode()), productId,
+					LanguageCode.of(language.getCode()));
 		} catch (Exception e) {
 			throw new ServiceRuntimeException("Error while getting product [" + productId + "]",e);
 		}

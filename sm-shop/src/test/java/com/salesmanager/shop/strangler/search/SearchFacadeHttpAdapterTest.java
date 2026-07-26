@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
@@ -27,12 +28,15 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import com.salesmanager.contracts.tenant.LanguageCode;
+import com.salesmanager.contracts.tenant.MerchantStoreId;
 import com.salesmanager.core.model.merchant.MerchantStore;
 import com.salesmanager.core.model.reference.language.Language;
 import com.salesmanager.shop.model.catalog.SearchProductRequest;
 import com.salesmanager.shop.model.entity.ValueList;
 import com.salesmanager.shop.strangler.support.ServiceUnavailableException;
 import com.salesmanager.shop.strangler.support.StranglerRestClient;
+import com.salesmanager.shop.tenant.TenantEntityBridge;
 
 @ExtendWith(MockitoExtension.class)
 class SearchFacadeHttpAdapterTest {
@@ -45,18 +49,25 @@ class SearchFacadeHttpAdapterTest {
 	@Mock
 	private SearchBulkIndexOrchestrator bulkIndexOrchestrator;
 
+	@Mock
+	private TenantEntityBridge tenantEntityBridge;
+
 	private MerchantStore store;
 	private Language language;
+	private MerchantStoreId storeId;
+	private LanguageCode languageCode;
 
 	@BeforeEach
 	void setUp() {
 		RestTemplate restTemplate = new RestTemplate();
 		server = MockRestServiceServer.createServer(restTemplate);
-		adapter = new SearchFacadeHttpAdapter(restTemplate, BASE_URL, bulkIndexOrchestrator);
+		adapter = new SearchFacadeHttpAdapter(restTemplate, BASE_URL, bulkIndexOrchestrator, tenantEntityBridge);
 
 		store = new MerchantStore();
 		store.setCode("DEFAULT");
 		language = new Language("en");
+		storeId = MerchantStoreId.of("DEFAULT");
+		languageCode = LanguageCode.of("en");
 
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		request.addHeader(StranglerRestClient.CORRELATION_HEADER, "corr-search-1");
@@ -82,7 +93,7 @@ class SearchFacadeHttpAdapterTest {
 		searchRequest.setCount(10);
 		searchRequest.setStart(0);
 
-		List<modules.commons.search.request.SearchItem> items = adapter.search(store, language, searchRequest);
+		List<modules.commons.search.request.SearchItem> items = adapter.search(storeId, languageCode, searchRequest);
 
 		assertThat(items).hasSize(1);
 		assertThat(items.get(0).getName()).isEqualTo("Phone");
@@ -97,7 +108,7 @@ class SearchFacadeHttpAdapterTest {
 				.andExpect(header(StranglerRestClient.CORRELATION_HEADER, "corr-search-1"))
 				.andRespond(withSuccess("{\"values\":[\"phone\",\"phones\"]}", MediaType.APPLICATION_JSON));
 
-		ValueList valueList = adapter.autocompleteRequest("ph", store, language);
+		ValueList valueList = adapter.autocompleteRequest("ph", storeId, languageCode);
 
 		assertThat(valueList.getValues()).containsExactly("phone", "phones");
 		server.verify();
@@ -111,7 +122,7 @@ class SearchFacadeHttpAdapterTest {
 		SearchProductRequest searchRequest = new SearchProductRequest();
 		searchRequest.setQuery("phone");
 
-		assertThatThrownBy(() -> adapter.search(store, language, searchRequest))
+		assertThatThrownBy(() -> adapter.search(storeId, languageCode, searchRequest))
 				.isInstanceOf(ServiceUnavailableException.class);
 		verifyNoInteractions(bulkIndexOrchestrator);
 	}
@@ -121,14 +132,17 @@ class SearchFacadeHttpAdapterTest {
 		server.expect(requestTo("http://search-test:8084/api/v1/search/autocomplete?store=DEFAULT&lang=en"))
 				.andRespond(withException(new ConnectException("Connection refused")));
 
-		assertThatThrownBy(() -> adapter.autocompleteRequest("ph", store, language))
+		assertThatThrownBy(() -> adapter.autocompleteRequest("ph", storeId, languageCode))
 				.isInstanceOf(ServiceUnavailableException.class);
 	}
 
 	@Test
 	void indexAllData_delegatesToBulkOrchestrator() throws Exception {
-		adapter.indexAllData(store);
+		when(tenantEntityBridge.resolveStore(storeId)).thenReturn(store);
 
+		adapter.indexAllData(storeId);
+
+		verify(tenantEntityBridge).resolveStore(storeId);
 		verify(bulkIndexOrchestrator).indexAllData(store);
 		server.verify();
 	}

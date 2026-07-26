@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.salesmanager.contracts.tenant.LanguageCode;
+import com.salesmanager.contracts.tenant.MerchantStoreId;
 import com.salesmanager.core.model.merchant.MerchantStore;
 import com.salesmanager.core.model.reference.language.Language;
 import com.salesmanager.shop.model.catalog.SearchProductRequest;
@@ -56,7 +58,8 @@ public class SearchApi {
       @ApiIgnore MerchantStore merchantStore,
       @ApiIgnore Language language) {
 
-    return searchFacade.search(merchantStore, language, searchRequest);
+    return searchFacade.search(MerchantStoreId.of(merchantStore.getCode()), LanguageCode.of(language.getCode()),
+        searchRequest);
   }
 
   @PostMapping("/search/autocomplete")
@@ -68,6 +71,7 @@ public class SearchApi {
       @RequestBody SearchProductRequest searchRequest,
       @ApiIgnore MerchantStore merchantStore,
       @ApiIgnore Language language) {
-    return searchFacade.autocompleteRequest(searchRequest.getQuery(), merchantStore, language);
+    return searchFacade.autocompleteRequest(searchRequest.getQuery(), MerchantStoreId.of(merchantStore.getCode()),
+        LanguageCode.of(language.getCode()));
   }
 }

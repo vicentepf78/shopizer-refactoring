@@ -26,6 +26,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.salesmanager.contracts.tenant.LanguageCode;
+import com.salesmanager.contracts.tenant.MerchantStoreId;
 import com.salesmanager.core.model.catalog.product.ProductCriteria;
 import com.salesmanager.core.model.merchant.MerchantStore;
 import com.salesmanager.core.model.reference.language.Language;
@@ -225,7 +227,8 @@ public class ProductApiV2 {
 		
 		
 		try {
-			ReadableCategory category = categoryFacade.getCategoryByFriendlyUrl(merchantStore, friendlyUrl, language);
+			ReadableCategory category = categoryFacade.getCategoryByFriendlyUrl(
+					MerchantStoreId.of(merchantStore.getCode()), friendlyUrl, LanguageCode.of(language.getCode()));
 			ProductCriteria  criterias = new ProductCriteria();
 			
 			List<Long> listOfIds = new ArrayList<Long>();
