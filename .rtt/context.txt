@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-26 13:03 | 1608 files | 251614 tokens
+# rtt index | generated 2026-07-26 13:17 | 1610 files | 252125 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -14885,15 +14885,16 @@ class Wave2ClientConfigTest
   void wave2RestTemplatePropagatesCorrelationId()
 
 # sm-shop/src/test/java/com/salesmanager/shop/strangler/content/ContentBlobClientTest.java [java]
-imports: org.assertj.core.api.Assertions.assertThatThrownBy, org.springframework.test.web.client.match.MockRestRequestMatchers.method, org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo, org.springframework.test.web.client.response.MockRestResponseCreators.withException, org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess, java.io.ByteArrayInputStream, java.net.ConnectException, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.http.HttpMethod, org.springframework.http.MediaType, org.springframework.test.web.client.MockRestServiceServer, org.springframework.web.client.RestTemplate, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.content.InputContentFile, com.salesmanager.shop.strangler.support.ServiceUnavailableException
+imports: org.springframework.test.web.client.match.MockRestRequestMatchers.method, org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo, org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess, java.io.ByteArrayInputStream, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.http.HttpMethod, org.springframework.test.web.client.MockRestServiceServer, org.springframework.web.client.RestTemplate, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.content.InputContentFile
 class ContentBlobClientTest
   void setUp()
-  void addOptionImage_postsToInternalCatalogBlobApi()
-  void removeFile_deletesViaInternalCatalogBlobApi()
-  void connectFailure_mapsTo503()
+  void addOptionImage_postsToInternalBlobEndpoint()
+  void addContentFile_usesVariantWhenTypeMissing()
+  void removeFile_deletesViaQueryParams()
+  InputContentFile inputFile(String name, String mime, byte[] bytes)
 
 # sm-shop/src/test/java/com/salesmanager/shop/strangler/content/ContentFacadeHttpAdapterTest.java [java]
-imports: org.assertj.core.api.Assertions.assertThat, org.assertj.core.api.Assertions.assertThatThrownBy, org.mockito.Mockito.when, org.springframework.test.web.client.match.MockRestRequestMatchers.header, org.springframework.test.web.client.match.MockRestRequestMatchers.method, org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo, org.springframework.test.web.client.response.MockRestResponseCreators.withException, org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess, java.net.ConnectException, org.junit.jupiter.api.AfterEach, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.springframework.http.HttpHeaders, org.springframework.http.HttpMethod, org.springframework.http.MediaType, org.springframework.mock.web.MockHttpServletRequest, org.springframework.test.web.client.MockRestServiceServer, org.springframework.web.client.RestTemplate, org.springframework.web.context.request.RequestContextHolder, org.springframework.web.context.request.ServletRequestAttributes, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.shop.model.content.page.ReadableContentPage, com.salesmanager.shop.strangler.support.ServiceUnavailableException, com.salesmanager.shop.strangler.support.StranglerRestClient, com.salesmanager.shop.utils.ImageFilePath
+imports: org.assertj.core.api.Assertions.assertThat, org.assertj.core.api.Assertions.assertThatThrownBy, org.mockito.Mockito.when, org.springframework.test.web.client.match.MockRestRequestMatchers.header, org.springframework.test.web.client.match.MockRestRequestMatchers.method, org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo, org.springframework.test.web.client.response.MockRestResponseCreators.withException, org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess, java.net.ConnectException, org.junit.jupiter.api.AfterEach, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.springframework.http.HttpHeaders, org.springframework.http.HttpMethod, org.springframework.http.MediaType, org.springframework.mock.web.MockHttpServletRequest, org.springframework.test.web.client.MockRestServiceServer, org.springframework.web.client.RestTemplate, org.springframework.web.context.request.RequestContextHolder, org.springframework.web.context.request.ServletRequestAttributes, com.salesmanager.core.model.content.ContentType, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.content.OutputContentFile, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.shop.model.content.page.ReadableContentPage, com.salesmanager.shop.model.content.box.ReadableContentBox
 class ContentFacadeHttpAdapterTest
   void setUp()
   void tearDown()
@@ -14902,6 +14903,18 @@ class ContentFacadeHttpAdapterTest
   void connectFailure_mapsTo503()
   void connectFailureOnPrivateEndpoint_mapsTo503()
   void absolutePath_usesImageUtilsLocally()
+  void getContentBox_forwardsPublicPath()
+  void getContentPages_listsPaginated()
+  void codeExist_checksPagePath()
+  void deleteContentById_callsPrivateEndpoint()
+  void saveContentBox_postsToPrivateEndpoint()
+  void getContentPageByName_usesNamePath()
+  void getContentFolder_listsImages()
+  void codeExist_checksBoxPath()
+  void updateContentPage_putsToPrivateEndpoint()
+  void downloadImage_delegatesToStaticProxy()
+  void renameFile_postsRenameEndpoint()
+  void getContentBoxesWithPrefix_filtersInMemory()
 
 # sm-shop/src/test/java/com/salesmanager/shop/strangler/content/StaticContentProxyTest.java [java]
 imports: org.assertj.core.api.Assertions.assertThat, org.assertj.core.api.Assertions.assertThatThrownBy, org.springframework.test.web.client.match.MockRestRequestMatchers.method, org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo, org.springframework.test.web.client.response.MockRestResponseCreators.withException, org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess, java.net.ConnectException, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.http.HttpMethod, org.springframework.http.MediaType, org.springframework.test.web.client.MockRestServiceServer, org.springframework.web.client.RestTemplate, com.salesmanager.core.model.content.FileContentType, com.salesmanager.shop.strangler.support.ServiceUnavailableException
@@ -14909,9 +14922,16 @@ class StaticContentProxyTest
   void setUp()
   void getStaticFile_fetchesFromInternalApi()
   void connectFailure_mapsTo503()
+  void emptyResponse_mapsTo503()
+
+# sm-shop/src/test/java/com/salesmanager/shop/strangler/merchant/CachedMerchantServiceClientTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.mockito.Mockito.times, org.mockito.Mockito.verify, org.mockito.Mockito.when, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.contracts.client.MerchantServiceClient, com.salesmanager.contracts.merchant.MerchantStoreSnapshot
+class CachedMerchantServiceClientTest
+  void getStoreSnapshot_cachesWithinTtl()
+  void getStoreSnapshot_doesNotCacheNull()
 
 # sm-shop/src/test/java/com/salesmanager/shop/strangler/merchant/MerchantFacadeHttpAdapterTest.java [java]
-imports: org.assertj.core.api.Assertions.assertThat, org.assertj.core.api.Assertions.assertThatThrownBy, org.mockito.Mockito.when, org.springframework.test.web.client.match.MockRestRequestMatchers.header, org.springframework.test.web.client.match.MockRestRequestMatchers.method, org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo, org.springframework.test.web.client.response.MockRestResponseCreators.withException, org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess, java.net.ConnectException, org.junit.jupiter.api.AfterEach, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.springframework.http.HttpHeaders, org.springframework.http.HttpMethod, org.springframework.http.MediaType, org.springframework.mock.web.MockHttpServletRequest, org.springframework.test.web.client.MockRestServiceServer, org.springframework.web.client.RestTemplate, org.springframework.web.context.request.RequestContextHolder, org.springframework.web.context.request.ServletRequestAttributes, com.salesmanager.contracts.client.MerchantServiceClient, com.salesmanager.contracts.merchant.MerchantStoreSnapshot, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.shop.model.store.ReadableMerchantStore, com.salesmanager.shop.model.system.Configs, com.salesmanager.shop.store.controller.system.MerchantConfigurationFacade
+imports: org.assertj.core.api.Assertions.assertThat, org.assertj.core.api.Assertions.assertThatThrownBy, org.mockito.Mockito.when, org.springframework.test.web.client.match.MockRestRequestMatchers.header, org.springframework.test.web.client.match.MockRestRequestMatchers.method, org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo, org.springframework.test.web.client.response.MockRestResponseCreators.withException, org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess, java.net.ConnectException, org.junit.jupiter.api.AfterEach, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.springframework.http.HttpHeaders, org.springframework.http.HttpMethod, org.springframework.http.MediaType, org.springframework.mock.web.MockHttpServletRequest, org.springframework.test.web.client.MockRestServiceServer, org.springframework.web.client.RestTemplate, org.springframework.web.context.request.RequestContextHolder, org.springframework.web.context.request.ServletRequestAttributes, com.salesmanager.contracts.client.MerchantServiceClient, com.salesmanager.contracts.merchant.MerchantStoreSnapshot, com.salesmanager.core.model.content.InputContentFile, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.merchant.MerchantStoreCriteria, com.salesmanager.core.model.reference.language.Language, com.salesmanager.shop.model.store.ReadableMerchantStore
 class MerchantFacadeHttpAdapterTest
   void setUp()
   void tearDown()
@@ -14919,11 +14939,31 @@ class MerchantFacadeHttpAdapterTest
   void getByCode_forwardsJwtOnPrivateStorePath()
   void getMerchantConfig_fetchesPublicConfig()
   void connectFailure_mapsTo503()
+  void getByCode_throwsWhenSnapshotMissing()
+  void supportedLanguages_fetchesFromMerchantService()
+  void getByCodePublic_usesStorefrontPath()
+  void findAll_privateListEndpoint()
+  void create_update_delete_store()
+  void existByCode_checksUniqueEndpoint()
+  void getChildStores_usesMerchantHierarchyPath()
+  void deleteLogo_callsMarketingEndpoint()
+  void getByCode_withLanguageObject()
+  void getBrand_readsMarketingEndpoint()
+  void getMerchantStoreNames_withCriteria()
+  void addStoreLogo_multipartUpload()
+
+# sm-shop/src/test/java/com/salesmanager/shop/strangler/merchant/MerchantServiceClientRestTemplateImplTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.springframework.test.web.client.match.MockRestRequestMatchers.method, org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo, org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.http.HttpMethod, org.springframework.http.MediaType, org.springframework.test.web.client.MockRestServiceServer, org.springframework.web.client.RestTemplate, com.salesmanager.contracts.merchant.MerchantStoreSnapshot, com.salesmanager.shop.strangler.config.Wave2Properties
+class MerchantServiceClientRestTemplateImplTest
+  void setUp()
+  void getStoreSnapshot_callsInternalSnapshotEndpoint()
 
 # sm-shop/src/test/java/com/salesmanager/shop/strangler/merchant/MerchantStoreEntityHydratorTest.java [java]
 imports: org.assertj.core.api.Assertions.assertThat, org.junit.jupiter.api.Test, com.salesmanager.contracts.merchant.MerchantStoreSnapshot, com.salesmanager.core.model.merchant.MerchantStore
 class MerchantStoreEntityHydratorTest
-  void hydrate_mapsSnapshotFieldsUsedByResolver()
+  void hydrate_nullSnapshot_returnsNull()
+  void hydrate_mapsFieldsAndRelations()
+  void hydrate_skipsOptionalFieldsWhenBlank()
 
 # sm-shop/src/test/java/com/salesmanager/shop/strangler/merchant/MerchantStoreResolverIntegrationTest.java [java]
 imports: org.assertj.core.api.Assertions.assertThat, org.mockito.Mockito.when, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.InjectMocks, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.springframework.mock.web.MockHttpServletRequest, org.springframework.web.context.request.ServletWebRequest, com.salesmanager.contracts.client.MerchantServiceClient, com.salesmanager.contracts.merchant.MerchantStoreSnapshot, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.shop.application.config.MerchantStoreArgumentResolver, com.salesmanager.shop.store.controller.store.facade.StoreFacade, com.salesmanager.shop.store.controller.user.facade.UserFacade

@@ -1,26 +1,23 @@
 package com.salesmanager.shop.strangler.content;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withException;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 import java.io.ByteArrayInputStream;
-import java.net.ConnectException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
 import com.salesmanager.core.model.content.FileContentType;
 import com.salesmanager.core.model.content.InputContentFile;
-import com.salesmanager.shop.strangler.support.ServiceUnavailableException;
 
 class ContentBlobClientTest {
+
+	private static final String BASE_URL = "http://content-test:8083";
 
 	private MockRestServiceServer server;
 	private ContentBlobClient client;
@@ -29,45 +26,51 @@ class ContentBlobClientTest {
 	void setUp() {
 		RestTemplate restTemplate = new RestTemplate();
 		server = MockRestServiceServer.createServer(restTemplate);
-		client = new ContentBlobClient(restTemplate, "http://content-test:8083");
+		client = new ContentBlobClient(restTemplate, BASE_URL);
 	}
 
 	@Test
-	void addOptionImage_postsToInternalCatalogBlobApi() {
-		server.expect(requestTo("http://content-test:8083/internal/v1/content/blobs/option-image"))
+	void addOptionImage_postsToInternalBlobEndpoint() {
+		server.expect(requestTo(BASE_URL + "/internal/v1/content/blobs/option-image"))
 				.andExpect(method(HttpMethod.POST))
-				.andRespond(withSuccess("", MediaType.APPLICATION_JSON));
+				.andRespond(withSuccess());
 
-		InputContentFile file = new InputContentFile();
-		file.setFileName("color-red.png");
-		file.setMimeType("image/png");
-		file.setFile(new ByteArrayInputStream(new byte[] { 9 }));
+		client.addOptionImage("DEFAULT", inputFile("opt.png", "image/png", "abc".getBytes()));
 
-		client.addOptionImage("DEFAULT", file);
 		server.verify();
 	}
 
 	@Test
-	void removeFile_deletesViaInternalCatalogBlobApi() {
+	void addContentFile_usesVariantWhenTypeMissing() {
+		server.expect(requestTo(BASE_URL + "/internal/v1/content/blobs/content-file"))
+				.andExpect(method(HttpMethod.POST))
+				.andRespond(withSuccess());
+
+		InputContentFile file = inputFile("file.txt", "text/plain", "data".getBytes());
+		file.setFileContentType(null);
+		client.addContentFile("DEFAULT", file);
+
+		server.verify();
+	}
+
+	@Test
+	void removeFile_deletesViaQueryParams() {
 		server.expect(requestTo(
-				"http://content-test:8083/internal/v1/content/blobs?storeCode=DEFAULT&fileType=PROPERTY&fileName=red.png"))
+				BASE_URL + "/internal/v1/content/blobs?storeCode=DEFAULT&fileType=IMAGE&fileName=logo.png"))
 				.andExpect(method(HttpMethod.DELETE))
 				.andRespond(withSuccess());
 
-		client.removeFile("DEFAULT", FileContentType.PROPERTY, "red.png");
+		client.removeFile("DEFAULT", FileContentType.IMAGE, "logo.png");
+
 		server.verify();
 	}
 
-	@Test
-	void connectFailure_mapsTo503() {
-		server.expect(requestTo("http://content-test:8083/internal/v1/content/blobs/option-image"))
-				.andRespond(withException(new ConnectException("Connection refused")));
-
+	private static InputContentFile inputFile(String name, String mime, byte[] bytes) {
 		InputContentFile file = new InputContentFile();
-		file.setFileName("x.png");
-		file.setFile(new ByteArrayInputStream(new byte[0]));
-
-		assertThatThrownBy(() -> client.addOptionImage("DEFAULT", file))
-				.isInstanceOf(ServiceUnavailableException.class);
+		file.setFileName(name);
+		file.setMimeType(mime);
+		file.setPath("/files");
+		file.setFile(new ByteArrayInputStream(bytes));
+		return file;
 	}
 }

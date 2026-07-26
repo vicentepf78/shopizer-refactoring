@@ -1,0 +1,209 @@
+# Wave 2 topology (TechSpec Dependências técnicas / design.md Deployment)
+#
+# Startup order: MySQL + OpenSearch → reference-service → content-service → merchant-service
+#   → search-service → sm-shop
+# No Eureka/K8s discovery — URLs via env (WAVE1_* / WAVE2_*).
+#
+# CMS blob volume mounted only on content-service (ADR-008).
+#
+# Pre-build Boot jars before `docker compose up --build`:
+#   ./mvnw -pl reference-service,content-service,search-service,merchant-service,sm-shop -am package -DskipTests
+#
+# Greenfield seed (ADR-004): InitializationDatabaseImpl stays in the monolith.
+# Against an empty DB, run sm-shop once (or seed externally) before relying on data.
+#
+# --- Manual smoke (minimum) ---
+# 1. Health UP:
+#    curl -s http://localhost:8081/actuator/health
+#    curl -s http://localhost:8083/actuator/health
+#    curl -s http://localhost:8084/actuator/health
+#    curl -s http://localhost:8085/actuator/health
+#    curl -s http://localhost:8080/actuator/health
+# 2. Storefront search (after index populated):
+#    curl -s -X POST "http://localhost:8080/api/v1/search?store=DEFAULT&lang=en" \
+#      -H 'Content-Type: application/json' -d '{"query":"test"}'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: wave2-mysql
+    environment:
+      MYSQL_DATABASE: SALESMANAGER
+      MYSQL_USER: shopizer
+      MYSQL_PASSWORD: very-long-shopizer-password
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+
+  opensearch:
+    image: opensearchproject/opensearch:1.3.14
+    container_name: wave2-opensearch
+    environment:
+      discovery.type: single-node
+      plugins.security.disabled: "true"
+      OPENSEARCH_JAVA_OPTS: -Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:9200"]
+      interval: 10s
+      timeout: 5s
+      retries: 24
+      start_period: 30s
+
+  reference-service:
+    build:
+      context: ./reference-service
+      dockerfile: Dockerfile
+    container_name: wave2-reference
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/SALESMANAGER?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+      DB_USER: shopizer
+      DB_PASSWORD: very-long-shopizer-password
+      SERVER_PORT: "8081"
+    ports:
+      - "8081:8081"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8081/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 18
+      start_period: 40s
+
+  content-service:
+    build:
+      context: ./content-service
+      dockerfile: Dockerfile
+    container_name: wave2-content
+    depends_on:
+      mysql:
+        condition: service_healthy
+      reference-service:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/SALESMANAGER?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+      DB_USER: shopizer
+      DB_PASSWORD: very-long-shopizer-password
+      JWT_SECRET: aSecret
+      WAVE1_REFERENCE_BASE_URL: http://reference-service:8081
+      WAVE1_HTTP_TIMEOUT_MS: "5000"
+      CMS_METHOD: default
+      CMS_FILES_LOCATION: /var/cms/files
+      SERVER_PORT: "8083"
+    volumes:
+      - wave2-cms-blobs:/var/cms/files
+    ports:
+      - "8083:8083"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8083/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 18
+      start_period: 50s
+
+  merchant-service:
+    build:
+      context: ./merchant-service
+      dockerfile: Dockerfile
+    container_name: wave2-merchant
+    depends_on:
+      mysql:
+        condition: service_healthy
+      reference-service:
+        condition: service_healthy
+      content-service:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/SALESMANAGER?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+      DB_USER: shopizer
+      DB_PASSWORD: very-long-shopizer-password
+      JWT_SECRET: aSecret
+      WAVE1_REFERENCE_BASE_URL: http://reference-service:8081
+      WAVE1_HTTP_TIMEOUT_MS: "5000"
+      WAVE2_CONTENT_BASE_URL: http://content-service:8083
+      WAVE2_HTTP_TIMEOUT_MS: "5000"
+      SERVER_PORT: "8085"
+    ports:
+      - "8085:8085"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8085/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 18
+      start_period: 50s
+
+  search-service:
+    build:
+      context: ./search-service
+      dockerfile: Dockerfile
+    container_name: wave2-search
+    depends_on:
+      opensearch:
+        condition: service_healthy
+    environment:
+      SEARCH_HOST: opensearch
+      SEARCH_PORT: "9200"
+      SEARCH_INTERNAL_TOKEN: dev-search-token
+      SEARCH_USERNAME: admin
+      SEARCH_PASSWORD: admin
+      SERVER_PORT: "8084"
+    ports:
+      - "8084:8084"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8084/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 18
+      start_period: 50s
+
+  sm-shop:
+    build:
+      context: ./sm-shop
+      dockerfile: Dockerfile.wave2
+    container_name: wave2-shop
+    depends_on:
+      mysql:
+        condition: service_healthy
+      reference-service:
+        condition: service_healthy
+      content-service:
+        condition: service_healthy
+      merchant-service:
+        condition: service_healthy
+      search-service:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: mysql,strangler,strangler-wave2
+      db.jdbcUrl: jdbc:mysql://mysql:3306/SALESMANAGER?autoReconnect=true&serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8
+      db.user: shopizer
+      db.password: very-long-shopizer-password
+      WAVE1_REFERENCE_BASE_URL: http://reference-service:8081
+      WAVE1_TAX_BASE_URL: http://tax-service:8082
+      WAVE1_HTTP_TIMEOUT_MS: "5000"
+      WAVE2_CONTENT_BASE_URL: http://content-service:8083
+      WAVE2_SEARCH_BASE_URL: http://search-service:8084
+      WAVE2_MERCHANT_BASE_URL: http://merchant-service:8085
+      WAVE2_HTTP_TIMEOUT_MS: "5000"
+      SEARCH_INTERNAL_TOKEN: dev-search-token
+      SERVER_PORT: "8080"
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8080/actuator/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 24
+      start_period: 120s
+
+volumes:
+  wave2-cms-blobs:

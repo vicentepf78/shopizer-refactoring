@@ -51,4 +51,14 @@ class StaticContentProxyTest {
 		assertThatThrownBy(() -> proxy.getStaticFile("DEFAULT", FileContentType.STATIC_FILE, "app.css"))
 				.isInstanceOf(ServiceUnavailableException.class);
 	}
+
+	@Test
+	void emptyResponse_mapsTo503() {
+		server.expect(requestTo("http://content-test:8083/internal/v1/static/files/DEFAULT/IMAGE/missing.png"))
+				.andExpect(method(HttpMethod.GET))
+				.andRespond(withSuccess(new byte[0], MediaType.APPLICATION_OCTET_STREAM));
+
+		assertThatThrownBy(() -> proxy.getStaticFile("DEFAULT", FileContentType.IMAGE, "missing.png"))
+				.isInstanceOf(ServiceUnavailableException.class);
+	}
 }

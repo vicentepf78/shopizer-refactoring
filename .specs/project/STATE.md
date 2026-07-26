@@ -1,7 +1,7 @@
 # State
 
-**Last Updated:** 2026-07-26T10:13:00-03:00
-**Current Work:** onda-1-reference-tax — COMPLETE (gate verde). Próximo: Execute onda-2-content-search-merchant task_01
+**Last Updated:** 2026-07-26T13:15:00-03:00
+**Current Work:** onda-2-content-search-merchant — COMPLETE (gate verde). Próximo: Specify/Execute Onda 3
 
 ---
 
@@ -177,4 +177,4 @@
 ## Todos
 
 - [x] Onda 1 gate `./mvnw clean install` verde (2026-07-26)
-- [ ] Iniciar Execute Onda 2 — task_01
+- [x] Onda 2 Execute complete — `docker-compose-wave2.yml`, suite Strangler, gate `./mvnw clean install` (2026-07-26)

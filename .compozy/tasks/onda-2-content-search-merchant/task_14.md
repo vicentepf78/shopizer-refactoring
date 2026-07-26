@@ -1,5 +1,5 @@
 ---
-status: pending
+status: completed
 title: Docker Compose, integração, gate e STATE
 type: infra
 complexity: medium
@@ -29,11 +29,11 @@ Consolida TLC T51–T54. Empacota a topologia Docker Wave2, consolida a suite de
 </requirements>
 
 ## Subtasks
-- [ ] 14.1 docker-compose-wave2.yml + config válido (T51)
-- [ ] 14.2 Suite integração Wave2 consolidada (T52)
-- [ ] 14.3 Gate `./mvnw clean install` (T53)
-- [ ] 14.4 Traceability + STATE.md + status design (T54)
-- [ ] 14.5 Checklist final 28 requirements mapped
+- [x] 14.1 docker-compose-wave2.yml + config válido (T51)
+- [x] 14.2 Suite integração Wave2 consolidada (T52)
+- [x] 14.3 Gate `./mvnw clean install` (T53)
+- [x] 14.4 Traceability + STATE.md + status design (T54)
+- [x] 14.5 Checklist final 28 requirements mapped
 
 ## Implementation Details
 Ver TechSpec: **Ordem de construção** passo 30, **Abordagem de testes** gates finais. Artefatos TLC em `.specs/features/onda-2-content-search-merchant/` e `.specs/project/STATE.md` (atualizar só na Execute desta task).
@@ -68,11 +68,11 @@ Ver TechSpec: **Ordem de construção** passo 30, **Abordagem de testes** gates 
 - Unit tests:
   - [ ] N/A principal — foco em integração/gate (helpers compose se houver)
 - Integration tests:
-  - [ ] `docker compose -f docker-compose-wave2.yml config` exit 0
-  - [ ] Suite `*Wave2*Test` / integração content+search+merchant+sm-shop verde
-  - [ ] `./mvnw clean install` reactor completo passa
-  - [ ] `Wave2ConsumerPactTest` permanece verde no install
-  - [ ] Checklist: 28 requirements mapped; 0 unmapped
+  - [x] `docker compose -f docker-compose-wave2.yml config` exit 0
+  - [x] Suite `*Wave2*Test` / integração content+search+merchant+sm-shop verde
+  - [x] `./mvnw clean install` reactor completo passa
+  - [x] `Wave2ConsumerPactTest` permanece verde no install
+  - [x] Checklist: 28 requirements mapped; 0 unmapped
 - Test coverage target: >=80% (código de teste/helpers tocados)
 - All tests must pass
 

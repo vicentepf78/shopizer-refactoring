@@ -2,7 +2,7 @@
 
 **Spec:** `.specs/features/onda-2-content-search-merchant/spec.md`
 **Context:** `.specs/features/onda-2-content-search-merchant/context.md` (OQ-01..06 confirmadas)
-**Status:** Approved — Tasks geradas (T1–T54)
+**Status:** Approved — Execute complete (T1–T54, gate 2026-07-26)
 **Exploração Design:** Subagentes content, search, merchant (2026-07-04)
 
 ---
@@ -505,15 +505,15 @@ graph TB
 
 | ID | Design section | Status |
 |----|----------------|--------|
-| CNT-01..09 | § content-service | In Design ✅ |
-| SRCH-01..08 | § search-service | In Design ✅ |
+| CNT-01..09 | § content-service | Verified ✅ |
+| SRCH-01..08 | § search-service | Verified ✅ |
 | SRCH-09 | Out of scope | Confirmed |
-| MCH-01..08 | § merchant-service | In Design ✅ |
+| MCH-01..08 | § merchant-service | Verified ✅ |
 | MCH-06 | Out of scope | Confirmed |
-| STR-01..06 | § Strangler, Deployment | In Design ✅ |
+| STR-01..06 | § Strangler, Deployment | Verified ✅ |
 
-**Coverage:** 28 total, 28 mapped to tasks ✅ — ver [tasks.md](./tasks.md)
+**Coverage:** 28 total, 28 mapped, 0 unmapped ✅ — ver [tasks.md](./tasks.md)
 
 ---
 
-**Próxima fase:** Execute — iniciar T1. **Código bloqueado** até aprovação explícita.
+**Próxima fase:** Onda 2 Tasks complete — ver [STATE.md](../../project/STATE.md).
