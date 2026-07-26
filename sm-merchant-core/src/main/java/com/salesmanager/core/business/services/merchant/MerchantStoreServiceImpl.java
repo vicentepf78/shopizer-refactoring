@@ -1,11 +1,11 @@
 package com.salesmanager.core.business.services.merchant;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.inject.Inject;
 
-import org.jsoup.helper.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import com.salesmanager.core.business.exception.ServiceException;
 import com.salesmanager.core.business.repositories.merchant.MerchantRepository;
 import com.salesmanager.core.business.repositories.merchant.PageableMerchantRepository;
-import com.salesmanager.core.business.services.catalog.product.type.ProductTypeService;
 import com.salesmanager.core.business.services.common.generic.SalesManagerEntityServiceImpl;
 import com.salesmanager.core.model.common.GenericEntityList;
 import com.salesmanager.core.model.merchant.MerchantStore;
@@ -24,9 +23,6 @@ import com.salesmanager.core.model.merchant.MerchantStoreCriteria;
 @Service("merchantService")
 public class MerchantStoreServiceImpl extends SalesManagerEntityServiceImpl<Integer, MerchantStore>
 		implements MerchantStoreService {
-
-	@Inject
-	protected ProductTypeService productTypeService;
 
 	@Autowired
 	private PageableMerchantRepository pageableMerchantRepository;
@@ -105,7 +101,7 @@ public class MerchantStoreServiceImpl extends SalesManagerEntityServiceImpl<Inte
 
 	@Override
 	public MerchantStore getParent(String code) throws ServiceException {
-		Validate.notNull(code, "MerchantStore code cannot be null");
+		Objects.requireNonNull(code, "MerchantStore code cannot be null");
 
 		
 		//get it

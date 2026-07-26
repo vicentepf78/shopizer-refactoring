@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.salesmanager.core.business.exception.ServiceException;
-import com.salesmanager.core.business.utils.RepositoryHelper;
 import com.salesmanager.core.model.common.GenericEntityList;
 import com.salesmanager.core.model.merchant.MerchantStore;
 import com.salesmanager.core.model.merchant.MerchantStoreCriteria;
@@ -74,7 +73,19 @@ public class MerchantRepositoryImpl implements MerchantRepositoryCustom {
       GenericEntityList entityList = new GenericEntityList();
       entityList.setTotalCount(count.intValue());
       
-      q = RepositoryHelper.paginateQuery(q, count, entityList, criteria);
+      // ponytail: inlined from sm-core RepositoryHelper — avoids duplicate class on classpath
+      if (criteria.isLegacyPagination()) {
+        if (criteria.getMaxCount() > 0) {
+          q.setFirstResult(criteria.getStartIndex());
+          q.setMaxResults(Math.min(criteria.getMaxCount(), count.intValue()));
+        }
+      } else {
+        int firstResult = (criteria.getStartPage() == 0 ? 0 : criteria.getStartPage()) * criteria.getPageSize();
+        q.setFirstResult(firstResult);
+        q.setMaxResults(criteria.getPageSize());
+        entityList.setTotalPages((count.intValue() / criteria.getPageSize()) + 1);
+        entityList.setTotalCount(count.intValue());
+      }
 
 
       List<MerchantStore> stores = q.getResultList();

@@ -58,6 +58,12 @@
 			<artifactId>sm-content-core</artifactId>
 		</dependency>
 
+		<!-- merchant store/config/log CRUD; ProductType stays in this module -->
+		<dependency>
+			<groupId>com.shopizer</groupId>
+			<artifactId>sm-merchant-core</artifactId>
+		</dependency>
+
 		<!-- sm-core-modules -->
 		<dependency>
 			<groupId>com.shopizer</groupId>

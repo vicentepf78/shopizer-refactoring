@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-26 11:08 | 1447 files | 221199 tokens
+# rtt index | generated 2026-07-26 11:08 | 1455 files | 222790 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -5190,23 +5190,6 @@ interface CustomerOptinRepository
 imports: java.util.List, org.springframework.data.jpa.repository.JpaRepository, org.springframework.data.jpa.repository.Query, com.salesmanager.core.model.customer.review.CustomerReview
 interface CustomerReviewRepository
 
-# sm-core/src/main/java/com/salesmanager/core/business/repositories/merchant/MerchantRepository.java [java]
-imports: java.util.List, org.springframework.data.jpa.repository.JpaRepository, org.springframework.data.jpa.repository.Query, com.salesmanager.core.model.merchant.MerchantStore
-interface MerchantRepository
-
-# sm-core/src/main/java/com/salesmanager/core/business/repositories/merchant/MerchantRepositoryCustom.java [java]
-imports: com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.model.common.GenericEntityList, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.merchant.MerchantStoreCriteria
-interface MerchantRepositoryCustom
-
-# sm-core/src/main/java/com/salesmanager/core/business/repositories/merchant/MerchantRepositoryImpl.java [java]
-imports: java.util.List, javax.persistence.EntityManager, javax.persistence.PersistenceContext, javax.persistence.Query, org.apache.commons.lang3.StringUtils, org.slf4j.Logger, org.slf4j.LoggerFactory, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.utils.RepositoryHelper, com.salesmanager.core.model.common.GenericEntityList, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.merchant.MerchantStoreCriteria
-class MerchantRepositoryImpl
-  GenericEntityList listByCriteria(MerchantStoreCriteria criteria)
-
-# sm-core/src/main/java/com/salesmanager/core/business/repositories/merchant/PageableMerchantRepository.java [java]
-imports: org.springframework.data.domain.Page, org.springframework.data.domain.Pageable, org.springframework.data.jpa.repository.Query, org.springframework.data.repository.PagingAndSortingRepository, com.salesmanager.core.model.merchant.MerchantStore
-interface PageableMerchantRepository
-
 # sm-core/src/main/java/com/salesmanager/core/business/repositories/order/OrderRepository.java [java]
 imports: org.springframework.data.jpa.repository.JpaRepository, org.springframework.data.jpa.repository.Query, com.salesmanager.core.model.order.Order
 interface OrderRepository
@@ -5265,14 +5248,6 @@ interface ShoppingCartItemRepository
 # sm-core/src/main/java/com/salesmanager/core/business/repositories/shoppingcart/ShoppingCartRepository.java [java]
 imports: java.util.List, org.springframework.data.jpa.repository.JpaRepository, org.springframework.data.jpa.repository.Query, com.salesmanager.core.model.shoppingcart.ShoppingCart
 interface ShoppingCartRepository
-
-# sm-core/src/main/java/com/salesmanager/core/business/repositories/system/MerchantConfigurationRepository.java [java]
-imports: java.util.List, org.springframework.data.jpa.repository.JpaRepository, org.springframework.data.jpa.repository.Query, com.salesmanager.core.model.system.MerchantConfiguration, com.salesmanager.core.model.system.MerchantConfigurationType
-interface MerchantConfigurationRepository
-
-# sm-core/src/main/java/com/salesmanager/core/business/repositories/system/MerchantLogRepository.java [java]
-imports: java.util.List, org.springframework.data.jpa.repository.JpaRepository, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.system.MerchantLog
-interface MerchantLogRepository
 
 # sm-core/src/main/java/com/salesmanager/core/business/repositories/system/ModuleConfigurationRepository.java [java]
 imports: java.util.List, org.springframework.data.jpa.repository.JpaRepository, com.salesmanager.core.model.system.IntegrationModule
@@ -5826,27 +5801,6 @@ class CustomerReviewServiceImpl
   List<CustomerReview> getByReviewedCustomer(Customer customer)
   CustomerReview getByReviewerAndReviewed(Long reviewer, Long reviewed)
 
-# sm-core/src/main/java/com/salesmanager/core/business/services/merchant/MerchantStoreService.java [java]
-imports: java.util.List, java.util.Optional, org.springframework.data.domain.Page, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.common.generic.SalesManagerEntityService, com.salesmanager.core.model.common.GenericEntityList, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.merchant.MerchantStoreCriteria
-interface MerchantStoreService
-
-# sm-core/src/main/java/com/salesmanager/core/business/services/merchant/MerchantStoreServiceImpl.java [java]
-imports: java.util.List, java.util.Optional, javax.inject.Inject, org.jsoup.helper.Validate, org.springframework.beans.factory.annotation.Autowired, org.springframework.data.domain.Page, org.springframework.data.domain.PageRequest, org.springframework.data.domain.Pageable, org.springframework.stereotype.Service, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.repositories.merchant.MerchantRepository, com.salesmanager.core.business.repositories.merchant.PageableMerchantRepository, com.salesmanager.core.business.services.catalog.product.type.ProductTypeService, com.salesmanager.core.business.services.common.generic.SalesManagerEntityServiceImpl, com.salesmanager.core.model.common.GenericEntityList, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.merchant.MerchantStoreCriteria
-class MerchantStoreServiceImpl
-  void saveOrUpdate(MerchantStore store)
-  MerchantStore getByCode(String code)
-  boolean existByCode(String code)
-  GenericEntityList<MerchantStore> getByCriteria(MerchantStoreCriteria criteria)
-  Page<MerchantStore> listChildren(String code, int page, int count)
-  Page<MerchantStore> listAll(Optional<String> storeName, int page, int count)
-  List<MerchantStore> findAllStoreCodeNameEmail()
-  Page<MerchantStore> listAllRetailers(Optional<String> storeName, int page, int count)
-  List<MerchantStore> findAllStoreNames()
-  MerchantStore getParent(String code)
-  List<MerchantStore> findAllStoreNames(String code)
-  Page<MerchantStore> listByGroup(Optional<String> storeName, String code, int page, int count)
-  boolean isStoreInGroup(String code)
-
 # sm-core/src/main/java/com/salesmanager/core/business/services/order/OrderService.java [java]
 imports: java.io.ByteArrayOutputStream, java.util.Date, java.util.List, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.common.generic.SalesManagerEntityService, com.salesmanager.core.model.customer.Customer, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.order.Order, com.salesmanager.core.model.order.OrderCriteria, com.salesmanager.core.model.order.OrderList, com.salesmanager.core.model.order.OrderSummary, com.salesmanager.core.model.order.OrderTotalSummary, com.salesmanager.core.model.order.orderstatus.OrderStatusHistory, com.salesmanager.core.model.payments.Payment, com.salesmanager.core.model.payments.Transaction, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.shoppingcart.ShoppingCart, com.salesmanager.core.model.shoppingcart.ShoppingCartItem
 interface OrderService
@@ -6114,29 +6068,6 @@ class EmailServiceImpl
   void sendHtmlEmail(MerchantStore store, Email email)
   EmailConfig getEmailConfiguration(MerchantStore store)
   void saveEmailConfiguration(EmailConfig emailConfig, MerchantStore store)
-
-# sm-core/src/main/java/com/salesmanager/core/business/services/system/MerchantConfigurationService.java [java]
-imports: java.util.List, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.common.generic.SalesManagerEntityService, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.system.MerchantConfig, com.salesmanager.core.model.system.MerchantConfiguration, com.salesmanager.core.model.system.MerchantConfigurationType
-interface MerchantConfigurationService
-
-# sm-core/src/main/java/com/salesmanager/core/business/services/system/MerchantConfigurationServiceImpl.java [java]
-imports: java.util.List, javax.inject.Inject, org.springframework.stereotype.Service, com.fasterxml.jackson.databind.ObjectMapper, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.repositories.system.MerchantConfigurationRepository, com.salesmanager.core.business.services.common.generic.SalesManagerEntityServiceImpl, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.system.MerchantConfig, com.salesmanager.core.model.system.MerchantConfiguration, com.salesmanager.core.model.system.MerchantConfigurationType
-class MerchantConfigurationServiceImpl
-  MerchantConfiguration getMerchantConfiguration(String key, MerchantStore store)
-  List<MerchantConfiguration> listByStore(MerchantStore store)
-  List<MerchantConfiguration> listByType(MerchantConfigurationType type, MerchantStore store)
-  void saveOrUpdate(MerchantConfiguration entity)
-  void delete(MerchantConfiguration merchantConfiguration)
-  MerchantConfig getMerchantConfig(MerchantStore store)
-  void saveMerchantConfig(MerchantConfig config, MerchantStore store)
-
-# sm-core/src/main/java/com/salesmanager/core/business/services/system/MerchantLogService.java [java]
-imports: com.salesmanager.core.business.services.common.generic.SalesManagerEntityService, com.salesmanager.core.model.system.MerchantLog
-interface MerchantLogService
-
-# sm-core/src/main/java/com/salesmanager/core/business/services/system/MerchantLogServiceImpl.java [java]
-imports: javax.inject.Inject, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.stereotype.Service, com.salesmanager.core.business.repositories.system.MerchantLogRepository, com.salesmanager.core.business.services.common.generic.SalesManagerEntityServiceImpl, com.salesmanager.core.model.system.MerchantLog
-class MerchantLogServiceImpl
 
 # sm-core/src/main/java/com/salesmanager/core/business/services/system/ModuleConfigurationService.java [java]
 imports: java.util.List, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.common.generic.SalesManagerEntityService, com.salesmanager.core.model.system.IntegrationModule
@@ -6513,6 +6444,162 @@ class UtilsTestCase
   void testCache()
   void testCurrency()
   void testGeoLocation()
+
+# sm-merchant-core/src/main/java/com/salesmanager/core/business/repositories/merchant/MerchantRepository.java [java]
+imports: java.util.List, org.springframework.data.jpa.repository.JpaRepository, org.springframework.data.jpa.repository.Query, com.salesmanager.core.model.merchant.MerchantStore
+interface MerchantRepository
+
+# sm-merchant-core/src/main/java/com/salesmanager/core/business/repositories/merchant/MerchantRepositoryCustom.java [java]
+imports: com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.model.common.GenericEntityList, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.merchant.MerchantStoreCriteria
+interface MerchantRepositoryCustom
+
+# sm-merchant-core/src/main/java/com/salesmanager/core/business/repositories/merchant/MerchantRepositoryImpl.java [java]
+imports: java.util.List, javax.persistence.EntityManager, javax.persistence.PersistenceContext, javax.persistence.Query, org.apache.commons.lang3.StringUtils, org.slf4j.Logger, org.slf4j.LoggerFactory, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.model.common.GenericEntityList, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.merchant.MerchantStoreCriteria
+class MerchantRepositoryImpl
+  GenericEntityList listByCriteria(MerchantStoreCriteria criteria)
+
+# sm-merchant-core/src/main/java/com/salesmanager/core/business/repositories/merchant/PageableMerchantRepository.java [java]
+imports: org.springframework.data.domain.Page, org.springframework.data.domain.Pageable, org.springframework.data.jpa.repository.Query, org.springframework.data.repository.PagingAndSortingRepository, com.salesmanager.core.model.merchant.MerchantStore
+interface PageableMerchantRepository
+
+# sm-merchant-core/src/main/java/com/salesmanager/core/business/repositories/system/MerchantConfigurationRepository.java [java]
+imports: java.util.List, org.springframework.data.jpa.repository.JpaRepository, org.springframework.data.jpa.repository.Query, com.salesmanager.core.model.system.MerchantConfiguration, com.salesmanager.core.model.system.MerchantConfigurationType
+interface MerchantConfigurationRepository
+
+# sm-merchant-core/src/main/java/com/salesmanager/core/business/repositories/system/MerchantLogRepository.java [java]
+imports: java.util.List, org.springframework.data.jpa.repository.JpaRepository, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.system.MerchantLog
+interface MerchantLogRepository
+
+# sm-merchant-core/src/main/java/com/salesmanager/core/business/services/merchant/MerchantStoreService.java [java]
+imports: java.util.List, java.util.Optional, org.springframework.data.domain.Page, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.common.generic.SalesManagerEntityService, com.salesmanager.core.model.common.GenericEntityList, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.merchant.MerchantStoreCriteria
+interface MerchantStoreService
+
+# sm-merchant-core/src/main/java/com/salesmanager/core/business/services/merchant/MerchantStoreServiceImpl.java [java]
+imports: java.util.List, java.util.Objects, java.util.Optional, javax.inject.Inject, org.springframework.beans.factory.annotation.Autowired, org.springframework.data.domain.Page, org.springframework.data.domain.PageRequest, org.springframework.data.domain.Pageable, org.springframework.stereotype.Service, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.repositories.merchant.MerchantRepository, com.salesmanager.core.business.repositories.merchant.PageableMerchantRepository, com.salesmanager.core.business.services.common.generic.SalesManagerEntityServiceImpl, com.salesmanager.core.model.common.GenericEntityList, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.merchant.MerchantStoreCriteria
+class MerchantStoreServiceImpl
+  void saveOrUpdate(MerchantStore store)
+  MerchantStore getByCode(String code)
+  boolean existByCode(String code)
+  GenericEntityList<MerchantStore> getByCriteria(MerchantStoreCriteria criteria)
+  Page<MerchantStore> listChildren(String code, int page, int count)
+  Page<MerchantStore> listAll(Optional<String> storeName, int page, int count)
+  List<MerchantStore> findAllStoreCodeNameEmail()
+  Page<MerchantStore> listAllRetailers(Optional<String> storeName, int page, int count)
+  List<MerchantStore> findAllStoreNames()
+  MerchantStore getParent(String code)
+  List<MerchantStore> findAllStoreNames(String code)
+  Page<MerchantStore> listByGroup(Optional<String> storeName, String code, int page, int count)
+  boolean isStoreInGroup(String code)
+
+# sm-merchant-core/src/main/java/com/salesmanager/core/business/services/system/MerchantConfigurationService.java [java]
+imports: java.util.List, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.common.generic.SalesManagerEntityService, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.system.MerchantConfig, com.salesmanager.core.model.system.MerchantConfiguration, com.salesmanager.core.model.system.MerchantConfigurationType
+interface MerchantConfigurationService
+
+# sm-merchant-core/src/main/java/com/salesmanager/core/business/services/system/MerchantConfigurationServiceImpl.java [java]
+imports: java.util.List, javax.inject.Inject, org.springframework.stereotype.Service, com.fasterxml.jackson.databind.ObjectMapper, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.repositories.system.MerchantConfigurationRepository, com.salesmanager.core.business.services.common.generic.SalesManagerEntityServiceImpl, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.system.MerchantConfig, com.salesmanager.core.model.system.MerchantConfiguration, com.salesmanager.core.model.system.MerchantConfigurationType
+class MerchantConfigurationServiceImpl
+  MerchantConfiguration getMerchantConfiguration(String key, MerchantStore store)
+  List<MerchantConfiguration> listByStore(MerchantStore store)
+  List<MerchantConfiguration> listByType(MerchantConfigurationType type, MerchantStore store)
+  void saveOrUpdate(MerchantConfiguration entity)
+  void delete(MerchantConfiguration merchantConfiguration)
+  MerchantConfig getMerchantConfig(MerchantStore store)
+  void saveMerchantConfig(MerchantConfig config, MerchantStore store)
+
+# sm-merchant-core/src/main/java/com/salesmanager/core/business/services/system/MerchantLogService.java [java]
+imports: com.salesmanager.core.business.services.common.generic.SalesManagerEntityService, com.salesmanager.core.model.system.MerchantLog
+interface MerchantLogService
+
+# sm-merchant-core/src/main/java/com/salesmanager/core/business/services/system/MerchantLogServiceImpl.java [java]
+imports: javax.inject.Inject, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.stereotype.Service, com.salesmanager.core.business.repositories.system.MerchantLogRepository, com.salesmanager.core.business.services.common.generic.SalesManagerEntityServiceImpl, com.salesmanager.core.model.system.MerchantLog
+class MerchantLogServiceImpl
+
+# sm-merchant-core/src/test/java/com/salesmanager/core/business/repositories/merchant/MerchantRepositoryImplTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertNotNull, javax.persistence.EntityManager, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.autoconfigure.domain.EntityScan, org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest, org.springframework.data.jpa.repository.config.EnableJpaRepositories, org.springframework.test.context.ContextConfiguration, com.salesmanager.core.model.common.CriteriaOrderBy, com.salesmanager.core.model.common.GenericEntityList, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.merchant.MerchantStoreCriteria
+class MerchantRepositoryImplTest
+  class Config
+  void listByCriteria_filtersByCode()
+  void listByCriteria_filtersByCodeAndName()
+  void listByCriteria_ordersByRequestedField()
+
+# sm-merchant-core/src/test/java/com/salesmanager/core/business/repositories/merchant/MerchantRepositoryTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertFalse, org.junit.jupiter.api.Assertions.assertNotNull, org.junit.jupiter.api.Assertions.assertTrue, javax.persistence.EntityManager, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.autoconfigure.domain.EntityScan, org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest, org.springframework.data.jpa.repository.config.EnableJpaRepositories, org.springframework.test.context.ContextConfiguration, com.salesmanager.core.model.merchant.MerchantStore
+class MerchantRepositoryTest
+  class Config
+  void findByCode_returnsPersistedStore()
+  void existsByCode_reflectsPersistence()
+  void listByGroup_includesParentAndChildViaParentId()
+
+# sm-merchant-core/src/test/java/com/salesmanager/core/business/repositories/merchant/MerchantTestData.java [java]
+imports: java.util.Collections, javax.persistence.EntityManager, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.country.Country, com.salesmanager.core.model.reference.currency.Currency, com.salesmanager.core.model.reference.language.Language
+class MerchantTestData
+  MerchantStore persistStore(EntityManager em, String code)
+  MerchantStore persistStore(EntityManager em, String code, MerchantStore parent)
+  Language findOrCreateLanguage(EntityManager em)
+  Country findOrCreateCountry(EntityManager em)
+  Currency findOrCreateCurrency(EntityManager em)
+
+# sm-merchant-core/src/test/java/com/salesmanager/core/business/repositories/system/MerchantConfigurationRepositoryTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertNotNull, javax.persistence.EntityManager, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.autoconfigure.domain.EntityScan, org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest, org.springframework.data.jpa.repository.config.EnableJpaRepositories, org.springframework.test.context.ContextConfiguration, com.salesmanager.core.business.repositories.merchant.MerchantTestData, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.system.MerchantConfiguration, com.salesmanager.core.model.system.MerchantConfigurationType
+class MerchantConfigurationRepositoryTest
+  class Config
+  void findByMerchantStoreAndKey_returnsPersistedConfig()
+
+# sm-merchant-core/src/test/java/com/salesmanager/core/business/services/merchant/MerchantCoreNoProductTypeTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertFalse, java.io.IOException, java.nio.file.Files, java.nio.file.Path, java.nio.file.Paths, java.util.stream.Stream, org.junit.jupiter.api.Test
+class MerchantCoreNoProductTypeTest
+  void moduleSources_excludeProductType()
+  boolean containsProductTypeReference(Path file)
+
+# sm-merchant-core/src/test/java/com/salesmanager/core/business/services/merchant/MerchantStoreServiceImplTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertFalse, org.junit.jupiter.api.Assertions.assertNotNull, org.junit.jupiter.api.Assertions.assertNull, org.junit.jupiter.api.Assertions.assertSame, org.junit.jupiter.api.Assertions.assertThrows, org.junit.jupiter.api.Assertions.assertTrue, org.mockito.ArgumentMatchers.any, org.mockito.ArgumentMatchers.anyInt, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.doReturn, org.mockito.Mockito.verify, org.mockito.Mockito.when, java.lang.reflect.Field, java.util.Arrays, java.util.Collections, java.util.List, java.util.Optional, java.util.stream.Collectors, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.springframework.data.domain.Page, org.springframework.data.domain.PageImpl, org.springframework.data.domain.PageRequest, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.repositories.merchant.MerchantRepository, com.salesmanager.core.business.repositories.merchant.PageableMerchantRepository
+class MerchantStoreServiceImplTest
+  void setUp()
+  void doesNotReferenceProductTypeService()
+  void defaultStoreCode_isProtectedConstant()
+  void getByCode_delegatesToRepository()
+  void existByCode_delegatesToRepository()
+  void getParent_nullCode_throwsNullPointerException()
+  void getParent_missingStore_throwsServiceException()
+  void getParent_withoutParent_returnsSelf()
+  void listAllRetailers_delegatesToRepository()
+  void findAllStoreNames_delegatesToRepository()
+  void findAllStoreNames_withCode_delegatesToRepository()
+  void isStoreInGroup_whenEmpty_returnsFalse()
+  void getParent_withParentId_resolvesParentFromRepository()
+  void listAll_withoutName_delegatesWithNull()
+  void listChildren_delegatesToPageableRepository()
+  void listAll_withOptionalName_delegatesToRepository()
+  void listByGroup_delegatesToPageableRepository()
+  void isStoreInGroup_whenMatches_returnsTrue()
+  void getByCriteria_delegatesToRepository()
+  void findAllStoreCodeNameEmail_delegatesToRepository()
+  void saveOrUpdate_delegatesToSave()
+  MerchantStore store(Integer id, String code)
+  void injectPageableRepository()
+
+# sm-merchant-core/src/test/java/com/salesmanager/core/business/services/system/MerchantConfigurationServiceImplTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertNotNull, org.junit.jupiter.api.Assertions.assertSame, org.junit.jupiter.api.Assertions.assertThrows, org.mockito.ArgumentMatchers.any, org.mockito.Mockito.never, org.mockito.Mockito.verify, org.mockito.Mockito.when, java.util.Collections, java.util.List, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.repositories.system.MerchantConfigurationRepository, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.system.MerchantConfig, com.salesmanager.core.model.system.MerchantConfiguration, com.salesmanager.core.model.system.MerchantConfigurationType
+class MerchantConfigurationServiceImplTest
+  void setUp()
+  void getMerchantConfiguration_delegatesToRepository()
+  void listByStore_delegatesToRepository()
+  void listByType_delegatesToRepository()
+  void saveOrUpdate_newEntity_creates()
+  void saveOrUpdate_existingEntity_updates()
+  void delete_whenFound_removesEntity()
+  void delete_whenMissing_skipsDelete()
+  void getMerchantConfig_parsesJsonValue()
+  void getMerchantConfig_invalidJson_throwsServiceException()
+  void saveMerchantConfig_createsWhenMissing()
+  void saveMerchantConfig_updatesExisting()
+  MerchantStore store(int id)
+  MerchantConfiguration config(Long id, String key)
+
+# sm-merchant-core/src/test/java/com/salesmanager/core/business/services/system/MerchantLogServiceImplTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertNotNull, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.core.business.repositories.system.MerchantLogRepository
+class MerchantLogServiceImplTest
+  void constructsWithRepository()
 
 # sm-reference-core/src/main/java/com/salesmanager/core/business/constants/Constants.java [java]
 imports: java.nio.charset.Charset, java.nio.charset.StandardCharsets, java.util.Currency, java.util.Locale
