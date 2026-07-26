@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-26 20:16 | 1704 files | 268408 tokens
+# rtt index | generated 2026-07-26 20:17 | 1705 files | 268562 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -8327,6 +8327,14 @@ class OrderSnapshotBuilderTest
   void fromMapsStatusTotalsAndLineSkuQuantity()
   void fromNullOrderReturnsNull()
   Order sampleOrder()
+
+# sm-core/src/test/java/com/salesmanager/core/business/services/checkout/outbox/CheckoutOutboxDispatcherTest.java [java]
+imports: org.mockito.Mockito.doThrow, org.mockito.Mockito.inOrder, org.mockito.Mockito.verify, org.mockito.Mockito.when, java.util.Arrays, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.InOrder, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.core.model.checkout.outbox.CheckoutOutboxEvent
+class CheckoutOutboxDispatcherTest
+  void setUp()
+  void dispatchPendingEvents_fetchesBatchAndMarksEachProcessed()
+  void dispatchPendingEvents_continuesWhenOneEventFails()
+  CheckoutOutboxEvent event(Long id)
 
 # sm-core/src/test/java/com/salesmanager/core/business/services/checkout/outbox/CheckoutOutboxIntegrationTest.java [java]
 imports: org.assertj.core.api.Assertions.assertThat, java.util.Date, java.util.List, javax.persistence.EntityManager, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.autoconfigure.domain.EntityScan, org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest, org.springframework.context.annotation.Import, org.springframework.data.jpa.repository.config.EnableJpaRepositories, org.springframework.test.context.ContextConfiguration, org.springframework.test.context.TestPropertySource, com.salesmanager.core.business.repositories.checkout.CheckoutOutboxJpaRepository, com.salesmanager.core.model.checkout.outbox.CheckoutOutboxEvent
