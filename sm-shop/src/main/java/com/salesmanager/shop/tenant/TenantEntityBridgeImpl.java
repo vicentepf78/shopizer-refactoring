@@ -33,7 +33,11 @@ public class TenantEntityBridgeImpl implements TenantEntityBridge {
 	@Override
 	public MerchantStore resolveStore(MerchantStoreId storeId) throws ConversionException {
 		try {
-			return merchantStoreService.getByCode(storeId.getCode());
+			MerchantStore store = merchantStoreService.getByCode(storeId.getCode());
+			if (store == null) {
+				throw new ConversionException("Unknown store: " + storeId.getCode());
+			}
+			return store;
 		} catch (ServiceException e) {
 			throw new ConversionException(e);
 		}
@@ -42,7 +46,11 @@ public class TenantEntityBridgeImpl implements TenantEntityBridge {
 	@Override
 	public Language resolveLanguage(LanguageCode languageCode) throws ConversionException {
 		try {
-			return languageService.getByCode(languageCode.getCode());
+			Language language = languageService.getByCode(languageCode.getCode());
+			if (language == null) {
+				throw new ConversionException("Unknown language: " + languageCode.getCode());
+			}
+			return language;
 		} catch (ServiceException e) {
 			throw new ConversionException(e);
 		}
