@@ -34,6 +34,7 @@
 		<module>shopizer-api-contracts</module>
 		<module>reference-service</module>
 		<module>tax-service</module>
+		<module>content-service</module>
 		<module>search-service</module>
 		<module>sm-shop-model</module>
 		<module>sm-shop</module>

@@ -1,10 +1,505 @@
-# rtt index | generated 2026-07-26 11:13 | 1455 files | 222790 tokens
+# rtt index | generated 2026-07-26 11:49 | 1501 files | 231121 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
 class MavenWrapperDownloader
   void main(String args[])
   void downloadFileFromURL(String urlString, File destination)
+
+# content-service/src/main/java/com/salesmanager/content/ContentServiceApplication.java [java]
+imports: org.springframework.boot.SpringApplication, org.springframework.boot.autoconfigure.SpringBootApplication, org.springframework.context.annotation.ImportResource
+class ContentServiceApplication
+  void main(String[] args)
+
+# content-service/src/main/java/com/salesmanager/content/api/internal/InternalLogoController.java [java]
+imports: org.springframework.http.HttpStatus, org.springframework.http.ResponseEntity, org.springframework.web.bind.annotation.DeleteMapping, org.springframework.web.bind.annotation.PostMapping, org.springframework.web.bind.annotation.RequestBody, org.springframework.web.bind.annotation.RequestMapping, org.springframework.web.bind.annotation.RequestParam, org.springframework.web.bind.annotation.RestController, com.salesmanager.content.facade.content.ContentFacade
+class InternalLogoController
+  ResponseEntity<Void> uploadLogo(@RequestBody LogoUploadRequest request)
+  ResponseEntity<Void> deleteLogo(
+			@RequestParam String storeCode,
+			@RequestParam String fileName)
+  class LogoUploadRequest
+
+# content-service/src/main/java/com/salesmanager/content/api/internal/StaticFilesInternalController.java [java]
+imports: org.springframework.http.HttpHeaders, org.springframework.http.MediaType, org.springframework.http.ResponseEntity, org.springframework.web.bind.annotation.GetMapping, org.springframework.web.bind.annotation.PathVariable, org.springframework.web.bind.annotation.RequestMapping, org.springframework.web.bind.annotation.RestController, com.salesmanager.content.facade.content.ContentFacade, com.salesmanager.core.model.content.FileContentType
+class StaticFilesInternalController
+  ResponseEntity<byte[]> getStaticFile(
+			@PathVariable String storeCode,
+			@PathVariable String imageType,
+			@PathVariable String fileName)
+
+# content-service/src/main/java/com/salesmanager/content/api/v1/content/ContentAdministrationApi.java [java]
+imports: java.io.IOException, java.io.Serializable, java.io.UnsupportedEncodingException, java.net.URLDecoder, java.util.List, java.util.UUID, java.util.stream.Collectors, javax.inject.Inject, org.apache.commons.io.FilenameUtils, org.apache.commons.lang3.StringUtils, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.beans.factory.annotation.Autowired, org.springframework.http.HttpStatus, org.springframework.http.MediaType, org.springframework.web.bind.annotation.CrossOrigin, org.springframework.web.bind.annotation.DeleteMapping, org.springframework.web.bind.annotation.GetMapping, org.springframework.web.bind.annotation.PostMapping, org.springframework.web.bind.annotation.RequestMapping, org.springframework.web.bind.annotation.RequestParam, org.springframework.web.bind.annotation.ResponseBody, org.springframework.web.bind.annotation.ResponseStatus, org.springframework.web.bind.annotation.RestController, org.springframework.web.multipart.MultipartFile, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.contracts.content.Content, com.salesmanager.contracts.content.ContentFile
+class ContentAdministrationApi
+  List<ImageFile> list(@RequestParam(value = "parentPath", required = false) String path,
+			MerchantStore merchantStore, Language language)
+  ContentFolder folder(
+			@RequestParam(value = "path", required = false) String path,
+			MerchantStore merchantStore, 
+			Language language)
+  FileStatus upload(
+			@RequestParam(value = "qqfile", required = true) MultipartFile qqfile,
+			@RequestParam(value = "qquuid", required = true) String qquuid,
+			@RequestParam(value = "qqfilename", required = true) String qqfilename,
+			@RequestParam(value = "qqtotalfilesize", required = false) Long qqtotalfilesize,
+			@RequestParam(value = "parentPath", required = false) String parentPath,
+			@RequestParam(value = "qqpartindex", required = false) Integer qqpartindex,
+			@RequestParam(value = "qqtotalparts", required = false) Integer qqtotalparts,
+			MerchantStore merchantStore, 
+			Language language)
+  String download(
+			@RequestParam(value = "path", required = true) String path,
+			MerchantStore merchantStore, 
+			Language language)
+  FileStatus rename(
+			@RequestParam(value = "path", required = true) String path,
+			@RequestParam(value = "newName", required = true) String newName,
+			MerchantStore merchantStore, 
+			Language language)
+  FileStatus remove(
+			@RequestParam(value = "path", required = true) String path,
+			MerchantStore merchantStore, 
+			Language language)
+  ImageFile convertToImageFile(MerchantStore store, Content content)
+  ImageFile convertToFolder(String folder)
+  String decodeContentPath(String path)
+  class FileStatus
+  class ImageFile
+
+# content-service/src/main/java/com/salesmanager/content/api/v1/content/ContentApi.java [java]
+imports: java.io.IOException, java.util.List, java.util.Optional, javax.inject.Inject, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, javax.validation.Valid, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.http.HttpStatus, org.springframework.http.MediaType, org.springframework.web.bind.annotation.DeleteMapping, org.springframework.web.bind.annotation.GetMapping, org.springframework.web.bind.annotation.PathVariable, org.springframework.web.bind.annotation.PostMapping, org.springframework.web.bind.annotation.PutMapping, org.springframework.web.bind.annotation.RequestBody, org.springframework.web.bind.annotation.RequestMapping, org.springframework.web.bind.annotation.RequestParam, org.springframework.web.bind.annotation.ResponseStatus, org.springframework.web.bind.annotation.RestController, org.springframework.web.multipart.MultipartFile, com.salesmanager.core.model.content.ContentType, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.contracts.content.ContentFile, com.salesmanager.contracts.content.ContentFolder, com.salesmanager.contracts.content.ContentName, com.salesmanager.contracts.content.PersistableContentEntity, com.salesmanager.contracts.content.ReadableContentEntity
+class ContentApi
+  ReadableEntityList<ReadableContentPage> pages(
+			MerchantStore merchantStore,
+			Language language,
+			int page,
+			int count)
+  List<ReadableContentBox> pagesSummary(
+			MerchantStore merchantStore, 
+			Language language)
+  ReadableEntityList<ReadableContentBox> boxes(
+			MerchantStore merchantStore,
+			Language language,
+			int page,
+			int count
+			)
+  ReadableContentPage page(@PathVariable("code") String code, MerchantStore merchantStore,
+			Language language)
+  ReadableContentPage pageByName(@PathVariable("name") String name, MerchantStore merchantStore,
+			Language language)
+  Entity createBox(
+			@RequestBody @Valid PersistableContentBox box, 
+			MerchantStore merchantStore,
+			Language language)
+  EntityExists boxExists(
+			@PathVariable String code, 
+			MerchantStore merchantStore,
+			Language language)
+  EntityExists pageExists(
+			@PathVariable String code, 
+			MerchantStore merchantStore,
+			Language language)
+  Entity createPage(
+			@RequestBody @Valid PersistableContentPage page, 
+			MerchantStore merchantStore,
+			Language language)
+  void deletePage(
+			@PathVariable Long id,
+			MerchantStore merchantStore,
+			Language language)
+  void deleteBox(
+			@PathVariable Long id,
+			MerchantStore merchantStore,
+			Language language)
+  void updatePage(
+			@RequestBody @Valid PersistableContentPage page,
+			@PathVariable Long id,
+			MerchantStore merchantStore,
+			Language language)
+  void updateBox(
+			@RequestBody @Valid PersistableContentBox box,
+			@PathVariable Long id,
+			MerchantStore merchantStore,
+			Language language)
+  ReadableContentFull content(@PathVariable("code") String code, MerchantStore merchantStore,
+			Language language)
+  List<ReadableContentEntity> contents(MerchantStore merchantStore, Language language)
+  ReadableContentBox manageBoxByCode(@PathVariable("code") String code, MerchantStore merchantStore,
+			Language language)
+  ReadableContentBox getBoxByCode(@PathVariable("code") String code, MerchantStore merchantStore,
+			Language language)
+  void addFolder(@RequestParam String parent, @RequestParam String folder,
+			MerchantStore merchantStore, Language language)
+  ContentFolder images(MerchantStore merchantStore, Language language,
+			@RequestParam(value = "path", required = false) String path, HttpServletRequest request,
+			HttpServletResponse response)
+  void upload(@RequestParam("file") MultipartFile file, MerchantStore merchantStore,
+			Language language)
+  void uploadMultipleFiles(@RequestParam(value = "file[]", required = true) MultipartFile[] files,
+			MerchantStore merchantStore, Language language)
+  void updatePage(@PathVariable Long id, @RequestBody @Valid PersistableContentEntity page,
+			MerchantStore merchantStore, Language language)
+  void deleteContent(Long id, MerchantStore merchantStore)
+  void deleteFile(@Valid ContentName name, MerchantStore merchantStore,
+			Language language)
+
+# content-service/src/main/java/com/salesmanager/content/client/ReferenceServiceClientImpl.java [java]
+imports: java.util.Collections, java.util.List, org.apache.commons.lang3.StringUtils, org.springframework.beans.factory.annotation.Value, org.springframework.core.ParameterizedTypeReference, org.springframework.http.HttpMethod, org.springframework.http.ResponseEntity, org.springframework.stereotype.Component, org.springframework.web.client.RestClientException, org.springframework.web.client.RestTemplate, org.springframework.web.util.UriComponentsBuilder, com.salesmanager.contracts.client.ReferenceServiceClient, com.salesmanager.contracts.reference.ReadableCountry, com.salesmanager.contracts.reference.ReadableLanguage, com.salesmanager.contracts.reference.ReadableZone, com.salesmanager.content.support.ReferenceUnavailableException
+class ReferenceServiceClientImpl
+  ReadableCountry getCountryByCode(String isoCode, String langCode)
+  ReadableZone getZoneByCode(String countryCode, String zoneCode, String langCode)
+  ReadableLanguage getLanguageByCode(String code)
+  List<ReadableCountry> getCountries(String langCode)
+  List<ReadableZone> getZones(String countryCode, String langCode)
+  List<ReadableLanguage> getLanguages()
+  List<T> exchangeList(String url, ParameterizedTypeReference<List<T>> type)
+
+# content-service/src/main/java/com/salesmanager/content/config/CacheConfig.java [java]
+imports: org.springframework.cache.Cache, org.springframework.cache.ehcache.EhCacheCacheManager, org.springframework.cache.ehcache.EhCacheManagerFactoryBean, org.springframework.context.annotation.Bean, org.springframework.context.annotation.Configuration, org.springframework.core.io.ClassPathResource
+class CacheConfig
+  EhCacheManagerFactoryBean springCacheManager()
+  EhCacheCacheManager cacheManager(net.sf.ehcache.CacheManager springCacheManager)
+  Cache serviceCache(EhCacheCacheManager cacheManager)
+
+# content-service/src/main/java/com/salesmanager/content/config/ContentCoreConfig.java [java]
+imports: org.springframework.boot.autoconfigure.domain.EntityScan, org.springframework.cache.annotation.EnableCaching, org.springframework.context.annotation.ComponentScan, org.springframework.context.annotation.Configuration, org.springframework.data.jpa.repository.config.EnableJpaRepositories
+class ContentCoreConfig
+
+# content-service/src/main/java/com/salesmanager/content/config/RestClientConfig.java [java]
+imports: java.time.Duration, java.util.UUID, javax.servlet.http.HttpServletRequest, org.springframework.beans.factory.annotation.Value, org.springframework.boot.web.client.RestTemplateBuilder, org.springframework.context.annotation.Bean, org.springframework.context.annotation.Configuration, org.springframework.http.client.ClientHttpRequestInterceptor, org.springframework.util.StringUtils, org.springframework.web.client.RestTemplate, org.springframework.web.context.request.RequestAttributes, org.springframework.web.context.request.RequestContextHolder, org.springframework.web.context.request.ServletRequestAttributes, com.salesmanager.content.web.CorrelationIdFilter
+class RestClientConfig
+  RestTemplate referenceRestTemplate(
+			RestTemplateBuilder builder,
+			@Value("${wave1.http.client.timeout-ms:5000}") long timeoutMs)
+  ClientHttpRequestInterceptor correlationInterceptor()
+  String resolveCorrelationId()
+
+# content-service/src/main/java/com/salesmanager/content/config/WebMvcConfig.java [java]
+imports: java.util.List, org.springframework.context.annotation.Configuration, org.springframework.web.method.support.HandlerMethodArgumentResolver, org.springframework.web.servlet.config.annotation.WebMvcConfigurer, com.salesmanager.content.web.LanguageArgumentResolver, com.salesmanager.content.web.MerchantStoreArgumentResolver
+class WebMvcConfig
+  void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers)
+
+# content-service/src/main/java/com/salesmanager/content/facade/content/ContentFacade.java [java]
+imports: java.util.List, java.util.Optional, com.salesmanager.contracts.content.ContentFile, com.salesmanager.contracts.content.ContentFolder, com.salesmanager.contracts.content.ReadableContentEntity, com.salesmanager.contracts.content.ReadableContentFull, com.salesmanager.contracts.content.box.PersistableContentBox, com.salesmanager.contracts.content.box.ReadableContentBox, com.salesmanager.contracts.content.page.PersistableContentPage, com.salesmanager.contracts.content.page.ReadableContentPage, com.salesmanager.contracts.common.ReadableEntityList, com.salesmanager.core.model.content.ContentType, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.content.OutputContentFile, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language
+interface ContentFacade
+
+# content-service/src/main/java/com/salesmanager/content/facade/content/ContentFacadeImpl.java [java]
+imports: java.io.ByteArrayInputStream, java.io.IOException, java.io.InputStream, java.net.URLEncoder, java.util.ArrayList, java.util.List, java.util.Optional, java.util.stream.Collectors, javax.inject.Inject, org.apache.commons.lang3.StringUtils, org.jsoup.helper.Validate, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.beans.factory.annotation.Qualifier, org.springframework.data.domain.Page, org.springframework.stereotype.Component, org.springframework.util.CollectionUtils, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.content.ContentService, com.salesmanager.core.business.services.reference.language.LanguageService, com.salesmanager.core.model.content.Content, com.salesmanager.core.model.content.ContentDescription, com.salesmanager.core.model.content.ContentType, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.content.InputContentFile, com.salesmanager.core.model.content.OutputContentFile, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.contracts.content.ContentDescriptionEntity, com.salesmanager.contracts.content.ContentFile
+class ContentFacadeImpl
+  ContentFolder getContentFolder(String folder, MerchantStore store)
+  ContentImage convertToContentImage(String name, MerchantStore store)
+  String absolutePath(MerchantStore store, String file)
+  void delete(MerchantStore store, String fileName, String fileType)
+  ReadableEntityList<ReadableContentPage> getContentPages(MerchantStore store, Language language, int page,
+			int count)
+  ReadableContentPage contentDescriptionToReadableContent(MerchantStore store, Content content,
+			ContentDescription contentDescription)
+  ReadableContentFull convertContentToReadableContentFull(MerchantStore store, Language language,
+			Content content)
+  ReadableContentEntity convertContentToReadableContentEntity(MerchantStore store, Language language,
+			Content content)
+  Content convertContentPageToContent(MerchantStore store, Content model, PersistableContentPage content)
+  Content convertContentBoxToContent(MerchantStore store, Content model, PersistableContentBox content)
+  List<ContentDescriptionEntity> createContentDescriptionEntitys(MerchantStore store, Content contentModel,
+			Language language)
+  ContentDescriptionEntity create(ContentDescription description)
+  List<ContentDescription> buildDescriptions(Content contentModel,
+			List<com.salesmanager.contracts.content.common.ContentDescription> persistableDescriptions)
+  ReadableContentPage getContentPage(String code, MerchantStore store, Language language)
+  ReadableEntityList<ReadableContentBox> getContentBoxes(ContentType type, String codePrefix,
+			MerchantStore store, Language language, int page, int count)
+  ReadableEntityList<ReadableContentBox> getContentBoxes(ContentType type, MerchantStore store,
+			Language language, int page, int count)
+  void addContentFile(ContentFile file, String merchantStoreCode)
+  FileContentType getFileContentType(String type)
+  ReadableContentBox convertContentToReadableContentBox(MerchantStore store, Language language,
+			Content content)
+  void setDescription(Content content, ReadableContentBox box, Language lang)
+  ReadableContentPage convertContentToReadableContentPage(MerchantStore store, Language language,
+			Content content)
+  com.salesmanager.contracts.content.common.ContentDescription contentDescription(
+			ContentDescription description)
+  Optional<ContentDescription> findAppropriateContentDescription(List<ContentDescription> contentDescriptions,
+			Language language)
+  ReadableContentBox getContentBox(String code, MerchantStore store, Language language)
+  String fixContentDescription(String description)
+  Long saveContentPage(PersistableContentPage page, MerchantStore merchantStore, Language language)
+  Long saveContentBox(PersistableContentBox box, MerchantStore merchantStore, Language language)
+  void addContentFiles(List<ContentFile> files, String merchantStoreCode)
+  void delete(MerchantStore store, Long id)
+  ReadableContentFull getContent(String code, MerchantStore store, Language language)
+  List<ReadableContentEntity> getContents(Optional<String> type, MerchantStore store, Language language)
+  ReadableContentPage getContentPageByName(String name, MerchantStore store, Language language)
+  void renameFile(MerchantStore store, FileContentType fileType, String originalName, String newName)
+  OutputContentFile download(MerchantStore store, FileContentType fileType, String fileName)
+  void updateContentPage(Long id, PersistableContentPage page, MerchantStore merchantStore,
+			Language language)
+  void deleteContent(Long id, MerchantStore merchantStore)
+  void updateContentBox(Long id, PersistableContentBox box, MerchantStore merchantStore, Language language)
+  boolean codeExist(String code, String type, MerchantStore store)
+  byte[] getStaticFile(String storeCode, FileContentType fileType, String fileName)
+  void uploadLogo(String storeCode, String fileName, byte[] content, String contentType)
+  void deleteLogo(String storeCode, String fileName)
+
+# content-service/src/main/java/com/salesmanager/content/health/ContentHealthIndicator.java [java]
+imports: java.io.IOException, java.nio.file.Files, java.nio.file.Path, java.nio.file.Paths, java.sql.Connection, javax.sql.DataSource, org.apache.commons.lang3.StringUtils, org.springframework.beans.factory.annotation.Value, org.springframework.boot.actuate.health.Health, org.springframework.boot.actuate.health.HealthIndicator, org.springframework.http.ResponseEntity, org.springframework.stereotype.Component, org.springframework.web.client.RestClientException, org.springframework.web.client.RestTemplate
+class ContentHealthIndicator
+  Health health()
+  boolean checkDatabase(Health.Builder builder)
+  boolean checkCms(Health.Builder builder)
+  boolean checkReference(Health.Builder builder)
+
+# content-service/src/main/java/com/salesmanager/content/security/AdminUserRepository.java [java]
+imports: org.springframework.data.jpa.repository.JpaRepository, org.springframework.data.jpa.repository.Query, com.salesmanager.core.model.user.User
+interface AdminUserRepository
+
+# content-service/src/main/java/com/salesmanager/content/security/AuthenticationTokenFilter.java [java]
+imports: java.io.IOException, javax.servlet.FilterChain, javax.servlet.ServletException, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, org.apache.commons.lang3.StringUtils, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.beans.factory.annotation.Value, org.springframework.security.authentication.UsernamePasswordAuthenticationToken, org.springframework.security.core.context.SecurityContextHolder, org.springframework.security.core.userdetails.UserDetails, org.springframework.security.core.userdetails.UserDetailsService, org.springframework.security.web.authentication.WebAuthenticationDetailsSource, org.springframework.stereotype.Component, org.springframework.web.filter.OncePerRequestFilter, io.jsonwebtoken.ExpiredJwtException
+class AuthenticationTokenFilter
+  void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+
+# content-service/src/main/java/com/salesmanager/content/security/ContentSecurityConfig.java [java]
+imports: org.springframework.context.annotation.Bean, org.springframework.context.annotation.Configuration, org.springframework.core.annotation.Order, org.springframework.http.HttpMethod, org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder, org.springframework.security.config.annotation.web.builders.HttpSecurity, org.springframework.security.config.annotation.web.configuration.EnableWebSecurity, org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter, org.springframework.security.config.http.SessionCreationPolicy, org.springframework.security.core.userdetails.UserDetailsService, org.springframework.security.web.AuthenticationEntryPoint, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter, org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint
+class ContentSecurityConfig
+  class PrivateApiSecurity
+  class PublicAndActuatorSecurity
+
+# content-service/src/main/java/com/salesmanager/content/security/JWTAdminDetailsService.java [java]
+imports: java.util.ArrayList, java.util.Collection, java.util.List, org.springframework.security.core.GrantedAuthority, org.springframework.security.core.authority.SimpleGrantedAuthority, org.springframework.security.core.userdetails.UserDetails, org.springframework.security.core.userdetails.UserDetailsService, org.springframework.security.core.userdetails.UsernameNotFoundException, org.springframework.stereotype.Service, com.salesmanager.core.model.user.Group, com.salesmanager.core.model.user.User
+class JWTAdminDetailsService
+  UserDetails loadUserByUsername(String userName)
+
+# content-service/src/main/java/com/salesmanager/content/security/JWTTokenUtil.java [java]
+imports: java.io.Serializable, java.util.Date, java.util.HashMap, java.util.Map, java.util.function.Function, org.springframework.beans.factory.annotation.Value, org.springframework.security.core.userdetails.UserDetails, org.springframework.stereotype.Component, io.jsonwebtoken.Claims, io.jsonwebtoken.Jwts, io.jsonwebtoken.SignatureAlgorithm
+class JWTTokenUtil
+  String getUsernameFromToken(String token)
+  Date getIssuedAtDateFromToken(String token)
+  Date getExpirationDateFromToken(String token)
+  T getClaimFromToken(String token, Function<Claims, T> claimsResolver)
+  Claims getAllClaimsFromToken(String token)
+  Boolean isTokenExpired(String token)
+  Boolean isCreatedBeforeLastPasswordReset(Date created, Date lastPasswordReset)
+  String generateToken(UserDetails userDetails)
+  String generateToken(String username)
+  String doGenerateToken(Map<String, Object> claims, String subject)
+  Boolean validateToken(String token, UserDetails userDetails)
+
+# content-service/src/main/java/com/salesmanager/content/security/JWTUser.java [java]
+imports: java.util.Collection, java.util.Date, org.springframework.security.core.GrantedAuthority, org.springframework.security.core.userdetails.UserDetails, com.fasterxml.jackson.annotation.JsonIgnore
+class JWTUser
+  Long getId()
+  String getStoreCode()
+  String getUsername()
+  boolean isAccountNonExpired()
+  boolean isAccountNonLocked()
+  boolean isCredentialsNonExpired()
+  String getFirstname()
+  String getLastname()
+  String getEmail()
+  String getPassword()
+  Collection<? extends GrantedAuthority> getAuthorities()
+  boolean isEnabled()
+  Date getLastPasswordResetDate()
+
+# content-service/src/main/java/com/salesmanager/content/security/MerchantStoreRepository.java [java]
+imports: org.springframework.data.jpa.repository.JpaRepository, org.springframework.data.jpa.repository.Query, com.salesmanager.core.model.merchant.MerchantStore
+interface MerchantStoreRepository
+
+# content-service/src/main/java/com/salesmanager/content/security/StoreAuthorizationService.java [java]
+imports: org.springframework.security.core.Authentication, org.springframework.security.core.GrantedAuthority, org.springframework.security.core.context.SecurityContextHolder, org.springframework.stereotype.Service, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.content.support.ResourceNotFoundException, com.salesmanager.content.support.StoreForbiddenException
+class StoreAuthorizationService
+  void authorize(MerchantStore store, String requestUri)
+
+# content-service/src/main/java/com/salesmanager/content/support/ConstraintException.java [java]
+class ConstraintException
+  String getErrorCode()
+
+# content-service/src/main/java/com/salesmanager/content/support/OperationNotAllowedException.java [java]
+class OperationNotAllowedException
+
+# content-service/src/main/java/com/salesmanager/content/support/ReferenceUnavailableException.java [java]
+class ReferenceUnavailableException
+  String getErrorCode()
+
+# content-service/src/main/java/com/salesmanager/content/support/ResourceNotFoundException.java [java]
+imports: org.springframework.http.HttpStatus, org.springframework.web.bind.annotation.ResponseStatus
+class ResourceNotFoundException
+
+# content-service/src/main/java/com/salesmanager/content/support/RestErrorHandler.java [java]
+imports: java.util.HashMap, java.util.Map, java.util.UUID, javax.servlet.http.HttpServletRequest, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.http.HttpStatus, org.springframework.web.bind.annotation.ExceptionHandler, org.springframework.web.bind.annotation.ResponseBody, org.springframework.web.bind.annotation.ResponseStatus, org.springframework.web.bind.annotation.RestControllerAdvice, org.springframework.web.client.RestClientException, org.springframework.web.context.request.RequestContextHolder, org.springframework.web.context.request.ServletRequestAttributes
+class RestErrorHandler
+  Map<String, Object> handleReferenceUnavailable(ReferenceUnavailableException ex)
+  Map<String, Object> handleRestClient(RestClientException ex)
+  Map<String, String> handleNotFound(ResourceNotFoundException ex)
+  Map<String, String> handleConstraint(ConstraintException ex)
+  Map<String, String> handleForbidden(StoreForbiddenException ex)
+  Map<String, String> handleBadRequest(ServiceRuntimeException ex)
+  Map<String, String> handleService(ServiceRuntimeException ex)
+  Map<String, String> error(String code, String message)
+  String correlationId()
+
+# content-service/src/main/java/com/salesmanager/content/support/ServiceRuntimeException.java [java]
+class ServiceRuntimeException
+  String getErrorCode()
+  String getErrorMessage()
+
+# content-service/src/main/java/com/salesmanager/content/support/StoreForbiddenException.java [java]
+class StoreForbiddenException
+
+# content-service/src/main/java/com/salesmanager/content/support/ValidationException.java [java]
+class ValidationException
+
+# content-service/src/main/java/com/salesmanager/content/util/ContentFilePathUtils.java [java]
+imports: org.apache.commons.lang3.StringUtils, org.springframework.stereotype.Component
+class ContentFilePathUtils
+  String buildStaticFilePath(String storeCode, String fileName)
+
+# content-service/src/main/java/com/salesmanager/content/util/ContentImagePath.java [java]
+imports: org.apache.commons.lang3.StringUtils, org.springframework.beans.factory.annotation.Value, org.springframework.stereotype.Component, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.merchant.MerchantStore
+class ContentImagePath
+  String getContextPath()
+  String buildStaticImageUtils(MerchantStore store, String imageName)
+  String buildStaticImageUtils(MerchantStore store, String type, String imageName)
+
+# content-service/src/main/java/com/salesmanager/content/util/FileNameUtils.java [java]
+imports: org.apache.commons.io.FilenameUtils, org.apache.commons.lang3.StringUtils, org.springframework.stereotype.Component
+class FileNameUtils
+  boolean validFileName(String fileName)
+
+# content-service/src/main/java/com/salesmanager/content/web/CorrelationIdFilter.java [java]
+imports: java.io.IOException, java.util.Collections, java.util.Enumeration, java.util.UUID, javax.servlet.FilterChain, javax.servlet.ServletException, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletRequestWrapper, javax.servlet.http.HttpServletResponse, org.slf4j.Logger, org.slf4j.LoggerFactory, org.slf4j.MDC, org.springframework.core.Ordered, org.springframework.core.annotation.Order, org.springframework.stereotype.Component, org.springframework.util.StringUtils, org.springframework.web.filter.OncePerRequestFilter
+class CorrelationIdFilter
+  void doFilterInternal(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			FilterChain filterChain)
+  class CorrelationHeaderRequest
+
+# content-service/src/main/java/com/salesmanager/content/web/LanguageArgumentResolver.java [java]
+imports: java.util.Optional, org.apache.commons.lang3.StringUtils, org.springframework.core.MethodParameter, org.springframework.stereotype.Component, org.springframework.web.bind.support.WebDataBinderFactory, org.springframework.web.context.request.NativeWebRequest, org.springframework.web.method.support.HandlerMethodArgumentResolver, org.springframework.web.method.support.ModelAndViewContainer, com.salesmanager.core.business.services.reference.language.LanguageService, com.salesmanager.core.model.reference.language.Language, com.salesmanager.content.support.ServiceRuntimeException
+class LanguageArgumentResolver
+  boolean supportsParameter(MethodParameter parameter)
+  Object resolveArgument(
+			MethodParameter parameter,
+			ModelAndViewContainer mavContainer,
+			NativeWebRequest webRequest,
+			WebDataBinderFactory binderFactory)
+
+# content-service/src/main/java/com/salesmanager/content/web/MerchantStoreArgumentResolver.java [java]
+imports: java.util.Optional, javax.servlet.http.HttpServletRequest, org.apache.commons.lang3.StringUtils, org.springframework.core.MethodParameter, org.springframework.stereotype.Component, org.springframework.web.bind.support.WebDataBinderFactory, org.springframework.web.context.request.NativeWebRequest, org.springframework.web.method.support.HandlerMethodArgumentResolver, org.springframework.web.method.support.ModelAndViewContainer, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.content.security.MerchantStoreRepository, com.salesmanager.content.security.StoreAuthorizationService, com.salesmanager.content.support.ResourceNotFoundException
+class MerchantStoreArgumentResolver
+  boolean supportsParameter(MethodParameter parameter)
+  Object resolveArgument(
+			MethodParameter parameter,
+			ModelAndViewContainer mavContainer,
+			NativeWebRequest webRequest,
+			WebDataBinderFactory binderFactory)
+
+# content-service/src/test/java/com/salesmanager/content/ContentServiceApplicationTest.java [java]
+imports: org.junit.jupiter.api.Test, org.springframework.boot.test.context.SpringBootTest, org.springframework.boot.test.mock.mockito.MockBean, org.springframework.test.context.ActiveProfiles, com.salesmanager.contracts.client.ReferenceServiceClient
+class ContentServiceApplicationTest
+  void contextLoads()
+
+# content-service/src/test/java/com/salesmanager/content/api/internal/InternalContentApiIntegrationTest.java [java]
+imports: org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete, org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get, org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post, org.springframework.test.web.servlet.result.MockMvcResultMatchers.header, org.springframework.test.web.servlet.result.MockMvcResultMatchers.status, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc, org.springframework.boot.test.context.SpringBootTest, org.springframework.boot.test.mock.mockito.MockBean, org.springframework.context.annotation.Import, org.springframework.http.MediaType, org.springframework.mock.web.MockMultipartFile, org.springframework.test.context.ActiveProfiles, org.springframework.test.web.servlet.MockMvc, org.springframework.test.web.servlet.request.MockMvcRequestBuilders, com.fasterxml.jackson.databind.ObjectMapper, com.salesmanager.contracts.client.ReferenceServiceClient, com.salesmanager.content.api.internal.InternalLogoController.LogoUploadRequest, com.salesmanager.content.security.JWTTokenUtil, com.salesmanager.content.support.TestDataFactory
+class InternalContentApiIntegrationTest
+  void setUp()
+  void staticGet_returnsBytesAndContentType()
+  void logoPostAndDelete_work()
+
+# content-service/src/test/java/com/salesmanager/content/api/v1/ContentAdminIntegrationTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get, org.springframework.test.web.servlet.result.MockMvcResultMatchers.status, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc, org.springframework.boot.test.context.SpringBootTest, org.springframework.boot.test.mock.mockito.MockBean, org.springframework.context.annotation.Import, org.springframework.test.context.ActiveProfiles, org.springframework.test.web.servlet.MockMvc, org.springframework.test.web.servlet.MvcResult, org.springframework.mock.web.MockMultipartFile, org.springframework.test.web.servlet.request.MockMvcRequestBuilders, com.salesmanager.contracts.client.ReferenceServiceClient, com.salesmanager.content.security.JWTTokenUtil, com.salesmanager.content.support.TestDataFactory
+class ContentAdminIntegrationTest
+  void setUp()
+  void deprecatedDownloadStub_returnsNullBody()
+  void adminRenameAndRemove_roundTrip()
+  void contentSummaryStub_returnsNullJson()
+
+# content-service/src/test/java/com/salesmanager/content/api/v1/ContentBoxesIntegrationTest.java [java]
+imports: org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get, org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post, org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath, org.springframework.test.web.servlet.result.MockMvcResultMatchers.status, java.util.Collections, java.util.UUID, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc, org.springframework.boot.test.context.SpringBootTest, org.springframework.boot.test.mock.mockito.MockBean, org.springframework.context.annotation.Import, org.springframework.http.MediaType, org.springframework.test.context.ActiveProfiles, org.springframework.test.web.servlet.MockMvc, com.fasterxml.jackson.databind.ObjectMapper, com.salesmanager.contracts.client.ReferenceServiceClient, com.salesmanager.contracts.content.box.PersistableContentBox, com.salesmanager.contracts.content.common.ContentDescription, com.salesmanager.content.security.JWTTokenUtil, com.salesmanager.content.support.TestDataFactory
+class ContentBoxesIntegrationTest
+  void setUp()
+  void boxCrud_localizedByLang()
+
+# content-service/src/test/java/com/salesmanager/content/api/v1/ContentFilesIntegrationTest.java [java]
+imports: org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get, org.springframework.test.web.servlet.result.MockMvcResultMatchers.status, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc, org.springframework.boot.test.context.SpringBootTest, org.springframework.boot.test.mock.mockito.MockBean, org.springframework.context.annotation.Import, org.springframework.mock.web.MockMultipartFile, org.springframework.test.context.ActiveProfiles, org.springframework.test.web.servlet.MockMvc, org.springframework.test.web.servlet.request.MockMvcRequestBuilders, com.salesmanager.contracts.client.ReferenceServiceClient, com.salesmanager.content.security.JWTTokenUtil, com.salesmanager.content.support.TestDataFactory
+class ContentFilesIntegrationTest
+  void setUp()
+  void uploadImage_persistsAndListsInFolder()
+
+# content-service/src/test/java/com/salesmanager/content/api/v1/ContentPagesIntegrationTest.java [java]
+imports: org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete, org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get, org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post, org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put, org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath, org.springframework.test.web.servlet.result.MockMvcResultMatchers.status, java.util.Arrays, java.util.UUID, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc, org.springframework.boot.test.context.SpringBootTest, org.springframework.boot.test.mock.mockito.MockBean, org.springframework.context.annotation.Import, org.springframework.http.MediaType, org.springframework.mock.web.MockMultipartFile, org.springframework.test.context.ActiveProfiles, org.springframework.test.web.servlet.MockMvc, org.springframework.test.web.servlet.MvcResult, org.springframework.test.web.servlet.request.MockMvcRequestBuilders, com.fasterxml.jackson.databind.ObjectMapper, com.salesmanager.contracts.client.ReferenceServiceClient, com.salesmanager.contracts.content.common.ContentDescription, com.salesmanager.contracts.content.page.PersistableContentPage, com.salesmanager.content.security.JWTTokenUtil, com.salesmanager.content.support.TestDataFactory
+class ContentPagesIntegrationTest
+  void setUp()
+  void pageCrud_withTwoLanguages_returnsReadableDtos()
+  ContentDescription description(String lang, String name, String url)
+
+# content-service/src/test/java/com/salesmanager/content/client/ReferenceServiceClientFailureTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThatThrownBy, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.test.web.client.MockRestServiceServer, org.springframework.web.client.RestTemplate, com.salesmanager.content.support.ReferenceUnavailableException
+class ReferenceServiceClientFailureTest
+  void setUp()
+  void getLanguageByCode_whenReferenceDown_throwsReferenceUnavailable()
+
+# content-service/src/test/java/com/salesmanager/content/client/ReferenceServiceClientTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.springframework.test.web.client.match.MockRestRequestMatchers.method, org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo, org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.http.HttpMethod, org.springframework.http.MediaType, org.springframework.test.web.client.MockRestServiceServer, org.springframework.web.client.RestTemplate, com.salesmanager.contracts.reference.ReadableCountry, com.salesmanager.contracts.reference.ReadableLanguage, com.salesmanager.contracts.reference.ReadableZone
+class ReferenceServiceClientTest
+  void setUp()
+  void getCountryByCode_resolvesFromCountryList()
+  void getZoneByCode_resolvesFromZonesList()
+  void getLanguageByCode_resolvesFromLanguagesList()
+  void getCountryByCode_unknown_returnsNull()
+  void blankInputs_returnNullWithoutHttpCall()
+  void getCountryByCode_withoutLang_omitsLangQueryParam()
+  void getZoneByCode_withoutLang_omitsLangQueryParam()
+  void getLanguageByCode_unknown_returnsNull()
+
+# content-service/src/test/java/com/salesmanager/content/facade/ContentFacadeImplTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.assertj.core.api.Assertions.assertThatThrownBy, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.when, java.util.Arrays, java.util.Collections, java.util.Optional, java.util.UUID, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.test.context.SpringBootTest, org.springframework.boot.test.mock.mockito.MockBean, org.springframework.context.annotation.Import, org.springframework.test.context.ActiveProfiles, com.salesmanager.contracts.client.ReferenceServiceClient, com.salesmanager.contracts.content.ContentFile, com.salesmanager.contracts.content.box.PersistableContentBox, com.salesmanager.contracts.content.box.ReadableContentBox, com.salesmanager.contracts.content.common.ContentDescription, com.salesmanager.contracts.content.page.PersistableContentPage, com.salesmanager.contracts.content.page.ReadableContentPage, com.salesmanager.contracts.reference.ReadableLanguage, com.salesmanager.core.model.content.ContentType, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.content.facade.content.ContentFacade, com.salesmanager.content.support.ConstraintException, com.salesmanager.content.support.ResourceNotFoundException
+class ContentFacadeImplTest
+  void setUp()
+  void getContentPages_returnsContractDtos_notJpaEntities()
+  void referenceClientResolvesLanguageByCode()
+  void getContentBoxes_withCodePrefixStub_returnsNull()
+  void pageAndBoxCrud_roundTripContractDtos()
+  void fileAndLogoOperations_persistAndReadBack()
+  void updatePageAndLookupByName()
+  void deprecatedSurfaces_returnContractDtos()
+  void boxUpdateAndFileRename()
+  void multilingualReads_withoutRequestLanguage()
+  void deleteContentById_whenPresent()
+  void getStaticFile_whenMissing_throwsNotFound()
+  void addStaticFile_usesNonImageContentTypeBranch()
+  void codeExist_reflectsPersistence()
+  void deleteByStoreAndId_whenPresent()
+  void deleteByStoreAndId_whenWrongStore_throwsNotFound()
+  void saveDuplicatePage_throwsConstraint()
+  void saveDuplicateBox_throwsConstraint()
+  void updatePageWhenMissing_throwsConstraint()
+  void deleteContentWhenMissing_throwsConstraint()
+  void getContentFolder_withPath_encodesFolder()
+  void getContentPages_listsSavedPages()
+  void getContentBoxes_listsSavedBoxes()
+  ContentFile file(String name)
+  PersistableContentPage page(String code, String lang, String name)
+  PersistableContentBox box(String code, String name)
+  ContentDescription desc(String lang, String name, String url)
+
+# content-service/src/test/java/com/salesmanager/content/security/ContentSecurityIntegrationTest.java [java]
+imports: org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get, org.springframework.test.web.servlet.result.MockMvcResultMatchers.status, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc, org.springframework.boot.test.context.SpringBootTest, org.springframework.boot.test.mock.mockito.MockBean, org.springframework.context.annotation.Import, org.springframework.test.context.ActiveProfiles, org.springframework.test.web.servlet.MockMvc, com.salesmanager.contracts.client.ReferenceServiceClient, com.salesmanager.content.support.TestDataFactory
+class ContentSecurityIntegrationTest
+  void setUp()
+  void privateContentWithoutJwt_returns401()
+  void publicContentWithoutJwt_isOpen()
+
+# content-service/src/test/java/com/salesmanager/content/support/TestDataFactory.java [java]
+imports: java.util.Collections, javax.persistence.EntityManager, javax.persistence.PersistenceContext, org.springframework.stereotype.Component, org.springframework.transaction.annotation.Transactional, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.country.Country, com.salesmanager.core.model.reference.currency.Currency, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.reference.zone.Zone, com.salesmanager.core.model.user.Group, com.salesmanager.core.model.user.GroupType, com.salesmanager.core.model.user.User, com.salesmanager.content.security.AdminUserRepository
+class TestDataFactory
+  Seed ensureDefaultAdmin()
+  Seed seedDefaultAdmin(String username, String storeCode)
+  MerchantStore seedOtherStore(String storeCode, Seed seed)
+  Zone seedZone(String code, Country country)
+  Language ensureLanguage(String code)
+  class Seed
 
 # reference-service/src/main/java/com/salesmanager/reference/ReferenceServiceApplication.java [java]
 imports: org.springframework.boot.SpringApplication, org.springframework.boot.autoconfigure.SpringBootApplication
