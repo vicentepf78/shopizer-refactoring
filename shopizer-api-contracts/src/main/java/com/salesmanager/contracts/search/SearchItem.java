@@ -6,9 +6,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * Search result item returned by product search and autocomplete APIs.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SearchItem implements Serializable {
 
 	private static final long serialVersionUID = 1L;

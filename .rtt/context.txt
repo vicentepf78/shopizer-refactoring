@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-26 20:14 | 1704 files | 268371 tokens
+# rtt index | generated 2026-07-26 20:15 | 1704 files | 268392 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -2258,7 +2258,7 @@ class ProductIndexPayload
   void setAddToCart(Boolean addToCart)
 
 # shopizer-api-contracts/src/main/java/com/salesmanager/contracts/search/SearchItem.java [java]
-imports: java.io.Serializable, java.util.ArrayList, java.util.HashMap, java.util.List, java.util.Map
+imports: java.io.Serializable, java.util.ArrayList, java.util.HashMap, java.util.List, java.util.Map, com.fasterxml.jackson.annotation.JsonIgnoreProperties
 class SearchItem
   Long getId()
   void setId(Long id)
@@ -2471,6 +2471,7 @@ class SearchDtoJacksonTest
   void productIndexPayloadSerializesSchemaVersionDefaultOne()
   void valueListRoundTripsStringValues()
   void productIndexBulkPayloadRespectsMaxBatchConstant()
+  void searchItemIgnoresUnknownFieldsDuringDeserialization()
   void searchItemRoundTripsLegacyPactJsonShape()
 
 # shopizer-api-contracts/src/test/java/com/salesmanager/contracts/tax/TaxDtoJacksonTest.java [java]
