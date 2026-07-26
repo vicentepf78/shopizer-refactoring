@@ -82,13 +82,24 @@ class SearchServiceIntegrationTest {
 	@Test
 	void unsupportedSchemaVersionReturns422() throws Exception {
 		ProductIndexPayload payload = validPayload();
-		payload.setSchemaVersion(2);
+		payload.setSchemaVersion(3);
 		mockMvc.perform(post("/internal/v1/index")
 						.header(InternalTokenFilter.INTERNAL_TOKEN_HEADER, TOKEN)
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(payload)))
 				.andExpect(status().isUnprocessableEntity())
-				.andExpect(jsonPath("$.schemaVersion").value(2));
+				.andExpect(jsonPath("$.schemaVersion").value(3));
+	}
+
+	@Test
+	void schemaVersionTwoIndexWithTokenReturns204() throws Exception {
+		ProductIndexPayload payload = validPayload();
+		payload.setSchemaVersion(2);
+		mockMvc.perform(post("/internal/v1/index")
+						.header(InternalTokenFilter.INTERNAL_TOKEN_HEADER, TOKEN)
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString(payload)))
+				.andExpect(status().isNoContent());
 	}
 
 	@Test

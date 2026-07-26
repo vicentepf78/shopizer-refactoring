@@ -83,6 +83,11 @@ class SearchProviderPactTest {
 		doNothing().when(searchIndexService).index(any());
 	}
 
+	@State("index accepts schema version 2")
+	void indexAcceptsSchemaVersion2() {
+		doNothing().when(searchIndexService).index(any());
+	}
+
 	@State("index rejects unsupported schema version")
 	void indexRejectsUnsupportedSchema() {
 		// validation happens in controller before service call

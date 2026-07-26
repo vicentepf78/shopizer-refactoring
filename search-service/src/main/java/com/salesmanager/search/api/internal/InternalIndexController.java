@@ -27,7 +27,8 @@ import com.salesmanager.search.support.UnsupportedSchemaVersionException;
 @RequestMapping("/internal/v1")
 public class InternalIndexController {
 
-	private static final int SUPPORTED_SCHEMA_VERSION = 1;
+	private static final int SUPPORTED_SCHEMA_VERSION_MIN = 1;
+	private static final int SUPPORTED_SCHEMA_VERSION_MAX = 2;
 
 	private final SearchIndexService searchIndexService;
 
@@ -61,8 +62,11 @@ public class InternalIndexController {
 	}
 
 	static void validateSchemaVersion(ProductIndexPayload payload) {
-		if (payload == null || payload.getSchemaVersion() != SUPPORTED_SCHEMA_VERSION) {
-			int version = payload == null ? -1 : payload.getSchemaVersion();
+		if (payload == null) {
+			throw new UnsupportedSchemaVersionException(-1);
+		}
+		int version = payload.getSchemaVersion();
+		if (version < SUPPORTED_SCHEMA_VERSION_MIN || version > SUPPORTED_SCHEMA_VERSION_MAX) {
 			throw new UnsupportedSchemaVersionException(version);
 		}
 	}
