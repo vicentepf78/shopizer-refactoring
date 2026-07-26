@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-26 18:36 | 1667 files | 260819 tokens
+# rtt index | generated 2026-07-26 18:51 | 1699 files | 266677 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -3624,6 +3624,24 @@ class ProductVariation
   boolean isVariantDefault()
   void setVariantDefault(boolean variantDefault)
 
+# sm-core-model/src/main/java/com/salesmanager/core/model/checkout/outbox/CheckoutOutboxEvent.java [java]
+imports: java.util.Date, javax.persistence.Column, javax.persistence.Entity, javax.persistence.GeneratedValue, javax.persistence.GenerationType, javax.persistence.Id, javax.persistence.Table, javax.persistence.Temporal, javax.persistence.TemporalType, javax.persistence.UniqueConstraint
+class CheckoutOutboxEvent
+  Long getId()
+  void setId(Long id)
+  String getAggregateId()
+  void setAggregateId(String aggregateId)
+  String getEventType()
+  void setEventType(String eventType)
+  String getPayload()
+  void setPayload(String payload)
+  String getStatus()
+  void setStatus(String status)
+  Date getCreatedAt()
+  void setCreatedAt(Date createdAt)
+  Date getProcessedAt()
+  void setProcessedAt(Date processedAt)
+
 # sm-core-model/src/main/java/com/salesmanager/core/model/common/Address.java [java]
 imports: java.io.Serializable
 class Address
@@ -6816,6 +6834,10 @@ interface PageableProductVariationRepository
 imports: java.util.List, java.util.Optional, org.springframework.data.jpa.repository.JpaRepository, org.springframework.data.jpa.repository.Query, com.salesmanager.core.model.catalog.product.variation.ProductVariation
 interface ProductVariationRepository
 
+# sm-core/src/main/java/com/salesmanager/core/business/repositories/checkout/CheckoutOutboxJpaRepository.java [java]
+imports: java.util.List, org.springframework.data.jpa.repository.JpaRepository, org.springframework.data.jpa.repository.Query, com.salesmanager.core.model.checkout.outbox.CheckoutOutboxEvent
+interface CheckoutOutboxJpaRepository
+
 # sm-core/src/main/java/com/salesmanager/core/business/repositories/customer/CustomerRepository.java [java]
 imports: java.util.List, org.springframework.data.jpa.repository.JpaRepository, org.springframework.data.jpa.repository.Query, com.salesmanager.core.model.customer.Customer
 interface CustomerRepository
@@ -7391,6 +7413,8 @@ class CheckoutApplicationServiceImpl
   Order placeOrder(CheckoutCommand command)
   Order placeApiOrder(CheckoutCommand command, MerchantStore store)
   Order placeStorefrontOrder(CheckoutCommand command, MerchantStore store, Language language)
+  Order processCheckoutOrder(Order modelOrder, Customer customer, List<ShoppingCartItem> shoppingCartItems,
+			OrderTotalSummary summary, Payment payment, Transaction transaction, MerchantStore store)
   Payment buildStorefrontPayment(CheckoutCommand command, Order modelOrder)
   void populateOrderCustomer(Customer customer, Order order)
   Locale storeLocale(MerchantStore store)
@@ -7426,6 +7450,25 @@ class CheckoutOrderProductAssembler
 # sm-core/src/main/java/com/salesmanager/core/business/services/checkout/CheckoutOutboxSnapshotDesign.java [java]
 class CheckoutOutboxSnapshotDesign
 
+# sm-core/src/main/java/com/salesmanager/core/business/services/checkout/CheckoutStagedOrderProcessor.java [java]
+imports: java.util.Date, java.util.HashSet, java.util.List, java.util.Set, java.util.UUID, javax.inject.Inject, org.apache.commons.lang3.StringUtils, org.apache.commons.lang3.Validate, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.stereotype.Service, org.springframework.transaction.annotation.Transactional, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.catalog.product.ProductService, com.fasterxml.jackson.core.JsonProcessingException, com.salesmanager.core.business.services.checkout.outbox.CheckoutOutboxEventType, com.salesmanager.core.business.services.checkout.outbox.CheckoutOutboxPayloadBuilder, com.salesmanager.core.business.services.checkout.outbox.CheckoutOutboxProperties, com.salesmanager.core.business.services.checkout.outbox.CheckoutOutboxRepository, com.salesmanager.core.business.services.customer.CustomerService, com.salesmanager.core.business.services.order.OrderService, com.salesmanager.core.business.services.payments.PaymentService, com.salesmanager.core.business.services.payments.TransactionService, com.salesmanager.core.model.catalog.product.Product, com.salesmanager.core.model.catalog.product.availability.ProductAvailability, com.salesmanager.core.model.common.UserContext, com.salesmanager.core.model.customer.Customer, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.order.Order, com.salesmanager.core.model.order.OrderTotalSummary
+class CheckoutStagedOrderProcessor
+  Order processOrder(Order order, Customer customer, List<ShoppingCartItem> items, OrderTotalSummary summary,
+			Payment payment, Transaction transaction, MerchantStore store)
+  void validate(Order order, Customer customer, List<ShoppingCartItem> items, Payment payment,
+			MerchantStore store, OrderTotalSummary summary)
+  void applyIpAddress(Order order)
+  String resolveAggregateId(Order order)
+  void appendOutbox(String aggregateId, CheckoutOutboxEventType type, String payloadJson)
+  String paymentRequestedPayload(Customer customer, Payment payment, MerchantStore store, Order order)
+  String paymentConfirmedPayload(Customer customer, Payment payment, Transaction processTransaction)
+  String orderPersistedPayload(Order order)
+  String inventoryDecrementedPayload(Order order)
+  void ensureOrderHistory(Order order)
+  void persistCustomerIfNeeded(Customer customer)
+  void saveOrUpdateTransaction(Transaction transaction)
+  void decrementInventory(Order order)
+
 # sm-core/src/main/java/com/salesmanager/core/business/services/checkout/CustomerSnapshotBuilder.java [java]
 imports: com.salesmanager.contracts.customer.AddressSnapshot, com.salesmanager.contracts.customer.CustomerSnapshot, com.salesmanager.core.model.common.Billing, com.salesmanager.core.model.common.Delivery, com.salesmanager.core.model.customer.Customer, com.salesmanager.core.model.reference.country.Country, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.reference.zone.Zone
 class CustomerSnapshotBuilder
@@ -7441,6 +7484,44 @@ class OrderSnapshotBuilder
   OrderSnapshot from(Order order)
   List<OrderLineSnapshot> mapLines(Iterable<OrderProduct> products)
   List<OrderTotalSnapshot> mapTotals(Iterable<OrderTotal> totals)
+
+# sm-core/src/main/java/com/salesmanager/core/business/services/checkout/outbox/CheckoutOutboxDispatcher.java [java]
+imports: java.util.List, javax.inject.Inject, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.boot.autoconfigure.condition.ConditionalOnProperty, org.springframework.scheduling.annotation.Scheduled, org.springframework.stereotype.Component, com.salesmanager.core.model.checkout.outbox.CheckoutOutboxEvent
+class CheckoutOutboxDispatcher
+  void dispatchPendingEvents()
+
+# sm-core/src/main/java/com/salesmanager/core/business/services/checkout/outbox/CheckoutOutboxEventType.java [java]
+
+# sm-core/src/main/java/com/salesmanager/core/business/services/checkout/outbox/CheckoutOutboxPayloadBuilder.java [java]
+imports: java.util.LinkedHashMap, java.util.Map, com.fasterxml.jackson.core.JsonProcessingException, com.fasterxml.jackson.databind.ObjectMapper, com.salesmanager.contracts.customer.CustomerSnapshot, com.salesmanager.contracts.order.OrderSnapshot, com.salesmanager.core.business.services.checkout.CustomerSnapshotBuilder, com.salesmanager.core.business.services.checkout.OrderSnapshotBuilder, com.salesmanager.core.model.customer.Customer, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.order.Order, com.salesmanager.core.model.payments.Payment, com.salesmanager.core.model.payments.PaymentType, com.salesmanager.core.model.payments.Transaction
+class CheckoutOutboxPayloadBuilder
+  String paymentRequested(Customer customer, Payment payment, MerchantStore store, String shoppingCartCode)
+  String paymentConfirmed(Customer customer, Payment payment, Transaction processTransaction)
+  String orderPersisted(Order order)
+  String inventoryDecremented(Order order)
+  CustomerSnapshot customerSnapshot(Customer customer)
+
+# sm-core/src/main/java/com/salesmanager/core/business/services/checkout/outbox/CheckoutOutboxProperties.java [java]
+imports: org.springframework.boot.context.properties.ConfigurationProperties, org.springframework.stereotype.Component
+class CheckoutOutboxProperties
+  boolean isEnabled()
+  void setEnabled(boolean enabled)
+  long getDispatcherIntervalMs()
+  void setDispatcherIntervalMs(long dispatcherIntervalMs)
+
+# sm-core/src/main/java/com/salesmanager/core/business/services/checkout/outbox/CheckoutOutboxRepository.java [java]
+imports: java.util.List, com.salesmanager.core.model.checkout.outbox.CheckoutOutboxEvent
+interface CheckoutOutboxRepository
+
+# sm-core/src/main/java/com/salesmanager/core/business/services/checkout/outbox/CheckoutOutboxRepositoryImpl.java [java]
+imports: java.util.Date, java.util.List, javax.inject.Inject, org.springframework.dao.DataIntegrityViolationException, org.springframework.data.domain.PageRequest, org.springframework.stereotype.Repository, com.salesmanager.core.business.repositories.checkout.CheckoutOutboxJpaRepository, com.salesmanager.core.model.checkout.outbox.CheckoutOutboxEvent
+class CheckoutOutboxRepositoryImpl
+  void append(String aggregateId, CheckoutOutboxEventType eventType, String payloadJson)
+  List<CheckoutOutboxEvent> findPending(int limit)
+  void markProcessed(CheckoutOutboxEvent event)
+
+# sm-core/src/main/java/com/salesmanager/core/business/services/checkout/outbox/CheckoutOutboxStatus.java [java]
+class CheckoutOutboxStatus
 
 # sm-core/src/main/java/com/salesmanager/core/business/services/customer/CustomerService.java [java]
 imports: java.util.List, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.common.generic.SalesManagerEntityService, com.salesmanager.core.model.common.Address, com.salesmanager.core.model.customer.Customer, com.salesmanager.core.model.customer.CustomerCriteria, com.salesmanager.core.model.customer.CustomerList, com.salesmanager.core.model.merchant.MerchantStore
@@ -8195,7 +8276,7 @@ class ProductSnapshotBuilderTest
   ProductInventory sampleInventory(String sku, String price, boolean discounted)
 
 # sm-core/src/test/java/com/salesmanager/core/business/services/checkout/CheckoutApplicationServicePlaceOrderTest.java [java]
-imports: org.assertj.core.api.Assertions.assertThat, org.junit.jupiter.api.Assertions.assertThrows, org.mockito.ArgumentMatchers.any, org.mockito.ArgumentMatchers.eq, org.mockito.ArgumentMatchers.isNull, org.mockito.Mockito.verify, org.mockito.Mockito.when, java.math.BigDecimal, java.util.Collections, java.util.HashMap, java.util.Map, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.contracts.tenant.LanguageCode, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.catalog.product.ProductService, com.salesmanager.core.business.services.catalog.product.attribute.ProductAttributeService, com.salesmanager.core.business.services.catalog.product.file.DigitalProductService, com.salesmanager.core.business.services.merchant.MerchantStoreService, com.salesmanager.core.business.services.order.OrderService, com.salesmanager.core.business.services.reference.language.LanguageService, com.salesmanager.core.model.catalog.product.Product, com.salesmanager.core.model.catalog.product.availability.ProductAvailability, com.salesmanager.core.model.catalog.product.description.ProductDescription, com.salesmanager.core.model.catalog.product.price.FinalPrice, com.salesmanager.core.model.catalog.product.price.ProductPrice
+imports: org.assertj.core.api.Assertions.assertThat, org.junit.jupiter.api.Assertions.assertThrows, org.mockito.ArgumentMatchers.any, org.mockito.ArgumentMatchers.eq, org.mockito.ArgumentMatchers.isNull, org.mockito.Mockito.lenient, org.mockito.Mockito.verify, org.mockito.Mockito.when, java.math.BigDecimal, java.util.Collections, java.util.HashMap, java.util.Map, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.contracts.tenant.LanguageCode, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.catalog.product.ProductService, com.salesmanager.core.business.services.catalog.product.attribute.ProductAttributeService, com.salesmanager.core.business.services.catalog.product.file.DigitalProductService, com.salesmanager.core.business.services.merchant.MerchantStoreService, com.salesmanager.core.business.services.order.OrderService, com.salesmanager.core.business.services.reference.language.LanguageService, com.salesmanager.core.business.services.checkout.outbox.CheckoutOutboxProperties, com.salesmanager.core.model.catalog.product.Product, com.salesmanager.core.model.catalog.product.availability.ProductAvailability, com.salesmanager.core.model.catalog.product.description.ProductDescription
 class CheckoutApplicationServicePlaceOrderTest
   void setUp()
   void apiFlowDelegatesToOrderServiceWithPreBuiltOrder()
@@ -8231,6 +8312,33 @@ class OrderSnapshotBuilderTest
   void fromMapsStatusTotalsAndLineSkuQuantity()
   void fromNullOrderReturnsNull()
   Order sampleOrder()
+
+# sm-core/src/test/java/com/salesmanager/core/business/services/checkout/outbox/CheckoutOutboxIntegrationTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.mockito.ArgumentMatchers.any, org.mockito.ArgumentMatchers.eq, org.mockito.ArgumentMatchers.isNull, org.mockito.Mockito.never, org.mockito.Mockito.verify, org.mockito.Mockito.when, java.math.BigDecimal, java.util.Collections, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.contracts.tenant.LanguageCode, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.core.business.services.catalog.product.ProductService, com.salesmanager.core.business.services.catalog.product.attribute.ProductAttributeService, com.salesmanager.core.business.services.catalog.product.file.DigitalProductService, com.salesmanager.core.business.services.checkout.CheckoutApplicationService, com.salesmanager.core.business.services.checkout.CheckoutApplicationServiceImpl, com.salesmanager.core.business.services.checkout.CheckoutCommand, com.salesmanager.core.business.services.checkout.CheckoutStagedOrderProcessor, com.salesmanager.core.business.services.checkout.CustomerSnapshotBuilder, com.salesmanager.core.business.services.merchant.MerchantStoreService, com.salesmanager.core.business.services.order.OrderService, com.salesmanager.core.business.services.reference.language.LanguageService, com.salesmanager.core.model.catalog.product.Product, com.salesmanager.core.model.catalog.product.availability.ProductAvailability, com.salesmanager.core.model.catalog.product.description.ProductDescription
+class CheckoutOutboxIntegrationTest
+  void setUp()
+  void whenOutboxEnabledUsesStagedProcessor()
+  void whenOutboxDisabledUsesLegacyOrderService()
+  MerchantStore store(String code)
+  OrderTotalSummary summary(BigDecimal total)
+  ShoppingCartItem cartItem(String sku)
+  Product productWithInventory(MerchantStore store, int qty, int requested)
+
+# sm-core/src/test/java/com/salesmanager/core/business/services/checkout/outbox/CheckoutOutboxRepositoryTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.mockito.ArgumentMatchers.any, org.mockito.Mockito.never, org.mockito.Mockito.verify, org.mockito.Mockito.when, java.util.Collections, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.ArgumentCaptor, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.springframework.dao.DataIntegrityViolationException, org.springframework.data.domain.Pageable, com.salesmanager.core.business.repositories.checkout.CheckoutOutboxJpaRepository, com.salesmanager.core.model.checkout.outbox.CheckoutOutboxEvent
+class CheckoutOutboxRepositoryTest
+  void setUp()
+  void appendIsIdempotentForAggregateAndEventType()
+  void appendPersistsNewEventWhenNotExists()
+  void appendIgnoresDuplicateKeyRace()
+  void findPendingDelegatesToJpaRepository()
+  void markProcessedUpdatesStatusAndTimestamp()
+
+# sm-core/src/test/java/com/salesmanager/core/business/services/checkout/outbox/CheckoutStagedOrderProcessorTest.java [java]
+imports: org.mockito.ArgumentMatchers.any, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.times, org.mockito.Mockito.verify, org.mockito.Mockito.when, java.math.BigDecimal, java.util.Collections, java.util.LinkedHashSet, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.core.business.services.catalog.product.ProductService, com.salesmanager.core.business.services.checkout.CheckoutStagedOrderProcessor, com.salesmanager.core.business.services.customer.CustomerService, com.salesmanager.core.business.services.order.OrderService, com.salesmanager.core.business.services.payments.PaymentService, com.salesmanager.core.business.services.payments.TransactionService, com.salesmanager.core.model.catalog.product.Product, com.salesmanager.core.model.catalog.product.availability.ProductAvailability, com.salesmanager.core.model.customer.Customer, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.order.Order, com.salesmanager.core.model.order.OrderTotalSummary, com.salesmanager.core.model.order.orderproduct.OrderProduct, com.salesmanager.core.model.payments.Payment, com.salesmanager.core.model.payments.PaymentType, com.salesmanager.core.model.payments.Transaction, com.salesmanager.core.model.shoppingcart.ShoppingCartItem
+class CheckoutStagedOrderProcessorTest
+  void setUp()
+  void writesFourOutboxEventsWhenFlagEnabled()
 
 # sm-core/src/test/java/com/salesmanager/core/business/services/content/ContentServiceThinCoreWiringTest.java [java]
 imports: org.assertj.core.api.Assertions.assertThat, org.junit.jupiter.api.Assertions.assertTrue, org.junit.jupiter.api.Test, org.springframework.stereotype.Service

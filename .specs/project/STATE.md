@@ -1,7 +1,7 @@
 # State
 
-**Last Updated:** 2026-07-26T14:20:13-03:00
-**Current Work:** onda-2-content-search-merchant — COMPLETE (gate verde, revalidado). Próximo: PR merge + Specify/Execute Onda 3
+**Last Updated:** 2026-07-26T18:51:00-03:00
+**Current Work:** Onda 3 Execute complete (`onda-3-contracts-dto`). Próximo: Onda 4 planning/Execute.
 
 ---
 
@@ -94,6 +94,14 @@
 **Trade-off:** `PRODUCT_TYPE.MERCHANT_ID` permanece cross-schema.
 **Impact:** MCH-06 confirmed out of scope.
 
+### AD-W3-005: Outbox transacional local para checkout (2026-07-26)
+
+**Decision:** Tabela `CHECKOUT_OUTBOX` + `processOrder` em estágios atrás de `checkout.outbox.enabled=false` (default).
+**Reason:** Seam para Onda 6 sem broker na Onda 3 (ADR-005).
+**Impact:** `CheckoutStagedOrderProcessor`, dispatcher in-process; payloads JSON via `OrderSnapshot`/`CustomerSnapshot`.
+
+---
+
 ### AD-007: GeoZone excluído da Onda 1 (2026-07-04)
 
 **Decision:** Sem API nem service para GeoZone/GeoZoneDescription.
@@ -105,19 +113,20 @@
 
 ## Active Blockers
 
-### B-001: Facade interfaces passam entidades Language/MerchantStore
+### B-001: Facade interfaces passam entidades Language/MerchantStore — PARCIAL (Onda 3)
 
 **Discovered:** 2026-07-04
 **Impact:** 20+ interfaces em `sm-shop-model`; `AbstractDataPopulator` hard-wired; impede contratos HTTP limpos.
 **Workaround:** Onda 1 limita refatoração às fronteiras Reference/Tax APIs; callers internos mantêm entidades temporariamente.
-**Resolution:** Onda 3 — `LanguageCode` / `MerchantStoreId` (story B do backlog mestre).
+**Resolution:** Onda 3 Fase 1 — `MerchantStoreId` / `LanguageCode` em facades P1 (`OrderFacade`, `ShoppingCartFacade`, `SearchFacade`, `ShippingFacade`, `CategoryFacade`, `ProductCommonFacade`). ~60 facades restantes → Ondas 4–6.
+**Status (2026-07-26):** PARCIAL — P1 migrado; `TenantEntityBridge` hidrata entidades na implementação.
 
-### B-002: ReferencesApi expõe entidades Language e Currency
+### B-002: ReferencesApi expõe entidades Language e Currency — RESOLVED (Onda 3)
 
 **Discovered:** 2026-07-04
 **Impact:** Viola critério de sucesso da Onda 1; `ReadableLanguage` existe mas não está wired.
-**Workaround:** Nenhum em produção extraída.
-**Resolution:** REF-04, REF-05 — design em `design.md`; implementar em Execute.
+**Resolution:** REF-04, REF-05 — `ReferencesApi` retorna `List<ReadableLanguage>` / `List<ReadableCurrency>` (task_08).
+**Status (2026-07-26):** RESOLVED.
 
 ### B-003: PersistableTaxRateMapper depende de reference services
 
@@ -161,6 +170,7 @@
 | —   | Specify Onda 2 (content/search/merchant) | 2026-07-04 | —      | ✅ Done |
 | —   | Design Onda 2 + OQ-01..06 confirmadas   | 2026-07-04 | —      | ✅ Done |
 | —   | Tasks Onda 2 (54 tarefas T1–T54)        | 2026-07-04 | —      | ✅ Done |
+| —   | PRD/TechSpec/Tasks Ondas 3–6 (Compozy)  | 2026-07-26 | —      | ✅ Done |
 
 ---
 
@@ -179,3 +189,7 @@
 - [x] Onda 1 gate `./mvnw clean install` verde (2026-07-26)
 - [x] Onda 2 Execute complete — `docker-compose-wave2.yml`, suite Strangler, gate `./mvnw clean install` (2026-07-26)
 - [x] Onda 1+2 reactor gate revalidado — `./mvnw clean install` verde, 16 módulos, ~4m50s (2026-07-26T14:20)
+- [x] Onda 2 merged to main (PR #4, 2026-07-26)
+- [x] Documentação Ondas 3–6 — Compozy + TLC em `.compozy/tasks/` e `.specs/features/` (2026-07-26)
+- [x] Onda 3 Execute complete — contracts DTO, CheckoutApplicationService, outbox, gate `./mvnw clean install` verde (2026-07-26)
+- [ ] Aprovar início Execute Onda 4

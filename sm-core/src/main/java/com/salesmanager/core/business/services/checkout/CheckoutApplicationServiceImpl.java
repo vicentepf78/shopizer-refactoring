@@ -43,6 +43,7 @@ import com.salesmanager.core.model.payments.PaymentType;
 import com.salesmanager.core.model.payments.Transaction;
 import com.salesmanager.core.model.reference.language.Language;
 import com.salesmanager.core.model.shoppingcart.ShoppingCartItem;
+import com.salesmanager.core.business.services.checkout.outbox.CheckoutOutboxProperties;
 
 @Service("checkoutApplicationService")
 public class CheckoutApplicationServiceImpl implements CheckoutApplicationService {
@@ -55,18 +56,23 @@ public class CheckoutApplicationServiceImpl implements CheckoutApplicationServic
 	private final DigitalProductService digitalProductService;
 	private final MerchantStoreService merchantStoreService;
 	private final LanguageService languageService;
+	private final CheckoutOutboxProperties outboxProperties;
+	private final CheckoutStagedOrderProcessor stagedOrderProcessor;
 	private final CheckoutOrderProductAssembler orderProductAssembler;
 
 	@Inject
 	public CheckoutApplicationServiceImpl(OrderService orderService, ProductService productService,
 			ProductAttributeService productAttributeService, DigitalProductService digitalProductService,
-			MerchantStoreService merchantStoreService, LanguageService languageService) {
+			MerchantStoreService merchantStoreService, LanguageService languageService,
+			CheckoutOutboxProperties outboxProperties, CheckoutStagedOrderProcessor stagedOrderProcessor) {
 		this.orderService = orderService;
 		this.productService = productService;
 		this.productAttributeService = productAttributeService;
 		this.digitalProductService = digitalProductService;
 		this.merchantStoreService = merchantStoreService;
 		this.languageService = languageService;
+		this.outboxProperties = outboxProperties;
+		this.stagedOrderProcessor = stagedOrderProcessor;
 		this.orderProductAssembler = new CheckoutOrderProductAssembler(productService, digitalProductService,
 				productAttributeService);
 	}
@@ -90,8 +96,8 @@ public class CheckoutApplicationServiceImpl implements CheckoutApplicationServic
 
 	private Order placeApiOrder(CheckoutCommand command, MerchantStore store) throws ServiceException {
 		Order modelOrder = command.getPreBuiltOrder();
-		return orderService.processOrder(modelOrder, command.getCustomer(), command.getShoppingCartItems(),
-				command.getOrderTotalSummary(), command.getPayment(), store);
+		return processCheckoutOrder(modelOrder, command.getCustomer(), command.getShoppingCartItems(),
+				command.getOrderTotalSummary(), command.getPayment(), null, store);
 	}
 
 	private Order placeStorefrontOrder(CheckoutCommand command, MerchantStore store, Language language)
@@ -189,13 +195,22 @@ public class CheckoutApplicationServiceImpl implements CheckoutApplicationServic
 		modelOrder.setPaymentModuleCode(command.getPaymentModule());
 		payment.setModuleName(command.getPaymentModule());
 
-		if (transaction != null) {
-			orderService.processOrder(modelOrder, customer, shoppingCartItems, summary, payment, store);
-		} else {
-			orderService.processOrder(modelOrder, customer, shoppingCartItems, summary, payment, transaction, store);
-		}
+		processCheckoutOrder(modelOrder, customer, shoppingCartItems, summary, payment, transaction, store);
 
 		return modelOrder;
+	}
+
+	private Order processCheckoutOrder(Order modelOrder, Customer customer, List<ShoppingCartItem> shoppingCartItems,
+			OrderTotalSummary summary, Payment payment, Transaction transaction, MerchantStore store)
+			throws ServiceException {
+		if (outboxProperties.isEnabled()) {
+			return stagedOrderProcessor.processOrder(modelOrder, customer, shoppingCartItems, summary, payment,
+					transaction, store);
+		}
+		if (transaction != null) {
+			return orderService.processOrder(modelOrder, customer, shoppingCartItems, summary, payment, store);
+		}
+		return orderService.processOrder(modelOrder, customer, shoppingCartItems, summary, payment, transaction, store);
 	}
 
 	private Payment buildStorefrontPayment(CheckoutCommand command, Order modelOrder) throws Exception {
