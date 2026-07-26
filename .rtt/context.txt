@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-26 20:12 | 1704 files | 268371 tokens
+# rtt index | generated 2026-07-26 20:14 | 1704 files | 268371 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -2257,15 +2257,6 @@ class ProductIndexPayload
   Boolean getAddToCart()
   void setAddToCart(Boolean addToCart)
 
-# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/search/ProductSnapshotIndexMapper.java [java]
-imports: java.util.ArrayList, java.util.HashMap, java.util.List, java.util.Map, com.salesmanager.contracts.catalog.ProductSnapshot, com.salesmanager.contracts.catalog.ProductSnapshotAttribute, com.salesmanager.contracts.catalog.ProductSnapshotInventory, com.salesmanager.contracts.catalog.ProductSnapshotVariant
-class ProductSnapshotIndexMapper
-  ProductIndexPayload toPayload(ProductSnapshot snapshot)
-  Map<String, String> toAttributeMap(List<ProductSnapshotAttribute> attributes)
-  List<Map<String, String>> toVariantMaps(List<ProductSnapshotVariant> variants)
-  List<Map<String, String>> toInventoryMaps(List<ProductSnapshotInventory> inventory)
-  boolean isNotBlank(String value)
-
 # shopizer-api-contracts/src/main/java/com/salesmanager/contracts/search/SearchItem.java [java]
 imports: java.io.Serializable, java.util.ArrayList, java.util.HashMap, java.util.List, java.util.Map
 class SearchItem
@@ -2473,14 +2464,6 @@ class ReferenceDtoJacksonTest
   void readableCountryAndZoneRoundTripWithNestedZones()
   void sizeReferencesSerializesMeasureEnums()
   void measureAndWeightEnumValuesAreStable()
-
-# shopizer-api-contracts/src/test/java/com/salesmanager/contracts/search/ProductSnapshotIndexMapperTest.java [java]
-imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertFalse, org.junit.jupiter.api.Assertions.assertTrue, org.junit.jupiter.api.Test, com.fasterxml.jackson.databind.ObjectMapper, com.salesmanager.contracts.catalog.ProductSnapshot, com.salesmanager.contracts.catalog.ProductSnapshotAttribute, com.salesmanager.contracts.catalog.ProductSnapshotInventory, com.salesmanager.contracts.catalog.ProductSnapshotVariant
-class ProductSnapshotIndexMapperTest
-  void toPayloadSetsSchemaVersionTwo()
-  void toPayloadMapsSnapshotFieldsToLegacyPayloadShape()
-  void productIndexPayloadV1StillDeserializes()
-  ProductSnapshot sampleSnapshot()
 
 # shopizer-api-contracts/src/test/java/com/salesmanager/contracts/search/SearchDtoJacksonTest.java [java]
 imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertFalse, org.junit.jupiter.api.Assertions.assertTrue, org.junit.jupiter.api.Test, com.fasterxml.jackson.databind.JsonNode, com.fasterxml.jackson.databind.ObjectMapper
@@ -7880,9 +7863,18 @@ class SearchServiceImpl
   String loadClassPathResource(String file)
 
 # sm-core/src/main/java/com/salesmanager/core/business/services/search/index/ProductIndexPayloadBuilder.java [java]
-imports: java.util.List, java.util.stream.Collectors, org.springframework.beans.factory.annotation.Autowired, org.springframework.stereotype.Service, com.salesmanager.contracts.search.ProductIndexPayload, com.salesmanager.contracts.search.ProductSnapshotIndexMapper, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.catalog.ProductSnapshotBuilder, com.salesmanager.core.model.catalog.product.Product, com.salesmanager.core.model.merchant.MerchantStore
+imports: java.util.List, java.util.stream.Collectors, org.springframework.beans.factory.annotation.Autowired, org.springframework.stereotype.Service, com.salesmanager.contracts.search.ProductIndexPayload, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.catalog.ProductSnapshotBuilder, com.salesmanager.core.model.catalog.product.Product, com.salesmanager.core.model.merchant.MerchantStore
 class ProductIndexPayloadBuilder
   List<ProductIndexPayload> buildAll(MerchantStore store, Product product)
+
+# sm-core/src/main/java/com/salesmanager/core/business/services/search/index/ProductSnapshotIndexMapper.java [java]
+imports: java.util.ArrayList, java.util.HashMap, java.util.List, java.util.Map, com.salesmanager.contracts.catalog.ProductSnapshot, com.salesmanager.contracts.catalog.ProductSnapshotAttribute, com.salesmanager.contracts.catalog.ProductSnapshotInventory, com.salesmanager.contracts.catalog.ProductSnapshotVariant, com.salesmanager.contracts.search.ProductIndexPayload
+class ProductSnapshotIndexMapper
+  ProductIndexPayload toPayload(ProductSnapshot snapshot)
+  Map<String, String> toAttributeMap(List<ProductSnapshotAttribute> attributes)
+  List<Map<String, String>> toVariantMaps(List<ProductSnapshotVariant> variants)
+  List<Map<String, String>> toInventoryMaps(List<ProductSnapshotInventory> inventory)
+  boolean isNotBlank(String value)
 
 # sm-core/src/main/java/com/salesmanager/core/business/services/search/index/SearchIndexProducer.java [java]
 imports: java.util.List, com.salesmanager.core.model.catalog.product.Product, com.salesmanager.core.model.merchant.MerchantStore
@@ -8404,9 +8396,17 @@ class MoneyOrderPaymentModuleV2IntegrationTest
   IntegrationModule sampleModule()
 
 # sm-core/src/test/java/com/salesmanager/core/business/services/search/index/ProductIndexPayloadBuilderTest.java [java]
-imports: org.assertj.core.api.Assertions.assertThat, org.mockito.Mockito.when, java.util.Collections, java.util.List, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.InjectMocks, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.contracts.catalog.ProductSnapshot, com.salesmanager.contracts.search.ProductIndexPayload, com.salesmanager.contracts.search.ProductSnapshotIndexMapper, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.model.catalog.product.Product, com.salesmanager.core.model.merchant.MerchantStore
+imports: org.assertj.core.api.Assertions.assertThat, org.mockito.Mockito.when, java.util.Collections, java.util.List, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.InjectMocks, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.contracts.catalog.ProductSnapshot, com.salesmanager.contracts.search.ProductIndexPayload, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.model.catalog.product.Product, com.salesmanager.core.model.merchant.MerchantStore
 class ProductIndexPayloadBuilderTest
   void buildAll_mapsSnapshotToPayloadWithSchemaVersionTwo()
+
+# sm-core/src/test/java/com/salesmanager/core/business/services/search/index/ProductSnapshotIndexMapperTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertFalse, org.junit.jupiter.api.Assertions.assertTrue, org.junit.jupiter.api.Test, com.fasterxml.jackson.databind.ObjectMapper, com.salesmanager.contracts.catalog.ProductSnapshot, com.salesmanager.contracts.catalog.ProductSnapshotAttribute, com.salesmanager.contracts.catalog.ProductSnapshotInventory, com.salesmanager.contracts.catalog.ProductSnapshotVariant, com.salesmanager.contracts.search.ProductIndexPayload
+class ProductSnapshotIndexMapperTest
+  void toPayloadSetsSchemaVersionTwo()
+  void toPayloadMapsSnapshotFieldsToLegacyPayloadShape()
+  void productIndexPayloadV1StillDeserializes()
+  ProductSnapshot sampleSnapshot()
 
 # sm-core/src/test/java/com/salesmanager/core/business/services/search/index/SearchIndexProducerInProcessTest.java [java]
 imports: org.assertj.core.api.Assertions.assertThat, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.verify, java.util.Arrays, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.ArgumentCaptor, org.mockito.InjectMocks, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.search.SearchService, com.salesmanager.core.model.catalog.product.Product, com.salesmanager.core.model.merchant.MerchantStore
@@ -15423,7 +15423,7 @@ class ZoneFacadeHttpAdapter
   List<ReadableZone> getZones(String countryCode, Language language, MerchantStore merchantStore)
 
 # sm-shop/src/main/java/com/salesmanager/shop/strangler/search/ProductIndexPayloadMapper.java [java]
-imports: org.springframework.stereotype.Service, com.salesmanager.contracts.catalog.ProductSnapshot, com.salesmanager.contracts.search.ProductIndexPayload, com.salesmanager.contracts.search.ProductSnapshotIndexMapper
+imports: org.springframework.stereotype.Service, com.salesmanager.contracts.catalog.ProductSnapshot, com.salesmanager.contracts.search.ProductIndexPayload, com.salesmanager.core.business.services.search.index.ProductSnapshotIndexMapper
 class ProductIndexPayloadMapper
   ProductIndexPayload toPayload(ProductSnapshot snapshot)
 
@@ -15968,7 +15968,7 @@ class ReferenceFacadeHttpAdapterTest
   void countryAdapter_mapsConnectFailureTo503()
 
 # sm-shop/src/test/java/com/salesmanager/shop/strangler/search/ProductIndexPayloadMapperTest.java [java]
-imports: org.assertj.core.api.Assertions.assertThat, org.junit.jupiter.api.Test, com.salesmanager.contracts.catalog.ProductSnapshot, com.salesmanager.contracts.search.ProductIndexPayload, com.salesmanager.contracts.search.ProductSnapshotIndexMapper
+imports: org.assertj.core.api.Assertions.assertThat, org.junit.jupiter.api.Test, com.salesmanager.contracts.catalog.ProductSnapshot, com.salesmanager.contracts.search.ProductIndexPayload, com.salesmanager.core.business.services.search.index.ProductSnapshotIndexMapper
 class ProductIndexPayloadMapperTest
   void toPayload_setsSchemaVersionTwoFromSnapshot()
 

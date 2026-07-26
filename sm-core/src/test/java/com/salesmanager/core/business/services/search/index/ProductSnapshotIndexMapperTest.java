@@ -1,4 +1,4 @@
-package com.salesmanager.contracts.search;
+package com.salesmanager.core.business.services.search.index;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -11,6 +11,7 @@ import com.salesmanager.contracts.catalog.ProductSnapshot;
 import com.salesmanager.contracts.catalog.ProductSnapshotAttribute;
 import com.salesmanager.contracts.catalog.ProductSnapshotInventory;
 import com.salesmanager.contracts.catalog.ProductSnapshotVariant;
+import com.salesmanager.contracts.search.ProductIndexPayload;
 
 class ProductSnapshotIndexMapperTest {
 

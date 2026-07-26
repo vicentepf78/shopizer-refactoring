@@ -14,7 +14,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.salesmanager.contracts.catalog.ProductSnapshot;
 import com.salesmanager.contracts.search.ProductIndexPayload;
-import com.salesmanager.contracts.search.ProductSnapshotIndexMapper;
 import com.salesmanager.core.business.exception.ServiceException;
 import com.salesmanager.core.model.catalog.product.Product;
 import com.salesmanager.core.model.merchant.MerchantStore;

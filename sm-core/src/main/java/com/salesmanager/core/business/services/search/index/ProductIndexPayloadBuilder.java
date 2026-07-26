@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.salesmanager.contracts.search.ProductIndexPayload;
-import com.salesmanager.contracts.search.ProductSnapshotIndexMapper;
 import com.salesmanager.core.business.exception.ServiceException;
 import com.salesmanager.core.business.services.catalog.ProductSnapshotBuilder;
 import com.salesmanager.core.model.catalog.product.Product;

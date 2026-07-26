@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import com.salesmanager.contracts.catalog.ProductSnapshot;
 import com.salesmanager.contracts.search.ProductIndexPayload;
-import com.salesmanager.contracts.search.ProductSnapshotIndexMapper;
+import com.salesmanager.core.business.services.search.index.ProductSnapshotIndexMapper;
 
 class ProductIndexPayloadMapperTest {
 

@@ -1,4 +1,4 @@
-package com.salesmanager.contracts.search;
+package com.salesmanager.core.business.services.search.index;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,6 +9,7 @@ import com.salesmanager.contracts.catalog.ProductSnapshot;
 import com.salesmanager.contracts.catalog.ProductSnapshotAttribute;
 import com.salesmanager.contracts.catalog.ProductSnapshotInventory;
 import com.salesmanager.contracts.catalog.ProductSnapshotVariant;
+import com.salesmanager.contracts.search.ProductIndexPayload;
 
 public final class ProductSnapshotIndexMapper {
 
