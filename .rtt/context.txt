@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-26 12:04 | 1540 files | 237317 tokens
+# rtt index | generated 2026-07-26 12:21 | 1543 files | 237604 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -7009,12 +7009,32 @@ class AjaxResponse
 class ProductQueryBuilder
   String buildProductQuery()
 
+# sm-core/src/test/java/com/salesmanager/core/business/NoContentDuplicateInSmCoreSourceTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertFalse, java.io.IOException, java.nio.file.Files, java.nio.file.Path, java.nio.file.Paths, java.util.stream.Stream, org.junit.jupiter.api.Test
+class NoContentDuplicateInSmCoreSourceTest
+  void smCoreSourcesExcludeDuplicatedContentDomain()
+  Path moduleRoot()
+  boolean containsForbiddenMarker(Path root)
+
 # sm-core/src/test/java/com/salesmanager/core/business/configuration/events/products/listeners/IndexProductEventListenerTest.java [java]
 imports: org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.verify, org.mockito.Mockito.when, java.util.HashSet, java.util.Set, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.InjectMocks, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.springframework.test.util.ReflectionTestUtils, com.salesmanager.core.business.configuration.events.products.DeleteProductEvent, com.salesmanager.core.business.configuration.events.products.SaveProductEvent, com.salesmanager.core.business.services.catalog.product.ProductService, com.salesmanager.core.business.services.search.index.SearchIndexProducer, com.salesmanager.core.model.catalog.product.Product, com.salesmanager.core.model.catalog.product.description.ProductDescription, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language
 class IndexProductEventListenerTest
   void setUp()
   void saveProductEvent_usesSearchIndexProducer()
   void deleteProductEvent_usesSearchIndexProducer()
+
+# sm-core/src/test/java/com/salesmanager/core/business/modules/cms/CoreCmsRewireTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertFalse, org.junit.jupiter.api.Assertions.assertTrue, java.io.IOException, java.nio.file.Files, java.nio.file.Path, java.nio.file.Paths, org.junit.jupiter.api.Test
+class CoreCmsRewireTest
+  void coreContextImportsContentCmsBeforeProductCms()
+  void coreCmsXmlKeepsProductBeansOnly()
+  Path moduleRoot()
+
+# sm-core/src/test/java/com/salesmanager/core/business/services/content/ContentServiceThinCoreWiringTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.junit.jupiter.api.Assertions.assertTrue, org.junit.jupiter.api.Test, org.springframework.stereotype.Service
+class ContentServiceThinCoreWiringTest
+  void contentServiceImplComesFromSmContentCoreJar()
+  void contentServiceImplIsComponentScannedFromThinCore()
 
 # sm-core/src/test/java/com/salesmanager/core/business/services/search/index/ProductIndexPayloadBuilderTest.java [java]
 imports: org.assertj.core.api.Assertions.assertThat, org.mockito.ArgumentMatchers.any, org.mockito.Mockito.when, java.math.BigDecimal, java.util.HashSet, java.util.List, java.util.Set, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.InjectMocks, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.contracts.search.ProductIndexPayload, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.catalog.inventory.ProductInventoryService, com.salesmanager.core.model.catalog.category.Category, com.salesmanager.core.model.catalog.category.CategoryDescription, com.salesmanager.core.model.catalog.product.Product, com.salesmanager.core.model.catalog.product.description.ProductDescription, com.salesmanager.core.model.catalog.product.inventory.ProductInventory, com.salesmanager.core.model.catalog.product.manufacturer.Manufacturer, com.salesmanager.core.model.catalog.product.manufacturer.ManufacturerDescription, com.salesmanager.core.model.catalog.product.price.FinalPrice, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language
