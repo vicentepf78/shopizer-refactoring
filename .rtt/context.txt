@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-26 18:25 | 1636 files | 254893 tokens
+# rtt index | generated 2026-07-26 18:25 | 1638 files | 255169 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -1857,9 +1857,55 @@ class ReadableContentPageFull
   List<ContentDescription> getDescriptions()
   void setDescriptions(List<ContentDescription> descriptions)
 
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/customer/AddressSnapshot.java [java]
+imports: java.io.Serializable
+class AddressSnapshot
+  String getFirstName()
+  void setFirstName(String firstName)
+  String getLastName()
+  void setLastName(String lastName)
+  String getCompany()
+  void setCompany(String company)
+  String getAddress()
+  void setAddress(String address)
+  String getCity()
+  void setCity(String city)
+  String getPostalCode()
+  void setPostalCode(String postalCode)
+  String getState()
+  void setState(String state)
+  String getTelephone()
+  void setTelephone(String telephone)
+  String getCountryCode()
+  void setCountryCode(String countryCode)
+  String getZoneCode()
+  void setZoneCode(String zoneCode)
+
 # shopizer-api-contracts/src/main/java/com/salesmanager/contracts/customer/CustomerEntity.java [java]
 imports: java.io.Serializable, com.salesmanager.contracts.common.ShopEntity
 class CustomerEntity
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/customer/CustomerSnapshot.java [java]
+imports: java.io.Serializable
+class CustomerSnapshot
+  int getSchemaVersion()
+  void setSchemaVersion(int schemaVersion)
+  Long getId()
+  void setId(Long id)
+  String getEmailAddress()
+  void setEmailAddress(String emailAddress)
+  String getNick()
+  void setNick(String nick)
+  String getCompany()
+  void setCompany(String company)
+  boolean isAnonymous()
+  void setAnonymous(boolean anonymous)
+  String getLanguageCode()
+  void setLanguageCode(String languageCode)
+  AddressSnapshot getBilling()
+  void setBilling(AddressSnapshot billing)
+  AddressSnapshot getDelivery()
+  void setDelivery(AddressSnapshot delivery)
 
 # shopizer-api-contracts/src/main/java/com/salesmanager/contracts/customer/package-info.java [java]
 
@@ -2024,6 +2070,70 @@ class ReadableMerchantStoreList
 # shopizer-api-contracts/src/main/java/com/salesmanager/contracts/order/OrderEntity.java [java]
 imports: java.io.Serializable, com.salesmanager.contracts.common.ShopEntity
 class OrderEntity
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/order/OrderLineSnapshot.java [java]
+imports: java.io.Serializable, java.math.BigDecimal
+class OrderLineSnapshot
+  String getSku()
+  void setSku(String sku)
+  String getProductName()
+  void setProductName(String productName)
+  int getQuantity()
+  void setQuantity(int quantity)
+  BigDecimal getOneTimeCharge()
+  void setOneTimeCharge(BigDecimal oneTimeCharge)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/order/OrderSnapshot.java [java]
+imports: java.io.Serializable, java.math.BigDecimal, java.util.ArrayList, java.util.List
+class OrderSnapshot
+  int getSchemaVersion()
+  void setSchemaVersion(int schemaVersion)
+  Long getId()
+  void setId(Long id)
+  String getStatus()
+  void setStatus(String status)
+  Long getCustomerId()
+  void setCustomerId(Long customerId)
+  String getCustomerEmailAddress()
+  void setCustomerEmailAddress(String customerEmailAddress)
+  String getStoreCode()
+  void setStoreCode(String storeCode)
+  String getCurrencyCode()
+  void setCurrencyCode(String currencyCode)
+  BigDecimal getCurrencyValue()
+  void setCurrencyValue(BigDecimal currencyValue)
+  BigDecimal getTotal()
+  void setTotal(BigDecimal total)
+  String getPaymentType()
+  void setPaymentType(String paymentType)
+  String getPaymentModuleCode()
+  void setPaymentModuleCode(String paymentModuleCode)
+  String getShippingModuleCode()
+  void setShippingModuleCode(String shippingModuleCode)
+  String getShoppingCartCode()
+  void setShoppingCartCode(String shoppingCartCode)
+  List<OrderLineSnapshot> getLines()
+  void setLines(List<OrderLineSnapshot> lines)
+  List<OrderTotalSnapshot> getTotals()
+  void setTotals(List<OrderTotalSnapshot> totals)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/order/OrderTotalSnapshot.java [java]
+imports: java.io.Serializable, java.math.BigDecimal
+class OrderTotalSnapshot
+  String getCode()
+  void setCode(String code)
+  String getTitle()
+  void setTitle(String title)
+  String getText()
+  void setText(String text)
+  BigDecimal getValue()
+  void setValue(BigDecimal value)
+  String getModule()
+  void setModule(String module)
+  String getOrderTotalType()
+  void setOrderTotalType(String orderTotalType)
+  int getSortOrder()
+  void setSortOrder(int sortOrder)
 
 # shopizer-api-contracts/src/main/java/com/salesmanager/contracts/order/package-info.java [java]
 
@@ -2297,6 +2407,12 @@ class ContentMerchantDtoClasspathTest
   void contentAndMerchantSourcesCompileWithoutCoreModelImports()
   void representativeContentAndMerchantTypesAreLoadable()
 
+# shopizer-api-contracts/src/test/java/com/salesmanager/contracts/customer/CustomerSnapshotJacksonTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertFalse, org.junit.jupiter.api.Assertions.assertTrue, org.junit.jupiter.api.Test, com.fasterxml.jackson.databind.JsonNode, com.fasterxml.jackson.databind.ObjectMapper
+class CustomerSnapshotJacksonTest
+  void roundTripPreservesCheckoutFieldsWithoutLazyCollections()
+  void anonymousSnapshotHasNoLazyGraphFields()
+
 # shopizer-api-contracts/src/test/java/com/salesmanager/contracts/merchant/MerchantDtoJacksonTest.java [java]
 imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertNotNull, java.io.IOException, java.lang.reflect.Modifier, java.nio.file.Files, java.nio.file.Path, java.nio.file.Paths, java.util.ArrayList, java.util.List, java.util.stream.Stream, org.junit.jupiter.api.Test, org.junit.jupiter.params.ParameterizedTest, org.junit.jupiter.params.provider.MethodSource, com.fasterxml.jackson.databind.JsonNode, com.fasterxml.jackson.databind.ObjectMapper, com.salesmanager.contracts.content.ReadableImage, com.salesmanager.contracts.reference.ReadableAddress, com.salesmanager.contracts.reference.ReadableLanguage
 class MerchantDtoJacksonTest
@@ -2304,6 +2420,12 @@ class MerchantDtoJacksonTest
   Stream<Class<?>> merchantDtoTypes()
   void merchantStoreSnapshotRoundTripWithNestedFields()
   void configsRoundTripPublicFlags()
+
+# shopizer-api-contracts/src/test/java/com/salesmanager/contracts/order/OrderSnapshotJacksonTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertFalse, org.junit.jupiter.api.Assertions.assertTrue, java.math.BigDecimal, java.util.List, org.junit.jupiter.api.Test, com.fasterxml.jackson.databind.JsonNode, com.fasterxml.jackson.databind.ObjectMapper
+class OrderSnapshotJacksonTest
+  void roundTripPreservesStatusTotalsAndLineSkuQuantity()
+  void emptySnapshotSerializesStableFieldNames()
 
 # shopizer-api-contracts/src/test/java/com/salesmanager/contracts/reference/ReferenceDtoJacksonTest.java [java]
 imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertFalse, org.junit.jupiter.api.Assertions.assertTrue, java.util.Arrays, java.util.Iterator, org.junit.jupiter.api.Test, com.fasterxml.jackson.databind.JsonNode, com.fasterxml.jackson.databind.ObjectMapper
@@ -6990,6 +7112,25 @@ class ProductVariationServiceImpl
   void saveOrUpdate(ProductVariation entity)
   List<ProductVariation> getByIds(List<Long> ids, MerchantStore store)
 
+# sm-core/src/main/java/com/salesmanager/core/business/services/checkout/CheckoutOutboxSnapshotDesign.java [java]
+class CheckoutOutboxSnapshotDesign
+
+# sm-core/src/main/java/com/salesmanager/core/business/services/checkout/CustomerSnapshotBuilder.java [java]
+imports: com.salesmanager.contracts.customer.AddressSnapshot, com.salesmanager.contracts.customer.CustomerSnapshot, com.salesmanager.core.model.common.Billing, com.salesmanager.core.model.common.Delivery, com.salesmanager.core.model.customer.Customer, com.salesmanager.core.model.reference.country.Country, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.reference.zone.Zone
+class CustomerSnapshotBuilder
+  CustomerSnapshot from(Customer customer)
+  AddressSnapshot fromBilling(Billing billing)
+  AddressSnapshot fromDelivery(Delivery delivery)
+  String countryCode(Country country)
+  String zoneCode(Zone zone)
+
+# sm-core/src/main/java/com/salesmanager/core/business/services/checkout/OrderSnapshotBuilder.java [java]
+imports: java.util.ArrayList, java.util.Comparator, java.util.List, com.salesmanager.contracts.order.OrderLineSnapshot, com.salesmanager.contracts.order.OrderSnapshot, com.salesmanager.contracts.order.OrderTotalSnapshot, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.order.Order, com.salesmanager.core.model.order.OrderTotal, com.salesmanager.core.model.order.orderproduct.OrderProduct, com.salesmanager.core.model.payments.PaymentType, com.salesmanager.core.model.reference.currency.Currency
+class OrderSnapshotBuilder
+  OrderSnapshot from(Order order)
+  List<OrderLineSnapshot> mapLines(Iterable<OrderProduct> products)
+  List<OrderTotalSnapshot> mapTotals(Iterable<OrderTotal> totals)
+
 # sm-core/src/main/java/com/salesmanager/core/business/services/customer/CustomerService.java [java]
 imports: java.util.List, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.common.generic.SalesManagerEntityService, com.salesmanager.core.model.common.Address, com.salesmanager.core.model.customer.Customer, com.salesmanager.core.model.customer.CustomerCriteria, com.salesmanager.core.model.customer.CustomerList, com.salesmanager.core.model.merchant.MerchantStore
 interface CustomerService
@@ -7656,6 +7797,21 @@ class ProductSnapshotBuilderTest
   Product sampleProduct()
   ProductInventory sampleInventory(String sku, String price)
   ProductInventory sampleInventory(String sku, String price, boolean discounted)
+
+# sm-core/src/test/java/com/salesmanager/core/business/services/checkout/CustomerSnapshotBuilderTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.junit.jupiter.api.Test, com.fasterxml.jackson.databind.JsonNode, com.fasterxml.jackson.databind.ObjectMapper, com.salesmanager.contracts.customer.CustomerSnapshot, com.salesmanager.core.model.common.Billing, com.salesmanager.core.model.common.Delivery, com.salesmanager.core.model.customer.Customer, com.salesmanager.core.model.reference.country.Country, com.salesmanager.core.model.reference.language.Language, com.salesmanager.core.model.reference.zone.Zone
+class CustomerSnapshotBuilderTest
+  void fromRegisteredCustomerMapsAddressesWithoutLazyCollections()
+  void fromNullCustomerReturnsAnonymousSnapshot()
+  void fromAnonymousCustomerKeepsEmailOnly()
+  Customer registeredCustomer()
+
+# sm-core/src/test/java/com/salesmanager/core/business/services/checkout/OrderSnapshotBuilderTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, java.math.BigDecimal, java.util.LinkedHashSet, java.util.Set, org.junit.jupiter.api.Test, com.salesmanager.contracts.order.OrderLineSnapshot, com.salesmanager.contracts.order.OrderSnapshot, com.salesmanager.contracts.order.OrderTotalSnapshot, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.order.Order, com.salesmanager.core.model.order.OrderTotal, com.salesmanager.core.model.order.OrderTotalType, com.salesmanager.core.model.order.orderproduct.OrderProduct, com.salesmanager.core.model.order.orderstatus.OrderStatus, com.salesmanager.core.model.payments.PaymentType, com.salesmanager.core.model.reference.currency.Currency
+class OrderSnapshotBuilderTest
+  void fromMapsStatusTotalsAndLineSkuQuantity()
+  void fromNullOrderReturnsNull()
+  Order sampleOrder()
 
 # sm-core/src/test/java/com/salesmanager/core/business/services/content/ContentServiceThinCoreWiringTest.java [java]
 imports: org.assertj.core.api.Assertions.assertThat, org.junit.jupiter.api.Assertions.assertTrue, org.junit.jupiter.api.Test, org.springframework.stereotype.Service
