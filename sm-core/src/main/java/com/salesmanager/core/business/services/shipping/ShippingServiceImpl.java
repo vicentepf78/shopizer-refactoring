@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.salesmanager.core.business.constants.ShippingConstants;
 import com.salesmanager.core.business.exception.ServiceException;
 import com.salesmanager.core.business.services.catalog.pricing.PricingService;
+import com.salesmanager.core.business.services.payments.IntegrationContextMapper;
 import com.salesmanager.core.business.services.reference.country.CountryService;
 import com.salesmanager.core.business.services.reference.language.LanguageService;
 import com.salesmanager.core.business.services.reference.loader.ConfigurationModulesLoader;
@@ -56,7 +57,10 @@ import com.salesmanager.core.model.system.IntegrationModule;
 import com.salesmanager.core.model.system.MerchantConfiguration;
 import com.salesmanager.core.modules.integration.IntegrationException;
 import com.salesmanager.core.modules.integration.shipping.model.Packaging;
+import com.salesmanager.core.modules.integration.common.dto.IntegrationStoreContext;
+import com.salesmanager.core.modules.integration.shipping.dto.ShippingQuoteRequestContext;
 import com.salesmanager.core.modules.integration.shipping.model.ShippingQuoteModule;
+import com.salesmanager.core.modules.integration.shipping.model.ShippingQuoteModuleV2;
 import com.salesmanager.core.modules.integration.shipping.model.ShippingQuotePrePostProcessModule;
 import com.salesmanager.core.modules.utils.Encryption;
 
@@ -243,7 +247,10 @@ public class ShippingServiceImpl implements ShippingService {
 				if(quoteModule==null) {
 					throw new ServiceException("Shipping quote module " + moduleCode + " does not exist");
 				}
-				quoteModule.validateModuleConfiguration(configuration, store);
+				IntegrationStoreContext storeContext = IntegrationContextMapper.toStoreContext(store);
+				ShippingQuoteModuleV2 moduleV2 = ShippingQuoteModuleV2Support.resolve(quoteModule,
+						new LegacyShippingEntityBundle(null, null, null, null, null, store, null, null));
+				moduleV2.validateModuleConfiguration(configuration, storeContext);
 				
 			} catch (IntegrationException ie) {
 				throw ie;
@@ -560,7 +567,12 @@ public class ShippingServiceImpl implements ShippingService {
 			List<ShippingOption> shippingOptions = null;
 					
 			try {
-				shippingOptions = shippingQuoteModule.getShippingQuotes(shippingQuote, packages, orderTotal, delivery, shippingOrigin, store, configuration, shippingModule, shippingConfiguration, locale);
+				LegacyShippingEntityBundle entityBundle = new LegacyShippingEntityBundle(shippingQuote, packages,
+						orderTotal, delivery, shippingOrigin, store, shippingConfiguration, locale);
+				ShippingQuoteModuleV2 moduleV2 = ShippingQuoteModuleV2Support.resolve(shippingQuoteModule, entityBundle);
+				ShippingQuoteRequestContext requestContext = IntegrationContextMapper.toShippingQuoteRequestContext(
+						store, packages, orderTotal, delivery, shippingOrigin, configuration, shippingModule, locale);
+				shippingOptions = IntegrationContextMapper.toShippingOptions(moduleV2.getShippingQuotes(requestContext));
 			} catch(Exception e) {
 				LOGGER.error("Error while calculating shipping : " + e.getMessage(), e);
 /*				merchantLogService.save(
