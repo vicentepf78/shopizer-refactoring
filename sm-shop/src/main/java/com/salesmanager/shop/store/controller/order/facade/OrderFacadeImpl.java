@@ -952,7 +952,7 @@ public class OrderFacadeImpl implements OrderFacade {
 			List<com.salesmanager.shop.model.order.v0.ReadableOrder> readableOrders = new ArrayList<com.salesmanager.shop.model.order.v0.ReadableOrder>();
 			for (Order order : orders) {
 				com.salesmanager.shop.model.order.v0.ReadableOrder readableOrder = new com.salesmanager.shop.model.order.v0.ReadableOrder();
-				readableOrderPopulator.populate(order, readableOrder, null, null);
+				readableOrderPopulator.populate(order, readableOrder, (MerchantStore) null, (Language) null);
 				readableOrders.add(readableOrder);
 
 			}

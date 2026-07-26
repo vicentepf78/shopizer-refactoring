@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-26 18:04 | 1610 files | 252125 tokens
+# rtt index | generated 2026-07-26 18:10 | 1625 files | 253481 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -1790,6 +1790,12 @@ class ReadableContentPageFull
   List<ContentDescription> getDescriptions()
   void setDescriptions(List<ContentDescription> descriptions)
 
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/customer/CustomerEntity.java [java]
+imports: java.io.Serializable, com.salesmanager.contracts.common.ShopEntity
+class CustomerEntity
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/customer/package-info.java [java]
+
 # shopizer-api-contracts/src/main/java/com/salesmanager/contracts/merchant/Configs.java [java]
 class Configs
   String getFacebook()
@@ -1947,6 +1953,12 @@ imports: java.util.ArrayList, java.util.List, com.salesmanager.contracts.common.
 class ReadableMerchantStoreList
   List<ReadableMerchantStore> getData()
   void setData(List<ReadableMerchantStore> data)
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/order/OrderEntity.java [java]
+imports: java.io.Serializable, com.salesmanager.contracts.common.ShopEntity
+class OrderEntity
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/order/package-info.java [java]
 
 # shopizer-api-contracts/src/main/java/com/salesmanager/contracts/reference/Address.java [java]
 imports: java.io.Serializable
@@ -2152,6 +2164,28 @@ class TaxRateEntity
   String getCode()
   void setCode(String code)
 
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/tenant/LanguageCode.java [java]
+imports: java.io.Serializable, java.util.Objects, com.fasterxml.jackson.annotation.JsonCreator, com.fasterxml.jackson.annotation.JsonValue
+class LanguageCode
+  LanguageCode of(String code)
+  String getCode()
+  boolean equals(Object other)
+  int hashCode()
+  String toString()
+
+# shopizer-api-contracts/src/main/java/com/salesmanager/contracts/tenant/MerchantStoreId.java [java]
+imports: java.io.Serializable, java.util.Objects, com.fasterxml.jackson.annotation.JsonCreator, com.fasterxml.jackson.annotation.JsonValue
+class MerchantStoreId
+  MerchantStoreId of(String code)
+  String getCode()
+  boolean equals(Object other)
+  int hashCode()
+  String toString()
+
+# shopizer-api-contracts/src/test/java/com/salesmanager/contracts/ContractsMustNotDependOnCoreModelTest.java [java]
+imports: com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses, com.tngtech.archunit.core.importer.ImportOption, com.tngtech.archunit.junit.AnalyzeClasses, com.tngtech.archunit.junit.ArchTest, com.tngtech.archunit.lang.ArchRule
+class ContractsMustNotDependOnCoreModelTest
+
 # shopizer-api-contracts/src/test/java/com/salesmanager/contracts/client/ServiceClientContractTest.java [java]
 imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertFalse, org.junit.jupiter.api.Assertions.assertTrue, java.lang.reflect.Method, java.lang.reflect.Parameter, java.math.BigDecimal, java.util.Arrays, org.junit.jupiter.api.Test, com.salesmanager.contracts.common.Entity, com.salesmanager.contracts.common.ReadableEntityList, com.salesmanager.contracts.reference.ReadableCountry, com.salesmanager.contracts.reference.ReadableLanguage, com.salesmanager.contracts.reference.ReadableZone, com.salesmanager.contracts.tax.PersistableTaxClass, com.salesmanager.contracts.tax.PersistableTaxRate, com.salesmanager.contracts.tax.ReadableTaxClass, com.salesmanager.contracts.tax.ReadableTaxRate, com.salesmanager.contracts.tax.TaxRateDescription
 class ServiceClientContractTest
@@ -2210,6 +2244,25 @@ imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.As
 class TaxDtoJacksonTest
   void persistableAndReadableTaxRateRoundTripWithI18nDescriptions()
   void taxClassAndFullRateRoundTrip()
+
+# shopizer-api-contracts/src/test/java/com/salesmanager/contracts/tenant/LanguageCodeTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertThrows, org.junit.jupiter.api.Test, com.fasterxml.jackson.databind.JsonNode, com.fasterxml.jackson.databind.ObjectMapper
+class LanguageCodeTest
+  void rejectsBlankCode()
+  void serializesAndDeserializesJson()
+
+# shopizer-api-contracts/src/test/java/com/salesmanager/contracts/tenant/MerchantStoreIdTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertNotEquals, org.junit.jupiter.api.Assertions.assertThrows, org.junit.jupiter.api.Test, com.fasterxml.jackson.databind.JsonNode, com.fasterxml.jackson.databind.ObjectMapper
+class MerchantStoreIdTest
+  void rejectsBlankCode()
+  void trimsCodeAndExposesValue()
+  void equalsAndHashCodeUseNormalizedCode()
+  void serializesAsPlainString()
+
+# shopizer-api-contracts/src/test/java/com/salesmanager/contracts/tenant/TenantContractJacksonTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertFalse, org.junit.jupiter.api.Test, com.fasterxml.jackson.databind.JsonNode, com.fasterxml.jackson.databind.ObjectMapper, com.salesmanager.contracts.customer.CustomerEntity, com.salesmanager.contracts.order.OrderEntity
+class TenantContractJacksonTest
+  void orderAndCustomerEntitiesFollowShopEntityShape()
 
 # sm-content-core/src/main/java/com/salesmanager/core/business/modules/cms/common/AssetsManager.java [java]
 interface AssetsManager
@@ -7312,12 +7365,22 @@ class UserServiceImpl
   User findByResetPasswordToken(String userName, String token, MerchantStore store)
   User getByPasswordResetToken(String storeCode, String token)
 
+# sm-core/src/main/java/com/salesmanager/core/business/tenant/TenantEntityBridgeRegistry.java [java]
+imports: com.salesmanager.contracts.tenant.LanguageCode, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.core.business.exception.ConversionException, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language
+class TenantEntityBridgeRegistry
+  interface Bridge
+  void register(Bridge tenantBridge)
+  Bridge require()
+  void clear()
+
 # sm-core/src/main/java/com/salesmanager/core/business/utils/AbstractDataPopulator.java [java]
-imports: java.util.Locale, com.salesmanager.core.business.exception.ConversionException, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language
+imports: java.util.Locale, com.salesmanager.contracts.tenant.LanguageCode, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.core.business.exception.ConversionException, com.salesmanager.core.business.tenant.TenantEntityBridgeRegistry, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language
 class AbstractDataPopulator
   void setLocale(Locale locale)
   Locale getLocale()
   Target populate(Source source, MerchantStore store, Language language)
+  Target populate(Source source, MerchantStoreId storeId, LanguageCode languageCode)
+  Target populate(Source source, Target target, MerchantStoreId storeId, LanguageCode languageCode)
   Target createTarget()
 
 # sm-core/src/main/java/com/salesmanager/core/business/utils/CatalogServiceHelper.java [java]
@@ -7339,7 +7402,7 @@ class CreditCardUtils
   String maskCardNumber(String clearcardnumber)
 
 # sm-core/src/main/java/com/salesmanager/core/business/utils/DataPopulator.java [java]
-imports: com.salesmanager.core.business.exception.ConversionException, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language
+imports: com.salesmanager.contracts.tenant.LanguageCode, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.core.business.exception.ConversionException, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language
 interface DataPopulator
 
 # sm-core/src/main/java/com/salesmanager/core/business/utils/DataUtils.java [java]
@@ -7511,6 +7574,13 @@ class SearchIndexProducerInProcessTest
   void setUp()
   void index_delegatesToLegacySearchService()
   void deleteDocument_delegatesToLegacySearchService()
+
+# sm-core/src/test/java/com/salesmanager/core/business/utils/AbstractDataPopulatorTenantOverloadTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.AfterEach, org.junit.jupiter.api.Test, com.salesmanager.contracts.tenant.LanguageCode, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.core.business.exception.ConversionException, com.salesmanager.core.business.tenant.TenantEntityBridgeRegistry, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language
+class AbstractDataPopulatorTenantOverloadTest
+  void tearDown()
+  void tenantPrimitiveOverloadDelegatesToEntityPopulate()
+  class TestPopulator
 
 # sm-core/src/test/java/com/salesmanager/test/business/utils/DataUtilsTest.java [java]
 imports: com.salesmanager.core.business.utils.DataUtils, com.salesmanager.core.constants.MeasureUnit, com.salesmanager.core.model.merchant.MerchantStore, org.junit.Test, org.junit.Assert, org.mockito.Mockito
@@ -14566,6 +14636,17 @@ class TaxFacadeHttpAdapter
   String taxUrl(String path, MerchantStore store, Language language)
   void appendStoreLang(UriComponentsBuilder builder, MerchantStore store, Language language)
 
+# sm-shop/src/main/java/com/salesmanager/shop/tenant/TenantEntityBridge.java [java]
+imports: com.salesmanager.core.business.tenant.TenantEntityBridgeRegistry
+interface TenantEntityBridge
+
+# sm-shop/src/main/java/com/salesmanager/shop/tenant/TenantEntityBridgeImpl.java [java]
+imports: javax.annotation.PostConstruct, org.springframework.stereotype.Component, com.salesmanager.contracts.tenant.LanguageCode, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.core.business.exception.ConversionException, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.merchant.MerchantStoreService, com.salesmanager.core.business.services.reference.language.LanguageService, com.salesmanager.core.business.tenant.TenantEntityBridgeRegistry, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language
+class TenantEntityBridgeImpl
+  void registerBridge()
+  MerchantStore resolveStore(MerchantStoreId storeId)
+  Language resolveLanguage(LanguageCode languageCode)
+
 # sm-shop/src/main/java/com/salesmanager/shop/utils/AbstractimageFilePath.java [java]
 imports: java.util.Properties, javax.annotation.Resource, org.apache.commons.lang3.StringUtils, com.salesmanager.core.model.catalog.product.Product, com.salesmanager.core.model.catalog.product.manufacturer.Manufacturer, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.shop.constants.Constants
 class AbstractimageFilePath
@@ -15047,6 +15128,11 @@ class TaxFacadeHttpAdapterTest
   void notFound_propagatesDownstreamStatus()
   void updateAndDeleteTaxClass_delegate()
   void updateDeleteAndListTaxRates_delegate()
+
+# sm-shop/src/test/java/com/salesmanager/shop/tenant/TenantEntityBridgeImplTest.java [java]
+imports: org.junit.jupiter.api.Assertions.assertSame, org.mockito.Mockito.when, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.InjectMocks, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.core.business.services.merchant.MerchantStoreService, com.salesmanager.core.business.services.reference.language.LanguageService, com.salesmanager.core.model.merchant.MerchantStore
+class TenantEntityBridgeImplTest
+  void resolveStoreReturnsStoreForValidCode()
 
 # sm-shop/src/test/java/com/salesmanager/test/shop/common/ServicesTestSupport.java [java]
 imports: org.hamcrest.core.Is.is, org.junit.Assert.assertNotNull, org.junit.Assert.assertThat, org.springframework.http.HttpStatus.CREATED, org.springframework.http.HttpStatus.OK, java.math.BigDecimal, java.nio.charset.Charset, java.util.ArrayList, java.util.List, org.junit.jupiter.api.extension.ExtendWith, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.test.context.SpringBootTest, org.springframework.boot.test.context.SpringBootTest.WebEnvironment, org.springframework.boot.test.web.client.TestRestTemplate, org.springframework.http.HttpEntity, org.springframework.http.HttpHeaders, org.springframework.http.HttpMethod, org.springframework.http.MediaType, org.springframework.http.ResponseEntity, org.springframework.test.context.junit.jupiter.SpringExtension, com.salesmanager.core.business.constants.Constants, com.salesmanager.shop.application.ShopApplication, com.salesmanager.shop.model.catalog.category.Category, com.salesmanager.shop.model.catalog.category.CategoryDescription, com.salesmanager.shop.model.catalog.category.PersistableCategory, com.salesmanager.shop.model.catalog.manufacturer.ManufacturerDescription, com.salesmanager.shop.model.catalog.manufacturer.PersistableManufacturer, com.salesmanager.shop.model.catalog.product.PersistableProductPrice, com.salesmanager.shop.model.catalog.product.ProductDescription, com.salesmanager.shop.model.catalog.product.ReadableProduct
