@@ -4759,7 +4759,7 @@ class SaveProductVariantEvent
   ProductVariant getVariant()
 
 # sm-core/src/main/java/com/salesmanager/core/business/configuration/events/products/listeners/IndexProductEventListener.java [java]
-imports: java.util.HashSet, java.util.List, java.util.Set, java.util.stream.Collectors, org.springframework.beans.factory.annotation.Autowired, org.springframework.beans.factory.annotation.Value, org.springframework.context.ApplicationListener, org.springframework.stereotype.Component, com.salesmanager.core.business.configuration.events.products.DeleteProductAttributeEvent, com.salesmanager.core.business.configuration.events.products.DeleteProductEvent, com.salesmanager.core.business.configuration.events.products.DeleteProductImageEvent, com.salesmanager.core.business.configuration.events.products.DeleteProductVariantEvent, com.salesmanager.core.business.configuration.events.products.ProductEvent, com.salesmanager.core.business.configuration.events.products.SaveProductAttributeEvent, com.salesmanager.core.business.configuration.events.products.SaveProductEvent, com.salesmanager.core.business.configuration.events.products.SaveProductImageEvent, com.salesmanager.core.business.configuration.events.products.SaveProductVariantEvent, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.catalog.product.ProductService, com.salesmanager.core.business.services.search.SearchService, com.salesmanager.core.model.catalog.product.Product, com.salesmanager.core.model.catalog.product.attribute.ProductAttribute, com.salesmanager.core.model.catalog.product.image.ProductImage, com.salesmanager.core.model.catalog.product.variant.ProductVariant, com.salesmanager.core.model.merchant.MerchantStore
+imports: java.util.HashSet, java.util.List, java.util.Set, java.util.stream.Collectors, org.springframework.beans.factory.annotation.Autowired, org.springframework.beans.factory.annotation.Value, org.springframework.context.ApplicationListener, org.springframework.stereotype.Component, com.salesmanager.core.business.configuration.events.products.DeleteProductAttributeEvent, com.salesmanager.core.business.configuration.events.products.DeleteProductEvent, com.salesmanager.core.business.configuration.events.products.DeleteProductImageEvent, com.salesmanager.core.business.configuration.events.products.DeleteProductVariantEvent, com.salesmanager.core.business.configuration.events.products.ProductEvent, com.salesmanager.core.business.configuration.events.products.SaveProductAttributeEvent, com.salesmanager.core.business.configuration.events.products.SaveProductEvent, com.salesmanager.core.business.configuration.events.products.SaveProductImageEvent, com.salesmanager.core.business.configuration.events.products.SaveProductVariantEvent, com.salesmanager.core.business.services.catalog.product.ProductService, com.salesmanager.core.business.services.search.index.SearchIndexProducer, com.salesmanager.core.model.catalog.product.Product, com.salesmanager.core.model.catalog.product.attribute.ProductAttribute, com.salesmanager.core.model.catalog.product.image.ProductImage, com.salesmanager.core.model.catalog.product.variant.ProductVariant, com.salesmanager.core.model.merchant.MerchantStore
 class IndexProductEventListener
   void onApplicationEvent(ProductEvent event)
   Product productOfEvent(ProductEvent event)
@@ -6468,6 +6468,32 @@ class SearchServiceImpl
   void mappings(SearchConfiguration config, String language)
   String loadClassPathResource(String file)
 
+# sm-core/src/main/java/com/salesmanager/core/business/services/search/index/ProductIndexPayloadBuilder.java [java]
+imports: java.util.ArrayList, java.util.HashMap, java.util.List, java.util.Map, java.util.Set, java.util.stream.Collectors, org.apache.commons.collections4.CollectionUtils, org.apache.commons.lang3.StringUtils, org.jsoup.helper.Validate, org.springframework.beans.factory.annotation.Autowired, org.springframework.stereotype.Service, com.salesmanager.contracts.search.ProductIndexPayload, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.catalog.inventory.ProductInventoryService, com.salesmanager.core.model.catalog.category.Category, com.salesmanager.core.model.catalog.category.CategoryDescription, com.salesmanager.core.model.catalog.product.Product, com.salesmanager.core.model.catalog.product.attribute.ProductAttribute, com.salesmanager.core.model.catalog.product.attribute.ProductOptionDescription, com.salesmanager.core.model.catalog.product.attribute.ProductOptionValueDescription, com.salesmanager.core.model.catalog.product.description.ProductDescription, com.salesmanager.core.model.catalog.product.image.ProductImage, com.salesmanager.core.model.catalog.product.inventory.ProductInventory, com.salesmanager.core.model.catalog.product.manufacturer.Manufacturer, com.salesmanager.core.model.catalog.product.manufacturer.ManufacturerDescription, com.salesmanager.core.model.catalog.product.variant.ProductVariant, com.salesmanager.core.model.merchant.MerchantStore
+class ProductIndexPayloadBuilder
+  List<ProductIndexPayload> buildAll(MerchantStore store, Product product)
+  ProductIndexPayload buildPayload(MerchantStore store, ProductDescription description, Product product,
+			List<Map<String, String>> variants, List<Map<String, String>> itemInventory)
+  List<Map<String, String>> buildInventory(Product product)
+  Map<String, String> inventory(Product product)
+  Map<String, String> inventory(ProductVariant product)
+  Map<String, String> variants(ProductVariant variant)
+  String manufacturer(Manufacturer manufacturer, String language)
+  String category(Category category, String language)
+  Map<String, String> attributes(Product product, String language)
+  Map<String, String> attribute(ProductAttribute attribute, String language)
+
+# sm-core/src/main/java/com/salesmanager/core/business/services/search/index/SearchIndexProducer.java [java]
+imports: java.util.List, com.salesmanager.core.model.catalog.product.Product, com.salesmanager.core.model.merchant.MerchantStore
+interface SearchIndexProducer
+
+# sm-core/src/main/java/com/salesmanager/core/business/services/search/index/SearchIndexProducerInProcess.java [java]
+imports: java.util.HashSet, java.util.List, java.util.Set, java.util.stream.Collectors, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.autoconfigure.condition.ConditionalOnProperty, org.springframework.stereotype.Service, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.search.SearchService, com.salesmanager.core.model.catalog.product.Product, com.salesmanager.core.model.catalog.product.description.ProductDescription, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language
+class SearchIndexProducerInProcess
+  void index(MerchantStore store, Product product)
+  void deleteDocument(MerchantStore store, Long productId, List<String> languages)
+  Product productStub(Long productId, MerchantStore store, List<String> languages)
+
 # sm-core/src/main/java/com/salesmanager/core/business/services/shipping/ShippingOriginService.java [java]
 imports: com.salesmanager.core.business.services.common.generic.SalesManagerEntityService, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.shipping.ShippingOrigin
 interface ShippingOriginService
@@ -6807,6 +6833,30 @@ class AjaxResponse
 # sm-core/src/main/java/com/salesmanager/core/business/utils/query/ProductQueryBuilder.java [java]
 class ProductQueryBuilder
   String buildProductQuery()
+
+# sm-core/src/test/java/com/salesmanager/core/business/configuration/events/products/listeners/IndexProductEventListenerTest.java [java]
+imports: org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.verify, org.mockito.Mockito.when, java.util.HashSet, java.util.Set, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.InjectMocks, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.springframework.test.util.ReflectionTestUtils, com.salesmanager.core.business.configuration.events.products.DeleteProductEvent, com.salesmanager.core.business.configuration.events.products.SaveProductEvent, com.salesmanager.core.business.services.catalog.product.ProductService, com.salesmanager.core.business.services.search.index.SearchIndexProducer, com.salesmanager.core.model.catalog.product.Product, com.salesmanager.core.model.catalog.product.description.ProductDescription, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language
+class IndexProductEventListenerTest
+  void setUp()
+  void saveProductEvent_usesSearchIndexProducer()
+  void deleteProductEvent_usesSearchIndexProducer()
+
+# sm-core/src/test/java/com/salesmanager/core/business/services/search/index/ProductIndexPayloadBuilderTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.mockito.ArgumentMatchers.any, org.mockito.Mockito.when, java.math.BigDecimal, java.util.HashSet, java.util.List, java.util.Set, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.InjectMocks, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.contracts.search.ProductIndexPayload, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.catalog.inventory.ProductInventoryService, com.salesmanager.core.model.catalog.category.Category, com.salesmanager.core.model.catalog.category.CategoryDescription, com.salesmanager.core.model.catalog.product.Product, com.salesmanager.core.model.catalog.product.description.ProductDescription, com.salesmanager.core.model.catalog.product.inventory.ProductInventory, com.salesmanager.core.model.catalog.product.manufacturer.Manufacturer, com.salesmanager.core.model.catalog.product.manufacturer.ManufacturerDescription, com.salesmanager.core.model.catalog.product.price.FinalPrice, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language
+class ProductIndexPayloadBuilderTest
+  void setUp()
+  void buildAll_generatesPayloadPerLanguageWithSchemaVersionOne()
+  Product sampleProduct()
+  void buildAll_includesDiscountAndVariantInventory()
+  ProductInventory sampleInventory(String sku, String price)
+  ProductInventory sampleInventory(String sku, String price, boolean discounted)
+
+# sm-core/src/test/java/com/salesmanager/core/business/services/search/index/SearchIndexProducerInProcessTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.verify, java.util.Arrays, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.ArgumentCaptor, org.mockito.InjectMocks, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.search.SearchService, com.salesmanager.core.model.catalog.product.Product, com.salesmanager.core.model.merchant.MerchantStore
+class SearchIndexProducerInProcessTest
+  void setUp()
+  void index_delegatesToLegacySearchService()
+  void deleteDocument_delegatesToLegacySearchService()
 
 # sm-core/src/test/java/com/salesmanager/test/business/utils/DataUtilsTest.java [java]
 imports: com.salesmanager.core.business.utils.DataUtils, com.salesmanager.core.constants.MeasureUnit, com.salesmanager.core.model.merchant.MerchantStore, org.junit.Test, org.junit.Assert, org.mockito.Mockito
@@ -13671,6 +13721,11 @@ imports: java.util.Collections, java.util.List, org.apache.commons.lang3.StringU
 class ZoneFacadeHttpAdapter
   List<ReadableZone> getZones(String countryCode, Language language, MerchantStore merchantStore)
 
+# sm-shop/src/main/java/com/salesmanager/shop/strangler/search/SearchBulkIndexOrchestrator.java [java]
+imports: java.util.List, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.boot.autoconfigure.condition.ConditionalOnProperty, org.springframework.stereotype.Service, com.salesmanager.core.business.services.catalog.product.ProductService, com.salesmanager.core.business.services.search.index.SearchIndexProducer, com.salesmanager.core.model.catalog.product.Product, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.shop.strangler.config.Wave2Properties
+class SearchBulkIndexOrchestrator
+  void indexAllData(MerchantStore store)
+
 # sm-shop/src/main/java/com/salesmanager/shop/strangler/search/SearchIndexClientRestTemplateImpl.java [java]
 imports: java.util.List, java.util.stream.Collectors, org.springframework.http.HttpEntity, org.springframework.http.HttpHeaders, org.springframework.http.HttpMethod, org.springframework.util.CollectionUtils, org.springframework.web.client.RestTemplate, org.springframework.web.util.UriComponentsBuilder, com.salesmanager.contracts.client.SearchIndexClient, com.salesmanager.contracts.search.ProductIndexBulkPayload, com.salesmanager.contracts.search.ProductIndexPayload, com.salesmanager.shop.strangler.config.Wave2Properties
 class SearchIndexClientRestTemplateImpl
@@ -13678,6 +13733,13 @@ class SearchIndexClientRestTemplateImpl
   void indexBulk(ProductIndexBulkPayload bulk)
   void deleteDocument(Long productId, String store, List<String> languages)
   HttpHeaders internalHeaders()
+
+# sm-shop/src/main/java/com/salesmanager/shop/strangler/search/SearchIndexProducerHttp.java [java]
+imports: java.util.ArrayList, java.util.List, java.util.stream.Collectors, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.boot.autoconfigure.condition.ConditionalOnProperty, org.springframework.stereotype.Service, com.salesmanager.contracts.client.SearchIndexClient, com.salesmanager.contracts.search.ProductIndexBulkPayload, com.salesmanager.contracts.search.ProductIndexPayload, com.salesmanager.core.business.services.search.index.ProductIndexPayloadBuilder, com.salesmanager.core.business.services.search.index.SearchIndexProducer, com.salesmanager.core.model.catalog.product.Product, com.salesmanager.core.model.merchant.MerchantStore
+class SearchIndexProducerHttp
+  void index(MerchantStore store, Product product)
+  void deleteDocument(MerchantStore store, Long productId, List<String> languages)
+  void indexBulkBatches(List<ProductIndexPayload> payloads)
 
 # sm-shop/src/main/java/com/salesmanager/shop/strangler/support/DownstreamHttpException.java [java]
 imports: org.springframework.http.HttpStatus, com.salesmanager.shop.store.api.exception.GenericRuntimeException
@@ -14029,6 +14091,20 @@ class ReferenceFacadeHttpAdapterTest
   void languageAdapter_mapsReadableLanguageToEntity()
   void currencyAdapter_mapsReadableCurrencyToEntity()
   void countryAdapter_mapsConnectFailureTo503()
+
+# sm-shop/src/test/java/com/salesmanager/shop/strangler/search/SearchBulkIndexOrchestratorTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.mockito.Mockito.times, org.mockito.Mockito.verify, org.mockito.Mockito.when, java.util.Arrays, java.util.List, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.ArgumentCaptor, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.core.business.services.catalog.product.ProductService, com.salesmanager.core.business.services.search.index.SearchIndexProducer, com.salesmanager.core.model.catalog.product.Product, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.shop.strangler.config.Wave2Properties
+class SearchBulkIndexOrchestratorTest
+  void setUp()
+  void indexAllData_listsProductsByStoreAndIndexesEach()
+  void indexAllData_appliesConfiguredDelayBetweenProducts()
+
+# sm-shop/src/test/java/com/salesmanager/shop/strangler/search/SearchIndexProducerHttpTest.java [java]
+imports: org.mockito.Mockito.when, org.springframework.test.web.client.match.MockRestRequestMatchers.header, org.springframework.test.web.client.match.MockRestRequestMatchers.method, org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo, org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess, java.util.Collections, java.util.List, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.springframework.http.HttpMethod, org.springframework.http.MediaType, org.springframework.test.web.client.MockRestServiceServer, org.springframework.web.client.RestTemplate, com.salesmanager.contracts.search.ProductIndexPayload, com.salesmanager.core.business.services.search.index.SearchIndexProducer, com.salesmanager.core.model.catalog.product.Product, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.shop.strangler.config.Wave2Properties, com.salesmanager.shop.strangler.search.SearchIndexClientRestTemplateImpl
+class SearchIndexProducerHttpTest
+  void setUp()
+  void index_emitsDeleteThenBulkPostWithInternalToken()
+  void deleteDocument_emitsDeleteWithInternalToken()
 
 # sm-shop/src/test/java/com/salesmanager/shop/strangler/support/RestErrorHandlerStranglerTest.java [java]
 imports: org.assertj.core.api.Assertions.assertThat, org.junit.jupiter.api.Test, org.springframework.http.HttpStatus, org.springframework.http.ResponseEntity, com.salesmanager.shop.store.api.exception.ErrorEntity, com.salesmanager.shop.store.api.exception.RestErrorHandler

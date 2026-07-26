@@ -64,6 +64,12 @@
 			<artifactId>sm-merchant-core</artifactId>
 		</dependency>
 
+		<!-- wave2 index payloads (ProductIndexPayloadBuilder) -->
+		<dependency>
+			<groupId>com.shopizer</groupId>
+			<artifactId>shopizer-api-contracts</artifactId>
+		</dependency>
+
 		<!-- sm-core-modules -->
 		<dependency>
 			<groupId>com.shopizer</groupId>

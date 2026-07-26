@@ -19,9 +19,8 @@ import com.salesmanager.core.business.configuration.events.products.SaveProductA
 import com.salesmanager.core.business.configuration.events.products.SaveProductEvent;
 import com.salesmanager.core.business.configuration.events.products.SaveProductImageEvent;
 import com.salesmanager.core.business.configuration.events.products.SaveProductVariantEvent;
-import com.salesmanager.core.business.exception.ServiceException;
 import com.salesmanager.core.business.services.catalog.product.ProductService;
-import com.salesmanager.core.business.services.search.SearchService;
+import com.salesmanager.core.business.services.search.index.SearchIndexProducer;
 import com.salesmanager.core.model.catalog.product.Product;
 import com.salesmanager.core.model.catalog.product.attribute.ProductAttribute;
 import com.salesmanager.core.model.catalog.product.image.ProductImage;
@@ -40,7 +39,7 @@ import com.salesmanager.core.model.merchant.MerchantStore;
 public class IndexProductEventListener implements ApplicationListener<ProductEvent> {
 
 	@Autowired
-	private SearchService searchService;
+	private SearchIndexProducer searchIndexProducer;
 
 	@Autowired
 	private ProductService productService;
@@ -127,7 +126,7 @@ public class IndexProductEventListener implements ApplicationListener<ProductEve
 			Product product = productOfEvent(event);
 			MerchantStore store = product.getMerchantStore();
 	
-			searchService.index(store, product);
+			searchIndexProducer.index(store, product);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -137,12 +136,11 @@ public class IndexProductEventListener implements ApplicationListener<ProductEve
 
 		Product product = event.getProduct();
 		MerchantStore store = product.getMerchantStore();
+		List<String> languages = product.getDescriptions().stream()
+				.map(d -> d.getLanguage().getCode())
+				.collect(Collectors.toList());
 
-		try {
-			searchService.deleteDocument(store, product);
-		} catch (ServiceException e) {
-			throw new RuntimeException(e);
-		}
+		searchIndexProducer.deleteDocument(store, product.getId(), languages);
 	}
 
 	void saveProductVariant(SaveProductVariantEvent event) {
@@ -165,11 +163,7 @@ public class IndexProductEventListener implements ApplicationListener<ProductEve
 		Set<ProductVariant> allVariants = new HashSet<ProductVariant>(filteredVariants);
 		product.setVariants(allVariants);
 
-		try {
-			searchService.index(store, product);
-		} catch (ServiceException e) {
-			throw new RuntimeException(e);
-		}
+		searchIndexProducer.index(store, product);
 
 	}
 
@@ -191,11 +185,7 @@ public class IndexProductEventListener implements ApplicationListener<ProductEve
 		Set<ProductVariant> allVariants = new HashSet<ProductVariant>(filteredVariants);
 		product.setVariants(allVariants);
 
-		try {
-			searchService.index(store, product);
-		} catch (ServiceException e) {
-			throw new RuntimeException(e);
-		}
+		searchIndexProducer.index(store, product);
 
 	}
 	
@@ -221,11 +211,7 @@ public class IndexProductEventListener implements ApplicationListener<ProductEve
 		Set<ProductImage> allInmages = new HashSet<ProductImage>(filteredImages);
 		product.setImages(allInmages);
 
-		try {
-			searchService.index(store, product);
-		} catch (ServiceException e) {
-			throw new RuntimeException(e);
-		}
+		searchIndexProducer.index(store, product);
 
 	}
 	
@@ -278,11 +264,7 @@ public class IndexProductEventListener implements ApplicationListener<ProductEve
 		Set<ProductAttribute> allAttributes = new HashSet<ProductAttribute>(filteredAttributes);
 		product.setAttributes(allAttributes);
 
-		try {
-			searchService.index(store, product);
-		} catch (ServiceException e) {
-			throw new RuntimeException(e);
-		}
+		searchIndexProducer.index(store, product);
 
 	}
 	
@@ -302,11 +284,7 @@ public class IndexProductEventListener implements ApplicationListener<ProductEve
 		Set<ProductAttribute> allAttributes = new HashSet<ProductAttribute>(filteredAttributes);
 		product.setAttributes(allAttributes);
 
-		try {
-			searchService.index(store, product);
-		} catch (ServiceException e) {
-			throw new RuntimeException(e);
-		}
+		searchIndexProducer.index(store, product);
 
 	}
 
