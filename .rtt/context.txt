@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-26 12:56 | 1604 files | 250075 tokens
+# rtt index | generated 2026-07-26 13:03 | 1608 files | 251614 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -470,6 +470,19 @@ imports: org.assertj.core.api.Assertions.assertThat, org.springframework.test.we
 class RestClientConfigTest
   void tearDown()
   void correlationInterceptorCopiesInboundHeader()
+
+# content-service/src/test/java/com/salesmanager/content/contract/ContentProviderPactTest.java [java]
+imports: org.mockito.ArgumentMatchers.any, org.mockito.ArgumentMatchers.anyInt, org.mockito.ArgumentMatchers.anyString, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.lenient, org.mockito.Mockito.when, java.util.Collections, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.TestTemplate, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.springframework.http.converter.json.MappingJackson2HttpMessageConverter, org.springframework.test.util.ReflectionTestUtils, org.springframework.test.web.servlet.setup.MockMvcBuilders, com.salesmanager.contracts.common.Entity, com.salesmanager.contracts.common.ReadableEntityList, com.salesmanager.contracts.content.ContentFolder, com.salesmanager.contracts.content.box.ReadableContentBox, com.salesmanager.contracts.content.page.ReadableContentPage, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.content.api.v1.content.ContentApi, com.salesmanager.content.facade.content.ContentFacade, com.salesmanager.content.support.RestErrorHandler, com.salesmanager.content.util.ContentImagePath, com.salesmanager.content.web.LanguageArgumentResolver, com.salesmanager.content.web.MerchantStoreArgumentResolver, au.com.dius.pact.provider.junit5.PactVerificationContext, au.com.dius.pact.provider.junit5.PactVerificationInvocationContextProvider
+class ContentProviderPactTest
+  void setUp(PactVerificationContext context)
+  void verifyInteraction(PactVerificationContext context)
+  void contentPagesExist()
+  void contentPageHomeExists()
+  void contentBoxesExist()
+  void contentBoxSidebarExists()
+  void acceptContentPageCreate()
+  void acceptContentBoxCreate()
+  void contentImagesFolderAvailable()
 
 # content-service/src/test/java/com/salesmanager/content/facade/ContentFacadeImplTest.java [java]
 imports: org.assertj.core.api.Assertions.assertThat, org.assertj.core.api.Assertions.assertThatThrownBy, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.when, java.util.Arrays, java.util.Collections, java.util.Optional, java.util.UUID, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.test.context.SpringBootTest, org.springframework.boot.test.mock.mockito.MockBean, org.springframework.context.annotation.Import, org.springframework.test.context.ActiveProfiles, com.salesmanager.contracts.client.ReferenceServiceClient, com.salesmanager.contracts.content.ContentFile, com.salesmanager.contracts.content.box.PersistableContentBox, com.salesmanager.contracts.content.box.ReadableContentBox, com.salesmanager.contracts.content.common.ContentDescription, com.salesmanager.contracts.content.page.PersistableContentPage, com.salesmanager.contracts.content.page.ReadableContentPage, com.salesmanager.contracts.reference.ReadableLanguage, com.salesmanager.core.model.content.ContentType, com.salesmanager.core.model.content.FileContentType, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.content.facade.content.ContentFacade, com.salesmanager.content.support.ConstraintException, com.salesmanager.content.support.ResourceNotFoundException
@@ -981,6 +994,17 @@ class RestClientConfigTest
   void tearDown()
   void correlationInterceptorCopiesInboundHeader()
 
+# merchant-service/src/test/java/com/salesmanager/merchant/contract/MerchantProviderPactTest.java [java]
+imports: org.mockito.ArgumentMatchers.any, org.mockito.ArgumentMatchers.anyInt, org.mockito.ArgumentMatchers.anyString, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.doNothing, org.mockito.Mockito.lenient, org.mockito.Mockito.when, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.TestTemplate, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.springframework.http.converter.json.MappingJackson2HttpMessageConverter, org.springframework.test.web.servlet.setup.MockMvcBuilders, com.salesmanager.contracts.merchant.Configs, com.salesmanager.contracts.merchant.MerchantStoreSnapshot, com.salesmanager.contracts.merchant.ReadableMerchantStore, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.reference.language.Language, com.salesmanager.merchant.api.internal.InternalStoreController, com.salesmanager.merchant.api.v1.store.MerchantStoreController, com.salesmanager.merchant.api.v1.system.PublicConfigsController, com.salesmanager.merchant.facade.MerchantConfigurationFacade, com.salesmanager.merchant.facade.StoreFacade, com.salesmanager.merchant.security.UserAuthorizationService, com.salesmanager.merchant.support.RestErrorHandler, com.salesmanager.merchant.web.LanguageArgumentResolver, com.salesmanager.merchant.web.MerchantStoreArgumentResolver, au.com.dius.pact.provider.junit5.PactVerificationContext, au.com.dius.pact.provider.junit5.PactVerificationInvocationContextProvider
+class MerchantProviderPactTest
+  void setUp(PactVerificationContext context)
+  void verifyInteraction(PactVerificationContext context)
+  void storeDefaultExists()
+  void merchantConfigExists()
+  void storeSnapshotExists()
+  void privateStoreDefaultExists()
+  void storeCreateAccepted()
+
 # merchant-service/src/test/java/com/salesmanager/merchant/facade/LogoOrchestrationTest.java [java]
 imports: org.assertj.core.api.Assertions.assertThat, org.mockito.ArgumentMatchers.any, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.doAnswer, org.mockito.Mockito.doThrow, org.mockito.Mockito.verify, org.mockito.Mockito.when, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.contracts.client.ContentServiceClient, com.salesmanager.core.business.exception.ServiceException, com.salesmanager.core.business.services.merchant.MerchantStoreService, com.salesmanager.core.business.services.reference.language.LanguageService, com.salesmanager.core.business.services.system.MerchantConfigurationService, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.merchant.populator.MerchantStoreSnapshotPopulator, com.salesmanager.merchant.populator.PersistableMerchantStorePopulator, com.salesmanager.merchant.populator.ReadableMerchantStorePopulator, com.salesmanager.merchant.util.MerchantLogoPath
 class LogoOrchestrationTest
@@ -1439,6 +1463,16 @@ imports: org.assertj.core.api.Assertions.assertThat, org.mockito.Mockito.mock, o
 class SearchModuleBootstrapTest
   void buildConfigurationLoadsMappingsAndSettings()
   void initConfiguresSearchModuleWhenEnabled()
+
+# search-service/src/test/java/com/salesmanager/search/contract/SearchProviderPactTest.java [java]
+imports: org.mockito.ArgumentMatchers.any, org.mockito.ArgumentMatchers.anyString, org.mockito.Mockito.doNothing, java.util.Collections, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.TestTemplate, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, org.springframework.http.converter.json.MappingJackson2HttpMessageConverter, org.springframework.test.web.servlet.setup.MockMvcBuilders, com.salesmanager.contracts.search.ValueList, com.salesmanager.search.api.internal.InternalIndexController, com.salesmanager.search.api.v1.SearchController, com.salesmanager.search.services.SearchIndexService, com.salesmanager.search.services.SearchQueryService, com.salesmanager.search.web.RestErrorHandler, au.com.dius.pact.provider.junit5.PactVerificationContext, au.com.dius.pact.provider.junit5.PactVerificationInvocationContextProvider, au.com.dius.pact.provider.junitsupport.Provider, au.com.dius.pact.provider.junitsupport.State, au.com.dius.pact.provider.junitsupport.loader.PactFolder, au.com.dius.pact.provider.spring.junit5.MockMvcTestTarget, modules.commons.search.request.SearchItem
+class SearchProviderPactTest
+  void setUp(PactVerificationContext context)
+  void verifyInteraction(PactVerificationContext context)
+  void searchResultsExist()
+  void autocompleteSuggestionsExist()
+  void indexAcceptsSchemaVersion1()
+  void indexRejectsUnsupportedSchema()
 
 # search-service/src/test/java/com/salesmanager/search/health/SearchHealthIndicatorTest.java [java]
 imports: org.assertj.core.api.Assertions.assertThat, org.mockito.Mockito.mock, org.mockito.Mockito.when, org.junit.jupiter.api.Test, org.springframework.boot.actuate.health.Health, org.springframework.boot.actuate.health.Status, modules.commons.search.SearchModule
@@ -14803,6 +14837,29 @@ class Wave1ConsumerPactTest
   Map<String, String> jsonHeaders()
   Map<String, String> authHeaders()
   Map<String, String> authJsonHeaders()
+
+# sm-shop/src/test/java/com/salesmanager/shop/contract/Wave2ConsumerPactTest.java [java]
+imports: au.com.dius.pact.consumer.dsl.LambdaDsl.newJsonArray, au.com.dius.pact.consumer.dsl.LambdaDsl.newJsonBody, org.assertj.core.api.Assertions.assertThat, java.io.IOException, java.util.HashMap, java.util.List, java.util.Map, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.springframework.core.ParameterizedTypeReference, org.springframework.http.HttpEntity, org.springframework.http.HttpHeaders, org.springframework.http.HttpMethod, org.springframework.http.MediaType, org.springframework.http.ResponseEntity, org.springframework.http.client.ClientHttpResponse, org.springframework.web.client.DefaultResponseErrorHandler, org.springframework.web.client.RestTemplate, com.salesmanager.contracts.merchant.MerchantStoreSnapshot, au.com.dius.pact.consumer.MockServer, au.com.dius.pact.consumer.dsl.PactDslWithProvider, au.com.dius.pact.consumer.junit5.PactConsumerTestExt, au.com.dius.pact.consumer.junit5.PactTestFor, au.com.dius.pact.core.model.PactSpecVersion, au.com.dius.pact.core.model.RequestResponsePact, au.com.dius.pact.core.model.annotations.Pact, au.com.dius.pact.core.model.annotations.PactDirectory
+class Wave2ConsumerPactTest
+  RequestResponsePact contentServicePact(PactDslWithProvider builder)
+  RequestResponsePact searchQueryPact(PactDslWithProvider builder)
+  RequestResponsePact searchIndexValidPact(PactDslWithProvider builder)
+  RequestResponsePact searchIndexInvalidPact(PactDslWithProvider builder)
+  RequestResponsePact merchantServicePact(PactDslWithProvider builder)
+  void contentEndpoints_matchStranglerExpectations(MockServer mockServer)
+  void searchQueryEndpoints_matchStranglerExpectations(MockServer mockServer)
+  void searchIndexValid_matchStranglerExpectations(MockServer mockServer)
+  void searchIndexInvalid_matchStranglerExpectations(MockServer mockServer)
+  void merchantEndpoints_matchStranglerExpectations(MockServer mockServer)
+  Map<String, String> jsonHeaders()
+  Map<String, String> authHeaders()
+  Map<String, String> authJsonHeaders()
+  Map<String, String> internalJsonHeaders()
+  HttpHeaders jsonEntityHeaders()
+  HttpHeaders authEntityHeaders()
+  HttpHeaders authJsonEntityHeaders()
+  HttpHeaders internalJsonEntityHeaders()
+  RestTemplate tolerantRestTemplate()
 
 # sm-shop/src/test/java/com/salesmanager/shop/filter/CorrelationIdFilterTest.java [java]
 imports: org.assertj.core.api.Assertions.assertThat, java.util.concurrent.atomic.AtomicReference, javax.servlet.http.HttpServletRequest, org.junit.jupiter.api.AfterEach, org.junit.jupiter.api.Test, org.slf4j.MDC, org.springframework.mock.web.MockHttpServletRequest, org.springframework.mock.web.MockHttpServletResponse

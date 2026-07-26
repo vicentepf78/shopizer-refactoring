@@ -19,6 +19,7 @@ Wave 2 search strangler on BFF complete (task_07): `SearchFacadeHttpAdapter` act
 
 ## Handoffs
 
+- task_13 done: Wave2 Pact consumer `sm-shop-wave2` + providers content/search/merchant; pacts in `pacts/`; runbook `docs/PACT-WAVE2.md`. Multipart upload excluded from Pact (see ContentFilesIntegrationTest).
 - task_12 done: CorrelationIdFilter + RestTemplate interceptors Wave2/sm-shop; health indicators content/search/merchant; correlationId in sm-shop 503 strangler body.
 - task_11 done: sm-shop Wave2 content+merchant strangler (ContentFacadeHttpAdapter, StaticContentProxy, ContentBlobClient, Store/MerchantConfig HTTP adapters, MerchantServiceClient+hydrator+resolver, conditional facade beans). Internal catalog blob API on content-service.
 - task_10 done: merchant-service exposes store REST (~18 endpoints, no ProductType), GET /api/v1/config, GET /internal/v1/store/{code}, AD-014 logo orchestration; gate `./mvnw verify -pl merchant-service -am` with JaCoCo ≥80% on facade/populator/client.

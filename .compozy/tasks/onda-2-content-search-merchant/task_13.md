@@ -1,5 +1,5 @@
 ---
-status: pending
+status: completed
 title: Pact providers e consumer Wave2
 type: test
 complexity: medium
@@ -29,11 +29,11 @@ Consolida TLC T49–T50. Adiciona verificação Pact provider nos três serviço
 </requirements>
 
 ## Subtasks
-- [ ] 13.1 Provider Pact content-service (T49)
-- [ ] 13.2 Provider Pact search-service (T49)
-- [ ] 13.3 Provider Pact merchant-service (T49)
-- [ ] 13.4 Consumer Wave2ConsumerPactTest em sm-shop (T50)
-- [ ] 13.5 Gates Maven dos quatro módulos
+- [x] 13.1 Provider Pact content-service (T49)
+- [x] 13.2 Provider Pact search-service (T49)
+- [x] 13.3 Provider Pact merchant-service (T49)
+- [x] 13.4 Consumer Wave2ConsumerPactTest em sm-shop (T50)
+- [x] 13.5 Gates Maven dos quatro módulos
 
 ## Implementation Details
 Ver TechSpec: **Abordagem de testes** (Pact), **Ordem de construção** passo 29. Requisito STR-02 / SRCH-07.
@@ -63,14 +63,14 @@ Ver TechSpec: **Abordagem de testes** (Pact), **Ordem de construção** passo 29
 
 ## Tests
 - Unit tests:
-  - [ ] N/A — foco em contract tests (coverage aplicado aos fixtures/helpers se houver)
+  - [x] N/A — foco em contract tests (coverage aplicado aos fixtures/helpers se houver)
 - Integration tests:
-  - [ ] Provider content: list/get page e box; upload file path P1
-  - [ ] Provider search: POST search/autocomplete; índice schemaVersion rejeitado
-  - [ ] Provider merchant: store CRUD subset; GET config; snapshot; sem ProductType
-  - [ ] Consumer sm-shop: interactions content/search/merchant usadas pelos adapters
-  - [ ] `./mvnw test -pl content-service,search-service,merchant-service -Dtest=*ProviderPactTest`
-  - [ ] `./mvnw test -pl sm-shop -Dtest=Wave2ConsumerPactTest`
+  - [x] Provider content: list/get page e box; upload file path P1
+  - [x] Provider search: POST search/autocomplete; índice schemaVersion rejeitado
+  - [x] Provider merchant: store CRUD subset; GET config; snapshot; sem ProductType
+  - [x] Consumer sm-shop: interactions content/search/merchant usadas pelos adapters
+  - [x] `./mvnw test -pl content-service,search-service,merchant-service -Dtest=*ProviderPactTest`
+  - [x] `./mvnw test -pl sm-shop -Dtest=Wave2ConsumerPactTest`
 - Test coverage target: >=80% (helpers/fixtures Pact quando aplicável)
 - All tests must pass
 

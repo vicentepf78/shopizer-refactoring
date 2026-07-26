@@ -1,0 +1,287 @@
+{
+  "consumer": {
+    "name": "sm-shop-wave2"
+  },
+  "interactions": [
+    {
+      "description": "search autocomplete",
+      "providerStates": [
+        {
+          "name": "autocomplete suggestions exist for store DEFAULT"
+        }
+      ],
+      "request": {
+        "body": {
+          "query": "ph"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "body": {
+            "$.query": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "method": "POST",
+        "path": "/api/v1/search/autocomplete",
+        "query": {
+          "lang": [
+            "en"
+          ],
+          "store": [
+            "DEFAULT"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "values": [
+            "phone",
+            "phones"
+          ]
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "index product document",
+      "providerStates": [
+        {
+          "name": "index accepts schema version 1"
+        }
+      ],
+      "request": {
+        "body": {
+          "id": 99,
+          "language": "en",
+          "name": "Sample",
+          "schemaVersion": 1,
+          "store": "default"
+        },
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Internal-Token": "test-internal-token"
+        },
+        "matchingRules": {
+          "body": {
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.language": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.schemaVersion": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.store": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "method": "POST",
+        "path": "/internal/v1/index"
+      },
+      "response": {
+        "status": 204
+      }
+    },
+    {
+      "description": "index rejects bad schema version",
+      "providerStates": [
+        {
+          "name": "index rejects unsupported schema version"
+        }
+      ],
+      "request": {
+        "body": {
+          "id": 99,
+          "schemaVersion": 2
+        },
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Internal-Token": "test-internal-token"
+        },
+        "matchingRules": {
+          "body": {
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.schemaVersion": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            }
+          }
+        },
+        "method": "POST",
+        "path": "/internal/v1/index"
+      },
+      "response": {
+        "body": {
+          "error": "Unsupported schemaVersion: 2",
+          "schemaVersion": 2
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "body": {
+            "$.error": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.schemaVersion": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            }
+          }
+        },
+        "status": 422
+      }
+    },
+    {
+      "description": "product search",
+      "providerStates": [
+        {
+          "name": "search results exist for store DEFAULT"
+        }
+      ],
+      "request": {
+        "body": {
+          "query": "phone"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "body": {
+            "$.query": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "method": "POST",
+        "path": "/api/v1/search",
+        "query": {
+          "lang": [
+            "en"
+          ],
+          "store": [
+            "DEFAULT"
+          ]
+        }
+      },
+      "response": {
+        "body": [
+          {
+            "description": "Smart phone",
+            "id": 1,
+            "name": "Phone"
+          }
+        ],
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "body": {
+            "$[0].description": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$[0].id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$[0].name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      }
+    }
+  ],
+  "metadata": {
+    "pact-jvm": {
+      "version": "4.6.17"
+    },
+    "pactSpecification": {
+      "version": "3.0.0"
+    }
+  },
+  "provider": {
+    "name": "search-service"
+  }
+}

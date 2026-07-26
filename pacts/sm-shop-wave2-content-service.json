@@ -1,0 +1,519 @@
+{
+  "consumer": {
+    "name": "sm-shop-wave2"
+  },
+  "interactions": [
+    {
+      "description": "get content box by code",
+      "providerStates": [
+        {
+          "name": "content box sidebar exists for store DEFAULT"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/api/v1/content/boxes/sidebar",
+        "query": {
+          "lang": [
+            "en"
+          ],
+          "store": [
+            "DEFAULT"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "code": "sidebar",
+          "contentType": "BOX",
+          "id": 2
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "body": {
+            "$.code": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.contentType": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "list content boxes",
+      "providerStates": [
+        {
+          "name": "content boxes exist for store DEFAULT"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/api/v1/content/boxes",
+        "query": {
+          "count": [
+            "10"
+          ],
+          "lang": [
+            "en"
+          ],
+          "page": [
+            "0"
+          ],
+          "store": [
+            "DEFAULT"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "items": [
+            {
+              "code": "sidebar",
+              "contentType": "BOX",
+              "id": 2
+            }
+          ],
+          "totalPages": 1
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "body": {
+            "$.items[0].code": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.items[0].contentType": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.items[0].id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.totalPages": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "get content images folder",
+      "providerStates": [
+        {
+          "name": "content images folder available for store DEFAULT"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/api/v1/content/images",
+        "query": {
+          "lang": [
+            "en"
+          ],
+          "store": [
+            "DEFAULT"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "content": [
+
+          ],
+          "path": "/"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "body": {
+            "$.path": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "get content page by code",
+      "providerStates": [
+        {
+          "name": "content page home exists for store DEFAULT"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/api/v1/content/pages/home",
+        "query": {
+          "lang": [
+            "en"
+          ],
+          "store": [
+            "DEFAULT"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "code": "home",
+          "id": 1,
+          "path": "/home"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "body": {
+            "$.code": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.path": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "list content pages",
+      "providerStates": [
+        {
+          "name": "content pages exist for store DEFAULT"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/api/v1/content/pages",
+        "query": {
+          "count": [
+            "10"
+          ],
+          "lang": [
+            "en"
+          ],
+          "page": [
+            "0"
+          ],
+          "store": [
+            "DEFAULT"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "items": [
+            {
+              "code": "home",
+              "contentType": "PAGE",
+              "id": 1,
+              "visible": true
+            }
+          ],
+          "number": 0,
+          "recordsFiltered": 1,
+          "recordsTotal": 1,
+          "totalPages": 1
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "body": {
+            "$.items[0].code": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.items[0].contentType": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.items[0].id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.items[0].visible": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.number": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.recordsFiltered": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.recordsTotal": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.totalPages": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "create content box",
+      "providerStates": [
+        {
+          "name": "store DEFAULT accepts content box create"
+        }
+      ],
+      "request": {
+        "body": {
+          "code": "promo",
+          "visible": true
+        },
+        "headers": {
+          "Authorization": "Bearer test-token",
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "body": {
+            "$.code": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.visible": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "method": "POST",
+        "path": "/api/v1/private/content/box",
+        "query": {
+          "lang": [
+            "en"
+          ],
+          "store": [
+            "DEFAULT"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "id": 4
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "body": {
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            }
+          }
+        },
+        "status": 201
+      }
+    },
+    {
+      "description": "create content page",
+      "providerStates": [
+        {
+          "name": "store DEFAULT accepts content page create"
+        }
+      ],
+      "request": {
+        "body": {
+          "code": "about",
+          "contentType": "PAGE",
+          "visible": true
+        },
+        "headers": {
+          "Authorization": "Bearer test-token",
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "body": {
+            "$.code": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.contentType": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.visible": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "method": "POST",
+        "path": "/api/v1/private/content/page",
+        "query": {
+          "lang": [
+            "en"
+          ],
+          "store": [
+            "DEFAULT"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "id": 3
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "body": {
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            }
+          }
+        },
+        "status": 201
+      }
+    }
+  ],
+  "metadata": {
+    "pact-jvm": {
+      "version": "4.6.17"
+    },
+    "pactSpecification": {
+      "version": "3.0.0"
+    }
+  },
+  "provider": {
+    "name": "content-service"
+  }
+}

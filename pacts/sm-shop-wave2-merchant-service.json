@@ -1,0 +1,318 @@
+{
+  "consumer": {
+    "name": "sm-shop-wave2"
+  },
+  "interactions": [
+    {
+      "description": "get merchant config",
+      "providerStates": [
+        {
+          "name": "merchant config exists for store DEFAULT"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/api/v1/config",
+        "query": {
+          "lang": [
+            "en"
+          ],
+          "store": [
+            "DEFAULT"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "displaySearchBox": true,
+          "displayShipping": true,
+          "facebook": "https://facebook.test"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "body": {
+            "$.displaySearchBox": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.displayShipping": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.facebook": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "get private store",
+      "providerStates": [
+        {
+          "name": "private store DEFAULT exists"
+        }
+      ],
+      "request": {
+        "headers": {
+          "Authorization": "Bearer test-token"
+        },
+        "method": "GET",
+        "path": "/api/v1/private/store/DEFAULT",
+        "query": {
+          "lang": [
+            "en"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "code": "DEFAULT",
+          "id": 1,
+          "name": "Default store"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "body": {
+            "$.code": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "get public store",
+      "providerStates": [
+        {
+          "name": "store DEFAULT exists"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/api/v1/store/DEFAULT",
+        "query": {
+          "lang": [
+            "en"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "code": "DEFAULT",
+          "id": 1,
+          "name": "Default store"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "body": {
+            "$.code": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      }
+    },
+    {
+      "description": "create merchant store",
+      "providerStates": [
+        {
+          "name": "store create accepted"
+        }
+      ],
+      "request": {
+        "body": {
+          "code": "NEWSTORE",
+          "email": "new@store.test",
+          "name": "New Store",
+          "phone": "555-0100"
+        },
+        "headers": {
+          "Authorization": "Bearer test-token",
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "body": {
+            "$.code": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.email": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.phone": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "method": "POST",
+        "path": "/api/v1/private/store"
+      },
+      "response": {
+        "status": 200
+      }
+    },
+    {
+      "description": "get store snapshot",
+      "providerStates": [
+        {
+          "name": "store snapshot DEFAULT exists"
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "path": "/internal/v1/store/DEFAULT",
+        "query": {
+          "lang": [
+            "en"
+          ]
+        }
+      },
+      "response": {
+        "body": {
+          "code": "DEFAULT",
+          "defaultLanguage": "en",
+          "id": 1,
+          "name": "Default store"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "matchingRules": {
+          "body": {
+            "$.code": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.defaultLanguage": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "status": 200
+      }
+    }
+  ],
+  "metadata": {
+    "pact-jvm": {
+      "version": "4.6.17"
+    },
+    "pactSpecification": {
+      "version": "3.0.0"
+    }
+  },
+  "provider": {
+    "name": "merchant-service"
+  }
+}
