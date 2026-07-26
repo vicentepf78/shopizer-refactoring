@@ -16,3 +16,10 @@ recursive = false
 
 [tasks.run.parallel]
 max_concurrency = 4
+
+[tasks.run.parallel.conflict_resolver]
+ide = "codex"
+model = "gpt-5.5"
+reasoning_effort = "medium"
+max_attempts = 3
+validation_command = []
