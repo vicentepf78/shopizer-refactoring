@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.salesmanager.contracts.tenant.LanguageCode;
 import com.salesmanager.contracts.tenant.MerchantStoreId;
+import com.salesmanager.core.modules.integration.common.dto.IntegrationModuleDto;
 import com.salesmanager.core.modules.integration.common.dto.IntegrationStoreContext;
 
 class PaymentRequestContextJacksonTest {
@@ -45,6 +46,13 @@ class PaymentRequestContextJacksonTest {
 		context.setCurrencyCode("USD");
 		context.getPaymentMetaData().put("token", "abc123");
 
+		IntegrationModuleDto module = new IntegrationModuleDto();
+		module.setCode("moneyorder");
+		module.setModule("moneyorder");
+		module.setType("payment");
+		module.setRegions("*");
+		context.setModule(module);
+
 		String json = mapper.writeValueAsString(context);
 		JsonNode tree = mapper.readTree(json);
 
@@ -56,6 +64,7 @@ class PaymentRequestContextJacksonTest {
 		assertEquals("39.98", tree.get("amount").asText());
 		assertEquals("SKU-1", tree.get("lineItems").get(0).get("sku").asText());
 		assertEquals("abc123", tree.get("paymentMetaData").get("token").asText());
+		assertEquals("moneyorder", tree.get("module").get("code").asText());
 
 		PaymentRequestContext roundTrip = mapper.readValue(json, PaymentRequestContext.class);
 		assertNotNull(roundTrip.getStore());
@@ -68,6 +77,7 @@ class PaymentRequestContextJacksonTest {
 		assertEquals(1, roundTrip.getLineItems().size());
 		assertEquals("SKU-1", roundTrip.getLineItems().get(0).getSku());
 		assertEquals("abc123", roundTrip.getPaymentMetaData().get("token"));
+		assertEquals("moneyorder", roundTrip.getModule().getCode());
 	}
 
 }

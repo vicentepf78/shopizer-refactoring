@@ -24,6 +24,7 @@ import com.salesmanager.core.model.shipping.ShippingOrigin;
 import com.salesmanager.core.model.shoppingcart.ShoppingCartItem;
 import com.salesmanager.core.model.system.IntegrationConfiguration;
 import com.salesmanager.core.model.system.IntegrationModule;
+import com.salesmanager.core.modules.integration.common.dto.IntegrationModuleDto;
 import com.salesmanager.core.modules.integration.common.dto.IntegrationStoreContext;
 import com.salesmanager.core.modules.integration.payment.dto.PaymentCaptureContext;
 import com.salesmanager.core.modules.integration.payment.dto.PaymentLineItemDto;
@@ -74,6 +75,30 @@ public final class IntegrationContextMapper {
 		return lineItems;
 	}
 
+	public static IntegrationModuleDto toModuleDto(IntegrationModule module) {
+		if (module == null) {
+			return null;
+		}
+		IntegrationModuleDto dto = new IntegrationModuleDto();
+		dto.setCode(module.getCode());
+		dto.setType(module.getType());
+		dto.setRegions(module.getRegions());
+		dto.setModule(module.getModule());
+		return dto;
+	}
+
+	public static IntegrationModule toModule(IntegrationModuleDto dto) {
+		if (dto == null) {
+			return null;
+		}
+		IntegrationModule module = new IntegrationModule();
+		module.setCode(dto.getCode());
+		module.setType(dto.getType());
+		module.setRegions(dto.getRegions());
+		module.setModule(dto.getModule());
+		return module;
+	}
+
 	public static PaymentRequestContext toPaymentRequestContext(MerchantStore store, Customer customer,
 			List<ShoppingCartItem> items, BigDecimal amount, Payment payment,
 			IntegrationConfiguration configuration, IntegrationModule module) {
@@ -101,7 +126,7 @@ public final class IntegrationContextMapper {
 			}
 		}
 		context.setConfiguration(configuration);
-		context.setModule(module);
+		context.setModule(toModuleDto(module));
 		return context;
 	}
 
@@ -118,7 +143,7 @@ public final class IntegrationContextMapper {
 		}
 		context.setCapturableTransaction(toTransactionResult(capturableTransaction));
 		context.setConfiguration(configuration);
-		context.setModule(module);
+		context.setModule(toModuleDto(module));
 		return context;
 	}
 
@@ -137,7 +162,7 @@ public final class IntegrationContextMapper {
 		context.setAmount(amount);
 		context.setRefundableTransaction(toTransactionResult(refundableTransaction));
 		context.setConfiguration(configuration);
-		context.setModule(module);
+		context.setModule(toModuleDto(module));
 		return context;
 	}
 
@@ -266,7 +291,7 @@ public final class IntegrationContextMapper {
 			context.setLocale(locale.toString());
 		}
 		context.setConfiguration(configuration);
-		context.setModule(module);
+		context.setModule(toModuleDto(module));
 		return context;
 	}
 

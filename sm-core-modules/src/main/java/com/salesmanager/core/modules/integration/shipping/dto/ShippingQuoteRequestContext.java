@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.salesmanager.core.model.system.IntegrationConfiguration;
-import com.salesmanager.core.model.system.IntegrationModule;
+import com.salesmanager.core.modules.integration.common.dto.IntegrationModuleDto;
 import com.salesmanager.core.modules.integration.common.dto.IntegrationStoreContext;
 
 public class ShippingQuoteRequestContext implements Serializable {
@@ -20,7 +20,7 @@ public class ShippingQuoteRequestContext implements Serializable {
 	private ShippingAddressDto origin;
 	private String locale;
 	private IntegrationConfiguration configuration;
-	private IntegrationModule module;
+	private IntegrationModuleDto module;
 
 	public IntegrationStoreContext getStore() {
 		return store;
@@ -78,11 +78,11 @@ public class ShippingQuoteRequestContext implements Serializable {
 		this.configuration = configuration;
 	}
 
-	public IntegrationModule getModule() {
+	public IntegrationModuleDto getModule() {
 		return module;
 	}
 
-	public void setModule(IntegrationModule module) {
+	public void setModule(IntegrationModuleDto module) {
 		this.module = module;
 	}
 

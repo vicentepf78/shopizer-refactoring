@@ -32,6 +32,8 @@ class IntegrationDtoNoJpaTest {
 					source + " must not reference Customer");
 			assertFalse(content.contains("com.salesmanager.core.model.shoppingcart.ShoppingCartItem"),
 					source + " must not reference ShoppingCartItem");
+			assertFalse(content.contains("com.salesmanager.core.model.system.IntegrationModule"),
+					source + " must not reference IntegrationModule JPA entity");
 			assertFalse(content.contains("javax.persistence."),
 					source + " must not import JPA");
 		} catch (IOException e) {

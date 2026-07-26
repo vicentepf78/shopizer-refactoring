@@ -224,7 +224,7 @@ public class PaymentServiceImpl implements PaymentService {
 			}
 			IntegrationStoreContext storeContext = IntegrationContextMapper.toStoreContext(store);
 			PaymentModuleV2 moduleV2 = PaymentModuleV2Support.resolve(module,
-					LegacyPaymentEntityBundle.forPayment(store, null, null, null));
+					LegacyPaymentEntityBundle.forPayment(store, null, null, null, null));
 			moduleV2.validateModuleConfiguration(configuration, storeContext);
 			
 		} catch (IntegrationException ie) {
@@ -378,7 +378,8 @@ public class PaymentServiceImpl implements PaymentService {
 			}
 		}
 		
-		LegacyPaymentEntityBundle entityBundle = LegacyPaymentEntityBundle.forPayment(store, customer, items, payment);
+		LegacyPaymentEntityBundle entityBundle = LegacyPaymentEntityBundle.forPayment(store, customer, items, payment,
+				integrationModule);
 		PaymentModuleV2 moduleV2 = PaymentModuleV2Support.resolve(module, entityBundle);
 		PaymentRequestContext requestContext = IntegrationContextMapper.toPaymentRequestContext(store, customer, items,
 				amount, payment, configuration, integrationModule);
@@ -460,7 +461,8 @@ public class PaymentServiceImpl implements PaymentService {
 		if(trx==null) {
 			throw new ServiceException("No capturable transaction for order id " + order.getId());
 		}
-		LegacyPaymentEntityBundle entityBundle = LegacyPaymentEntityBundle.forCapture(store, customer, order, trx);
+		LegacyPaymentEntityBundle entityBundle = LegacyPaymentEntityBundle.forCapture(store, customer, order, trx,
+				integrationModule);
 		PaymentModuleV2 moduleV2 = PaymentModuleV2Support.resolve(module, entityBundle);
 		PaymentCaptureContext captureContext = IntegrationContextMapper.toCaptureContext(store, customer, order, trx,
 				configuration, integrationModule);
@@ -541,7 +543,7 @@ public class PaymentServiceImpl implements PaymentService {
 		}
 		
 		LegacyPaymentEntityBundle entityBundle = LegacyPaymentEntityBundle.forRefund(store, customer, order, refundable,
-				amount, partial);
+				amount, partial, integrationModule);
 		PaymentModuleV2 moduleV2 = PaymentModuleV2Support.resolve(paymentModule, entityBundle);
 		PaymentRefundContext refundContext = IntegrationContextMapper.toRefundContext(store, customer, order, partial,
 				refundable, amount, configuration, integrationModule);
@@ -755,7 +757,8 @@ public class PaymentServiceImpl implements PaymentService {
 		
 		IntegrationModule integrationModule = getPaymentMethodByCode(store,payment.getModuleName());
 
-		LegacyPaymentEntityBundle entityBundle = LegacyPaymentEntityBundle.forPayment(store, customer, null, payment);
+		LegacyPaymentEntityBundle entityBundle = LegacyPaymentEntityBundle.forPayment(store, customer, null, payment,
+				integrationModule);
 		PaymentModuleV2 moduleV2 = PaymentModuleV2Support.resolve(module, entityBundle);
 		PaymentRequestContext requestContext = IntegrationContextMapper.toPaymentRequestContext(store, customer, null,
 				amount, payment, configuration, integrationModule);
@@ -797,7 +800,8 @@ public class PaymentServiceImpl implements PaymentService {
 		
 		IntegrationModule integrationModule = getPaymentMethodByCode(store,payment.getModuleName());
 		
-		LegacyPaymentEntityBundle entityBundle = LegacyPaymentEntityBundle.forPayment(store, customer, null, payment);
+		LegacyPaymentEntityBundle entityBundle = LegacyPaymentEntityBundle.forPayment(store, customer, null, payment,
+				integrationModule);
 		PaymentModuleV2 moduleV2 = PaymentModuleV2Support.resolve(module, entityBundle);
 		PaymentRequestContext requestContext = IntegrationContextMapper.toPaymentRequestContext(store, customer, null,
 				amount, payment, configuration, integrationModule);

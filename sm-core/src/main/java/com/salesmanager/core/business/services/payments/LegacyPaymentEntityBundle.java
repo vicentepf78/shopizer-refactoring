@@ -9,6 +9,7 @@ import com.salesmanager.core.model.order.Order;
 import com.salesmanager.core.model.payments.Payment;
 import com.salesmanager.core.model.payments.Transaction;
 import com.salesmanager.core.model.shoppingcart.ShoppingCartItem;
+import com.salesmanager.core.model.system.IntegrationModule;
 
 final class LegacyPaymentEntityBundle {
 
@@ -21,10 +22,11 @@ final class LegacyPaymentEntityBundle {
 	private final Transaction refundableTransaction;
 	private final BigDecimal refundAmount;
 	private final boolean partialRefund;
+	private final IntegrationModule integrationModule;
 
 	private LegacyPaymentEntityBundle(MerchantStore store, Customer customer, List<ShoppingCartItem> items,
 			Payment payment, Order order, Transaction capturableTransaction, Transaction refundableTransaction,
-			BigDecimal refundAmount, boolean partialRefund) {
+			BigDecimal refundAmount, boolean partialRefund, IntegrationModule integrationModule) {
 		this.store = store;
 		this.customer = customer;
 		this.items = items;
@@ -34,23 +36,26 @@ final class LegacyPaymentEntityBundle {
 		this.refundableTransaction = refundableTransaction;
 		this.refundAmount = refundAmount;
 		this.partialRefund = partialRefund;
+		this.integrationModule = integrationModule;
 	}
 
 	static LegacyPaymentEntityBundle forPayment(MerchantStore store, Customer customer, List<ShoppingCartItem> items,
-			Payment payment) {
-		return new LegacyPaymentEntityBundle(store, customer, items, payment, null, null, null, null, false);
+			Payment payment, IntegrationModule integrationModule) {
+		return new LegacyPaymentEntityBundle(store, customer, items, payment, null, null, null, null, false,
+				integrationModule);
 	}
 
 	static LegacyPaymentEntityBundle forCapture(MerchantStore store, Customer customer, Order order,
-			Transaction capturableTransaction) {
+			Transaction capturableTransaction, IntegrationModule integrationModule) {
 		return new LegacyPaymentEntityBundle(store, customer, null, null, order, capturableTransaction, null, null,
-				false);
+				false, integrationModule);
 	}
 
 	static LegacyPaymentEntityBundle forRefund(MerchantStore store, Customer customer, Order order,
-			Transaction refundableTransaction, BigDecimal amount, boolean partial) {
+			Transaction refundableTransaction, BigDecimal amount, boolean partial,
+			IntegrationModule integrationModule) {
 		return new LegacyPaymentEntityBundle(store, customer, null, null, order, null, refundableTransaction, amount,
-				partial);
+				partial, integrationModule);
 	}
 
 	MerchantStore getStore() {
@@ -87,6 +92,10 @@ final class LegacyPaymentEntityBundle {
 
 	boolean isPartialRefund() {
 		return partialRefund;
+	}
+
+	IntegrationModule getIntegrationModule() {
+		return integrationModule;
 	}
 
 }

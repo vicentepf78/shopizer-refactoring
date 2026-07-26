@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-26 19:34 | 1699 files | 266989 tokens
+# rtt index | generated 2026-07-26 19:38 | 1700 files | 267206 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -5522,6 +5522,18 @@ class IntegrationException
   void setErrorFields(List<String> errorFields)
   List<String> getErrorFields()
 
+# sm-core-modules/src/main/java/com/salesmanager/core/modules/integration/common/dto/IntegrationModuleDto.java [java]
+imports: java.io.Serializable
+class IntegrationModuleDto
+  String getCode()
+  void setCode(String code)
+  String getType()
+  void setType(String type)
+  String getRegions()
+  void setRegions(String regions)
+  String getModule()
+  void setModule(String module)
+
 # sm-core-modules/src/main/java/com/salesmanager/core/modules/integration/common/dto/IntegrationStoreContext.java [java]
 imports: java.io.Serializable, com.salesmanager.contracts.tenant.LanguageCode, com.salesmanager.contracts.tenant.MerchantStoreId
 class IntegrationStoreContext
@@ -5533,7 +5545,7 @@ class IntegrationStoreContext
   void setDefaultLanguage(LanguageCode defaultLanguage)
 
 # sm-core-modules/src/main/java/com/salesmanager/core/modules/integration/payment/dto/PaymentCaptureContext.java [java]
-imports: java.io.Serializable, com.salesmanager.core.model.system.IntegrationConfiguration, com.salesmanager.core.model.system.IntegrationModule, com.salesmanager.core.modules.integration.common.dto.IntegrationStoreContext
+imports: java.io.Serializable, com.salesmanager.core.model.system.IntegrationConfiguration, com.salesmanager.core.modules.integration.common.dto.IntegrationModuleDto, com.salesmanager.core.modules.integration.common.dto.IntegrationStoreContext
 class PaymentCaptureContext
   IntegrationStoreContext getStore()
   void setStore(IntegrationStoreContext store)
@@ -5547,8 +5559,8 @@ class PaymentCaptureContext
   void setCapturableTransaction(TransactionResult capturableTransaction)
   IntegrationConfiguration getConfiguration()
   void setConfiguration(IntegrationConfiguration configuration)
-  IntegrationModule getModule()
-  void setModule(IntegrationModule module)
+  IntegrationModuleDto getModule()
+  void setModule(IntegrationModuleDto module)
 
 # sm-core-modules/src/main/java/com/salesmanager/core/modules/integration/payment/dto/PaymentLineItemDto.java [java]
 imports: java.io.Serializable, java.math.BigDecimal
@@ -5567,7 +5579,7 @@ class PaymentLineItemDto
   void setVariant(Long variant)
 
 # sm-core-modules/src/main/java/com/salesmanager/core/modules/integration/payment/dto/PaymentRefundContext.java [java]
-imports: java.io.Serializable, java.math.BigDecimal, com.salesmanager.core.model.system.IntegrationConfiguration, com.salesmanager.core.model.system.IntegrationModule, com.salesmanager.core.modules.integration.common.dto.IntegrationStoreContext
+imports: java.io.Serializable, java.math.BigDecimal, com.salesmanager.core.model.system.IntegrationConfiguration, com.salesmanager.core.modules.integration.common.dto.IntegrationModuleDto, com.salesmanager.core.modules.integration.common.dto.IntegrationStoreContext
 class PaymentRefundContext
   IntegrationStoreContext getStore()
   void setStore(IntegrationStoreContext store)
@@ -5583,11 +5595,11 @@ class PaymentRefundContext
   void setRefundableTransaction(TransactionResult refundableTransaction)
   IntegrationConfiguration getConfiguration()
   void setConfiguration(IntegrationConfiguration configuration)
-  IntegrationModule getModule()
-  void setModule(IntegrationModule module)
+  IntegrationModuleDto getModule()
+  void setModule(IntegrationModuleDto module)
 
 # sm-core-modules/src/main/java/com/salesmanager/core/modules/integration/payment/dto/PaymentRequestContext.java [java]
-imports: java.io.Serializable, java.math.BigDecimal, java.util.ArrayList, java.util.HashMap, java.util.List, java.util.Map, com.salesmanager.core.model.system.IntegrationConfiguration, com.salesmanager.core.model.system.IntegrationModule, com.salesmanager.core.modules.integration.common.dto.IntegrationStoreContext
+imports: java.io.Serializable, java.math.BigDecimal, java.util.ArrayList, java.util.HashMap, java.util.List, java.util.Map, com.salesmanager.core.model.system.IntegrationConfiguration, com.salesmanager.core.modules.integration.common.dto.IntegrationModuleDto, com.salesmanager.core.modules.integration.common.dto.IntegrationStoreContext
 class PaymentRequestContext
   IntegrationStoreContext getStore()
   void setStore(IntegrationStoreContext store)
@@ -5611,8 +5623,8 @@ class PaymentRequestContext
   void setPaymentMetaData(Map<String, String> paymentMetaData)
   IntegrationConfiguration getConfiguration()
   void setConfiguration(IntegrationConfiguration configuration)
-  IntegrationModule getModule()
-  void setModule(IntegrationModule module)
+  IntegrationModuleDto getModule()
+  void setModule(IntegrationModuleDto module)
 
 # sm-core-modules/src/main/java/com/salesmanager/core/modules/integration/payment/dto/TransactionResult.java [java]
 imports: java.io.Serializable, java.math.BigDecimal, java.util.Date, java.util.HashMap, java.util.Map
@@ -5719,7 +5731,7 @@ class ShippingOptionDto
   void setEstimatedNumberOfDays(String estimatedNumberOfDays)
 
 # sm-core-modules/src/main/java/com/salesmanager/core/modules/integration/shipping/dto/ShippingQuoteRequestContext.java [java]
-imports: java.io.Serializable, java.math.BigDecimal, java.util.ArrayList, java.util.List, com.salesmanager.core.model.system.IntegrationConfiguration, com.salesmanager.core.model.system.IntegrationModule, com.salesmanager.core.modules.integration.common.dto.IntegrationStoreContext
+imports: java.io.Serializable, java.math.BigDecimal, java.util.ArrayList, java.util.List, com.salesmanager.core.model.system.IntegrationConfiguration, com.salesmanager.core.modules.integration.common.dto.IntegrationModuleDto, com.salesmanager.core.modules.integration.common.dto.IntegrationStoreContext
 class ShippingQuoteRequestContext
   IntegrationStoreContext getStore()
   void setStore(IntegrationStoreContext store)
@@ -5735,8 +5747,8 @@ class ShippingQuoteRequestContext
   void setLocale(String locale)
   IntegrationConfiguration getConfiguration()
   void setConfiguration(IntegrationConfiguration configuration)
-  IntegrationModule getModule()
-  void setModule(IntegrationModule module)
+  IntegrationModuleDto getModule()
+  void setModule(IntegrationModuleDto module)
 
 # sm-core-modules/src/main/java/com/salesmanager/core/modules/integration/shipping/model/CustomShippingQuoteItem.java [java]
 imports: java.math.BigDecimal
@@ -5809,7 +5821,7 @@ class IntegrationDtoNoJpaTest
   void assertNoForbiddenReferences(Path source)
 
 # sm-core-modules/src/test/java/com/salesmanager/core/modules/integration/payment/dto/PaymentRequestContextJacksonTest.java [java]
-imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertNotNull, java.math.BigDecimal, java.util.Collections, org.junit.jupiter.api.Test, com.fasterxml.jackson.databind.JsonNode, com.fasterxml.jackson.databind.ObjectMapper, com.salesmanager.contracts.tenant.LanguageCode, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.core.modules.integration.common.dto.IntegrationStoreContext
+imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertNotNull, java.math.BigDecimal, java.util.Collections, org.junit.jupiter.api.Test, com.fasterxml.jackson.databind.JsonNode, com.fasterxml.jackson.databind.ObjectMapper, com.salesmanager.contracts.tenant.LanguageCode, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.core.modules.integration.common.dto.IntegrationModuleDto, com.salesmanager.core.modules.integration.common.dto.IntegrationStoreContext
 class PaymentRequestContextJacksonTest
   void roundTripJsonPreservesPaymentRequestFields()
 
@@ -7684,11 +7696,13 @@ class OrderTotalServiceImpl
   OrderTotalVariation findOrderTotalVariation(OrderSummary summary, Customer customer, MerchantStore store, Language language)
 
 # sm-core/src/main/java/com/salesmanager/core/business/services/payments/IntegrationContextMapper.java [java]
-imports: java.math.BigDecimal, java.util.ArrayList, java.util.HashMap, java.util.List, java.util.Locale, java.util.Map, com.salesmanager.contracts.tenant.LanguageCode, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.core.model.common.Delivery, com.salesmanager.core.model.customer.Customer, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.order.Order, com.salesmanager.core.model.payments.Payment, com.salesmanager.core.model.payments.Transaction, com.salesmanager.core.model.payments.TransactionType, com.salesmanager.core.model.reference.country.Country, com.salesmanager.core.model.reference.zone.Zone, com.salesmanager.core.model.shipping.PackageDetails, com.salesmanager.core.model.shipping.ShippingOption, com.salesmanager.core.model.shipping.ShippingOrigin, com.salesmanager.core.model.shoppingcart.ShoppingCartItem, com.salesmanager.core.model.system.IntegrationConfiguration, com.salesmanager.core.model.system.IntegrationModule, com.salesmanager.core.modules.integration.common.dto.IntegrationStoreContext, com.salesmanager.core.modules.integration.payment.dto.PaymentCaptureContext, com.salesmanager.core.modules.integration.payment.dto.PaymentLineItemDto, com.salesmanager.core.modules.integration.payment.dto.PaymentRefundContext, com.salesmanager.core.modules.integration.payment.dto.PaymentRequestContext, com.salesmanager.core.modules.integration.payment.dto.TransactionResult, com.salesmanager.core.modules.integration.shipping.dto.PackageDetailsDto
+imports: java.math.BigDecimal, java.util.ArrayList, java.util.HashMap, java.util.List, java.util.Locale, java.util.Map, com.salesmanager.contracts.tenant.LanguageCode, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.core.model.common.Delivery, com.salesmanager.core.model.customer.Customer, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.order.Order, com.salesmanager.core.model.payments.Payment, com.salesmanager.core.model.payments.Transaction, com.salesmanager.core.model.payments.TransactionType, com.salesmanager.core.model.reference.country.Country, com.salesmanager.core.model.reference.zone.Zone, com.salesmanager.core.model.shipping.PackageDetails, com.salesmanager.core.model.shipping.ShippingOption, com.salesmanager.core.model.shipping.ShippingOrigin, com.salesmanager.core.model.shoppingcart.ShoppingCartItem, com.salesmanager.core.model.system.IntegrationConfiguration, com.salesmanager.core.model.system.IntegrationModule, com.salesmanager.core.modules.integration.common.dto.IntegrationModuleDto, com.salesmanager.core.modules.integration.common.dto.IntegrationStoreContext, com.salesmanager.core.modules.integration.payment.dto.PaymentCaptureContext, com.salesmanager.core.modules.integration.payment.dto.PaymentLineItemDto, com.salesmanager.core.modules.integration.payment.dto.PaymentRefundContext, com.salesmanager.core.modules.integration.payment.dto.PaymentRequestContext, com.salesmanager.core.modules.integration.payment.dto.TransactionResult
 class IntegrationContextMapper
   IntegrationStoreContext toStoreContext(MerchantStore store)
   PaymentLineItemDto toLineItem(ShoppingCartItem item)
   List<PaymentLineItemDto> toLineItems(List<ShoppingCartItem> items)
+  IntegrationModuleDto toModuleDto(IntegrationModule module)
+  IntegrationModule toModule(IntegrationModuleDto dto)
   PaymentRequestContext toPaymentRequestContext(MerchantStore store, Customer customer,
 			List<ShoppingCartItem> items, BigDecimal amount, Payment payment,
 			IntegrationConfiguration configuration, IntegrationModule module)
@@ -7712,14 +7726,15 @@ class IntegrationContextMapper
   List<ShippingOptionDto> toShippingOptionDtos(List<ShippingOption> options)
 
 # sm-core/src/main/java/com/salesmanager/core/business/services/payments/LegacyPaymentEntityBundle.java [java]
-imports: java.math.BigDecimal, java.util.List, com.salesmanager.core.model.customer.Customer, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.order.Order, com.salesmanager.core.model.payments.Payment, com.salesmanager.core.model.payments.Transaction, com.salesmanager.core.model.shoppingcart.ShoppingCartItem
+imports: java.math.BigDecimal, java.util.List, com.salesmanager.core.model.customer.Customer, com.salesmanager.core.model.merchant.MerchantStore, com.salesmanager.core.model.order.Order, com.salesmanager.core.model.payments.Payment, com.salesmanager.core.model.payments.Transaction, com.salesmanager.core.model.shoppingcart.ShoppingCartItem, com.salesmanager.core.model.system.IntegrationModule
 class LegacyPaymentEntityBundle
   LegacyPaymentEntityBundle forPayment(MerchantStore store, Customer customer, List<ShoppingCartItem> items,
-			Payment payment)
+			Payment payment, IntegrationModule integrationModule)
   LegacyPaymentEntityBundle forCapture(MerchantStore store, Customer customer, Order order,
-			Transaction capturableTransaction)
+			Transaction capturableTransaction, IntegrationModule integrationModule)
   LegacyPaymentEntityBundle forRefund(MerchantStore store, Customer customer, Order order,
-			Transaction refundableTransaction, BigDecimal amount, boolean partial)
+			Transaction refundableTransaction, BigDecimal amount, boolean partial,
+			IntegrationModule integrationModule)
   MerchantStore getStore()
   Customer getCustomer()
   List<ShoppingCartItem> getItems()
@@ -7729,9 +7744,10 @@ class LegacyPaymentEntityBundle
   Transaction getRefundableTransaction()
   BigDecimal getRefundAmount()
   boolean isPartialRefund()
+  IntegrationModule getIntegrationModule()
 
 # sm-core/src/main/java/com/salesmanager/core/business/services/payments/LegacyPaymentModuleBridge.java [java]
-imports: com.salesmanager.core.model.system.IntegrationConfiguration, com.salesmanager.core.modules.integration.IntegrationException, com.salesmanager.core.modules.integration.common.dto.IntegrationStoreContext, com.salesmanager.core.modules.integration.payment.dto.PaymentCaptureContext, com.salesmanager.core.modules.integration.payment.dto.PaymentRefundContext, com.salesmanager.core.modules.integration.payment.dto.PaymentRequestContext, com.salesmanager.core.modules.integration.payment.dto.TransactionResult, com.salesmanager.core.modules.integration.payment.model.PaymentModule, com.salesmanager.core.modules.integration.payment.model.PaymentModuleV2
+imports: com.salesmanager.core.model.system.IntegrationConfiguration, com.salesmanager.core.model.system.IntegrationModule, com.salesmanager.core.modules.integration.IntegrationException, com.salesmanager.core.modules.integration.common.dto.IntegrationModuleDto, com.salesmanager.core.modules.integration.common.dto.IntegrationStoreContext, com.salesmanager.core.modules.integration.payment.dto.PaymentCaptureContext, com.salesmanager.core.modules.integration.payment.dto.PaymentRefundContext, com.salesmanager.core.modules.integration.payment.dto.PaymentRequestContext, com.salesmanager.core.modules.integration.payment.dto.TransactionResult, com.salesmanager.core.modules.integration.payment.model.PaymentModule, com.salesmanager.core.modules.integration.payment.model.PaymentModuleV2
 class LegacyPaymentModuleBridge
   void validateModuleConfiguration(IntegrationConfiguration configuration, IntegrationStoreContext store)
   TransactionResult initTransaction(PaymentRequestContext context)
@@ -7739,6 +7755,8 @@ class LegacyPaymentModuleBridge
   TransactionResult authorizeAndCapture(PaymentRequestContext context)
   TransactionResult capture(PaymentCaptureContext context)
   TransactionResult refund(PaymentRefundContext context)
+  IntegrationModule resolveModule(PaymentRequestContext context)
+  IntegrationModule resolveModule(IntegrationModuleDto module)
 
 # sm-core/src/main/java/com/salesmanager/core/business/services/payments/PaymentModuleV2Support.java [java]
 imports: com.salesmanager.core.modules.integration.payment.model.PaymentModule, com.salesmanager.core.modules.integration.payment.model.PaymentModuleV2

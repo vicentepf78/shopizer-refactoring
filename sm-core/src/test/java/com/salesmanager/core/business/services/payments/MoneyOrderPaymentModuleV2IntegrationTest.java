@@ -34,7 +34,7 @@ class MoneyOrderPaymentModuleV2IntegrationTest {
 		IntegrationModule module = sampleModule();
 
 		LegacyPaymentEntityBundle entities = LegacyPaymentEntityBundle.forPayment(store, customer,
-				Collections.singletonList(item), payment);
+				Collections.singletonList(item), payment, module);
 		PaymentModuleV2 moduleV2 = new LegacyPaymentModuleBridge(new MoneyOrderPayment(), entities);
 		PaymentRequestContext context = IntegrationContextMapper.toPaymentRequestContext(store, customer,
 				Collections.singletonList(item), new BigDecimal("49.99"), payment, configuration, module);
@@ -57,7 +57,7 @@ class MoneyOrderPaymentModuleV2IntegrationTest {
 		IntegrationModule module = sampleModule();
 
 		LegacyPaymentEntityBundle entities = LegacyPaymentEntityBundle.forPayment(store, customer,
-				Collections.emptyList(), payment);
+				Collections.emptyList(), payment, module);
 		PaymentModuleV2 moduleV2 = new LegacyPaymentModuleBridge(new MoneyOrderPayment(), entities);
 		PaymentRequestContext context = IntegrationContextMapper.toPaymentRequestContext(store, customer,
 				Collections.emptyList(), new BigDecimal("10.00"), payment, configuration, module);

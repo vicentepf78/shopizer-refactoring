@@ -1,7 +1,9 @@
 package com.salesmanager.core.business.services.payments;
 
 import com.salesmanager.core.model.system.IntegrationConfiguration;
+import com.salesmanager.core.model.system.IntegrationModule;
 import com.salesmanager.core.modules.integration.IntegrationException;
+import com.salesmanager.core.modules.integration.common.dto.IntegrationModuleDto;
 import com.salesmanager.core.modules.integration.common.dto.IntegrationStoreContext;
 import com.salesmanager.core.modules.integration.payment.dto.PaymentCaptureContext;
 import com.salesmanager.core.modules.integration.payment.dto.PaymentRefundContext;
@@ -30,35 +32,49 @@ public class LegacyPaymentModuleBridge implements PaymentModuleV2 {
 	public TransactionResult initTransaction(PaymentRequestContext context) throws IntegrationException {
 		return IntegrationContextMapper.toTransactionResult(delegate.initTransaction(entities.getStore(),
 				entities.getCustomer(), context.getAmount(), entities.getPayment(), context.getConfiguration(),
-				context.getModule()));
+				resolveModule(context)));
 	}
 
 	@Override
 	public TransactionResult authorize(PaymentRequestContext context) throws IntegrationException {
 		return IntegrationContextMapper.toTransactionResult(delegate.authorize(entities.getStore(),
 				entities.getCustomer(), entities.getItems(), context.getAmount(), entities.getPayment(),
-				context.getConfiguration(), context.getModule()));
+				context.getConfiguration(), resolveModule(context)));
 	}
 
 	@Override
 	public TransactionResult authorizeAndCapture(PaymentRequestContext context) throws IntegrationException {
 		return IntegrationContextMapper.toTransactionResult(delegate.authorizeAndCapture(entities.getStore(),
 				entities.getCustomer(), entities.getItems(), context.getAmount(), entities.getPayment(),
-				context.getConfiguration(), context.getModule()));
+				context.getConfiguration(), resolveModule(context)));
 	}
 
 	@Override
 	public TransactionResult capture(PaymentCaptureContext context) throws IntegrationException {
 		return IntegrationContextMapper.toTransactionResult(delegate.capture(entities.getStore(), entities.getCustomer(),
 				entities.getOrder(), entities.getCapturableTransaction(), context.getConfiguration(),
-				context.getModule()));
+				resolveModule(context.getModule())));
 	}
 
 	@Override
 	public TransactionResult refund(PaymentRefundContext context) throws IntegrationException {
 		return IntegrationContextMapper.toTransactionResult(delegate.refund(entities.isPartialRefund(),
 				entities.getStore(), entities.getRefundableTransaction(), entities.getOrder(), context.getAmount(),
-				context.getConfiguration(), context.getModule()));
+				context.getConfiguration(), resolveModule(context.getModule())));
+	}
+
+	private IntegrationModule resolveModule(PaymentRequestContext context) {
+		if (entities.getIntegrationModule() != null) {
+			return entities.getIntegrationModule();
+		}
+		return IntegrationContextMapper.toModule(context.getModule());
+	}
+
+	private IntegrationModule resolveModule(IntegrationModuleDto module) {
+		if (entities.getIntegrationModule() != null) {
+			return entities.getIntegrationModule();
+		}
+		return IntegrationContextMapper.toModule(module);
 	}
 
 }

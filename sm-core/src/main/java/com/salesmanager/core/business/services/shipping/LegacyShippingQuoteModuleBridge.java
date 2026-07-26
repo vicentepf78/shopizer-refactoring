@@ -31,7 +31,8 @@ public class LegacyShippingQuoteModuleBridge implements ShippingQuoteModuleV2 {
 	public List<ShippingOptionDto> getShippingQuotes(ShippingQuoteRequestContext context) throws IntegrationException {
 		return IntegrationContextMapper.toShippingOptionDtos(delegate.getShippingQuotes(entities.getQuote(),
 				entities.getPackages(), entities.getOrderTotal(), entities.getDelivery(), entities.getOrigin(),
-				entities.getStore(), context.getConfiguration(), context.getModule(),
+				entities.getStore(), context.getConfiguration(),
+				IntegrationContextMapper.toModule(context.getModule()),
 				entities.getShippingConfiguration(), entities.getLocale()));
 	}
 

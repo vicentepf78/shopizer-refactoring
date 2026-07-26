@@ -3,7 +3,7 @@ package com.salesmanager.core.modules.integration.payment.dto;
 import java.io.Serializable;
 
 import com.salesmanager.core.model.system.IntegrationConfiguration;
-import com.salesmanager.core.model.system.IntegrationModule;
+import com.salesmanager.core.modules.integration.common.dto.IntegrationModuleDto;
 import com.salesmanager.core.modules.integration.common.dto.IntegrationStoreContext;
 
 public class PaymentCaptureContext implements Serializable {
@@ -16,7 +16,7 @@ public class PaymentCaptureContext implements Serializable {
 	private Long orderId;
 	private TransactionResult capturableTransaction;
 	private IntegrationConfiguration configuration;
-	private IntegrationModule module;
+	private IntegrationModuleDto module;
 
 	public IntegrationStoreContext getStore() {
 		return store;
@@ -66,11 +66,11 @@ public class PaymentCaptureContext implements Serializable {
 		this.configuration = configuration;
 	}
 
-	public IntegrationModule getModule() {
+	public IntegrationModuleDto getModule() {
 		return module;
 	}
 
-	public void setModule(IntegrationModule module) {
+	public void setModule(IntegrationModuleDto module) {
 		this.module = module;
 	}
 
