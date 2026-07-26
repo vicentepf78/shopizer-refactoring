@@ -255,6 +255,45 @@ class CheckoutApplicationServicePlaceOrderTest {
 	}
 
 	@Test
+	void whenOutboxEnabledApiFlowUsesStagedProcessor() throws Exception {
+		MerchantStore store = store("DEFAULT");
+		Customer customer = new Customer();
+		Order preBuilt = new Order();
+		Order persisted = new Order();
+		persisted.setId(99L);
+		OrderTotalSummary summary = summary(BigDecimal.TEN);
+		Payment payment = new Payment();
+		ShoppingCartItem item = new ShoppingCartItem();
+		String idempotencyKey = "corr-api-123";
+
+		when(outboxProperties.isEnabled()).thenReturn(true);
+		when(merchantStoreService.getByCode("DEFAULT")).thenReturn(store);
+		when(languageService.getByCode("en")).thenReturn(new Language("en"));
+		when(stagedOrderProcessor.processOrder(eq(preBuilt), eq(customer), eq(Collections.singletonList(item)),
+				eq(summary), eq(payment), isNull(), eq(store), eq(idempotencyKey))).thenReturn(persisted);
+
+		CheckoutCommand command = CheckoutCommand.builder()
+				.storeId(MerchantStoreId.of("DEFAULT"))
+				.languageCode(LanguageCode.of("en"))
+				.customerSnapshot(CustomerSnapshotBuilder.from(customer))
+				.customer(customer)
+				.shoppingCartItems(Collections.singletonList(item))
+				.orderTotalSummary(summary)
+				.preBuiltOrder(preBuilt)
+				.payment(payment)
+				.idempotencyKey(idempotencyKey)
+				.build();
+
+		Order result = checkoutApplicationService.placeOrder(command);
+
+		assertThat(result.getId()).isEqualTo(99L);
+		verify(stagedOrderProcessor).processOrder(preBuilt, customer, command.getShoppingCartItems(), summary, payment,
+				null, store, idempotencyKey);
+		verify(orderService, never()).processOrder(any(), any(), any(), any(), any(), any());
+		verify(orderService, never()).processOrder(any(), any(), any(), any(), any(), any(), any());
+	}
+
+	@Test
 	void storefrontPayPalWithoutTransactionThrowsPaymentError() throws Exception {
 		MerchantStore store = store("DEFAULT");
 		Language language = new Language("en");

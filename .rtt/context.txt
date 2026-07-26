@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-26 20:17 | 1705 files | 268562 tokens
+# rtt index | generated 2026-07-26 20:19 | 1705 files | 268575 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -8294,6 +8294,7 @@ class CheckoutApplicationServicePlaceOrderTest
   void whenOutboxEnabledPayPalOmitsCommandTransaction()
   void whenOutboxDisabledPayPalOmitsCommandTransaction()
   void apiFlowDelegatesToOrderServiceWithPreBuiltOrder()
+  void whenOutboxEnabledApiFlowUsesStagedProcessor()
   void storefrontPayPalWithoutTransactionThrowsPaymentError()
   void storefrontMissingProductThrowsInventoryMismatch()
   void storefrontWithTransactionUsesLegacyOrderServiceBranch()
