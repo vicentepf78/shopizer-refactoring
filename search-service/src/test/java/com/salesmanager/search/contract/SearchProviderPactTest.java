@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import com.salesmanager.contracts.search.SearchItem;
 import com.salesmanager.contracts.search.ValueList;
 import com.salesmanager.search.api.internal.InternalIndexController;
 import com.salesmanager.search.api.v1.SearchController;
@@ -27,7 +28,6 @@ import au.com.dius.pact.provider.junitsupport.Provider;
 import au.com.dius.pact.provider.junitsupport.State;
 import au.com.dius.pact.provider.junitsupport.loader.PactFolder;
 import au.com.dius.pact.provider.spring.junit5.MockMvcTestTarget;
-import modules.commons.search.request.SearchItem;
 
 /**
  * Pact provider verification for Wave 2 search query + internal index endpoints (STR-02).
@@ -80,6 +80,11 @@ class SearchProviderPactTest {
 
 	@State("index accepts schema version 1")
 	void indexAcceptsSchemaVersion1() {
+		doNothing().when(searchIndexService).index(any());
+	}
+
+	@State("index accepts schema version 2")
+	void indexAcceptsSchemaVersion2() {
 		doNothing().when(searchIndexService).index(any());
 	}
 

@@ -6,6 +6,8 @@ import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.salesmanager.contracts.tenant.LanguageCode;
+import com.salesmanager.contracts.tenant.MerchantStoreId;
 import com.salesmanager.core.business.services.customer.CustomerService;
 import com.salesmanager.core.business.services.shoppingcart.ShoppingCartService;
 import com.salesmanager.core.model.customer.Customer;
@@ -16,6 +18,7 @@ import com.salesmanager.shop.model.shoppingcart.ReadableShoppingCart;
 import com.salesmanager.shop.store.api.exception.ResourceNotFoundException;
 import com.salesmanager.shop.store.api.exception.ServiceRuntimeException;
 import com.salesmanager.shop.store.controller.shoppingCart.facade.v1.ShoppingCartFacade;
+import com.salesmanager.shop.tenant.TenantEntityBridge;
 
 @Service("shoppingCartFacadev1")
 public class ShoppingCartFacadeImpl implements ShoppingCartFacade {
@@ -33,8 +36,20 @@ public class ShoppingCartFacadeImpl implements ShoppingCartFacade {
 	private com.salesmanager.shop.store.controller.shoppingCart.facade.ShoppingCartFacade shoppingCartFacade; // legacy
 																												// facade
 
+	@Autowired
+	private TenantEntityBridge tenantEntityBridge;
+
 	@Override
-	public ReadableShoppingCart get(Optional<String> cart, Long customerId, MerchantStore store, Language language) {
+	public ReadableShoppingCart get(Optional<String> cart, Long customerId, MerchantStoreId storeId, LanguageCode languageCode) {
+
+		MerchantStore store;
+		Language language;
+		try {
+			store = tenantEntityBridge.resolveStore(storeId);
+			language = tenantEntityBridge.resolveLanguage(languageCode);
+		} catch (com.salesmanager.core.business.exception.ConversionException e) {
+			throw new ServiceRuntimeException(e);
+		}
 
 		Validate.notNull(customerId, "Customer id cannot be null");
 		Validate.notNull(store, "MerchantStore cannot be null");

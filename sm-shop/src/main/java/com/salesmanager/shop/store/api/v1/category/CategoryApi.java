@@ -25,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.salesmanager.contracts.tenant.LanguageCode;
+import com.salesmanager.contracts.tenant.MerchantStoreId;
 import com.salesmanager.core.model.merchant.MerchantStore;
 import com.salesmanager.core.model.reference.language.Language;
 import com.salesmanager.shop.constants.Constants;
@@ -56,6 +58,10 @@ public class CategoryApi {
 
 	private static final int DEFAULT_CATEGORY_DEPTH = 0;
 
+	private static LanguageCode languageCode(Language language) {
+		return language != null ? LanguageCode.of(language.getCode()) : null;
+	}
+
 	@Inject
 	private CategoryFacade categoryFacade;
 
@@ -72,7 +78,8 @@ public class CategoryApi {
 			@PathVariable(name = "id") Long categoryId, 
 			@ApiIgnore MerchantStore merchantStore,
 			@ApiIgnore Language language) {
-		ReadableCategory category = categoryFacade.getById(merchantStore, categoryId, language);
+		ReadableCategory category = categoryFacade.getById(MerchantStoreId.of(merchantStore.getCode()), categoryId,
+				languageCode(language));
 		return category;
 	}
 
@@ -88,7 +95,8 @@ public class CategoryApi {
 								@PathVariable(name = "friendlyUrl") String friendlyUrl,
 								@ApiIgnore MerchantStore merchantStore,
 								@ApiIgnore Language language) throws Exception {
-		ReadableCategory category = categoryFacade.getCategoryByFriendlyUrl(merchantStore, friendlyUrl, language);
+		ReadableCategory category = categoryFacade.getCategoryByFriendlyUrl(MerchantStoreId.of(merchantStore.getCode()),
+				friendlyUrl, languageCode(language));
 		return category;
 	}
 
@@ -99,7 +107,7 @@ public class CategoryApi {
 	@ApiOperation(httpMethod = "GET", value = "Check if category code already exists", notes = "", response = EntityExists.class)
 	public ResponseEntity<EntityExists> exists(@RequestParam(value = "code") String code,
 			@ApiIgnore MerchantStore merchantStore, @ApiIgnore Language language) {
-		boolean isCategoryExist = categoryFacade.existByCode(merchantStore, code);
+		boolean isCategoryExist = categoryFacade.existByCode(MerchantStoreId.of(merchantStore.getCode()), code);
 		return new ResponseEntity<EntityExists>(new EntityExists(isCategoryExist), HttpStatus.OK);
 	}
 
@@ -124,7 +132,8 @@ public class CategoryApi {
 
 		ListCriteria criteria = new ListCriteria();
 		criteria.setName(name);
-		return categoryFacade.getCategoryHierarchy(merchantStore, criteria, DEFAULT_CATEGORY_DEPTH, language, filter,
+		return categoryFacade.getCategoryHierarchy(MerchantStoreId.of(merchantStore.getCode()), criteria,
+				DEFAULT_CATEGORY_DEPTH, languageCode(language), filter,
 				page, count);
 	}
 	
@@ -139,7 +148,8 @@ public class CategoryApi {
 			@ApiIgnore Language lang) {
 
 
-		return categoryFacade.listByProduct(merchantStore, id, lang);
+		return categoryFacade.listByProduct(MerchantStoreId.of(merchantStore.getCode()), id,
+				languageCode(lang));
 
 	}
 

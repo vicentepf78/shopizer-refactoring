@@ -13,6 +13,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.mock.env.MockEnvironment;
 import org.springframework.web.client.RestTemplate;
 
+import com.salesmanager.contracts.tenant.LanguageCode;
+import com.salesmanager.contracts.tenant.MerchantStoreId;
 import com.salesmanager.core.model.merchant.MerchantStore;
 import com.salesmanager.core.model.reference.language.Language;
 import com.salesmanager.shop.model.catalog.SearchProductRequest;
@@ -20,6 +22,7 @@ import com.salesmanager.shop.model.entity.ValueList;
 import com.salesmanager.shop.store.controller.search.facade.SearchFacade;
 import com.salesmanager.shop.strangler.search.SearchBulkIndexOrchestrator;
 import com.salesmanager.shop.strangler.search.SearchFacadeHttpAdapter;
+import com.salesmanager.shop.tenant.TenantEntityBridge;
 
 class SearchStranglerConditionalBeanTest {
 
@@ -78,10 +81,17 @@ class SearchStranglerConditionalBeanTest {
 		}
 
 		@Bean
+		TenantEntityBridge tenantEntityBridge() {
+			return org.mockito.Mockito.mock(TenantEntityBridge.class);
+		}
+
+		@Bean
 		SearchFacadeHttpAdapter searchFacadeHttpAdapter(
 				RestTemplate wave2RestTemplate,
-				SearchBulkIndexOrchestrator orchestrator) {
-			return new SearchFacadeHttpAdapter(wave2RestTemplate, "http://localhost:8084", orchestrator);
+				SearchBulkIndexOrchestrator orchestrator,
+				TenantEntityBridge tenantEntityBridge) {
+			return new SearchFacadeHttpAdapter(wave2RestTemplate, "http://localhost:8084", orchestrator,
+					tenantEntityBridge);
 		}
 	}
 
@@ -94,28 +104,35 @@ class SearchStranglerConditionalBeanTest {
 		}
 
 		@Bean
+		TenantEntityBridge tenantEntityBridge() {
+			return org.mockito.Mockito.mock(TenantEntityBridge.class);
+		}
+
+		@Bean
 		@ConditionalOnProperty(name = "wave2.strangler.enabled", havingValue = "true")
-		SearchFacadeHttpAdapter searchFacadeHttpAdapter() {
+		SearchFacadeHttpAdapter searchFacadeHttpAdapter(TenantEntityBridge tenantEntityBridge) {
 			return new SearchFacadeHttpAdapter(
 					new RestTemplate(),
 					"http://localhost:8084",
-					org.mockito.Mockito.mock(SearchBulkIndexOrchestrator.class));
+					org.mockito.Mockito.mock(SearchBulkIndexOrchestrator.class),
+					tenantEntityBridge);
 		}
 	}
 
 	static class InProcessSearchFacade implements SearchFacade {
 		@Override
-		public void indexAllData(MerchantStore store) {
+		public void indexAllData(MerchantStoreId storeId) {
 		}
 
 		@Override
-		public List<modules.commons.search.request.SearchItem> search(
-				MerchantStore store, Language language, SearchProductRequest searchRequest) {
+		public List<com.salesmanager.contracts.search.SearchItem> search(
+				MerchantStoreId storeId, LanguageCode language,
+				com.salesmanager.contracts.search.SearchProductRequest searchRequest) {
 			return Collections.emptyList();
 		}
 
 		@Override
-		public ValueList autocompleteRequest(String query, MerchantStore store, Language language) {
+		public ValueList autocompleteRequest(String query, MerchantStoreId storeId, LanguageCode language) {
 			return new ValueList();
 		}
 	}

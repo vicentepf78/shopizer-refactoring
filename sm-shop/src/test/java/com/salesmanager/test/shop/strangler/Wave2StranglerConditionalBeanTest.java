@@ -11,6 +11,8 @@ import org.springframework.mock.env.MockEnvironment;
 import org.springframework.web.client.RestTemplate;
 
 import com.salesmanager.contracts.client.MerchantServiceClient;
+import com.salesmanager.contracts.tenant.LanguageCode;
+import com.salesmanager.contracts.tenant.MerchantStoreId;
 import com.salesmanager.shop.store.controller.content.facade.ContentFacade;
 import com.salesmanager.shop.store.controller.store.facade.StoreFacade;
 import com.salesmanager.shop.store.controller.system.MerchantConfigurationFacade;
@@ -24,6 +26,7 @@ import com.salesmanager.shop.strangler.merchant.StoreFacadeHttpAdapter;
 import com.salesmanager.shop.strangler.config.Wave2Properties;
 import com.salesmanager.shop.strangler.search.SearchBulkIndexOrchestrator;
 import com.salesmanager.shop.strangler.search.SearchFacadeHttpAdapter;
+import com.salesmanager.shop.tenant.TenantEntityBridge;
 import com.salesmanager.shop.utils.ImageFilePath;
 
 class Wave2StranglerConditionalBeanTest {
@@ -120,10 +123,17 @@ class Wave2StranglerConditionalBeanTest {
 		}
 
 		@Bean
+		TenantEntityBridge tenantEntityBridge() {
+			return org.mockito.Mockito.mock(TenantEntityBridge.class);
+		}
+
+		@Bean
 		SearchFacadeHttpAdapter searchFacadeHttpAdapter(
 				RestTemplate wave2RestTemplate,
-				SearchBulkIndexOrchestrator orchestrator) {
-			return new SearchFacadeHttpAdapter(wave2RestTemplate, "http://localhost:8084", orchestrator);
+				SearchBulkIndexOrchestrator orchestrator,
+				TenantEntityBridge tenantEntityBridge) {
+			return new SearchFacadeHttpAdapter(wave2RestTemplate, "http://localhost:8084", orchestrator,
+					tenantEntityBridge);
 		}
 
 		@Bean
@@ -316,21 +326,21 @@ class Wave2StranglerConditionalBeanTest {
 
 	static class InProcessSearchFacade implements SearchFacade {
 		@Override
-		public void indexAllData(com.salesmanager.core.model.merchant.MerchantStore store) {
+		public void indexAllData(MerchantStoreId storeId) {
 		}
 
 		@Override
-		public java.util.List<modules.commons.search.request.SearchItem> search(
-				com.salesmanager.core.model.merchant.MerchantStore store,
-				com.salesmanager.core.model.reference.language.Language language,
-				com.salesmanager.shop.model.catalog.SearchProductRequest searchRequest) {
+		public java.util.List<com.salesmanager.contracts.search.SearchItem> search(
+				MerchantStoreId storeId,
+				LanguageCode language,
+				com.salesmanager.contracts.search.SearchProductRequest searchRequest) {
 			return java.util.Collections.emptyList();
 		}
 
 		@Override
 		public com.salesmanager.shop.model.entity.ValueList autocompleteRequest(String query,
-				com.salesmanager.core.model.merchant.MerchantStore store,
-				com.salesmanager.core.model.reference.language.Language language) {
+				MerchantStoreId storeId,
+				LanguageCode language) {
 			return new com.salesmanager.shop.model.entity.ValueList();
 		}
 	}

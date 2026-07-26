@@ -18,6 +18,8 @@ import org.apache.commons.lang3.Validate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import com.salesmanager.contracts.tenant.LanguageCode;
+import com.salesmanager.contracts.tenant.MerchantStoreId;
 import com.salesmanager.core.business.exception.ConversionException;
 import com.salesmanager.core.business.exception.ServiceException;
 import com.salesmanager.core.business.services.catalog.category.CategoryService;
@@ -45,6 +47,7 @@ import com.salesmanager.shop.store.api.exception.ResourceNotFoundException;
 import com.salesmanager.shop.store.api.exception.ServiceRuntimeException;
 import com.salesmanager.shop.store.api.exception.UnauthorizedException;
 import com.salesmanager.shop.store.controller.category.facade.CategoryFacade;
+import com.salesmanager.shop.tenant.TenantEntityBridge;
 
 @Service(value = "categoryFacade")
 public class CategoryFacadeImpl implements CategoryFacade {
@@ -64,13 +67,18 @@ public class CategoryFacadeImpl implements CategoryFacade {
 	@Inject
 	private ProductAttributeService productAttributeService;
 
+	@Inject
+	private TenantEntityBridge tenantEntityBridge;
+
 	private static final String FEATURED_CATEGORY = "featured";
 	private static final String VISIBLE_CATEGORY = "visible";
 	private static final String ADMIN_CATEGORY = "admin";
 
 	@Override
-	public ReadableCategoryList getCategoryHierarchy(MerchantStore store, ListCriteria criteria, int depth,
-			Language language, List<String> filter, int page, int count) {
+	public ReadableCategoryList getCategoryHierarchy(MerchantStoreId storeId, ListCriteria criteria, int depth,
+			LanguageCode languageCode, List<String> filter, int page, int count) {
+		MerchantStore store = resolveStore(storeId);
+		Language language = resolveLanguage(languageCode);
 
 		Validate.notNull(store,"MerchantStore can not be null");
 
@@ -83,7 +91,15 @@ public class CategoryFacadeImpl implements CategoryFacade {
 
 			List<Category> categories = null;
 			ReadableCategoryList returnList = new ReadableCategoryList();
-			if (!CollectionUtils.isEmpty(filter) && filter.contains(FEATURED_CATEGORY)) {
+			if (language == null) {
+				categories = categoryService.getListByDepth(parent, depth);
+				if (!CollectionUtils.isEmpty(filter) && filter.contains(FEATURED_CATEGORY)) {
+					categories = categories.stream().filter(Category::isFeatured).collect(Collectors.toList());
+				}
+				returnList.setRecordsTotal(categories.size());
+				returnList.setNumber(categories.size());
+				returnList.setTotalPages(1);
+			} else if (!CollectionUtils.isEmpty(filter) && filter.contains(FEATURED_CATEGORY)) {
 				categories = categoryService.getListByDepthFilterByFeatured(parent, depth, language);
 				returnList.setRecordsTotal(categories.size());
 				returnList.setNumber(categories.size());
@@ -147,7 +163,8 @@ public class CategoryFacadeImpl implements CategoryFacade {
 	}
 
 	@Override
-	public boolean existByCode(MerchantStore store, String code) {
+	public boolean existByCode(MerchantStoreId storeId, String code) {
+		MerchantStore store = resolveStore(storeId);
 		try {
 			Category c = categoryService.getByCode(store, code);
 			return c != null ? true : false;
@@ -241,7 +258,9 @@ public class CategoryFacadeImpl implements CategoryFacade {
 	}
 
 	@Override
-	public ReadableCategory getById(MerchantStore store, Long id, Language language) {
+	public ReadableCategory getById(MerchantStoreId storeId, Long id, LanguageCode languageCode) {
+		MerchantStore store = resolveStore(storeId);
+		Language language = resolveLanguage(languageCode);
 
 			Category categoryModel = null;
 			if (language != null) {
@@ -311,7 +330,9 @@ public class CategoryFacadeImpl implements CategoryFacade {
 	}
 
 	@Override
-	public ReadableCategory getByCode(MerchantStore store, String code, Language language) throws Exception {
+	public ReadableCategory getByCode(MerchantStoreId storeId, String code, LanguageCode languageCode) throws Exception {
+		MerchantStore store = resolveStore(storeId);
+		Language language = resolveLanguage(languageCode);
 
 		Validate.notNull(code, "category code must not be null");
 		ReadableCategoryPopulator categoryPopulator = new ReadableCategoryPopulator();
@@ -324,20 +345,30 @@ public class CategoryFacadeImpl implements CategoryFacade {
 	}
 
 	@Override
-	public ReadableCategory getCategoryByFriendlyUrl(MerchantStore store, String friendlyUrl, Language language) throws Exception {
+	public ReadableCategory getCategoryByFriendlyUrl(MerchantStoreId storeId, String friendlyUrl, LanguageCode languageCode) throws Exception {
+		MerchantStore store = resolveStore(storeId);
+		Language language = resolveLanguage(languageCode);
 		Validate.notNull(friendlyUrl, "Category search friendly URL must not be null");
 
 
-		Category category = categoryService.getBySeUrl(store, friendlyUrl, language);
-		
-		if(category == null) {
+		Category category;
+		if (language == null) {
+			List<Category> matches = categoryService.listBySeUrl(store, friendlyUrl);
+			category = CollectionUtils.isEmpty(matches) ? null : matches.get(0);
+		} else {
+			category = categoryService.getBySeUrl(store, friendlyUrl, language);
+		}
+
+		if (category == null) {
 			throw new ResourceNotFoundException("Category with friendlyUrl [" + friendlyUrl + "] was not found");
 		}
-		
+
+		if (language == null) {
+			return readableCategoryMapper.convert(category, store, language);
+		}
+
 		ReadableCategoryPopulator categoryPopulator = new ReadableCategoryPopulator();
 		ReadableCategory readableCategory = new ReadableCategory();
-		
-		
 		categoryPopulator.populate(category, readableCategory, store, language);
 
 		return readableCategory;
@@ -368,8 +399,10 @@ public class CategoryFacadeImpl implements CategoryFacade {
 	}
 
 	@Override
-	public List<ReadableProductVariant> categoryProductVariants(Long categoryId, MerchantStore store,
-			Language language) {
+	public List<ReadableProductVariant> categoryProductVariants(Long categoryId, MerchantStoreId storeId,
+			LanguageCode languageCode) {
+		MerchantStore store = resolveStore(storeId);
+		Language language = resolveLanguage(languageCode);
 		Category category = categoryService.getById(categoryId, store.getId());
 
 		List<ReadableProductVariant> variants = new ArrayList<ReadableProductVariant>();
@@ -543,7 +576,9 @@ public class CategoryFacadeImpl implements CategoryFacade {
 	}
 
 	@Override
-	public ReadableCategoryList listByProduct(MerchantStore store, Long product, Language language) {
+	public ReadableCategoryList listByProduct(MerchantStoreId storeId, Long product, LanguageCode languageCode) {
+		MerchantStore store = resolveStore(storeId);
+		Language language = resolveLanguage(languageCode);
 		Validate.notNull(product, "Product id must not be null");
 		Validate.notNull(store, "Store must not be null");
 		
@@ -563,5 +598,24 @@ public class CategoryFacadeImpl implements CategoryFacade {
 
 		
 		return readableList;
+	}
+
+	private MerchantStore resolveStore(MerchantStoreId storeId) {
+		try {
+			return tenantEntityBridge.resolveStore(storeId);
+		} catch (ConversionException e) {
+			throw new ServiceRuntimeException(e);
+		}
+	}
+
+	private Language resolveLanguage(LanguageCode languageCode) {
+		if (languageCode == null) {
+			return null;
+		}
+		try {
+			return tenantEntityBridge.resolveLanguage(languageCode);
+		} catch (ConversionException e) {
+			throw new ServiceRuntimeException(e);
+		}
 	}
 }

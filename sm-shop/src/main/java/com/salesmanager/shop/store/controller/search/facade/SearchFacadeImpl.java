@@ -14,6 +14,11 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.salesmanager.contracts.search.SearchItem;
+import com.salesmanager.contracts.search.SearchProductRequest;
+import com.salesmanager.contracts.tenant.LanguageCode;
+import com.salesmanager.contracts.tenant.MerchantStoreId;
 import com.salesmanager.core.business.exception.ConversionException;
 import com.salesmanager.core.business.exception.ServiceException;
 import com.salesmanager.core.business.services.catalog.category.CategoryService;
@@ -24,7 +29,6 @@ import com.salesmanager.core.model.catalog.category.Category;
 import com.salesmanager.core.model.catalog.product.Product;
 import com.salesmanager.core.model.merchant.MerchantStore;
 import com.salesmanager.core.model.reference.language.Language;
-import com.salesmanager.shop.model.catalog.SearchProductRequest;
 import com.salesmanager.shop.model.catalog.category.ReadableCategory;
 import com.salesmanager.shop.model.catalog.product.ReadableProduct;
 import com.salesmanager.shop.model.entity.ValueList;
@@ -32,10 +36,10 @@ import com.salesmanager.shop.populator.catalog.ReadableCategoryPopulator;
 import com.salesmanager.shop.populator.catalog.ReadableProductPopulator;
 import com.salesmanager.shop.store.api.exception.ConversionRuntimeException;
 import com.salesmanager.shop.store.api.exception.ServiceRuntimeException;
+import com.salesmanager.shop.tenant.TenantEntityBridge;
 import com.salesmanager.shop.utils.ImageFilePath;
 
 import modules.commons.search.request.Aggregation;
-import modules.commons.search.request.SearchItem;
 import modules.commons.search.request.SearchRequest;
 import modules.commons.search.request.SearchResponse;
 
@@ -44,6 +48,7 @@ import modules.commons.search.request.SearchResponse;
 public class SearchFacadeImpl implements SearchFacade {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SearchFacadeImpl.class);
+	private static final ObjectMapper MAPPER = new ObjectMapper();
 
 	@Inject
 	private SearchService searchService;
@@ -61,6 +66,9 @@ public class SearchFacadeImpl implements SearchFacade {
 	@Qualifier("img")
 	private ImageFilePath imageUtils;
 
+	@Inject
+	private TenantEntityBridge tenantEntityBridge;
+
 	private final static String CATEGORY_FACET_NAME = "categories";
 	private final static String MANUFACTURER_FACET_NAME = "manufacturer";
 	private final static int AUTOCOMPLETE_ENTRIES_COUNT = 15;
@@ -71,7 +79,8 @@ public class SearchFacadeImpl implements SearchFacade {
 	 */
 	@Override
 	@Async
-	public void indexAllData(MerchantStore store) throws Exception {
+	public void indexAllData(MerchantStoreId storeId) throws Exception {
+		MerchantStore store = tenantEntityBridge.resolveStore(storeId);
 		List<Product> products = productService.listByStore(store);
 
 		products.stream().forEach(p -> {
@@ -85,10 +94,21 @@ public class SearchFacadeImpl implements SearchFacade {
 	}
 
 	@Override
-	public List<SearchItem> search(MerchantStore store, Language language, SearchProductRequest searchRequest) {
+	public List<SearchItem> search(MerchantStoreId storeId, LanguageCode languageCode, SearchProductRequest searchRequest) {
+		MerchantStore store;
+		Language language;
+		try {
+			store = tenantEntityBridge.resolveStore(storeId);
+			language = resolveLanguage(languageCode);
+		} catch (ConversionException e) {
+			throw new ConversionRuntimeException(e);
+		}
+		if (language == null) {
+			language = store.getDefaultLanguage();
+		}
 		SearchResponse response = search(store, language.getCode(), searchRequest.getQuery(), searchRequest.getCount(),
 				searchRequest.getStart());
-		return response.getItems();
+		return response.getItems().stream().map(SearchFacadeImpl::toContractItem).collect(Collectors.toList());
 	}
 
 	private SearchResponse search(MerchantStore store, String languageCode, String query, Integer count,
@@ -175,7 +195,18 @@ public class SearchFacadeImpl implements SearchFacade {
 	}
 
 	@Override
-	public ValueList autocompleteRequest(String word, MerchantStore store, Language language) {
+	public ValueList autocompleteRequest(String word, MerchantStoreId storeId, LanguageCode languageCode) {
+		MerchantStore store;
+		Language language;
+		try {
+			store = tenantEntityBridge.resolveStore(storeId);
+			language = resolveLanguage(languageCode);
+		} catch (ConversionException e) {
+			throw new ConversionRuntimeException(e);
+		}
+		if (language == null) {
+			language = store.getDefaultLanguage();
+		}
 		Validate.notNull(word,"Search Keyword must not be null");
 		Validate.notNull(language, "Language cannot be null");
 		Validate.notNull(store,"MerchantStore cannot be null");
@@ -204,5 +235,16 @@ public class SearchFacadeImpl implements SearchFacade {
 
 	}
 
+	// ponytail: Jackson convertValue — commons SearchItem shares field names with contract DTO
+	private static SearchItem toContractItem(modules.commons.search.request.SearchItem source) {
+		return MAPPER.convertValue(source, SearchItem.class);
+	}
+
+	private Language resolveLanguage(LanguageCode languageCode) throws ConversionException {
+		if (languageCode == null) {
+			return null;
+		}
+		return tenantEntityBridge.resolveLanguage(languageCode);
+	}
 
 }

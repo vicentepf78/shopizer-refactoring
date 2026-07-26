@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.salesmanager.contracts.tenant.LanguageCode;
+import com.salesmanager.contracts.tenant.MerchantStoreId;
 import com.salesmanager.core.business.services.reference.language.LanguageService;
 import com.salesmanager.core.model.customer.Customer;
 import com.salesmanager.core.model.merchant.MerchantStore;
@@ -29,6 +31,7 @@ import com.salesmanager.shop.model.order.total.ReadableOrderTotal;
 import com.salesmanager.shop.model.order.total.ReadableTotal;
 import com.salesmanager.shop.model.order.v1.ReadableOrderConfirmation;
 import com.salesmanager.shop.store.controller.order.facade.v1.OrderFacade;
+import com.salesmanager.shop.tenant.TenantEntityBridge;
 import com.salesmanager.shop.utils.LabelUtils;
 
 @Service("orderFacadev1")
@@ -52,9 +55,20 @@ public class OrderFacadeImpl implements OrderFacade {
 	@Autowired
 	private LanguageService languageService;
 
+	@Autowired
+	private TenantEntityBridge tenantEntityBridge;
+
 	@Override
-	public ReadableOrderConfirmation orderConfirmation(Order order, Customer customer, MerchantStore store,
-			Language language) {
+	public ReadableOrderConfirmation orderConfirmation(Order order, Customer customer, MerchantStoreId storeId,
+			LanguageCode languageCode) {
+		MerchantStore store;
+		Language language;
+		try {
+			store = tenantEntityBridge.resolveStore(storeId);
+			language = tenantEntityBridge.resolveLanguage(languageCode);
+		} catch (com.salesmanager.core.business.exception.ConversionException e) {
+			throw new com.salesmanager.shop.store.api.exception.ConversionRuntimeException(e);
+		}
 		Validate.notNull(order, "Order cannot be null");
 		Validate.notNull(customer, "Customer cannot be null");
 		Validate.notNull(store, "MerchantStore cannot be null");

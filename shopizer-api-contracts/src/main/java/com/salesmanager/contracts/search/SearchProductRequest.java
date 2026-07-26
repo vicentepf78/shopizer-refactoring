@@ -1,4 +1,4 @@
-package com.salesmanager.search.api.v1;
+package com.salesmanager.contracts.search;
 
 import java.io.Serializable;
 
@@ -39,4 +39,5 @@ public class SearchProductRequest implements Serializable {
 	public void setCount(int count) {
 		this.count = count;
 	}
+
 }

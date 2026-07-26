@@ -64,7 +64,7 @@ class SearchIndexProducerHttpTest {
 		payload.setId(99L);
 		payload.setStore("default");
 		payload.setLanguage("en");
-		payload.setSchemaVersion(1);
+		payload.setSchemaVersion(2);
 		when(payloadBuilder.buildAll(store, product)).thenReturn(Collections.singletonList(payload));
 
 		server.expect(requestTo(BASE_URL + "/internal/v1/index/99?store=default&languages=en"))

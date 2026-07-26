@@ -31,6 +31,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.salesmanager.contracts.tenant.LanguageCode;
+import com.salesmanager.contracts.tenant.MerchantStoreId;
 import com.salesmanager.core.business.services.catalog.category.CategoryService;
 import com.salesmanager.core.business.services.catalog.product.ProductService;
 import com.salesmanager.core.model.catalog.category.Category;
@@ -312,7 +314,8 @@ public class ProductApi {
 	public ReadableProduct get(@PathVariable final Long id, @RequestParam(value = "lang", required = false) String lang,
 			@ApiIgnore MerchantStore merchantStore, @ApiIgnore Language language, HttpServletResponse response)
 			throws Exception {
-		ReadableProduct product = productCommonFacade.getProduct(merchantStore, id, language);
+		ReadableProduct product = productCommonFacade.getProduct(MerchantStoreId.of(merchantStore.getCode()), id,
+				LanguageCode.of(language.getCode()));
 
 		if (product == null) {
 			response.sendError(404, "Product not fount for id " + id);
@@ -388,7 +391,7 @@ public class ProductApi {
 	public ResponseEntity<EntityExists> exists(@RequestParam(value = "code") String code,
 			@ApiIgnore MerchantStore merchantStore, @ApiIgnore Language language) {
 
-		boolean exists = productCommonFacade.exists(code, merchantStore);
+		boolean exists = productCommonFacade.exists(code, MerchantStoreId.of(merchantStore.getCode()));
 		return new ResponseEntity<EntityExists>(new EntityExists(exists), HttpStatus.OK);
 
 	}

@@ -220,6 +220,26 @@ class Wave2ConsumerPactTest {
 	}
 
 	@Pact(consumer = CONSUMER, provider = "search-service")
+	RequestResponsePact searchIndexSchemaVersionTwoPact(PactDslWithProvider builder) {
+		return builder
+				.given("index accepts schema version 2")
+				.uponReceiving("index product document schema version 2")
+					.path("/internal/v1/index")
+					.method("POST")
+					.headers(internalJsonHeaders())
+					.body(newJsonBody(o -> {
+						o.numberType("schemaVersion", 2);
+						o.numberType("id", 99);
+						o.stringType("store", "default");
+						o.stringType("language", "en");
+						o.stringType("name", "Sample");
+					}).build())
+				.willRespondWith()
+					.status(204)
+				.toPact();
+	}
+
+	@Pact(consumer = CONSUMER, provider = "search-service")
 	RequestResponsePact searchIndexInvalidPact(PactDslWithProvider builder) {
 		return builder
 				.given("index rejects unsupported schema version")
@@ -228,15 +248,15 @@ class Wave2ConsumerPactTest {
 					.method("POST")
 					.headers(internalJsonHeaders())
 					.body(newJsonBody(o -> {
-						o.numberType("schemaVersion", 2);
+						o.numberType("schemaVersion", 3);
 						o.numberType("id", 99);
 					}).build())
 				.willRespondWith()
 					.status(422)
 					.headers(jsonHeaders())
 					.body(newJsonBody(o -> {
-						o.stringType("error", "Unsupported schemaVersion: 2");
-						o.numberType("schemaVersion", 2);
+						o.stringType("error", "Unsupported schemaVersion: 3");
+						o.numberType("schemaVersion", 3);
 					}).build())
 				.toPact();
 	}
@@ -419,12 +439,24 @@ class Wave2ConsumerPactTest {
 	}
 
 	@Test
+	@PactTestFor(providerName = "search-service", pactMethod = "searchIndexSchemaVersionTwoPact")
+	void searchIndexSchemaVersionTwo_matchStranglerExpectations(MockServer mockServer) {
+		assertThat(restTemplate.exchange(
+				mockServer.getUrl() + "/internal/v1/index",
+				HttpMethod.POST,
+				new HttpEntity<>(
+						"{\"schemaVersion\":2,\"id\":99,\"store\":\"default\",\"language\":\"en\",\"name\":\"Sample\"}",
+						internalJsonEntityHeaders()),
+				Void.class).getStatusCodeValue()).isEqualTo(204);
+	}
+
+	@Test
 	@PactTestFor(providerName = "search-service", pactMethod = "searchIndexInvalidPact")
 	void searchIndexInvalid_matchStranglerExpectations(MockServer mockServer) {
 		ResponseEntity<Map<String, Object>> rejected = tolerantRestTemplate().exchange(
 				mockServer.getUrl() + "/internal/v1/index",
 				HttpMethod.POST,
-				new HttpEntity<>("{\"schemaVersion\":2,\"id\":99}", internalJsonEntityHeaders()),
+				new HttpEntity<>("{\"schemaVersion\":3,\"id\":99}", internalJsonEntityHeaders()),
 				new ParameterizedTypeReference<Map<String, Object>>() {});
 		assertThat(rejected.getStatusCodeValue()).isEqualTo(422);
 		assertThat(rejected.getBody()).containsKeys("error", "schemaVersion");

@@ -2,14 +2,11 @@ package com.salesmanager.shop.store.controller.search.facade;
 
 import java.util.List;
 
-import com.salesmanager.core.model.merchant.MerchantStore;
-import com.salesmanager.core.model.reference.language.Language;
-import com.salesmanager.shop.model.catalog.SearchProductList;
-import com.salesmanager.shop.model.catalog.SearchProductRequest;
+import com.salesmanager.contracts.search.SearchItem;
+import com.salesmanager.contracts.search.SearchProductRequest;
+import com.salesmanager.contracts.tenant.LanguageCode;
+import com.salesmanager.contracts.tenant.MerchantStoreId;
 import com.salesmanager.shop.model.entity.ValueList;
-
-import modules.commons.search.request.SearchItem;
-import modules.commons.search.request.SearchResponse;
 
 /**
  * Different services for searching and indexing data
@@ -21,10 +18,10 @@ public interface SearchFacade {
 
 	/**
 	 * This utility method will re-index all products in the catalogue
-	 * @param store
+	 * @param storeId
 	 * @throws Exception
 	 */
-	public void indexAllData(MerchantStore store) throws Exception;
+	public void indexAllData(MerchantStoreId storeId) throws Exception;
 	
 	/**
 	 * Produces a search request against elastic search
@@ -32,22 +29,15 @@ public interface SearchFacade {
 	 * @return
 	 * @throws Exception
 	 */
-	List<SearchItem> search(MerchantStore store, Language language, SearchProductRequest searchRequest);
-
-	/**
-	 * Copy sm-core search response to a simple readable format populated with corresponding products
-	 * @param searchResponse
-	 * @return
-	 */
-	//public SearchProductList convertToSearchProductList(SearchResponse searchResponse, MerchantStore store, int start, int count, Language language) throws Exception;
+	List<SearchItem> search(MerchantStoreId storeId, LanguageCode language, SearchProductRequest searchRequest);
 
 	/**
 	 * List of keywords / autocompletes for a given word being typed
 	 * @param query
-	 * @param store
+	 * @param storeId
 	 * @param language
 	 * @return
 	 * @throws Exception
 	 */
-	ValueList autocompleteRequest(String query, MerchantStore store, Language language);
+	ValueList autocompleteRequest(String query, MerchantStoreId storeId, LanguageCode language);
 }

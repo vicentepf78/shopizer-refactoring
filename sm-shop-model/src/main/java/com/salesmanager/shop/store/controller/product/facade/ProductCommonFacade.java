@@ -2,6 +2,8 @@ package com.salesmanager.shop.store.controller.product.facade;
 
 import java.util.List;
 
+import com.salesmanager.contracts.tenant.LanguageCode;
+import com.salesmanager.contracts.tenant.MerchantStoreId;
 import com.salesmanager.core.model.catalog.category.Category;
 import com.salesmanager.core.model.catalog.product.Product;
 import com.salesmanager.core.model.catalog.product.review.ProductReview;
@@ -53,7 +55,7 @@ public interface ProductCommonFacade {
 	   * @return
 	   * @throws Exception
 	   */
-	  ReadableProduct getProduct(MerchantStore store, Long id, Language language) throws Exception;
+	  ReadableProduct getProduct(MerchantStoreId storeId, Long id, LanguageCode language) throws Exception;
 	  
 	  /**
 	   * 
@@ -61,7 +63,7 @@ public interface ProductCommonFacade {
 	   * @param store
 	   * @return
 	   */
-	  Product getProduct(Long id, MerchantStore store);
+	  Product getProduct(Long id, MerchantStoreId storeId);
 
 	  /**
 	   * Reads a product by code
@@ -72,7 +74,7 @@ public interface ProductCommonFacade {
 	   * @return
 	   * @throws Exception
 	   */
-	  ReadableProduct getProductByCode(MerchantStore store, String uniqueCode, Language language)
+	  ReadableProduct getProductByCode(MerchantStoreId storeId, String uniqueCode, LanguageCode language)
 	      throws Exception;
 
 
@@ -169,8 +171,8 @@ public interface ProductCommonFacade {
 	   * @return
 	   * @throws Exception
 	   */
-	  List<ReadableProductReview> getProductReviews(Product product, MerchantStore store,
-	      Language language) throws Exception;
+	  List<ReadableProductReview> getProductReviews(Product product, MerchantStoreId storeId,
+	      LanguageCode language) throws Exception;
 
 	  /**
 	   * validates if product exists
@@ -178,7 +180,7 @@ public interface ProductCommonFacade {
 	   * @param store
 	   * @return
 	   */
-	  public boolean exists(String sku, MerchantStore store);
+	  public boolean exists(String sku, MerchantStoreId storeId);
 
 
 

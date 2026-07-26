@@ -2,6 +2,7 @@ package com.salesmanager.shop.store.api.v1.references;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -13,10 +14,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.salesmanager.contracts.reference.ReadableCurrency;
+import com.salesmanager.contracts.reference.ReadableLanguage;
 import com.salesmanager.core.model.merchant.MerchantStore;
-import com.salesmanager.core.model.reference.currency.Currency;
 import com.salesmanager.core.model.reference.language.Language;
 import com.salesmanager.shop.model.references.MeasureUnit;
+import com.salesmanager.shop.populator.references.ReadableCurrencyMapper;
+import com.salesmanager.shop.populator.references.ReadableLanguageMapper;
 import com.salesmanager.shop.model.references.ReadableCountry;
 import com.salesmanager.shop.model.references.ReadableZone;
 import com.salesmanager.shop.model.references.SizeReferences;
@@ -60,8 +64,10 @@ public class ReferencesApi {
    * @return
    */
   @GetMapping("/languages")
-  public List<Language> getLanguages() {
-    return languageFacade.getLanguages();
+  public List<ReadableLanguage> getLanguages() {
+    return languageFacade.getLanguages().stream()
+        .map(ReadableLanguageMapper::toDto)
+        .collect(Collectors.toList());
   }
 
   /**
@@ -74,14 +80,19 @@ public class ReferencesApi {
   @GetMapping("/country")
   public List<ReadableCountry> getCountry(@ApiIgnore Language language, HttpServletRequest request) {
     MerchantStore merchantStore = storeFacade.getByCode(request);
-    return countryFacade.getListCountryZones(language, merchantStore);
+    return countryFacade.getListCountryZones(resolveLanguage(language), merchantStore);
   }
 
   @GetMapping("/zones")
   public List<ReadableZone> getZones(
       @RequestParam("code") String code, @ApiIgnore Language language, HttpServletRequest request) {
     MerchantStore merchantStore = storeFacade.getByCode(request);
-    return zoneFacade.getZones(code, language, merchantStore);
+    return zoneFacade.getZones(code, resolveLanguage(language), merchantStore);
+  }
+
+  /** {@code lang=_all} yields null from {@link LanguageUtils#getRESTLanguage}; facades need a language. */
+  private Language resolveLanguage(Language language) {
+    return language != null ? language : languageUtils.getServiceLanguage(null);
   }
 
   /**
@@ -90,8 +101,10 @@ public class ReferencesApi {
    * @return
    */
   @GetMapping("/currency")
-  public List<Currency> getCurrency() {
-    return currencyFacade.getList();
+  public List<ReadableCurrency> getCurrency() {
+    return currencyFacade.getList().stream()
+        .map(ReadableCurrencyMapper::toDto)
+        .collect(Collectors.toList());
   }
 
   @GetMapping("/measures")

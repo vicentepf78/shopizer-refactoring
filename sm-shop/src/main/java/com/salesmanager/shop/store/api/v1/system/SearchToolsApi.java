@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.salesmanager.contracts.tenant.MerchantStoreId;
 import com.salesmanager.core.model.merchant.MerchantStore;
 import com.salesmanager.core.model.reference.language.Language;
 import com.salesmanager.shop.constants.Constants;
@@ -76,7 +77,7 @@ public class SearchToolsApi {
 			throw new UnauthorizedException();
 		}
 		try {
-			searchFacade.indexAllData(merchantStore);
+			searchFacade.indexAllData(MerchantStoreId.of(merchantStore.getCode()));
 		} catch (Exception e) {
 			throw new RestApiException("Exception while indexing store data", e);
 		}

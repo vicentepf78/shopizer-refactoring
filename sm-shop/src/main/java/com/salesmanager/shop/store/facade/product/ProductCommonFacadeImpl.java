@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import com.salesmanager.contracts.tenant.LanguageCode;
+import com.salesmanager.contracts.tenant.MerchantStoreId;
 import com.salesmanager.core.business.exception.ConversionException;
 import com.salesmanager.core.business.exception.ServiceException;
 import com.salesmanager.core.business.services.catalog.pricing.PricingService;
@@ -45,6 +47,7 @@ import com.salesmanager.shop.store.api.exception.OperationNotAllowedException;
 import com.salesmanager.shop.store.api.exception.ResourceNotFoundException;
 import com.salesmanager.shop.store.api.exception.ServiceRuntimeException;
 import com.salesmanager.shop.store.controller.product.facade.ProductCommonFacade;
+import com.salesmanager.shop.tenant.TenantEntityBridge;
 import com.salesmanager.shop.utils.DateUtil;
 import com.salesmanager.shop.utils.ImageFilePath;
 
@@ -80,6 +83,9 @@ public class ProductCommonFacadeImpl implements ProductCommonFacade {
 	@Inject
 	@Qualifier("img")
 	private ImageFilePath imageUtils;
+
+	@Inject
+	private TenantEntityBridge tenantEntityBridge;
 
 	@Override
 	public Long saveProduct(MerchantStore store, PersistableProduct product, Language language) {
@@ -124,7 +130,9 @@ public class ProductCommonFacadeImpl implements ProductCommonFacade {
 	}
 
 	@Override
-	public ReadableProduct getProduct(MerchantStore store, Long id, Language language) {
+	public ReadableProduct getProduct(MerchantStoreId storeId, Long id, LanguageCode languageCode) {
+		MerchantStore store = resolveStore(storeId);
+		Language language = resolveLanguage(languageCode);
 
 		Product product = productService.findOne(id, store);
 		if (product == null) {
@@ -282,8 +290,10 @@ public class ProductCommonFacadeImpl implements ProductCommonFacade {
 	}
 
 	@Override
-	public ReadableProduct getProductByCode(MerchantStore store, String uniqueCode, Language language)
+	public ReadableProduct getProductByCode(MerchantStoreId storeId, String uniqueCode, LanguageCode languageCode)
 			throws Exception {
+		MerchantStore store = resolveStore(storeId);
+		Language language = resolveLanguage(languageCode);
 
 		Product product = productService.getBySku(uniqueCode, store, language);
 
@@ -326,8 +336,10 @@ public class ProductCommonFacadeImpl implements ProductCommonFacade {
 	}
 
 	@Override
-	public List<ReadableProductReview> getProductReviews(Product product, MerchantStore store, Language language)
+	public List<ReadableProductReview> getProductReviews(Product product, MerchantStoreId storeId, LanguageCode languageCode)
 			throws Exception {
+		MerchantStore store = resolveStore(storeId);
+		Language language = resolveLanguage(languageCode);
 
 		List<ProductReview> reviews = productReviewService.getByProduct(product);
 
@@ -378,7 +390,8 @@ public class ProductCommonFacadeImpl implements ProductCommonFacade {
 	}
 
 	@Override
-	public boolean exists(String sku, MerchantStore store) {
+	public boolean exists(String sku, MerchantStoreId storeId) {
+		MerchantStore store = resolveStore(storeId);
 
 		return productService.exists(sku, store);
 	}
@@ -412,7 +425,8 @@ public class ProductCommonFacadeImpl implements ProductCommonFacade {
 
 
 	@Override
-	public Product getProduct(Long id, MerchantStore store) {
+	public Product getProduct(Long id, MerchantStoreId storeId) {
+		MerchantStore store = resolveStore(storeId);
 		return productService.findOne(id, store);
 	}
 
@@ -473,5 +487,23 @@ public class ProductCommonFacadeImpl implements ProductCommonFacade {
 		}
 	}
 
+	private MerchantStore resolveStore(MerchantStoreId storeId) {
+		try {
+			return tenantEntityBridge.resolveStore(storeId);
+		} catch (ConversionException e) {
+			throw new ConversionRuntimeException(e);
+		}
+	}
+
+	private Language resolveLanguage(LanguageCode languageCode) {
+		if (languageCode == null) {
+			return null;
+		}
+		try {
+			return tenantEntityBridge.resolveLanguage(languageCode);
+		} catch (ConversionException e) {
+			throw new ConversionRuntimeException(e);
+		}
+	}
 
 }

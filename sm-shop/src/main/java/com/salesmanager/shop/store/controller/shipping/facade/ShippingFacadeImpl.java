@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.salesmanager.contracts.tenant.LanguageCode;
+import com.salesmanager.contracts.tenant.MerchantStoreId;
 import com.salesmanager.core.business.exception.ConversionException;
 import com.salesmanager.core.business.exception.ServiceException;
 import com.salesmanager.core.business.services.reference.country.CountryService;
@@ -36,6 +38,7 @@ import com.salesmanager.shop.store.api.exception.ConversionRuntimeException;
 import com.salesmanager.shop.store.api.exception.OperationNotAllowedException;
 import com.salesmanager.shop.store.api.exception.ResourceNotFoundException;
 import com.salesmanager.shop.store.api.exception.ServiceRuntimeException;
+import com.salesmanager.shop.tenant.TenantEntityBridge;
 
 @Service("shippingFacade")
 public class ShippingFacadeImpl implements ShippingFacade {
@@ -53,12 +56,14 @@ public class ShippingFacadeImpl implements ShippingFacade {
 	
 	@Autowired
 	ZoneService zoneService;
-	
-	
 
+	@Autowired
+	private TenantEntityBridge tenantEntityBridge;
 
 	@Override
-	public ExpeditionConfiguration getExpeditionConfiguration(MerchantStore store, Language language) {
+	public ExpeditionConfiguration getExpeditionConfiguration(MerchantStoreId storeId, LanguageCode languageCode) {
+		MerchantStore store = resolveStore(storeId);
+		Language language = resolveLanguage(languageCode);
 		ExpeditionConfiguration expeditionConfiguration = new ExpeditionConfiguration();
 		try {
 			
@@ -87,7 +92,8 @@ public class ShippingFacadeImpl implements ShippingFacade {
 	}
 
 	@Override
-	public void saveExpeditionConfiguration(ExpeditionConfiguration expedition, MerchantStore store) {
+	public void saveExpeditionConfiguration(ExpeditionConfiguration expedition, MerchantStoreId storeId) {
+		MerchantStore store = resolveStore(storeId);
 		Validate.notNull(expedition, "ExpeditionConfiguration cannot be null");
 		try {
 			
@@ -117,7 +123,8 @@ public class ShippingFacadeImpl implements ShippingFacade {
 	}
 
 	@Override
-	public ReadableAddress getShippingOrigin(MerchantStore store) {
+	public ReadableAddress getShippingOrigin(MerchantStoreId storeId) {
+		MerchantStore store = resolveStore(storeId);
 		
 		ShippingOrigin o = shippingOriginService.getByStore(store);
 		
@@ -144,7 +151,8 @@ public class ShippingFacadeImpl implements ShippingFacade {
 	}
 
 	@Override
-	public void saveShippingOrigin(PersistableAddress address, MerchantStore store) {
+	public void saveShippingOrigin(PersistableAddress address, MerchantStoreId storeId) {
+		MerchantStore store = resolveStore(storeId);
 		Validate.notNull(address, "PersistableAddress cannot be null");
 		try {
 			ShippingOrigin o = shippingOriginService.getByStore(store);
@@ -195,7 +203,8 @@ public class ShippingFacadeImpl implements ShippingFacade {
 	}
 
 	@Override
-	public void createPackage(PackageDetails packaging, MerchantStore store) {
+	public void createPackage(PackageDetails packaging, MerchantStoreId storeId) {
+		MerchantStore store = resolveStore(storeId);
 		Validate.notNull(store, "MerchantStore cannot be null");
 		Validate.notNull(packaging, "PackageDetails cannot be null");
 		ShippingConfiguration config = getDbConfig(store);
@@ -247,7 +256,8 @@ public class ShippingFacadeImpl implements ShippingFacade {
 	}
 
 	@Override
-	public PackageDetails getPackage(String code, MerchantStore store) {
+	public PackageDetails getPackage(String code, MerchantStoreId storeId) {
+		MerchantStore store = resolveStore(storeId);
 		Validate.notNull(store, "MerchantStore cannot be null");
 		Validate.notEmpty(code,"Packaging unique code cannot be empty");
 		
@@ -263,7 +273,8 @@ public class ShippingFacadeImpl implements ShippingFacade {
 	}
 
 	@Override
-	public List<PackageDetails> listPackages(MerchantStore store) {
+	public List<PackageDetails> listPackages(MerchantStoreId storeId) {
+		MerchantStore store = resolveStore(storeId);
 		Validate.notNull(store, "MerchantStore cannot be null");
 		ShippingConfiguration config = getDbConfig(store);
 		
@@ -272,7 +283,8 @@ public class ShippingFacadeImpl implements ShippingFacade {
 	}
 
 	@Override
-	public void updatePackage(String code, PackageDetails packaging, MerchantStore store) {
+	public void updatePackage(String code, PackageDetails packaging, MerchantStoreId storeId) {
+		MerchantStore store = resolveStore(storeId);
 		Validate.notNull(store, "MerchantStore cannot be null");
 		Validate.notNull(packaging, "PackageDetails cannot be null");
 		Validate.notEmpty(code,"Packaging unique code cannot be empty");
@@ -298,7 +310,8 @@ public class ShippingFacadeImpl implements ShippingFacade {
 	}
 
 	@Override
-	public void deletePackage(String code, MerchantStore store) {
+	public void deletePackage(String code, MerchantStoreId storeId) {
+		MerchantStore store = resolveStore(storeId);
 		
 		Validate.notNull(store, "MerchantStore cannot be null");
 		Validate.notEmpty(code,"Packaging unique code cannot be empty");
@@ -346,7 +359,9 @@ public class ShippingFacadeImpl implements ShippingFacade {
 	}
 
 	@Override
-	public List<ReadableCountry> shipToCountry(MerchantStore store, Language language) {
+	public List<ReadableCountry> shipToCountry(MerchantStoreId storeId, LanguageCode languageCode) {
+		MerchantStore store = resolveStore(storeId);
+		Language language = resolveLanguage(languageCode);
 		
 		
 		try {
@@ -382,6 +397,22 @@ public class ShippingFacadeImpl implements ShippingFacade {
 	ReadableCountry convert(Country country, MerchantStore store, Language lang) throws ConversionException {
 		ReadableCountryPopulator countryPopulator = new ReadableCountryPopulator();
 		return countryPopulator.populate(country, store, lang);
+	}
+
+	private MerchantStore resolveStore(MerchantStoreId storeId) {
+		try {
+			return tenantEntityBridge.resolveStore(storeId);
+		} catch (ConversionException e) {
+			throw new ConversionRuntimeException(e);
+		}
+	}
+
+	private Language resolveLanguage(LanguageCode languageCode) {
+		try {
+			return tenantEntityBridge.resolveLanguage(languageCode);
+		} catch (ConversionException e) {
+			throw new ConversionRuntimeException(e);
+		}
 	}
 
 }

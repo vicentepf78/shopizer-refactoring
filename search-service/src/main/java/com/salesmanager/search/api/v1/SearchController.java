@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.salesmanager.contracts.search.SearchItem;
+import com.salesmanager.contracts.search.SearchProductRequest;
 import com.salesmanager.contracts.search.ValueList;
 import com.salesmanager.search.services.SearchQueryService;
-
-import modules.commons.search.request.SearchItem;
 
 @RestController
 @RequestMapping("/api/v1")

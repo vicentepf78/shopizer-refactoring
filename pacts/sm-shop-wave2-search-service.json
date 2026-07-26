@@ -124,6 +124,76 @@
       }
     },
     {
+      "description": "index product document schema version 2",
+      "providerStates": [
+        {
+          "name": "index accepts schema version 2"
+        }
+      ],
+      "request": {
+        "body": {
+          "id": 99,
+          "language": "en",
+          "name": "Sample",
+          "schemaVersion": 2,
+          "store": "default"
+        },
+        "headers": {
+          "Content-Type": "application/json",
+          "X-Internal-Token": "test-internal-token"
+        },
+        "matchingRules": {
+          "body": {
+            "$.id": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.language": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.name": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            },
+            "$.schemaVersion": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "number"
+                }
+              ]
+            },
+            "$.store": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
+        "method": "POST",
+        "path": "/internal/v1/index"
+      },
+      "response": {
+        "status": 204
+      }
+    },
+    {
       "description": "index rejects bad schema version",
       "providerStates": [
         {
@@ -133,7 +203,7 @@
       "request": {
         "body": {
           "id": 99,
-          "schemaVersion": 2
+          "schemaVersion": 3
         },
         "headers": {
           "Content-Type": "application/json",
@@ -164,8 +234,8 @@
       },
       "response": {
         "body": {
-          "error": "Unsupported schemaVersion: 2",
-          "schemaVersion": 2
+          "error": "Unsupported schemaVersion: 3",
+          "schemaVersion": 3
         },
         "headers": {
           "Content-Type": "application/json"

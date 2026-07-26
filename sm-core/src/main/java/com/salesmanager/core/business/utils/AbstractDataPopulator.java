@@ -34,6 +34,7 @@ public abstract class AbstractDataPopulator<Source,Target> implements DataPopula
 	public Target populate(Source source, MerchantStore store, Language language) throws ConversionException{
 	   return populate(source,createTarget(), store, language);
 	}
+
 	protected abstract Target createTarget();
 
    

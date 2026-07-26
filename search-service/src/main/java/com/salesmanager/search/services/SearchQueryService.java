@@ -2,10 +2,9 @@ package com.salesmanager.search.services;
 
 import java.util.List;
 
+import com.salesmanager.contracts.search.SearchItem;
+import com.salesmanager.contracts.search.SearchProductRequest;
 import com.salesmanager.contracts.search.ValueList;
-import com.salesmanager.search.api.v1.SearchProductRequest;
-
-import modules.commons.search.request.SearchItem;
 
 public interface SearchQueryService {
 

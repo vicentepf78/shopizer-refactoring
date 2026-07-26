@@ -1,6 +1,9 @@
 package com.salesmanager.shop.store.controller.category.facade;
 
 import java.util.List;
+
+import com.salesmanager.contracts.tenant.LanguageCode;
+import com.salesmanager.contracts.tenant.MerchantStoreId;
 import com.salesmanager.core.model.catalog.category.Category;
 import com.salesmanager.core.model.merchant.MerchantStore;
 import com.salesmanager.core.model.reference.language.Language;
@@ -23,7 +26,7 @@ public interface CategoryFacade {
      * @param count
      * @return ReadableCategoryList
      */
-	ReadableCategoryList getCategoryHierarchy(MerchantStore store, ListCriteria criteria, int depth, Language language, List<String> filter, int page, int count);
+	ReadableCategoryList getCategoryHierarchy(MerchantStoreId storeId, ListCriteria criteria, int depth, LanguageCode language, List<String> filter, int page, int count);
 
 	/**
 	 *
@@ -40,7 +43,7 @@ public interface CategoryFacade {
 	 * @param language
 	 * @return ReadableCategory
 	 */
-	ReadableCategory getById(MerchantStore store, Long id, Language language);
+	ReadableCategory getById(MerchantStoreId storeId, Long id, LanguageCode language);
 
 	/**
 	 *
@@ -50,7 +53,7 @@ public interface CategoryFacade {
 	 * @return ReadableCategory
 	 * @throws Exception
 	 */
-	ReadableCategory getByCode(MerchantStore store, String code, Language language) throws Exception;
+	ReadableCategory getByCode(MerchantStoreId storeId, String code, LanguageCode language) throws Exception;
 
 	/**
 	 * Get a Category by the Search Engine friendly URL slug
@@ -60,7 +63,7 @@ public interface CategoryFacade {
 	 * @param language
 	 * @return
 	 */
-	ReadableCategory getCategoryByFriendlyUrl(MerchantStore merchantStore, String friendlyUrl, Language language) throws Exception;
+	ReadableCategory getCategoryByFriendlyUrl(MerchantStoreId storeId, String friendlyUrl, LanguageCode language) throws Exception;
 
 	Category getByCode(String code, MerchantStore store);
 
@@ -76,7 +79,7 @@ public interface CategoryFacade {
 	 * @param language
 	 * @return
 	 */
-	List<ReadableProductVariant> categoryProductVariants(Long categoryId, MerchantStore store, Language language);
+	List<ReadableProductVariant> categoryProductVariants(Long categoryId, MerchantStoreId storeId, LanguageCode language);
 
 	/**
 	 * Check if category code already exist
@@ -85,7 +88,7 @@ public interface CategoryFacade {
 	 * @return
 	 * @throws Exception
 	 */
-	boolean existByCode(MerchantStore store, String code);
+	boolean existByCode(MerchantStoreId storeId, String code);
 
 	/**
 	 * Move a Category from a node to another node
@@ -109,5 +112,5 @@ public interface CategoryFacade {
 	 * @param product
 	 * @return
 	 */
-	ReadableCategoryList listByProduct(MerchantStore store, Long product, Language language);
+	ReadableCategoryList listByProduct(MerchantStoreId storeId, Long product, LanguageCode language);
 }

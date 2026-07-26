@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.salesmanager.contracts.tenant.LanguageCode;
+import com.salesmanager.contracts.tenant.MerchantStoreId;
 import com.salesmanager.core.model.merchant.MerchantStore;
 import com.salesmanager.core.model.reference.language.Language;
 import com.salesmanager.shop.constants.Constants;
@@ -58,7 +60,8 @@ public class ShippingExpeditionApi {
 		authorizationUtils.authorizeUser(user, Stream.of(Constants.GROUP_SUPERADMIN, Constants.GROUP_ADMIN,
 				Constants.GROUP_SHIPPING, Constants.GROUP_ADMIN_RETAIL).collect(Collectors.toList()), merchantStore);
 
-		return shippingFacade.getExpeditionConfiguration(merchantStore, language);
+		return shippingFacade.getExpeditionConfiguration(MerchantStoreId.of(merchantStore.getCode()),
+				LanguageCode.of(language.getCode()));
 
 	}
 	
@@ -67,7 +70,8 @@ public class ShippingExpeditionApi {
 	 	getCountry(
 				@ApiIgnore MerchantStore merchantStore,
 				@ApiIgnore Language language) {
-	    return shippingFacade.shipToCountry(merchantStore, language);
+	    return shippingFacade.shipToCountry(MerchantStoreId.of(merchantStore.getCode()),
+	    		LanguageCode.of(language.getCode()));
 	  }
 	
 	
@@ -84,7 +88,7 @@ public class ShippingExpeditionApi {
 		authorizationUtils.authorizeUser(user, Stream.of(Constants.GROUP_SUPERADMIN, Constants.GROUP_ADMIN,
 				Constants.GROUP_SHIPPING, Constants.GROUP_ADMIN_RETAIL).collect(Collectors.toList()), merchantStore);
 
-		shippingFacade.saveExpeditionConfiguration(expedition, merchantStore);
+		shippingFacade.saveExpeditionConfiguration(expedition, MerchantStoreId.of(merchantStore.getCode()));
 
 	}
 

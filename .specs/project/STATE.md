@@ -1,7 +1,7 @@
 # State
 
-**Last Updated:** 2026-07-26T14:20:13-03:00
-**Current Work:** onda-2-content-search-merchant — COMPLETE (gate verde, revalidado). Próximo: PR merge + Specify/Execute Onda 3
+**Last Updated:** 2026-07-26T19:30:00-03:00
+**Current Work:** Onda 3 Execute complete (`onda-3-contracts-dto`). Próximo: Onda 4 planning/Execute.
 
 ---
 
@@ -94,6 +94,24 @@
 **Trade-off:** `PRODUCT_TYPE.MERCHANT_ID` permanece cross-schema.
 **Impact:** MCH-06 confirmed out of scope.
 
+### AD-W3-005: Outbox transacional local para checkout (2026-07-26)
+
+**Decision:** Tabela `CHECKOUT_OUTBOX` + `processOrder` em estágios atrás de `checkout.outbox.enabled=false` (default).
+**Reason:** Seam para Onda 6 sem broker na Onda 3 (ADR-005).
+**Impact:** `CheckoutStagedOrderProcessor`, dispatcher in-process; payloads JSON via `OrderSnapshot`/`CustomerSnapshot`.
+**Aggregate ID (SAG-01):** ordem de resolução — `order.id` → `shoppingCartCode` → `CheckoutCommand.idempotencyKey` (tipicamente `X-Correlation-Id`); sem chave estável, checkout com outbox habilitado falha (`checkout.outbox.aggregate-id-required`) em vez de UUID aleatório.
+
+### AD-W3-006: Fronteira transacional única no checkout outbox (2026-07-26)
+
+**Decision:** `CheckoutStagedOrderProcessor.processOrder` usa um único `@Transactional` envolvendo gateway de pagamento, persistência (customer/order/transaction) e appends outbox quando `checkout.outbox.enabled=true`.
+**Reason:** SAG-03 exige que cada escrita outbox ocorra na mesma transação do passo de negócio correspondente. O legado `OrderServiceImpl.process` não tem `@Transactional` — cada chamada downstream commita de forma independente.
+**Trade-offs:**
+1. Conexão DB retida durante HTTP externo ao gateway — aceitável com flag default `false`; revisar pool sizing antes do rollout Onda 6.
+2. Granularidade de rollback: `EXCEPTION_INVENTORY_MISMATCH` (produto ausente em `decrementInventory`) reverte customer/order/outbox no caminho staged; no legado esses passos já estavam commitados. CHK-05 aplica-se com flag off (rota legada intacta); com flag on, atomicidade SAG-03 prevalece sobre commits parciais.
+**Impact:** Desvio documentado e intencional; split de transações adiado para Onda 6 se o rollout exigir paridade fina de rollback.
+
+---
+
 ### AD-007: GeoZone excluído da Onda 1 (2026-07-04)
 
 **Decision:** Sem API nem service para GeoZone/GeoZoneDescription.
@@ -105,19 +123,20 @@
 
 ## Active Blockers
 
-### B-001: Facade interfaces passam entidades Language/MerchantStore
+### B-001: Facade interfaces passam entidades Language/MerchantStore — PARCIAL (Onda 3)
 
 **Discovered:** 2026-07-04
 **Impact:** 20+ interfaces em `sm-shop-model`; `AbstractDataPopulator` hard-wired; impede contratos HTTP limpos.
 **Workaround:** Onda 1 limita refatoração às fronteiras Reference/Tax APIs; callers internos mantêm entidades temporariamente.
-**Resolution:** Onda 3 — `LanguageCode` / `MerchantStoreId` (story B do backlog mestre).
+**Resolution:** Onda 3 Fase 1 — `MerchantStoreId` / `LanguageCode` em facades P1 (`OrderFacade`, `ShoppingCartFacade`, `SearchFacade`, `ShippingFacade`, `CategoryFacade`, `ProductCommonFacade`). ~60 facades restantes → Ondas 4–6.
+**Status (2026-07-26):** PARCIAL — P1 migrado; `TenantEntityBridge` hidrata entidades na implementação.
 
-### B-002: ReferencesApi expõe entidades Language e Currency
+### B-002: ReferencesApi expõe entidades Language e Currency — RESOLVED (Onda 3)
 
 **Discovered:** 2026-07-04
 **Impact:** Viola critério de sucesso da Onda 1; `ReadableLanguage` existe mas não está wired.
-**Workaround:** Nenhum em produção extraída.
-**Resolution:** REF-04, REF-05 — design em `design.md`; implementar em Execute.
+**Resolution:** REF-04, REF-05 — `ReferencesApi` retorna `List<ReadableLanguage>` / `List<ReadableCurrency>` (task_08).
+**Status (2026-07-26):** RESOLVED.
 
 ### B-003: PersistableTaxRateMapper depende de reference services
 
@@ -161,6 +180,7 @@
 | —   | Specify Onda 2 (content/search/merchant) | 2026-07-04 | —      | ✅ Done |
 | —   | Design Onda 2 + OQ-01..06 confirmadas   | 2026-07-04 | —      | ✅ Done |
 | —   | Tasks Onda 2 (54 tarefas T1–T54)        | 2026-07-04 | —      | ✅ Done |
+| —   | PRD/TechSpec/Tasks Ondas 3–6 (Compozy)  | 2026-07-26 | —      | ✅ Done |
 
 ---
 
@@ -179,3 +199,7 @@
 - [x] Onda 1 gate `./mvnw clean install` verde (2026-07-26)
 - [x] Onda 2 Execute complete — `docker-compose-wave2.yml`, suite Strangler, gate `./mvnw clean install` (2026-07-26)
 - [x] Onda 1+2 reactor gate revalidado — `./mvnw clean install` verde, 16 módulos, ~4m50s (2026-07-26T14:20)
+- [x] Onda 2 merged to main (PR #4, 2026-07-26)
+- [x] Documentação Ondas 3–6 — Compozy + TLC em `.compozy/tasks/` e `.specs/features/` (2026-07-26)
+- [x] Onda 3 Execute complete — contracts DTO, CheckoutApplicationService, outbox, gate `./mvnw clean install` verde (2026-07-26)
+- [ ] Aprovar início Execute Onda 4
