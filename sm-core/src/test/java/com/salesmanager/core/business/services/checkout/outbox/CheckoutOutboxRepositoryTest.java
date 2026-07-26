@@ -1,11 +1,13 @@
 package com.salesmanager.core.business.services.checkout.outbox;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.sql.SQLException;
 import java.util.Collections;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +17,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Pageable;
 
 import com.salesmanager.core.business.repositories.checkout.CheckoutOutboxJpaRepository;
@@ -60,9 +63,21 @@ class CheckoutOutboxRepositoryTest {
 	@Test
 	void appendIgnoresDuplicateKeyRace() {
 		when(jpaRepository.existsByAggregateIdAndEventType("cart-123", "PAYMENT_REQUESTED")).thenReturn(false);
-		when(jpaRepository.saveAndFlush(any())).thenThrow(new DataIntegrityViolationException("duplicate"));
+		when(jpaRepository.saveAndFlush(any())).thenThrow(new DuplicateKeyException("duplicate"));
 
 		repository.append("cart-123", CheckoutOutboxEventType.PAYMENT_REQUESTED, "{}");
+	}
+
+	@Test
+	void appendRethrowsNonDuplicateIntegrityViolation() {
+		when(jpaRepository.existsByAggregateIdAndEventType("cart-123", "PAYMENT_REQUESTED")).thenReturn(false);
+		DataIntegrityViolationException violation = new DataIntegrityViolationException("not null",
+				new SQLException("Column 'AGGREGATE_ID' cannot be null", "23000", 1048));
+		when(jpaRepository.saveAndFlush(any())).thenThrow(violation);
+
+		assertThatThrownBy(
+				() -> repository.append("cart-123", CheckoutOutboxEventType.PAYMENT_REQUESTED, "{}"))
+				.isSameAs(violation);
 	}
 
 	@Test

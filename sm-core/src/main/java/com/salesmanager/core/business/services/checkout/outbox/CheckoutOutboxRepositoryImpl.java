@@ -1,11 +1,13 @@
 package com.salesmanager.core.business.services.checkout.outbox;
 
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 
@@ -37,9 +39,27 @@ public class CheckoutOutboxRepositoryImpl implements CheckoutOutboxRepository {
 
 		try {
 			jpaRepository.saveAndFlush(row);
-		} catch (DataIntegrityViolationException ignored) {
+		} catch (DataIntegrityViolationException ex) {
+			if (!isDuplicateKeyViolation(ex)) {
+				throw ex;
+			}
 			// ponytail: concurrent append on same aggregate+type — idempotent no-op
 		}
+	}
+
+	private static boolean isDuplicateKeyViolation(DataIntegrityViolationException ex) {
+		if (ex instanceof DuplicateKeyException) {
+			return true;
+		}
+		Throwable cause = ex.getMostSpecificCause();
+		if (!(cause instanceof SQLException)) {
+			return false;
+		}
+		SQLException sql = (SQLException) cause;
+		if ("23505".equals(sql.getSQLState())) {
+			return true;
+		}
+		return "23000".equals(sql.getSQLState()) && sql.getErrorCode() == 1062;
 	}
 
 	@Override
