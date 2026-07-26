@@ -80,4 +80,14 @@ class PaymentRequestContextJacksonTest {
 		assertEquals("moneyorder", roundTrip.getModule().getCode());
 	}
 
+	@Test
+	void ignoresUnknownFieldsDuringDeserialization() throws Exception {
+		String json = "{\"customerId\":1,\"customerEmail\":\"buyer@example.com\",\"futureField\":\"ignored\"}";
+
+		PaymentRequestContext context = mapper.readValue(json, PaymentRequestContext.class);
+
+		assertEquals(Long.valueOf(1L), context.getCustomerId());
+		assertEquals("buyer@example.com", context.getCustomerEmail());
+	}
+
 }

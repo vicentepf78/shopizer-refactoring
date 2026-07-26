@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-26 20:15 | 1704 files | 268392 tokens
+# rtt index | generated 2026-07-26 20:16 | 1704 files | 268408 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -5583,7 +5583,7 @@ class PaymentRefundContext
   void setModule(IntegrationModuleDto module)
 
 # sm-core-modules/src/main/java/com/salesmanager/core/modules/integration/payment/dto/PaymentRequestContext.java [java]
-imports: java.io.Serializable, java.math.BigDecimal, java.util.ArrayList, java.util.HashMap, java.util.List, java.util.Map, com.salesmanager.core.model.system.IntegrationConfiguration, com.salesmanager.core.modules.integration.common.dto.IntegrationModuleDto, com.salesmanager.core.modules.integration.common.dto.IntegrationStoreContext
+imports: java.io.Serializable, java.math.BigDecimal, java.util.ArrayList, java.util.HashMap, java.util.List, java.util.Map, com.fasterxml.jackson.annotation.JsonIgnoreProperties, com.salesmanager.core.model.system.IntegrationConfiguration, com.salesmanager.core.modules.integration.common.dto.IntegrationModuleDto, com.salesmanager.core.modules.integration.common.dto.IntegrationStoreContext
 class PaymentRequestContext
   IntegrationStoreContext getStore()
   void setStore(IntegrationStoreContext store)
@@ -5808,6 +5808,7 @@ class IntegrationDtoNoJpaTest
 imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertNotNull, java.math.BigDecimal, java.util.Collections, org.junit.jupiter.api.Test, com.fasterxml.jackson.databind.JsonNode, com.fasterxml.jackson.databind.ObjectMapper, com.salesmanager.contracts.tenant.LanguageCode, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.core.modules.integration.common.dto.IntegrationModuleDto, com.salesmanager.core.modules.integration.common.dto.IntegrationStoreContext
 class PaymentRequestContextJacksonTest
   void roundTripJsonPreservesPaymentRequestFields()
+  void ignoresUnknownFieldsDuringDeserialization()
 
 # sm-core-modules/src/test/java/com/salesmanager/core/modules/integration/shipping/dto/ShippingQuoteRequestContextJacksonTest.java [java]
 imports: org.junit.jupiter.api.Assertions.assertEquals, org.junit.jupiter.api.Assertions.assertNotNull, java.math.BigDecimal, org.junit.jupiter.api.Test, com.fasterxml.jackson.databind.JsonNode, com.fasterxml.jackson.databind.ObjectMapper, com.salesmanager.contracts.tenant.LanguageCode, com.salesmanager.contracts.tenant.MerchantStoreId, com.salesmanager.core.modules.integration.common.dto.IntegrationStoreContext

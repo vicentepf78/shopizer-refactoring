@@ -7,10 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.salesmanager.core.model.system.IntegrationConfiguration;
 import com.salesmanager.core.modules.integration.common.dto.IntegrationModuleDto;
 import com.salesmanager.core.modules.integration.common.dto.IntegrationStoreContext;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PaymentRequestContext implements Serializable {
 
 	private static final long serialVersionUID = 1L;
