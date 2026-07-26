@@ -1,4 +1,4 @@
-# rtt index | generated 2026-07-26 10:37 | 1423 files | 218248 tokens
+# rtt index | generated 2026-07-26 11:08 | 1447 files | 221199 tokens
 # If this looks outdated, ask the user to run: rtt update
 # .mvn/wrapper/MavenWrapperDownloader.java [java]
 imports: java.net, java.io, java.nio.channels, java.util.Properties
@@ -196,6 +196,194 @@ class CorrelationIdFilterTest
   void clearMdc()
   void generatesIdWhenHeaderAbsent()
   void propagatesExistingHeader()
+
+# search-service/src/main/java/com/salesmanager/search/SearchServiceApplication.java [java]
+imports: org.springframework.boot.SpringApplication, org.springframework.boot.autoconfigure.SpringBootApplication, org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration, org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+class SearchServiceApplication
+  void main(String[] args)
+
+# search-service/src/main/java/com/salesmanager/search/api/internal/InternalIndexController.java [java]
+imports: java.util.Arrays, java.util.Collections, java.util.List, java.util.stream.Collectors, javax.validation.Valid, org.apache.commons.lang3.StringUtils, org.springframework.http.HttpStatus, org.springframework.http.ResponseEntity, org.springframework.web.bind.annotation.DeleteMapping, org.springframework.web.bind.annotation.PathVariable, org.springframework.web.bind.annotation.PostMapping, org.springframework.web.bind.annotation.RequestBody, org.springframework.web.bind.annotation.RequestMapping, org.springframework.web.bind.annotation.RequestParam, org.springframework.web.bind.annotation.RestController, com.salesmanager.contracts.search.ProductIndexBulkPayload, com.salesmanager.contracts.search.ProductIndexPayload, com.salesmanager.search.services.SearchIndexService, com.salesmanager.search.support.UnsupportedSchemaVersionException
+class InternalIndexController
+  ResponseEntity<Void> index(@RequestBody ProductIndexPayload payload)
+  ResponseEntity<Void> indexBulk(@Valid @RequestBody ProductIndexBulkPayload bulk)
+  ResponseEntity<Void> delete(
+			@PathVariable Long productId,
+			@RequestParam String store,
+			@RequestParam(required = false) String languages)
+  void validateSchemaVersion(ProductIndexPayload payload)
+  List<String> parseLanguages(String languages)
+
+# search-service/src/main/java/com/salesmanager/search/api/v1/SearchController.java [java]
+imports: java.util.List, org.springframework.web.bind.annotation.PostMapping, org.springframework.web.bind.annotation.RequestBody, org.springframework.web.bind.annotation.RequestMapping, org.springframework.web.bind.annotation.RequestParam, org.springframework.web.bind.annotation.ResponseBody, org.springframework.web.bind.annotation.RestController, com.salesmanager.contracts.search.ValueList, com.salesmanager.search.services.SearchQueryService, modules.commons.search.request.SearchItem
+class SearchController
+  List<SearchItem> search(
+			@RequestBody SearchProductRequest searchRequest,
+			@RequestParam(defaultValue = "DEFAULT") String store,
+			@RequestParam(defaultValue = "en") String lang)
+  ValueList autocomplete(
+			@RequestBody SearchProductRequest searchRequest,
+			@RequestParam(defaultValue = "DEFAULT") String store,
+			@RequestParam(defaultValue = "en") String lang)
+
+# search-service/src/main/java/com/salesmanager/search/api/v1/SearchProductRequest.java [java]
+imports: java.io.Serializable, javax.validation.constraints.NotEmpty
+class SearchProductRequest
+  String getQuery()
+  void setQuery(String query)
+  int getStart()
+  void setStart(int start)
+  int getCount()
+  void setCount(int count)
+
+# search-service/src/main/java/com/salesmanager/search/api/v1/SearchReindexController.java [java]
+imports: org.springframework.http.HttpStatus, org.springframework.http.ResponseEntity, org.springframework.web.bind.annotation.PostMapping, org.springframework.web.bind.annotation.RequestMapping, org.springframework.web.bind.annotation.RestController
+class SearchReindexController
+  ResponseEntity<Void> reindexAll()
+
+# search-service/src/main/java/com/salesmanager/search/config/ApplicationSearchConfiguration.java [java]
+imports: java.util.List, org.springframework.boot.context.properties.ConfigurationProperties, org.springframework.context.annotation.Configuration, modules.commons.search.configuration.Credentials, modules.commons.search.configuration.SearchHost
+class ApplicationSearchConfiguration
+  String getClusterName()
+  void setClusterName(String clusterName)
+  Credentials getCredentials()
+  void setCredentials(Credentials credentials)
+  List<SearchHost> getHost()
+  void setHost(List<SearchHost> host)
+  List<String> getSearchLanguages()
+  void setSearchLanguages(List<String> searchLanguages)
+
+# search-service/src/main/java/com/salesmanager/search/config/SearchModuleBootstrap.java [java]
+imports: java.io.IOException, java.nio.charset.StandardCharsets, javax.annotation.PostConstruct, org.apache.commons.lang3.Validate, org.slf4j.Logger, org.slf4j.LoggerFactory, org.springframework.beans.factory.annotation.Autowired, org.springframework.beans.factory.annotation.Value, org.springframework.boot.context.properties.EnableConfigurationProperties, org.springframework.core.io.ClassPathResource, org.springframework.stereotype.Component, modules.commons.search.SearchModule, modules.commons.search.configuration.SearchConfiguration
+class SearchModuleBootstrap
+  void init()
+  SearchConfiguration buildConfiguration()
+  void settings(SearchConfiguration config, String language)
+  void mappings(SearchConfiguration config, String language)
+  String loadClassPathResource(String file)
+
+# search-service/src/main/java/com/salesmanager/search/config/SearchServiceProperties.java [java]
+imports: org.springframework.boot.context.properties.ConfigurationProperties, org.springframework.stereotype.Component
+class SearchServiceProperties
+  Internal getInternal()
+  class Internal
+
+# search-service/src/main/java/com/salesmanager/search/health/SearchHealthIndicator.java [java]
+imports: org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.actuate.health.Health, org.springframework.boot.actuate.health.HealthIndicator, org.springframework.stereotype.Component, modules.commons.search.SearchModule
+class SearchHealthIndicator
+  Health health()
+
+# search-service/src/main/java/com/salesmanager/search/services/SearchIndexService.java [java]
+imports: java.util.List, com.salesmanager.contracts.search.ProductIndexPayload
+interface SearchIndexService
+
+# search-service/src/main/java/com/salesmanager/search/services/SearchIndexServiceImpl.java [java]
+imports: java.util.Collections, java.util.List, java.util.stream.Collectors, org.apache.commons.lang3.StringUtils, org.apache.commons.lang3.Validate, org.springframework.beans.factory.annotation.Autowired, org.springframework.stereotype.Service, org.springframework.util.CollectionUtils, com.salesmanager.contracts.search.ProductIndexPayload, com.salesmanager.search.support.SearchUnavailableException, modules.commons.search.SearchModule, modules.commons.search.request.IndexItem
+class SearchIndexServiceImpl
+  void index(ProductIndexPayload payload)
+  void indexBulk(List<ProductIndexPayload> payloads)
+  void delete(Long productId, String store, List<String> languages)
+  IndexItem toIndexItem(ProductIndexPayload payload)
+  void ensureAvailable()
+  SearchModule getSearchModule()
+
+# search-service/src/main/java/com/salesmanager/search/services/SearchQueryService.java [java]
+imports: java.util.List, com.salesmanager.contracts.search.ValueList, com.salesmanager.search.api.v1.SearchProductRequest, modules.commons.search.request.SearchItem
+interface SearchQueryService
+
+# search-service/src/main/java/com/salesmanager/search/services/SearchQueryServiceImpl.java [java]
+imports: java.util.List, java.util.stream.Collectors, org.apache.commons.lang3.Validate, org.springframework.beans.factory.annotation.Autowired, org.springframework.stereotype.Service, com.salesmanager.contracts.search.ProductIndexPayload, com.salesmanager.contracts.search.ValueList, com.salesmanager.search.api.v1.SearchProductRequest, com.salesmanager.search.support.SearchUnavailableException, modules.commons.search.SearchModule, modules.commons.search.request.IndexItem, modules.commons.search.request.SearchItem, modules.commons.search.request.SearchRequest, modules.commons.search.request.SearchResponse
+class SearchQueryServiceImpl
+  List<SearchItem> search(String store, String lang, SearchProductRequest request)
+  ValueList autocomplete(String store, String lang, String query)
+  void ensureAvailable()
+  SearchModule getSearchModule()
+
+# search-service/src/main/java/com/salesmanager/search/support/SearchUnavailableException.java [java]
+class SearchUnavailableException
+
+# search-service/src/main/java/com/salesmanager/search/support/UnsupportedSchemaVersionException.java [java]
+class UnsupportedSchemaVersionException
+  int getSchemaVersion()
+
+# search-service/src/main/java/com/salesmanager/search/web/CorrelationIdFilter.java [java]
+imports: java.io.IOException, java.util.Collections, java.util.Enumeration, java.util.UUID, javax.servlet.FilterChain, javax.servlet.ServletException, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletRequestWrapper, javax.servlet.http.HttpServletResponse, org.slf4j.Logger, org.slf4j.LoggerFactory, org.slf4j.MDC, org.springframework.core.Ordered, org.springframework.core.annotation.Order, org.springframework.stereotype.Component, org.springframework.util.StringUtils, org.springframework.web.filter.OncePerRequestFilter
+class CorrelationIdFilter
+  void doFilterInternal(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			FilterChain filterChain)
+  class CorrelationHeaderRequest
+
+# search-service/src/main/java/com/salesmanager/search/web/InternalTokenFilter.java [java]
+imports: java.io.IOException, java.nio.charset.StandardCharsets, javax.servlet.FilterChain, javax.servlet.ServletException, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, org.slf4j.MDC, org.springframework.core.Ordered, org.springframework.core.annotation.Order, org.springframework.http.MediaType, org.springframework.stereotype.Component, org.springframework.util.StringUtils, org.springframework.web.filter.OncePerRequestFilter, com.fasterxml.jackson.databind.ObjectMapper, com.salesmanager.search.config.SearchServiceProperties
+class InternalTokenFilter
+  boolean shouldNotFilter(HttpServletRequest request)
+  void doFilterInternal(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			FilterChain filterChain)
+  void writeUnauthorized(HttpServletResponse response)
+
+# search-service/src/main/java/com/salesmanager/search/web/RestErrorHandler.java [java]
+imports: java.util.HashMap, java.util.Map, org.slf4j.Logger, org.slf4j.LoggerFactory, org.slf4j.MDC, org.springframework.http.HttpStatus, org.springframework.util.StringUtils, org.springframework.web.bind.annotation.ExceptionHandler, org.springframework.web.bind.annotation.ResponseBody, org.springframework.web.bind.annotation.ResponseStatus, org.springframework.web.bind.annotation.RestControllerAdvice, com.salesmanager.search.support.SearchUnavailableException, com.salesmanager.search.support.UnsupportedSchemaVersionException
+class RestErrorHandler
+  Map<String, String> handleSearchUnavailable(SearchUnavailableException ex)
+  Map<String, Object> handleUnsupportedSchema(UnsupportedSchemaVersionException ex)
+  Map<String, String> errorBody(String error)
+
+# search-service/src/test/java/com/salesmanager/search/SearchServiceIntegrationTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete, org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get, org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post, org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath, org.springframework.test.web.servlet.result.MockMvcResultMatchers.status, org.mockito.ArgumentMatchers.any, org.mockito.Mockito.when, javax.sql.DataSource, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.springframework.beans.factory.annotation.Autowired, org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc, org.springframework.boot.test.context.SpringBootTest, org.springframework.boot.test.mock.mockito.MockBean, org.springframework.http.MediaType, org.springframework.test.context.ActiveProfiles, org.springframework.test.web.servlet.MockMvc, com.fasterxml.jackson.databind.ObjectMapper, com.salesmanager.contracts.search.ProductIndexPayload, com.salesmanager.search.api.v1.SearchProductRequest, com.salesmanager.search.web.InternalTokenFilter, modules.commons.search.SearchModule, modules.commons.search.request.SearchRequest, modules.commons.search.request.SearchResponse
+class SearchServiceIntegrationTest
+  void stubOpenSearch()
+  void contextLoadsWithoutDataSource(@Autowired(required = false) DataSource dataSource)
+  void healthEndpointIsReachable()
+  void invalidInternalTokenReturns401()
+  void unsupportedSchemaVersionReturns422()
+  void validIndexWithTokenReturns204()
+  void searchEndpointIsRegistered()
+  void autocompleteEndpointIsRegistered()
+  void reindexAdminEndpointReturns501()
+  void deleteIndexWithTokenReturns204()
+  ProductIndexPayload validPayload()
+
+# search-service/src/test/java/com/salesmanager/search/api/internal/InternalIndexControllerTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.assertj.core.api.Assertions.assertThatThrownBy, org.junit.jupiter.api.Test, com.salesmanager.contracts.search.ProductIndexPayload, com.salesmanager.search.support.UnsupportedSchemaVersionException
+class InternalIndexControllerTest
+  void validateSchemaVersionRejectsUnsupportedVersions()
+  void parseLanguagesSplitsCommaSeparatedValues()
+
+# search-service/src/test/java/com/salesmanager/search/config/SearchModuleBootstrapTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.mockito.Mockito.mock, org.mockito.Mockito.verify, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.junit.jupiter.MockitoExtension, org.springframework.test.util.ReflectionTestUtils, modules.commons.search.SearchModule, modules.commons.search.configuration.SearchConfiguration
+class SearchModuleBootstrapTest
+  void buildConfigurationLoadsMappingsAndSettings()
+  void initConfiguresSearchModuleWhenEnabled()
+
+# search-service/src/test/java/com/salesmanager/search/services/SearchIndexServiceImplTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.assertj.core.api.Assertions.assertThatThrownBy, org.mockito.ArgumentMatchers.any, org.mockito.ArgumentMatchers.anyList, org.mockito.ArgumentMatchers.eq, org.mockito.Mockito.doThrow, org.mockito.Mockito.verify, java.util.Collections, java.util.HashMap, java.util.List, java.util.Map, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.ArgumentCaptor, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.contracts.search.ProductIndexPayload, com.salesmanager.search.support.SearchUnavailableException, modules.commons.search.SearchModule, modules.commons.search.request.IndexItem
+class SearchIndexServiceImplTest
+  void setUp()
+  void indexValidPayloadCallsOpenSearchClient()
+  void indexBulkCallsOpenSearchBulkIndex()
+  void deleteCallsOpenSearchDelete()
+  void openSearchFailureMapsToSearchUnavailable()
+  void toIndexItemCopiesInventoryAndAttributes()
+  ProductIndexPayload samplePayload()
+
+# search-service/src/test/java/com/salesmanager/search/services/SearchQueryServiceImplTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.assertj.core.api.Assertions.assertThatThrownBy, org.mockito.ArgumentMatchers.any, org.mockito.Mockito.verify, org.mockito.Mockito.when, java.util.Collections, org.junit.jupiter.api.BeforeEach, org.junit.jupiter.api.Test, org.junit.jupiter.api.extension.ExtendWith, org.mockito.Mock, org.mockito.junit.jupiter.MockitoExtension, com.salesmanager.contracts.search.ValueList, com.salesmanager.search.api.v1.SearchProductRequest, com.salesmanager.search.support.SearchUnavailableException, modules.commons.search.SearchModule, modules.commons.search.request.SearchItem, modules.commons.search.request.SearchRequest, modules.commons.search.request.SearchResponse
+class SearchQueryServiceImplTest
+  void setUp()
+  void searchUsesOpenSearchModule()
+  void autocompleteMapsSuggestionsToValueList()
+  void openSearchFailureMapsToSearchUnavailable()
+  void missingSearchModuleReturns503Exception()
+  void hasNoSmCoreModelImports()
+
+# search-service/src/test/java/com/salesmanager/search/web/RestErrorHandlerTest.java [java]
+imports: org.assertj.core.api.Assertions.assertThat, org.junit.jupiter.api.Test, org.slf4j.MDC, com.salesmanager.search.support.SearchUnavailableException
+class RestErrorHandlerTest
+  void mapsOpenSearchUnavailableTo503Body()
 
 # shopizer-api-contracts/src/main/java/com/salesmanager/contracts/catalog/NamedEntity.java [java]
 imports: java.io.Serializable, com.salesmanager.contracts.common.ShopEntity
