@@ -1,7 +1,7 @@
 # Roadmap — Decomposição Shopizer
 
-**Current Milestone:** Onda 2 — Content, Search, Merchant (Execute)
-**Status:** Ready — Execute liberado (Onda 1 gate verde)
+**Current Milestone:** Onda 3 — Contratos DTO (Specify/Tasks prontos)
+**Status:** Ondas 1–2 Execute ✅; Ondas 3–6 documentação Compozy + TLC ✅ (Execute bloqueado por gates)
 
 **Fonte:** [docs/decomposition/MIGRATION-MASTER-PLAN.md](../../docs/decomposition/MIGRATION-MASTER-PLAN.md)
 
@@ -52,24 +52,33 @@
 - Strangler Fig + testes de contrato
 - **TLC:** Specify ✅ → Design ✅ → Tasks ✅ → Execute ✅ (gate reactor 2026-07-26)
 
-### Onda 2 — Content, Search, Merchant (semanas 25–32) - READY
+### Onda 2 — Content, Search, Merchant (semanas 25–32) - COMPLETE
 
 - `content-service` (dificuldade 2–6/10) — split-brain JPA+blob
 - `search-service` (dificuldade 5/10) — `ProductIndexPayload` interim
 - `merchant-service` (dificuldade 5/10) — sem ProductType APIs
-- **TLC:** Specify ✅ → Design ✅ → Tasks ✅ → Execute (liberado — aguardando task_01)
+- **TLC:** Specify ✅ → Design ✅ → Tasks ✅ → Execute ✅ (gate reactor 2026-07-26, PR #4)
 
-### Onda 3 — Contratos DTO (semanas 33–38) - PLANNED
+### Onda 3 — Contratos DTO (semanas 33–38) - READY
 
-- ProductSnapshot, LanguageCode, MerchantStoreId
-- Checkout Application Service
-- Sem deploy de novos microserviços
+- ProductSnapshot, OrderSnapshot, CustomerSnapshot, LanguageCode, MerchantStoreId
+- Checkout Application Service + outbox foundation (sem novos microserviços)
+- **Compozy:** PRD ✅ → TechSpec ✅ → Tasks ✅ (10 tasks) — Execute bloqueado até aprovação
 
-### Onda 4 — Catalog + Customer (semanas 39–48) - PLANNED
+### Onda 4 — Catalog + Customer (semanas 39–48) - READY
 
-### Onda 5 — Integration Service (semanas 49–56) - PLANNED
+- `catalog-service` read-first; `customer-service` após CustomerSnapshot
+- **Compozy:** PRD ✅ → TechSpec ✅ → Tasks ✅ (15 tasks) — gate: Onda 3 Execute
 
-### Onda 6 — ShoppingCart + Order (semanas 57–68) - PLANNED
+### Onda 5 — Integration Service (semanas 49–56) - READY
+
+- `integration-service` — payment/shipping orchestration stateless
+- **Compozy:** PRD ✅ → TechSpec ✅ → Tasks ✅ (12 tasks) — gate: Onda 3 + Onda 4 partial
+
+### Onda 6 — ShoppingCart + Order (semanas 57–68) - READY
+
+- `shoppingcart-service` + `order-service` — última extração (coupling 9/10)
+- **Compozy:** PRD ✅ → TechSpec ✅ → Tasks ✅ (16 tasks) — gate: Ondas 3–5
 
 ---
 

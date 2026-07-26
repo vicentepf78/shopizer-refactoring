@@ -1,7 +1,7 @@
 # State
 
-**Last Updated:** 2026-07-26T14:20:13-03:00
-**Current Work:** onda-2-content-search-merchant — COMPLETE (gate verde, revalidado). Próximo: PR merge + Specify/Execute Onda 3
+**Last Updated:** 2026-07-26T14:50:00-03:00
+**Current Work:** Ondas 3–6 — documentação Compozy + TLC completa (53 tasks, 196 TLC tasks). Próximo: aprovar Execute Onda 3
 
 ---
 
@@ -161,6 +161,7 @@
 | —   | Specify Onda 2 (content/search/merchant) | 2026-07-04 | —      | ✅ Done |
 | —   | Design Onda 2 + OQ-01..06 confirmadas   | 2026-07-04 | —      | ✅ Done |
 | —   | Tasks Onda 2 (54 tarefas T1–T54)        | 2026-07-04 | —      | ✅ Done |
+| —   | PRD/TechSpec/Tasks Ondas 3–6 (Compozy)  | 2026-07-26 | —      | ✅ Done |
 
 ---
 
@@ -179,3 +180,6 @@
 - [x] Onda 1 gate `./mvnw clean install` verde (2026-07-26)
 - [x] Onda 2 Execute complete — `docker-compose-wave2.yml`, suite Strangler, gate `./mvnw clean install` (2026-07-26)
 - [x] Onda 1+2 reactor gate revalidado — `./mvnw clean install` verde, 16 módulos, ~4m50s (2026-07-26T14:20)
+- [x] Onda 2 merged to main (PR #4, 2026-07-26)
+- [x] Documentação Ondas 3–6 — Compozy + TLC em `.compozy/tasks/` e `.specs/features/` (2026-07-26)
+- [ ] Aprovar início Execute Onda 3 (`onda-3-contracts-dto` task_01)
