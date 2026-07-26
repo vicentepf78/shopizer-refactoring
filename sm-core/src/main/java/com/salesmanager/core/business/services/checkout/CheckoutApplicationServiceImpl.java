@@ -97,7 +97,7 @@ public class CheckoutApplicationServiceImpl implements CheckoutApplicationServic
 	private Order placeApiOrder(CheckoutCommand command, MerchantStore store) throws ServiceException {
 		Order modelOrder = command.getPreBuiltOrder();
 		return processCheckoutOrder(modelOrder, command.getCustomer(), command.getShoppingCartItems(),
-				command.getOrderTotalSummary(), command.getPayment(), null, store);
+				command.getOrderTotalSummary(), command.getPayment(), null, store, command.getIdempotencyKey());
 	}
 
 	private Order placeStorefrontOrder(CheckoutCommand command, MerchantStore store, Language language)
@@ -195,18 +195,19 @@ public class CheckoutApplicationServiceImpl implements CheckoutApplicationServic
 		modelOrder.setPaymentModuleCode(command.getPaymentModule());
 		payment.setModuleName(command.getPaymentModule());
 
-		processCheckoutOrder(modelOrder, customer, shoppingCartItems, summary, payment, transaction, store);
+		processCheckoutOrder(modelOrder, customer, shoppingCartItems, summary, payment, transaction, store,
+				command.getIdempotencyKey());
 
 		return modelOrder;
 	}
 
 	private Order processCheckoutOrder(Order modelOrder, Customer customer, List<ShoppingCartItem> shoppingCartItems,
-			OrderTotalSummary summary, Payment payment, Transaction transaction, MerchantStore store)
-			throws ServiceException {
+			OrderTotalSummary summary, Payment payment, Transaction transaction, MerchantStore store,
+			String idempotencyKey) throws ServiceException {
 		if (outboxProperties.isEnabled()) {
 			// ponytail: legacy storefront PayPal drops command Transaction; outbox path must match
 			return stagedOrderProcessor.processOrder(modelOrder, customer, shoppingCartItems, summary, payment, null,
-					store);
+					store, idempotencyKey);
 		}
 		if (transaction != null) {
 			return orderService.processOrder(modelOrder, customer, shoppingCartItems, summary, payment, store);

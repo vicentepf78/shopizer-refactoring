@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 import javax.inject.Inject;
 
@@ -68,13 +67,13 @@ public class CheckoutStagedOrderProcessor {
 
 	@Transactional
 	public Order processOrder(Order order, Customer customer, List<ShoppingCartItem> items, OrderTotalSummary summary,
-			Payment payment, Transaction transaction, MerchantStore store) throws ServiceException {
+			Payment payment, Transaction transaction, MerchantStore store, String idempotencyKey) throws ServiceException {
 		validate(order, customer, items, payment, store, summary);
 
 		applyIpAddress(order);
 
-		String aggregateId = resolveAggregateId(order);
 		boolean writeOutbox = outboxProperties.isEnabled();
+		String aggregateId = writeOutbox ? resolveAggregateId(order, idempotencyKey) : null;
 
 		if (writeOutbox) {
 			appendOutbox(aggregateId, CheckoutOutboxEventType.PAYMENT_REQUESTED,
@@ -136,14 +135,17 @@ public class CheckoutStagedOrderProcessor {
 		}
 	}
 
-	private static String resolveAggregateId(Order order) {
+	private static String resolveAggregateId(Order order, String idempotencyKey) throws ServiceException {
 		if (order.getId() != null && order.getId() > 0) {
 			return String.valueOf(order.getId());
 		}
 		if (!StringUtils.isBlank(order.getShoppingCartCode())) {
 			return order.getShoppingCartCode();
 		}
-		return UUID.randomUUID().toString();
+		if (!StringUtils.isBlank(idempotencyKey)) {
+			return idempotencyKey;
+		}
+		throw new ServiceException("checkout.outbox.aggregate-id-required");
 	}
 
 	private void appendOutbox(String aggregateId, CheckoutOutboxEventType type, String payloadJson)

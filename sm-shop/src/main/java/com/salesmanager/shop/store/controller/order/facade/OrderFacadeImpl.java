@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Async;
@@ -85,6 +86,7 @@ import com.salesmanager.core.model.shipping.ShippingQuote;
 import com.salesmanager.core.model.shipping.ShippingSummary;
 import com.salesmanager.core.model.shoppingcart.ShoppingCart;
 import com.salesmanager.core.model.shoppingcart.ShoppingCartItem;
+import com.salesmanager.shop.filter.CorrelationIdFilter;
 import com.salesmanager.shop.model.customer.PersistableCustomer;
 import com.salesmanager.shop.model.customer.ReadableCustomer;
 import com.salesmanager.shop.model.customer.address.Address;
@@ -363,6 +365,7 @@ public class OrderFacadeImpl implements OrderFacade {
 				.comments(order.getComments())
 				.paymentDetails(order.getPayment())
 				.customerAgreed(order.isCustomerAgreed())
+				.idempotencyKey(checkoutIdempotencyKey())
 				.build();
 
 		return checkoutApplicationService.placeOrder(command);
@@ -1124,6 +1127,7 @@ public class OrderFacadeImpl implements OrderFacade {
 					.orderTotalSummary(orderTotalSummary)
 					.payment(paymentModel)
 					.preBuiltOrder(modelOrder)
+					.idempotencyKey(checkoutIdempotencyKey())
 					.build();
 			modelOrder = checkoutApplicationService.placeOrder(command);
 
@@ -1444,5 +1448,9 @@ public class OrderFacadeImpl implements OrderFacade {
 			e.printStackTrace();
 		}
 
+	}
+
+	private static String checkoutIdempotencyKey() {
+		return MDC.get(CorrelationIdFilter.MDC_KEY);
 	}
 }

@@ -39,6 +39,7 @@ public final class CheckoutCommand {
 	private final String comments;
 	private final Map<String, String> paymentDetails;
 	private final boolean customerAgreed;
+	private final String idempotencyKey;
 
 	private CheckoutCommand(Builder builder) {
 		this.storeId = builder.storeId;
@@ -56,6 +57,7 @@ public final class CheckoutCommand {
 		this.comments = builder.comments;
 		this.paymentDetails = builder.paymentDetails == null ? Collections.emptyMap() : builder.paymentDetails;
 		this.customerAgreed = builder.customerAgreed;
+		this.idempotencyKey = builder.idempotencyKey;
 	}
 
 	public static Builder builder() {
@@ -122,6 +124,14 @@ public final class CheckoutCommand {
 		return customerAgreed;
 	}
 
+	/**
+	 * Stable key for checkout outbox aggregate id when order has no id or shoppingCartCode
+	 * (typically {@code X-Correlation-Id} from the HTTP layer).
+	 */
+	public String getIdempotencyKey() {
+		return idempotencyKey;
+	}
+
 	public boolean isApiFlow() {
 		return preBuiltOrder != null;
 	}
@@ -143,6 +153,7 @@ public final class CheckoutCommand {
 		private String comments;
 		private Map<String, String> paymentDetails;
 		private boolean customerAgreed;
+		private String idempotencyKey;
 
 		public Builder storeId(MerchantStoreId storeId) {
 			this.storeId = storeId;
@@ -216,6 +227,11 @@ public final class CheckoutCommand {
 
 		public Builder customerAgreed(boolean customerAgreed) {
 			this.customerAgreed = customerAgreed;
+			return this;
+		}
+
+		public Builder idempotencyKey(String idempotencyKey) {
+			this.idempotencyKey = idempotencyKey;
 			return this;
 		}
 

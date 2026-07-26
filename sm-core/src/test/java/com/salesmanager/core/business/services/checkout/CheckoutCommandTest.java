@@ -115,4 +115,26 @@ class CheckoutCommandTest {
 		assertThat(command.getPayment()).isSameAs(payment);
 	}
 
+	@Test
+	void buildAcceptsOptionalIdempotencyKey() {
+		Customer customer = new Customer();
+		OrderTotalSummary summary = new OrderTotalSummary();
+		summary.setTotal(BigDecimal.ONE);
+		Payment payment = new Payment();
+
+		CheckoutCommand command = CheckoutCommand.builder()
+				.storeId(MerchantStoreId.of("DEFAULT"))
+				.languageCode(LanguageCode.of("en"))
+				.customerSnapshot(CustomerSnapshotBuilder.from(customer))
+				.customer(customer)
+				.shoppingCartItems(Collections.singletonList(new ShoppingCartItem()))
+				.orderTotalSummary(summary)
+				.preBuiltOrder(new Order())
+				.payment(payment)
+				.idempotencyKey("corr-abc")
+				.build();
+
+		assertThat(command.getIdempotencyKey()).isEqualTo("corr-abc");
+	}
+
 }

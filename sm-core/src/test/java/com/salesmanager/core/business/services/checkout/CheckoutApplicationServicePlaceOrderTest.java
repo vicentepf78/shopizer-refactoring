@@ -91,7 +91,7 @@ class CheckoutApplicationServicePlaceOrderTest {
 		when(productService.getBySku("SKU-1", store, language)).thenReturn(productWithInventory(store, 10, 1));
 		when(digitalProductService.getByProduct(eq(store), any(Product.class))).thenReturn(null);
 		when(stagedOrderProcessor.processOrder(any(Order.class), eq(customer), any(), eq(summary), any(Payment.class),
-				isNull(), eq(store))).thenReturn(builtOrder);
+				isNull(), eq(store), isNull())).thenReturn(builtOrder);
 
 		CheckoutCommand command = CheckoutCommand.builder()
 				.storeId(MerchantStoreId.of("DEFAULT"))
@@ -107,7 +107,7 @@ class CheckoutApplicationServicePlaceOrderTest {
 		checkoutApplicationService.placeOrder(command);
 
 		verify(stagedOrderProcessor).processOrder(any(Order.class), eq(customer), any(), eq(summary), any(Payment.class),
-				isNull(), eq(store));
+				isNull(), eq(store), isNull());
 		verify(orderService, never()).processOrder(any(), any(), any(), any(), any(), any());
 	}
 
@@ -142,7 +142,7 @@ class CheckoutApplicationServicePlaceOrderTest {
 
 		verify(orderService).processOrder(any(Order.class), eq(customer), any(), eq(summary), any(Payment.class),
 				isNull(), eq(store));
-		verify(stagedOrderProcessor, never()).processOrder(any(), any(), any(), any(), any(), any(), any());
+		verify(stagedOrderProcessor, never()).processOrder(any(), any(), any(), any(), any(), any(), any(), any());
 	}
 
 	@Test
@@ -162,7 +162,7 @@ class CheckoutApplicationServicePlaceOrderTest {
 		when(productService.getBySku("SKU-1", store, language)).thenReturn(productWithInventory(store, 10, 1));
 		when(digitalProductService.getByProduct(eq(store), any(Product.class))).thenReturn(null);
 		when(stagedOrderProcessor.processOrder(any(Order.class), eq(customer), any(), eq(summary), any(Payment.class),
-				isNull(), eq(store))).thenReturn(builtOrder);
+				isNull(), eq(store), isNull())).thenReturn(builtOrder);
 
 		CheckoutCommand command = CheckoutCommand.builder()
 				.storeId(MerchantStoreId.of("DEFAULT"))
@@ -179,7 +179,7 @@ class CheckoutApplicationServicePlaceOrderTest {
 		checkoutApplicationService.placeOrder(command);
 
 		verify(stagedOrderProcessor).processOrder(any(Order.class), eq(customer), any(), eq(summary), any(Payment.class),
-				isNull(), eq(store));
+				isNull(), eq(store), isNull());
 		verify(orderService, never()).processOrder(any(), any(), any(), any(), any(), any());
 	}
 
@@ -216,7 +216,7 @@ class CheckoutApplicationServicePlaceOrderTest {
 		checkoutApplicationService.placeOrder(command);
 
 		verify(orderService).processOrder(any(Order.class), eq(customer), any(), eq(summary), any(Payment.class), eq(store));
-		verify(stagedOrderProcessor, never()).processOrder(any(), any(), any(), any(), any(), any(), any());
+		verify(stagedOrderProcessor, never()).processOrder(any(), any(), any(), any(), any(), any(), any(), any());
 	}
 
 	@Test
